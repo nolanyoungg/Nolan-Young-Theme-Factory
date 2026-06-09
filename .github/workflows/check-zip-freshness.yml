@@ -1,16 +1,19 @@
 name: Check ZIP Freshness
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'wp-content/themes/**'
       - 'dist/zipped-themes/**'
       - 'scripts/validate-zip-freshness.sh'
+      - '.github/workflows/check-zip-freshness.yml'
   pull_request:
     paths:
       - 'wp-content/themes/**'
       - 'dist/zipped-themes/**'
       - 'scripts/validate-zip-freshness.sh'
+      - '.github/workflows/check-zip-freshness.yml'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true

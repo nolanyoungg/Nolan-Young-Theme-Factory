@@ -12,6 +12,9 @@ on:
       - 'dist/zipped-themes/**'
       - 'scripts/validate-zip-freshness.sh'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   freshness:
     runs-on: ubuntu-latest

@@ -6,6 +6,10 @@ fail() {
   exit 1
 }
 
+valid_slug() {
+  [[ "$1" =~ ^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]]
+}
+
 usage() {
   printf 'Usage: bash scripts/create-theme-pr.sh <theme-slug>\n' >&2
 }
@@ -20,10 +24,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root_dir="$(cd "$script_dir/.." && pwd)"
 cd "$root_dir"
 
-case "$slug" in
-  nolan-showcase-theme-[0-9][0-9]) ;;
-  *) fail "Invalid theme slug: $slug" ;;
-esac
+valid_slug "$slug" || fail "Invalid theme slug: $slug"
 
 theme_dir="wp-content/themes/$slug"
 preview_dir="docs/themes/$slug"

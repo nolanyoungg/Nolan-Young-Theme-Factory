@@ -1,0 +1,12 @@
+{
+  "name": "001_nolan_young_theme_northstar_web_works",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Premium classic WordPress theme for a strategic web design and development company.",
+  "scripts": {
+    "build": "node build/build-assets.mjs"
+  }
+}
+
+
+

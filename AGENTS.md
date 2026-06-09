@@ -49,10 +49,10 @@ optional finalization/fix pass
 The expected final output for each theme generation run is:
 
 ```text
-wp-content/themes/nolan-showcase-theme-XX/
-docs/themes/nolan-showcase-theme-XX/
-dist/zipped-themes/nolan-showcase-theme-XX.zip
-reports/runs/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
+docs/themes/NNN_nolan_young_theme_description/
+dist/zipped-themes/NNN_nolan_young_theme_description.zip
+reports/runs/NNN_nolan_young_theme_description/
 ```
 
 ---
@@ -249,15 +249,15 @@ Nolan-Young-Theme-Factory/
 Each generated theme must use the next available versioned slug:
 
 ```text
-nolan-showcase-theme-XX
+NNN_nolan_young_theme_description
 ```
 
-Use two-digit numbering:
+Use three-digit numbering plus a short description:
 
 ```text
-nolan-showcase-theme-01
-nolan-showcase-theme-02
-nolan-showcase-theme-03
+001_nolan_young_theme_northstar_web_works
+002_nolan_young_theme_description
+003_nolan_young_theme_description
 ```
 
 The next version must be determined by checking all relevant output locations:
@@ -284,31 +284,31 @@ A new prompt run should create a new theme version.
 For each theme slug:
 
 ```text
-nolan-showcase-theme-XX
+NNN_nolan_young_theme_description
 ```
 
 the generated WordPress theme must be created at:
 
 ```text
-wp-content/themes/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
 ```
 
 The generated static preview must be created at:
 
 ```text
-docs/themes/nolan-showcase-theme-XX/
+docs/themes/NNN_nolan_young_theme_description/
 ```
 
 The generated ZIP must be created at:
 
 ```text
-dist/zipped-themes/nolan-showcase-theme-XX.zip
+dist/zipped-themes/NNN_nolan_young_theme_description.zip
 ```
 
 The run reports must be created at:
 
 ```text
-reports/runs/nolan-showcase-theme-XX/
+reports/runs/NNN_nolan_young_theme_description/
 ```
 
 The theme preview must be linked from:
@@ -324,7 +324,7 @@ docs/index.html
 Every generated WordPress theme must follow this structure exactly:
 
 ```text
-wp-content/themes/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
 ├── style.css
 ├── functions.php
 ├── theme.json
@@ -468,13 +468,13 @@ Additional files may be added only when they support the generated theme and do 
 Every generated theme must include a static preview at:
 
 ```text
-docs/themes/nolan-showcase-theme-XX/
+docs/themes/NNN_nolan_young_theme_description/
 ```
 
 Minimum required structure:
 
 ```text
-docs/themes/nolan-showcase-theme-XX/
+docs/themes/NNN_nolan_young_theme_description/
 ├── index.html
 ├── assets/
 │   ├── css/
@@ -721,7 +721,7 @@ selected prompt file
 Output:
 
 ```text
-reports/runs/nolan-showcase-theme-XX/plan.md
+reports/runs/NNN_nolan_young_theme_description/plan.md
 ```
 
 Planner output does not need file blocks.
@@ -759,14 +759,14 @@ instructions/04-design-style-instructions.md
 instructions/05-content-instructions.md
 contracts/required-theme-structure.md
 contracts/file-block-format.md
-reports/runs/nolan-showcase-theme-XX/plan.md
+reports/runs/NNN_nolan_young_theme_description/plan.md
 selected prompt file
 ```
 
 Output:
 
 ```text
-wp-content/themes/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
 ```
 
 Builder output must use file blocks.
@@ -789,7 +789,7 @@ instructions/00-global-instructions.md
 instructions/06-static-preview-instructions.md
 contracts/required-preview-structure.md
 contracts/file-block-format.md
-reports/runs/nolan-showcase-theme-XX/plan.md
+reports/runs/NNN_nolan_young_theme_description/plan.md
 selected prompt file
 generated theme summary/listing
 ```
@@ -797,7 +797,7 @@ generated theme summary/listing
 Output:
 
 ```text
-docs/themes/nolan-showcase-theme-XX/
+docs/themes/NNN_nolan_young_theme_description/
 docs/index.html
 ```
 
@@ -831,7 +831,7 @@ instructions/10-release-instructions.md
 contracts/security-rules.md
 contracts/quality-rules.md
 contracts/release-artifact-rules.md
-reports/runs/nolan-showcase-theme-XX/plan.md
+reports/runs/NNN_nolan_young_theme_description/plan.md
 validation output if present
 selected prompt file
 ```
@@ -839,7 +839,7 @@ selected prompt file
 Output:
 
 ```text
-reports/runs/nolan-showcase-theme-XX/local-review.md
+reports/runs/NNN_nolan_young_theme_description/local-review.md
 optional file blocks for fixes
 ```
 
@@ -860,14 +860,14 @@ file contents here
 Example:
 
 ```text
----FILE: wp-content/themes/nolan-showcase-theme-01/style.css---
+---FILE: wp-content/themes/001_nolan_young_theme_northstar_web_works/style.css---
 /*
-Theme Name: Nolan Showcase Theme 01
+Theme Name: Nolan Young Theme 001 - Northstar Web Works
 Theme URI: https://example.com/
 Author: Nolan Young
 Description: Generated classic WordPress theme.
 Version: 1.0.0
-Text Domain: nolan-showcase-theme-01
+Text Domain: 001_nolan_young_theme_northstar_web_works
 */
 ---END FILE---
 ```
@@ -939,11 +939,11 @@ Codex should not:
 In Codex-only mode, Codex must produce the full result:
 
 ```text
-wp-content/themes/nolan-showcase-theme-XX/
-docs/themes/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
+docs/themes/NNN_nolan_young_theme_description/
 docs/index.html update
-dist/zipped-themes/nolan-showcase-theme-XX.zip after packaging
-reports/runs/nolan-showcase-theme-XX/
+dist/zipped-themes/NNN_nolan_young_theme_description.zip after packaging
+reports/runs/NNN_nolan_young_theme_description/
 ```
 
 Codex-only mode must not be shallow.
@@ -1029,7 +1029,7 @@ dist/zipped-themes/
 ZIP path:
 
 ```text
-dist/zipped-themes/nolan-showcase-theme-XX.zip
+dist/zipped-themes/NNN_nolan_young_theme_description.zip
 ```
 
 The ZIP must contain the theme folder itself.
@@ -1037,7 +1037,7 @@ The ZIP must contain the theme folder itself.
 Correct internal ZIP structure:
 
 ```text
-nolan-showcase-theme-XX/
+NNN_nolan_young_theme_description/
 ├── style.css
 ├── functions.php
 └── ...
@@ -1076,17 +1076,17 @@ Validation scripts must be deterministic and must not use AI.
 Main validator:
 
 ```bash
-bash scripts/validate-all.sh nolan-showcase-theme-XX
+bash scripts/validate-all.sh NNN_nolan_young_theme_description
 ```
 
 This must run:
 
 ```bash
-bash scripts/validate-theme-structure.sh nolan-showcase-theme-XX
-bash scripts/validate-theme-quality.sh nolan-showcase-theme-XX
-bash scripts/validate-preview.sh nolan-showcase-theme-XX
-bash scripts/validate-security.sh nolan-showcase-theme-XX
-bash scripts/validate-zip-freshness.sh nolan-showcase-theme-XX
+bash scripts/validate-theme-structure.sh NNN_nolan_young_theme_description
+bash scripts/validate-theme-quality.sh NNN_nolan_young_theme_description
+bash scripts/validate-preview.sh NNN_nolan_young_theme_description
+bash scripts/validate-security.sh NNN_nolan_young_theme_description
+bash scripts/validate-zip-freshness.sh NNN_nolan_young_theme_description
 ```
 
 If no generated themes exist yet, repo-level validation should not fail the repository. It should clearly explain that no generated themes are present.
@@ -1362,7 +1362,7 @@ The generated theme should be installable in WordPress as a normal theme ZIP.
 The static preview must be generated under:
 
 ```text
-docs/themes/nolan-showcase-theme-XX/
+docs/themes/NNN_nolan_young_theme_description/
 ```
 
 It must be linked from:
@@ -1392,7 +1392,7 @@ It should not be a blank or token preview.
 Each run must create a reports folder:
 
 ```text
-reports/runs/nolan-showcase-theme-XX/
+reports/runs/NNN_nolan_young_theme_description/
 ```
 
 Reports may include:
@@ -1546,10 +1546,10 @@ Do not silently pick defaults that could cause unexpected model usage.
 A theme generation run is complete only when all of these exist:
 
 ```text
-wp-content/themes/nolan-showcase-theme-XX/
-docs/themes/nolan-showcase-theme-XX/
-dist/zipped-themes/nolan-showcase-theme-XX.zip
-reports/runs/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
+docs/themes/NNN_nolan_young_theme_description/
+dist/zipped-themes/NNN_nolan_young_theme_description.zip
+reports/runs/NNN_nolan_young_theme_description/
 ```
 
 The generated theme must:
@@ -1572,16 +1572,16 @@ The workflow should print final paths:
 
 ```text
 Theme:
-wp-content/themes/nolan-showcase-theme-XX/
+wp-content/themes/NNN_nolan_young_theme_description/
 
 Preview:
-docs/themes/nolan-showcase-theme-XX/
+docs/themes/NNN_nolan_young_theme_description/
 
 ZIP:
-dist/zipped-themes/nolan-showcase-theme-XX.zip
+dist/zipped-themes/NNN_nolan_young_theme_description.zip
 
 Reports:
-reports/runs/nolan-showcase-theme-XX/
+reports/runs/NNN_nolan_young_theme_description/
 ```
 
 It should also print suggested next commands:
@@ -1589,7 +1589,7 @@ It should also print suggested next commands:
 ```bash
 git status
 git add .
-git commit -m "Add nolan-showcase-theme-XX"
+git commit -m "Add NNN_nolan_young_theme_description"
 git push
 ```
 
@@ -1663,4 +1663,6 @@ It must be able to:
 The goal is not to generate toy demos.
 
 The goal is to generate complete, visually impressive, production-oriented WordPress themes with repeatable automation and clear quality gates.
+
+
 

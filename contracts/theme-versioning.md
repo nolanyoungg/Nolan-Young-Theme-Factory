@@ -1,10 +1,10 @@
 # Theme Versioning
 
-Generated themes use sequential two-digit slugs:
+Generated themes use sequential three-digit slugs with a short description:
 
-- `nolan-showcase-theme-01`
-- `nolan-showcase-theme-02`
-- `nolan-showcase-theme-03`
+- `001_nolan_young_theme_northstar_web_works`
+- `002_nolan_young_theme_description`
+- `003_nolan_young_theme_description`
 
 The next slug must be determined from all generated output locations:
 
@@ -14,3 +14,4 @@ The next slug must be determined from all generated output locations:
 - `reports/runs/`
 
 Never overwrite or reuse an existing generated slug.
+

@@ -24,7 +24,7 @@ found=0
 while IFS= read -r theme_dir; do
   found=1
   run_validators "$(basename "$theme_dir")"
-done < <(find "$root_dir/wp-content/themes" -mindepth 1 -maxdepth 1 -type d -name 'nolan-showcase-theme-[0-9][0-9]' | sort)
+done < <(find "$root_dir/wp-content/themes" -mindepth 1 -maxdepth 1 -type d -name '[0-9][0-9][0-9]_nolan_young_theme_*' | sort)
 
 if [ "$found" -eq 0 ]; then
   printf 'No generated themes found.\n'

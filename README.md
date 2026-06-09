@@ -12,10 +12,10 @@ It supports three modes:
 
 Each generated theme run should produce:
 
-- `wp-content/themes/nolan-showcase-theme-XX/`
-- `docs/themes/nolan-showcase-theme-XX/`
-- `dist/zipped-themes/nolan-showcase-theme-XX.zip`
-- `reports/runs/nolan-showcase-theme-XX/`
+- `wp-content/themes/NNN_nolan_young_theme_description/`
+- `docs/themes/NNN_nolan_young_theme_description/`
+- `dist/zipped-themes/NNN_nolan_young_theme_description.zip`
+- `reports/runs/NNN_nolan_young_theme_description/`
 
 The next slug is determined across:
 
@@ -57,7 +57,7 @@ bash scripts/run-hybrid-theme-workflow.sh
 Run validation for a generated theme with:
 
 ```bash
-bash scripts/validate-all.sh nolan-showcase-theme-01
+bash scripts/validate-all.sh 001_nolan_young_theme_northstar_web_works
 ```
 
 If you omit the slug, the validator scans all generated themes. If none exist, it reports that fact and exits cleanly.
@@ -67,7 +67,7 @@ If you omit the slug, the validator scans all generated themes. If none exist, i
 Package a theme ZIP with:
 
 ```bash
-bash scripts/package-theme.sh nolan-showcase-theme-01
+bash scripts/package-theme.sh 001_nolan_young_theme_northstar_web_works
 ```
 
 The package script keeps the ZIP in `dist/zipped-themes/` and includes the theme folder itself.
@@ -75,3 +75,5 @@ The package script keeps the ZIP in `dist/zipped-themes/` and includes the theme
 ## Preview Gallery
 
 The gallery is served from `docs/index.html`. Each generated preview must be linked there and use only local assets.
+
+

@@ -11,7 +11,7 @@ For every generated theme:
 * The selected prompt remains the creative brief.
 * The required repository structure is a scaffold, not the design.
 * The result must look like a polished premium company website.
-* The homepage must be complete and staged with hero, services, work, trust/proof, process, testimonials or proof, editorial imagery, blog/resource preview, CTA, and footer.
+* The homepage must be complete and staged with hero, services, work, trust/proof, process, testimonials or proof, industry-appropriate imagery, blog/resource preview, CTA, and footer.
 * The Nolan-menu header system is required.
 * Local copyright-safe raster image assets are required.
 * Static previews must include all seven required pages and visually match the WordPress templates.
@@ -284,9 +284,9 @@ NNN_nolan_young_theme_description
 Use three-digit numbering plus a short description:
 
 ```text
-001_nolan_young_theme_editorial_photography
-002_nolan_young_theme_wedding_films
-003_nolan_young_theme_brand_studio
+001_nolan_young_theme_landscape_design
+002_nolan_young_theme_restaurant_group
+003_nolan_young_theme_software_platform
 ```
 
 The next version must be determined by checking all relevant output locations:
@@ -519,12 +519,12 @@ docs/themes/NNN_nolan_young_theme_description/
 │   │   └── preview.js
 │   └── images/
 │       ├── README.md
-│       ├── editorial-couple-portrait.jpg
-│       ├── wedding-detail-bouquet.jpg
-│       ├── studio-brand-session.jpg
-│       ├── family-lifestyle-session.jpg
-│       ├── modern-event-coverage.jpg
-│       └── product-detail-flatlay.jpg
+│       ├── landscape-garden-pathway.jpg
+│       ├── restaurant-plated-dish.jpg
+│       ├── construction-framing-crew.jpg
+│       ├── software-dashboard-interface.jpg
+│       ├── wellness-treatment-room.jpg
+│       └── real-estate-kitchen-detail.jpg
 └── README.md
 ```
 
@@ -905,14 +905,14 @@ file contents here
 Example:
 
 ```text
----FILE: wp-content/themes/001_nolan_young_theme_editorial_photography/style.css---
+---FILE: wp-content/themes/001_nolan_young_theme_landscape_design/style.css---
 /*
-Theme Name: Nolan Young Theme 001 - Editorial Photography
+Theme Name: Nolan Young Theme 001 - Landscape Design
 Theme URI: https://example.com/
 Author: Nolan Young
 Description: Generated classic WordPress theme.
 Version: 1.0.0
-Text Domain: 001_nolan_young_theme_editorial_photography
+Text Domain: 001_nolan_young_theme_landscape_design
 */
 ---END FILE---
 ```

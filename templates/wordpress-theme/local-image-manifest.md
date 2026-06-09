@@ -1,14 +1,16 @@
 # Local Image Manifest
 
-Every generated theme should include local, copyright-safe raster image files such as:
+Every generated theme should include local, copyright-safe raster image files that match the specific business category.
+
+Example filename patterns:
 
 ```text
-assets/images/editorial-couple-portrait.jpg
-assets/images/wedding-detail-bouquet.jpg
-assets/images/studio-brand-session.jpg
-assets/images/family-lifestyle-session.jpg
-assets/images/modern-event-coverage.jpg
-assets/images/product-detail-flatlay.jpg
+assets/images/landscape-garden-pathway.jpg
+assets/images/restaurant-plated-dish.jpg
+assets/images/construction-framing-crew.jpg
+assets/images/software-dashboard-interface.jpg
+assets/images/wellness-treatment-room.jpg
+assets/images/real-estate-kitchen-detail.jpg
 ```
 
 The static preview should copy or recreate the same assets under:
@@ -17,4 +19,4 @@ The static preview should copy or recreate the same assets under:
 docs/themes/<theme-slug>/assets/images/
 ```
 
-Do not hotlink images. Do not use client, celebrity, watermarked, or random web imagery.
+Do not hotlink images. Do not use client, celebrity, watermarked, or random web imagery. Do not force photography, wedding, or portrait imagery into non-photography themes.

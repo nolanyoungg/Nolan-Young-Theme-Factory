@@ -49,7 +49,7 @@ Build and output requirements:
   - Services, About, and Blog open accessible Nolan-menu panels
   - Work is a direct link
   - mobile drawer works without hover
-- Use local copyright-safe raster photography assets for hero, portfolio, service cards, editorial sections, and proof sections
+- Because this prompt is for a photography studio, use local copyright-safe raster photography assets for hero, portfolio, service cards, editorial sections, and proof sections
 - Package the theme as a ZIP ready for WordPress upload
 - Validate structure, quality, security, preview linkage, and ZIP freshness
 

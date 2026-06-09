@@ -107,7 +107,7 @@ See `contracts/nolan-menu-header.md`.
 
 ## Image Assets
 
-Generated themes must use local, copyright-safe demo photography. Store theme images in:
+Generated themes must use local, copyright-safe demo images that fit the generated business category. A restaurant theme should use restaurant imagery; a landscaping theme should use landscaping imagery; a photography theme should use photography imagery. Store theme images in:
 
 ```text
 wp-content/themes/<theme-slug>/assets/images/
@@ -119,7 +119,7 @@ Store static preview images in:
 docs/themes/<theme-slug>/assets/images/
 ```
 
-Do not use hotlinked images, CDN images, random web images, watermarked stock, client photos, celebrity photos, or gray placeholder boxes.
+Do not use hotlinked images, CDN images, random web images, watermarked stock, client photos, celebrity photos, or gray placeholder boxes. Do not force every theme into a photography, wedding, portrait, or MNY Photo-style visual direction.
 
 ## CI And Live Verification
 

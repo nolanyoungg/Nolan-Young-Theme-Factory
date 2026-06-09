@@ -2,9 +2,9 @@
 
 Generated themes use sequential three-digit slugs with a short description:
 
-- `001_nolan_young_theme_editorial_photography`
-- `002_nolan_young_theme_wedding_films`
-- `003_nolan_young_theme_brand_studio`
+- `001_nolan_young_theme_landscape_design`
+- `002_nolan_young_theme_restaurant_group`
+- `003_nolan_young_theme_software_platform`
 
 The next slug must be determined from all generated output locations:
 

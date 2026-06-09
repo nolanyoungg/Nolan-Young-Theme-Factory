@@ -10,6 +10,6 @@ Important conventions:
 - Include docs, accessibility notes, README, and changelog.
 - Implement the Nolan-menu header contract from `contracts/nolan-menu-header.md`.
 - Keep primary desktop nav exactly `Services`, `About`, `Work`, `Blog`; Contact belongs only in the right-side CTA.
-- Store copyright-safe demo photography under `assets/images/` with descriptive filenames.
+- Store copyright-safe, industry-appropriate demo images under `assets/images/` with descriptive filenames.
 - Use reusable template parts for home, services, about, work, blog, contact, and single service layouts.
 - Ensure the static previews can mirror the WordPress templates closely.

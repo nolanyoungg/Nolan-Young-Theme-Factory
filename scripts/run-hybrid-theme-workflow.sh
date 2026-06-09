@@ -99,7 +99,7 @@ append_premium_output_standard() {
     printf '%s\n' 'The final output must look like a polished premium company website, not a file checklist.'
     printf '%s\n' 'Build a complete sticky Nolan-menu header with logo, Services/About/Work/Blog nav, and a right-side Contact Us CTA. Contact must not be a primary desktop nav item.'
     printf '%s\n' 'Use the exact Nolan-menu data attributes and ARIA behavior from contracts/nolan-menu-header.md.'
-    printf '%s\n' 'Use local copyright-safe photography assets only. Do not hotlink images or use CDNs.'
+    printf '%s\n' 'Use local copyright-safe image assets that match the generated business category. Do not hotlink images or use CDNs.'
     printf '%s\n' 'Create matching WordPress templates and static preview pages with the same header, footer, classes, section order, image assets, and visual hierarchy.'
     printf '%s\n' 'Create all seven required static preview pages: homepage_preview.html, services_preview.html, about-us_preview.html, contact_preview.html, single_services_preview.html, blog_preview.html, and work_preview.html.'
     printf '%s\n' 'Do not use lorem ipsum, placeholder copy, gray boxes, sample text, TODOs, or generic filler.'

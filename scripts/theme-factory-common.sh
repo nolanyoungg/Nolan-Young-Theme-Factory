@@ -348,7 +348,7 @@ const path = require('path');
 const indexPath = process.argv[2];
 const slug = process.argv[3];
 const themeName = process.argv[4];
-const href = `themes/${slug}/index.html`;
+  const href = `themes/${slug}/homepage_preview.html`;
 const file = fs.readFileSync(indexPath, 'utf8');
 
 if (file.includes(href)) {

@@ -90,6 +90,29 @@ write_prompt_header() {
   } > "$output"
 }
 
+append_premium_output_standard() {
+  local output="$1"
+  {
+    printf '\n## Non-Negotiable Premium Output Standard\n\n'
+    printf '%s\n' 'Follow the selected user prompt as the creative brief. Do not produce a generic agency site unless the prompt asks for one.'
+    printf '%s\n' 'Use the required WordPress structure as the scaffold, but make the design, copy, imagery, and page staging fit the prompt.'
+    printf '%s\n' 'The final output must look like a polished premium company website, not a file checklist.'
+    printf '%s\n' 'Build a complete sticky Nolan-menu header with logo, Services/About/Work/Blog nav, and a right-side Contact Us CTA. Contact must not be a primary desktop nav item.'
+    printf '%s\n' 'Use the exact Nolan-menu data attributes and ARIA behavior from contracts/nolan-menu-header.md.'
+    printf '%s\n' 'Use local copyright-safe photography assets only. Do not hotlink images or use CDNs.'
+    printf '%s\n' 'Create matching WordPress templates and static preview pages with the same header, footer, classes, section order, image assets, and visual hierarchy.'
+    printf '%s\n' 'Create all seven required static preview pages: homepage_preview.html, services_preview.html, about-us_preview.html, contact_preview.html, single_services_preview.html, blog_preview.html, and work_preview.html.'
+    printf '%s\n' 'Do not use lorem ipsum, placeholder copy, gray boxes, sample text, TODOs, or generic filler.'
+    printf '\nRead and obey these contracts:\n'
+    printf '%s\n' '- contracts/premium-output-standard.md'
+    printf '%s\n' '- contracts/nolan-menu-header.md'
+    printf '%s\n' '- contracts/local-image-rules.md'
+    printf '%s\n' '- contracts/required-preview-structure.md'
+    printf '%s\n' '- contracts/required-theme-structure.md'
+    printf '%s\n' '- contracts/quality-rules.md'
+  } >> "$output"
+}
+
 append_repo_context() {
   local output="$1"
   {
@@ -112,16 +135,25 @@ Read these files before planning:
 - instructions/01-planning-instructions.md
 - contracts/theme-versioning.md
 - contracts/required-theme-structure.md
+- contracts/premium-output-standard.md
+- contracts/nolan-menu-header.md
+- contracts/local-image-rules.md
 
 Task:
 - create a concise implementation plan for the next generated theme
 - preserve the prompt intent exactly
 - identify the page map, content direction, design direction, risks, and execution priorities
+- plan the seven required static preview pages and how they mirror WordPress templates
+- plan the Nolan-menu header and local image asset set
 - do not write theme files
 - do not output file blocks
 
 Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
+
+EOF
+  append_premium_output_standard "$output"
+  cat >> "$output" <<EOF
 
 ## User Prompt
 
@@ -148,6 +180,10 @@ Read these files before building:
 - instructions/05-content-instructions.md
 - contracts/required-theme-structure.md
 - contracts/file-block-format.md
+- contracts/premium-output-standard.md
+- contracts/nolan-menu-header.md
+- contracts/local-image-rules.md
+- contracts/quality-rules.md
 
 The plan file is:
 - $plan_file
@@ -155,12 +191,19 @@ The plan file is:
 Task:
 - create the complete classic WordPress theme at wp-content/themes/$slug/
 - emit only file blocks using the required protocol
-- include all required files and real content
+- include all required files, expanded template parts, premium header, local assets, and real prompt-specific content
+- create local image assets under wp-content/themes/$slug/assets/images/ and reference them from the templates
+- implement Nolan-menu desktop and mobile behavior in local JS
+- implement complete CSS for sticky header, Nolan-menu panels, mobile drawer, homepage, services, work, blog, contact, footer, and responsive states
 - do not use remote assets, CDN assets, placeholder text, TODOs, or lorem ipsum
 - keep the design polished, finished, and installable
 
 Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
+
+EOF
+  append_premium_output_standard "$output"
+  cat >> "$output" <<EOF
 
 ## User Prompt
 
@@ -184,6 +227,9 @@ Read these files before building the preview:
 - instructions/06-static-preview-instructions.md
 - contracts/required-preview-structure.md
 - contracts/file-block-format.md
+- contracts/premium-output-standard.md
+- contracts/nolan-menu-header.md
+- contracts/local-image-rules.md
 
 The plan file is:
 - $plan_file
@@ -193,13 +239,21 @@ Theme summary:
 
 Task:
 - create docs/themes/$slug/
-- mirror the WordPress theme visually without WordPress or PHP
+- create index.html plus all seven required preview pages
+- make the preview pages visual matches for the WordPress templates, not loose approximations
+- reuse the same class names, header, footer, section order, image assets, buttons, and card layouts
+- make header links click between all preview pages
+- implement Nolan-menu behavior in local preview JS
 - use only local assets
 - emit only file blocks using the required protocol
 - update docs/index.html so it links to the preview
 
 Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
+
+EOF
+  append_premium_output_standard "$output"
+  cat >> "$output" <<EOF
 
 ## User Prompt
 
@@ -232,6 +286,10 @@ Read these files before fixing:
 - contracts/security-rules.md
 - contracts/quality-rules.md
 - contracts/release-artifact-rules.md
+- contracts/premium-output-standard.md
+- contracts/nolan-menu-header.md
+- contracts/local-image-rules.md
+- contracts/required-preview-structure.md
 
 Validation output:
 - $validation_file
@@ -244,7 +302,7 @@ Theme summary:
 
 Task:
 - inspect the generated theme and preview
-- fix only the issues needed to pass validation
+- fix issues needed to pass validation and meet the premium output standard
 - preserve the prompt direction
 - emit file blocks only if files need to change
 
@@ -252,6 +310,7 @@ Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
 
 EOF
+  append_premium_output_standard "$output"
   printf '\n## User Prompt\n\n' >> "$output"
   cat "$prompt_file" >> "$output"
 }
@@ -358,15 +417,24 @@ if [ "$mode" != "ollama-only" ]; then
     printf '%s\n' '- instructions/10-release-instructions.md'
     printf '%s\n' '- contracts/quality-rules.md'
     printf '%s\n' '- contracts/release-artifact-rules.md'
+    printf '%s\n' '- contracts/premium-output-standard.md'
+    printf '%s\n' '- contracts/nolan-menu-header.md'
+    printf '%s\n' '- contracts/local-image-rules.md'
+    printf '%s\n' '- contracts/required-preview-structure.md'
     printf '\nTask:\n'
     printf '%s\n' '- finalize the existing generated theme'
     printf '%s\n' '- preserve the prompt direction and the existing design intent'
-    printf '%s\n' '- fix broken PHP, styling, preview mismatch, build issues, accessibility issues, and release readiness problems'
+    printf '%s\n' '- fix broken PHP, styling, preview mismatch, build issues, accessibility issues, Nolan-menu behavior, local images, and release readiness problems'
+    printf '%s\n' '- ensure all seven static preview pages exist and visually match the WordPress templates'
+    printf '%s\n' '- ensure the homepage feels premium, complete, and prompt-specific'
     printf '%s\n' '- do not start from scratch unless the output is unrecoverable'
     printf '%s\n' '- do not run a second Codex pass without explicit user confirmation'
+  } > "$codex_prompt"
+  append_premium_output_standard "$codex_prompt"
+  {
     printf '\n## User Prompt\n\n'
     cat "$prompt_file"
-  } > "$codex_prompt"
+  } >> "$codex_prompt"
 
   run_codex_final_pass "$codex_prompt"
   run_npm_build

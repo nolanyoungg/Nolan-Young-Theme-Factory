@@ -1,9 +1,15 @@
 # WordPress Theme Template
 
-This folder is a reference point for generated classic WordPress themes.
+Generated themes must follow the required structure from `AGENTS.md` and `contracts/required-theme-structure.md`, then add prompt-specific design, copy, imagery, and polish.
 
-Use it to hold reusable scaffolding, starter docs, or shared conventions if the factory later needs a seed theme template.
+Important conventions:
 
-Do not treat it as a placeholder for generated outputs. Generated themes still belong in `wp-content/themes/NNN_nolan_young_theme_description/`.
-
-
+- Compile source assets into `assets/css/bundle.css` and `assets/js/bundle.js`.
+- Enqueue compiled assets from WordPress.
+- Keep PHP escaped and sanitized.
+- Include docs, accessibility notes, README, and changelog.
+- Implement the Nolan-menu header contract from `contracts/nolan-menu-header.md`.
+- Keep primary desktop nav exactly `Services`, `About`, `Work`, `Blog`; Contact belongs only in the right-side CTA.
+- Store copyright-safe demo photography under `assets/images/` with descriptive filenames.
+- Use reusable template parts for home, services, about, work, blog, contact, and single service layouts.
+- Ensure the static previews can mirror the WordPress templates closely.

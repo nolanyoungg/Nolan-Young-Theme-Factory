@@ -27,7 +27,7 @@ scan_patterns() {
     --exclude='*.jpeg' \
     --exclude='*.webp' \
     --exclude='*.gif' \
-    'lorem ipsum|todo|placeholder text|coming soon|sample service|replace this|dummy content' \
+    'lorem ipsum|todo|placeholder|sample text|coming soon|sample service|example service|replace this|dummy content|image here|gray box|we are passionate about excellence|your success is our mission|we help businesses grow' \
     "$path" 2>/dev/null || true
 }
 
@@ -53,8 +53,20 @@ else
   fi
 
   grep -R -I -n -E 'wp_enqueue_style|wp_enqueue_script' "$theme_dir/inc" "$theme_dir/functions.php" >/dev/null 2>&1 || fail "Missing asset enqueue calls"
+  grep -R -I -n -E 'wp_enqueue_style' "$theme_dir/inc" "$theme_dir/functions.php" >/dev/null 2>&1 || fail "Missing wp_enqueue_style call"
+  grep -R -I -n -E 'wp_enqueue_script' "$theme_dir/inc" "$theme_dir/functions.php" >/dev/null 2>&1 || fail "Missing wp_enqueue_script call"
+  grep -R -I -n -E 'front-page|content-home-hero|content-home-services|content-home-work|content-home-process|content-home-testimonials|content-home-cta' "$theme_dir/front-page.php" "$theme_dir/template-parts" >/dev/null 2>&1 || fail "Homepage template parts are missing or not referenced"
+  grep -R -I -n -E '\.(jpg|jpeg|png|webp)' "$theme_dir" >/dev/null 2>&1 || fail "Theme does not reference local raster images"
   [ -f "$theme_dir/README.md" ] || fail "Missing theme README"
   [ -f "$theme_dir/CHANGELOG.md" ] || fail "Missing CHANGELOG"
+fi
+
+if [ -d "$preview_dir" ]; then
+  preview_matches="$(scan_patterns "$preview_dir")"
+  if [ -n "$preview_matches" ]; then
+    printf '%s\n' "$preview_matches" >&2
+    fail "Preview contains placeholder or filler copy"
+  fi
 fi
 
 if [ -f "$root_dir/docs/index.html" ]; then

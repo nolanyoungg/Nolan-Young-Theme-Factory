@@ -57,7 +57,7 @@ bash scripts/run-hybrid-theme-workflow.sh
 Run validation for a generated theme with:
 
 ```bash
-bash scripts/validate-all.sh 001_nolan_young_theme_northstar_web_works
+bash scripts/validate-all.sh NNN_nolan_young_theme_description
 ```
 
 If you omit the slug, the validator scans all generated themes. If none exist, it reports that fact and exits cleanly.
@@ -67,14 +67,59 @@ If you omit the slug, the validator scans all generated themes. If none exist, i
 Package a theme ZIP with:
 
 ```bash
-bash scripts/package-theme.sh 001_nolan_young_theme_northstar_web_works
+bash scripts/package-theme.sh NNN_nolan_young_theme_description
 ```
 
 The package script keeps the ZIP in `dist/zipped-themes/` and includes the theme folder itself.
 
 ## Preview Gallery
 
-The gallery is served from `docs/index.html`. Each generated preview must be linked there and use only local assets.
+The gallery is served from `docs/index.html`. Each generated preview card links to `docs/themes/<theme-slug>/homepage_preview.html`.
+
+Each generated preview directory must include:
+
+- `index.html`
+- `homepage_preview.html`
+- `services_preview.html`
+- `about-us_preview.html`
+- `contact_preview.html`
+- `single_services_preview.html`
+- `blog_preview.html`
+- `work_preview.html`
+- `assets/css/preview.css`
+- `assets/js/preview.js`
+- local raster images in `assets/images/`
+
+The preview pages must visually match the WordPress templates. They should use the same header, footer, class names, section order, copy style, local images, button styles, cards, and responsive assumptions.
+
+## Nolan-Menu Header
+
+Generated themes must implement the Nolan-menu header system:
+
+- Desktop header layout: logo, primary nav, Contact Us CTA.
+- Primary nav items: `Services`, `About`, `Work`, `Blog`.
+- Contact is only the right-side CTA, not a primary nav item.
+- Services, About, and Blog use dropdown panels with the required `data-menu-item` and `data-menu-dropdown` attributes.
+- Dropdown rails use matching `data-rail-item` and `data-rail-content` keys.
+- JavaScript must handle open/close, one active panel, Escape, outside click, scroll lock, backdrop, rail switching, and mobile drawer behavior.
+
+See `contracts/nolan-menu-header.md`.
+
+## Image Assets
+
+Generated themes must use local, copyright-safe demo photography. Store theme images in:
+
+```text
+wp-content/themes/<theme-slug>/assets/images/
+```
+
+Store static preview images in:
+
+```text
+docs/themes/<theme-slug>/assets/images/
+```
+
+Do not use hotlinked images, CDN images, random web images, watermarked stock, client photos, celebrity photos, or gray placeholder boxes.
 
 ## CI And Live Verification
 

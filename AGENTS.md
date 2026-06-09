@@ -2,6 +2,31 @@
 
 # Nolan Young Theme Factory — AI Operating Instructions
 
+## Current Repair Addendum
+
+The factory must now favor direct prompt-following and premium finished output over loose multi-agent roleplay.
+
+For every generated theme:
+
+* The selected prompt remains the creative brief.
+* The required repository structure is a scaffold, not the design.
+* The result must look like a polished premium company website.
+* The homepage must be complete and staged with hero, services, work, trust/proof, process, testimonials or proof, editorial imagery, blog/resource preview, CTA, and footer.
+* The Nolan-menu header system is required.
+* Local copyright-safe raster image assets are required.
+* Static previews must include all seven required pages and visually match the WordPress templates.
+* Validation must fail if preview pages, local images, Nolan-menu attributes, local assets, or required templates are missing.
+
+Authoritative supporting contracts:
+
+```text
+contracts/premium-output-standard.md
+contracts/nolan-menu-header.md
+contracts/local-image-rules.md
+contracts/required-preview-structure.md
+contracts/quality-rules.md
+```
+
 ## 1. Repository Purpose
 
 This repository is the **Nolan Young Theme Factory**.
@@ -194,7 +219,10 @@ Nolan-Young-Theme-Factory/
 │   ├── theme-versioning.md
 │   ├── security-rules.md
 │   ├── quality-rules.md
-│   └── release-artifact-rules.md
+│   ├── release-artifact-rules.md
+│   ├── premium-output-standard.md
+│   ├── nolan-menu-header.md
+│   └── local-image-rules.md
 │
 ├── codex/
 │   ├── README.md
@@ -230,6 +258,7 @@ Nolan-Young-Theme-Factory/
 │   ├── validate-theme-structure.sh
 │   ├── validate-theme-quality.sh
 │   ├── validate-preview.sh
+│   ├── validate-nolan-menu.sh
 │   ├── validate-security.sh
 │   ├── validate-zip-freshness.sh
 │   ├── package-theme.sh
@@ -255,9 +284,9 @@ NNN_nolan_young_theme_description
 Use three-digit numbering plus a short description:
 
 ```text
-001_nolan_young_theme_northstar_web_works
-002_nolan_young_theme_description
-003_nolan_young_theme_description
+001_nolan_young_theme_editorial_photography
+002_nolan_young_theme_wedding_films
+003_nolan_young_theme_brand_studio
 ```
 
 The next version must be determined by checking all relevant output locations:
@@ -476,13 +505,26 @@ Minimum required structure:
 ```text
 docs/themes/NNN_nolan_young_theme_description/
 ├── index.html
+├── homepage_preview.html
+├── services_preview.html
+├── about-us_preview.html
+├── contact_preview.html
+├── single_services_preview.html
+├── blog_preview.html
+├── work_preview.html
 ├── assets/
 │   ├── css/
 │   │   └── preview.css
 │   ├── js/
 │   │   └── preview.js
 │   └── images/
-│       └── README.md
+│       ├── README.md
+│       ├── editorial-couple-portrait.jpg
+│       ├── wedding-detail-bouquet.jpg
+│       ├── studio-brand-session.jpg
+│       ├── family-lifestyle-session.jpg
+│       ├── modern-event-coverage.jpg
+│       └── product-detail-flatlay.jpg
 └── README.md
 ```
 
@@ -491,7 +533,10 @@ The static preview must:
 * work without WordPress
 * work without PHP
 * use local assets only
-* visually represent the generated WordPress theme
+* visually match the generated WordPress templates
+* use the same header, footer, class names, section order, copy style, image assets, button styles, and card layouts as the WordPress theme
+* include clickable header links between all seven preview pages
+* implement the Nolan-menu header data attributes and behavior
 * be linked from `docs/index.html`
 * avoid CDN dependencies
 * avoid remote image URLs
@@ -860,14 +905,14 @@ file contents here
 Example:
 
 ```text
----FILE: wp-content/themes/001_nolan_young_theme_northstar_web_works/style.css---
+---FILE: wp-content/themes/001_nolan_young_theme_editorial_photography/style.css---
 /*
-Theme Name: Nolan Young Theme 001 - Northstar Web Works
+Theme Name: Nolan Young Theme 001 - Editorial Photography
 Theme URI: https://example.com/
 Author: Nolan Young
 Description: Generated classic WordPress theme.
 Version: 1.0.0
-Text Domain: 001_nolan_young_theme_northstar_web_works
+Text Domain: 001_nolan_young_theme_editorial_photography
 */
 ---END FILE---
 ```
@@ -1085,6 +1130,7 @@ This must run:
 bash scripts/validate-theme-structure.sh NNN_nolan_young_theme_description
 bash scripts/validate-theme-quality.sh NNN_nolan_young_theme_description
 bash scripts/validate-preview.sh NNN_nolan_young_theme_description
+bash scripts/validate-nolan-menu.sh NNN_nolan_young_theme_description
 bash scripts/validate-security.sh NNN_nolan_young_theme_description
 bash scripts/validate-zip-freshness.sh NNN_nolan_young_theme_description
 ```
@@ -1136,10 +1182,15 @@ Must check:
 Must check:
 
 * `docs/themes/<theme-slug>/index.html` exists
+* all seven required preview files exist
+* preview header links to every required preview file
 * preview CSS exists
 * preview JS exists
 * preview is not empty
 * preview uses local relative assets
+* preview includes local raster image assets
+* preview contains required Nolan-menu data attributes
+* preview trigger buttons include ARIA controls and expanded state
 * `docs/index.html` links to preview
 
 ### Security Validation

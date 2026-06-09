@@ -22,6 +22,53 @@ fail() {
 [ -f "$preview_dir/assets/js/preview.js" ] || fail "Missing preview JS"
 [ -f "$preview_dir/README.md" ] || fail "Missing preview README"
 
+required_preview_files=(
+  homepage_preview.html
+  services_preview.html
+  about-us_preview.html
+  contact_preview.html
+  single_services_preview.html
+  blog_preview.html
+  work_preview.html
+)
+
+required_preview_links=(
+  homepage_preview.html
+  services_preview.html
+  about-us_preview.html
+  contact_preview.html
+  single_services_preview.html
+  blog_preview.html
+  work_preview.html
+)
+
+for file in "${required_preview_files[@]}"; do
+  page="$preview_dir/$file"
+  if [ ! -f "$page" ]; then
+    fail "Missing required preview page: docs/themes/$slug/$file"
+    continue
+  fi
+
+  [ -s "$page" ] || fail "Preview page is empty: docs/themes/$slug/$file"
+  grep -q 'assets/css/preview.css' "$page" || fail "$file does not reference local preview CSS"
+  grep -q 'assets/js/preview.js' "$page" || fail "$file does not reference local preview JS"
+
+  for link in "${required_preview_links[@]}"; do
+    grep -q "$link" "$page" || fail "$file does not link to $link"
+  done
+
+  grep -q 'data-menu-item="services"' "$page" || fail "$file missing data-menu-item=\"services\""
+  grep -q 'data-menu-dropdown="services"' "$page" || fail "$file missing data-menu-dropdown=\"services\""
+  grep -q 'data-menu-item="about"' "$page" || fail "$file missing data-menu-item=\"about\""
+  grep -q 'data-menu-dropdown="about"' "$page" || fail "$file missing data-menu-dropdown=\"about\""
+  grep -q 'data-menu-item="blog"' "$page" || fail "$file missing data-menu-item=\"blog\""
+  grep -q 'data-menu-dropdown="blog"' "$page" || fail "$file missing data-menu-dropdown=\"blog\""
+  grep -q 'data-rail-item=' "$page" || fail "$file missing data-rail-item controls"
+  grep -q 'data-rail-content=' "$page" || fail "$file missing data-rail-content sections"
+  grep -q 'aria-controls=' "$page" || fail "$file missing aria-controls on menu triggers"
+  grep -q 'aria-expanded=' "$page" || fail "$file missing aria-expanded on menu triggers"
+done
+
 if [ -f "$preview_dir/index.html" ]; then
   [ -s "$preview_dir/index.html" ] || fail "Preview index.html is empty"
   grep -q 'assets/css/preview.css' "$preview_dir/index.html" || fail "Preview HTML does not reference preview CSS"
@@ -37,9 +84,22 @@ if [ -f "$preview_dir/assets/js/preview.js" ]; then
 fi
 
 if [ -f "$root_dir/docs/index.html" ]; then
-  grep -q "themes/$slug/index.html" "$root_dir/docs/index.html" || fail "docs/index.html does not link to the preview"
+  grep -Eq "themes/$slug/(index|homepage_preview)\\.html" "$root_dir/docs/index.html" || fail "docs/index.html does not link to the preview"
 else
   fail "Missing docs/index.html"
+fi
+
+if [ -d "$preview_dir/assets/images" ]; then
+  image_count="$(find "$preview_dir/assets/images" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | wc -l | tr -d ' ')"
+  [ "$image_count" -ge 6 ] || fail "Preview must include at least 6 local raster image assets"
+else
+  fail "Missing preview image directory"
+fi
+
+if [ -f "$preview_dir/assets/js/preview.js" ]; then
+  grep -q 'Escape' "$preview_dir/assets/js/preview.js" || fail "Preview JS does not handle Escape"
+  grep -q 'aria-expanded' "$preview_dir/assets/js/preview.js" || fail "Preview JS does not update aria-expanded"
+  grep -Eq 'body|document\.body|classList' "$preview_dir/assets/js/preview.js" || fail "Preview JS does not manage body/menu state"
 fi
 
 if grep -R -I -n -E \

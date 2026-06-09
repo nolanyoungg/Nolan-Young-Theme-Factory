@@ -125,6 +125,18 @@ required_template_parts=(
   template-parts/content-blog-preview.php
   template-parts/content-cta-banner.php
   template-parts/content-footer-widgets.php
+  template-parts/content-home-hero.php
+  template-parts/content-home-services.php
+  template-parts/content-home-work.php
+  template-parts/content-home-process.php
+  template-parts/content-home-testimonials.php
+  template-parts/content-home-cta.php
+  template-parts/content-services.php
+  template-parts/content-about.php
+  template-parts/content-work.php
+  template-parts/content-contact.php
+  template-parts/content-blog.php
+  template-parts/content-single-service.php
 )
 
 for file in "${required_template_parts[@]}"; do
@@ -159,6 +171,13 @@ fi
 
 if [ -f "$theme_dir/assets/js/bundle.js" ]; then
   [ -s "$theme_dir/assets/js/bundle.js" ] || fail "Compiled JS is empty"
+fi
+
+if [ -d "$theme_dir/assets/images" ]; then
+  image_count="$(find "$theme_dir/assets/images" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | wc -l | tr -d ' ')"
+  [ "$image_count" -ge 6 ] || fail "Theme must include at least 6 local raster image assets"
+else
+  fail "Missing theme image directory"
 fi
 
 if command -v php >/dev/null 2>&1; then

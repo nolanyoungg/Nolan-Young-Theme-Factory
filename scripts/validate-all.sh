@@ -11,6 +11,7 @@ run_validators() {
   bash "$script_dir/validate-theme-structure.sh" "$slug"
   bash "$script_dir/validate-theme-quality.sh" "$slug"
   bash "$script_dir/validate-preview.sh" "$slug"
+  bash "$script_dir/validate-nolan-menu.sh" "$slug"
   bash "$script_dir/validate-security.sh" "$slug"
   bash "$script_dir/validate-zip-freshness.sh" "$slug"
 }

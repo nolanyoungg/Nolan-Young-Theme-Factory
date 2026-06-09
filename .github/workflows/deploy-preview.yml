@@ -1,12 +1,14 @@
 name: Deploy Preview
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - 'docs/**'
       - 'wp-content/themes/**'
+      - '.github/workflows/deploy-preview.yml'
 
 permissions:
   contents: read

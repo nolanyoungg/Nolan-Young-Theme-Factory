@@ -76,4 +76,21 @@ The package script keeps the ZIP in `dist/zipped-themes/` and includes the theme
 
 The gallery is served from `docs/index.html`. Each generated preview must be linked there and use only local assets.
 
+## CI And Live Verification
+
+Every pushed generated theme should pass these GitHub Actions workflows on `main`:
+
+- `Validate Theme`
+- `Check ZIP Freshness`
+- `Deploy Preview`
+
+After pushing, verify the live remote and workflow status:
+
+```bash
+git ls-remote origin refs/heads/main
+gh run list --repo nolanyoungg/Nolan-Young-Theme-Factory --branch main --limit 10
+```
+
+The remote `main` SHA must match local `git rev-parse HEAD`. The latest validation and ZIP freshness runs must be green before treating the repository as updated. The Pages workflow deploys the `docs/` folder and can also be run manually from GitHub Actions.
+
 

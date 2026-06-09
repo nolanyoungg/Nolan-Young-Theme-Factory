@@ -29,8 +29,17 @@ if [ -f "$zip_path" ]; then
     fail "ZIP contains node_modules or .git"
   fi
 
-  theme_factory_require_cmd node
-  if ! node - "$theme_dir" "$zip_path" <<'NODE'
+  if [ "${GITHUB_ACTIONS:-}" = "true" ] && command -v git >/dev/null 2>&1 && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+    theme_commit_time="$(git log -1 --format=%ct -- "wp-content/themes/$slug" || true)"
+    zip_commit_time="$(git log -1 --format=%ct -- "dist/zipped-themes/$slug.zip" || true)"
+    if [ -z "$theme_commit_time" ] || [ -z "$zip_commit_time" ]; then
+      fail "Unable to determine committed freshness for theme or ZIP"
+    elif [ "$zip_commit_time" -lt "$theme_commit_time" ]; then
+      fail "ZIP commit is older than theme commit"
+    fi
+  else
+    theme_factory_require_cmd node
+    if ! node - "$theme_dir" "$zip_path" <<'NODE'
 const fs = require('fs');
 const path = require('path');
 const themeDir = process.argv[2];
@@ -57,8 +66,9 @@ if (!(zipMtime >= themeNewest)) {
   process.exit(1);
 }
 NODE
-  then
-    fail "ZIP is older than generated theme files"
+    then
+      fail "ZIP is older than generated theme files"
+    fi
   fi
 fi
 

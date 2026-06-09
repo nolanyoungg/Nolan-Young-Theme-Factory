@@ -9,6 +9,7 @@ on:
       - 'contracts/**'
       - 'agents/**'
       - 'instructions/**'
+      - 'dist/zipped-themes/**'
   pull_request:
     paths:
       - 'wp-content/themes/**'
@@ -17,6 +18,7 @@ on:
       - 'contracts/**'
       - 'agents/**'
       - 'instructions/**'
+      - 'dist/zipped-themes/**'
 
 jobs:
   validate:

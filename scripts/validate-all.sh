@@ -2,19 +2,29 @@
 set -Eeuo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-root_dir="$(cd "$script_dir/.." && pwd)"
+source "$script_dir/theme-factory-common.sh"
+root_dir="$(theme_factory_repo_root)"
 cd "$root_dir"
 
+run_validators() {
+  local slug="$1"
+  bash "$script_dir/validate-theme-structure.sh" "$slug"
+  bash "$script_dir/validate-theme-quality.sh" "$slug"
+  bash "$script_dir/validate-preview.sh" "$slug"
+  bash "$script_dir/validate-security.sh" "$slug"
+  bash "$script_dir/validate-zip-freshness.sh" "$slug"
+}
+
 if [ "${1:-}" != "" ]; then
-  bash scripts/validate-theme.sh "$1"
+  run_validators "$1"
   exit 0
 fi
 
 found=0
 while IFS= read -r theme_dir; do
   found=1
-  bash scripts/validate-theme.sh "$(basename "$theme_dir")"
-done < <(find wp-content/themes -mindepth 1 -maxdepth 1 -type d -name 'nolan-showcase-theme-[0-9][0-9]' | sort)
+  run_validators "$(basename "$theme_dir")"
+done < <(find "$root_dir/wp-content/themes" -mindepth 1 -maxdepth 1 -type d -name 'nolan-showcase-theme-[0-9][0-9]' | sort)
 
 if [ "$found" -eq 0 ]; then
   printf 'No generated themes found.\n'

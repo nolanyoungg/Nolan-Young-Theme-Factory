@@ -1,9 +1,9 @@
 # Prompt Files
 
-Place user theme prompts in `prompts/pending/` as `.txt` or `.md` files. The workflow lists these files and requires the user to choose one.
+Place user theme prompts in `prompts/pending/` as `.txt` or `.md` files. The workflow reads from this folder and either lets you choose interactively or uses `THEME_PROMPT_FILE` when one is provided.
 
-Prompt files are inserted verbatim into Ollama and Codex prompts. The scripts do not rewrite, summarize, compress, or replace them, even when they are very long.
+Prompt files are treated as the authoritative creative brief. Long prompts are preserved verbatim. Short prompts are allowed and will be interpreted more flexibly by the generation stages.
 
-After a successful run, the workflow can move the selected prompt to `prompts/completed/`. It asks first and will not overwrite an existing completed prompt.
+After a successful run, the workflow can move the selected prompt to `prompts/completed/`, but it asks first and will not overwrite an existing completed file.
 
-Do not include secrets, API keys, private credentials, production passwords, or unpublished customer data in prompt files.
+Do not place secrets, API keys, tokens, passwords, private keys, or unpublished customer data in prompt files.

@@ -1,0 +1,10 @@
+.contact-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.contact-form .button,
+.newsletter-form .button {
+  justify-self: start;
+}
+

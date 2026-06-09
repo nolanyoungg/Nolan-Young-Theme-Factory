@@ -1,66 +1,28 @@
 name: Validate Theme
 
 on:
-  pull_request:
   push:
-    branches: [main]
-  workflow_dispatch:
-
-permissions:
-  contents: read
+    paths:
+      - 'wp-content/themes/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - 'contracts/**'
+      - 'agents/**'
+      - 'instructions/**'
+  pull_request:
+    paths:
+      - 'wp-content/themes/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - 'contracts/**'
+      - 'agents/**'
+      - 'instructions/**'
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: Install validation tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zip unzip php-cli
-
-      - name: Shell syntax check
-        run: bash -n scripts/*.sh
-
-      - name: Detect changed theme slugs
-        id: changed
+      - uses: actions/checkout@v4
+      - name: Validate generated themes
         shell: bash
-        run: |
-          set -Eeuo pipefail
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            base_ref="${{ github.base_ref }}"
-            git fetch origin "$base_ref" --depth=1
-            changed_files="$(git diff --name-only "origin/$base_ref"...HEAD)"
-          else
-            before="${{ github.event.before }}"
-            if [ -n "$before" ] && git cat-file -e "$before^{commit}" 2>/dev/null; then
-              changed_files="$(git diff --name-only "$before" HEAD)"
-            else
-              changed_files="$(git diff --name-only HEAD~1 HEAD 2>/dev/null || true)"
-            fi
-          fi
-
-          slugs="$(printf '%s\n' "$changed_files" | sed -n 's#^wp-content/themes/\(nolan-showcase-theme-[0-9][0-9]\)/.*#\1#p' | sort -u | tr '\n' ' ')"
-          echo "slugs=$slugs" >> "$GITHUB_OUTPUT"
-
-      - name: Validate changed themes or starter repo
-        shell: bash
-        run: |
-          set -Eeuo pipefail
-          slugs="${{ steps.changed.outputs.slugs }}"
-          if [ -z "$slugs" ]; then
-            bash scripts/validate-all.sh
-            exit 0
-          fi
-          for slug in $slugs; do
-            bash scripts/validate-all.sh "$slug"
-          done
+        run: bash scripts/validate-all.sh

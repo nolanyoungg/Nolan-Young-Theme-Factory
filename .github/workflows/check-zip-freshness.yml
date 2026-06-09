@@ -1,0 +1,28 @@
+name: Check ZIP Freshness
+
+on:
+  push:
+    paths:
+      - 'wp-content/themes/**'
+      - 'dist/zipped-themes/**'
+      - 'scripts/validate-zip-freshness.sh'
+  pull_request:
+    paths:
+      - 'wp-content/themes/**'
+      - 'dist/zipped-themes/**'
+      - 'scripts/validate-zip-freshness.sh'
+
+jobs:
+  freshness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate ZIP freshness
+        shell: bash
+        run: |
+          if [ -d wp-content/themes ]; then
+            for theme_dir in wp-content/themes/nolan-showcase-theme-*; do
+              [ -d "$theme_dir" ] || continue
+              bash scripts/validate-zip-freshness.sh "$(basename "$theme_dir")"
+            done
+          fi

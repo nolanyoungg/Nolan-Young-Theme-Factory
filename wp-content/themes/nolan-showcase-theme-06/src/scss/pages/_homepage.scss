@@ -1,0 +1,33 @@
+.hero-copy h1 {
+  margin-bottom: 1rem;
+}
+
+.hero-lede,
+.section-lede {
+  max-width: 64ch;
+  color: var(--color-olive);
+}
+
+.button-row,
+.hero-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.hero-metrics {
+  margin-top: 1.5rem;
+}
+
+.hero-metrics > div {
+  flex: 1 1 150px;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.hero-metrics strong {
+  display: block;
+  font-size: 1.55rem;
+}
+

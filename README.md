@@ -1,114 +1,77 @@
 # Nolan Young Theme Factory
 
-A small Codex-powered WordPress theme factory.
+This repository is a controlled factory for generating installable classic WordPress themes from prompt files in `prompts/pending/`.
 
-Put a prompt in `prompts/pending/`, run one script, and receive:
-- an installable classic WordPress theme in `wp-content/themes/`
-- a static preview in `docs/themes/`
-- a WordPress upload ZIP in `dist/zipped-themes/`
-- an optional GitHub pull request for review
+It supports three modes:
 
-Generated themes are already present:
-- Theme: `wp-content/themes/nolan-showcase-theme-01/`
-- Preview: `docs/themes/nolan-showcase-theme-01/index.html`
-- ZIP: `dist/zipped-themes/nolan-showcase-theme-01.zip`
+1. Hybrid: Ollama draft stages, then one Codex final pass.
+2. Codex only: Codex handles the full generation.
+3. Ollama only: local Ollama stages only, with no Codex invocation.
 
-## Requirements
+## Core Outputs
 
-- Git
-- Bash
-- Node/npm, for generated theme builds
-- `zip` and `unzip`
-- Codex CLI
-- GitHub CLI (`gh`) for automatic PR creation
-- PHP is optional; validation uses `php -l` when available
+Each generated theme run should produce:
 
-## Run
+- `wp-content/themes/nolan-showcase-theme-XX/`
+- `docs/themes/nolan-showcase-theme-XX/`
+- `dist/zipped-themes/nolan-showcase-theme-XX.zip`
+- `reports/runs/nolan-showcase-theme-XX/`
 
-```bash
-bash scripts/run-theme-workflow.sh
-```
+The next slug is determined across:
 
-The script asks for:
-- a prompt file from `prompts/pending/`
-- a Codex model: `gpt-5.5`, `gpt-5.4`, or `gpt-5.4-mini`
-- a reasoning level: `low`, `medium`, `high`, or `xhigh`
+- `wp-content/themes/`
+- `docs/themes/`
+- `dist/zipped-themes/`
+- `reports/runs/`
 
-Defaults:
-- model: `gpt-5.4-mini`
-- reasoning: `low`
-- PR creation: automatic after validation passes
+## Workflow Scripts
 
-Noninteractive example:
+- `bash scripts/run-hybrid-theme-workflow.sh`
+- `bash scripts/run-hybrid-theme-workflow.sh codex-only`
+- `bash scripts/run-hybrid-theme-workflow.sh ollama-only`
+- `powershell.exe -File scripts/run-hybrid-theme-workflow.ps1`
 
-```bash
-THEME_PROMPT_FILE=prompts/pending/01-premium-photography-studio.txt \
-CODEX_MODEL=gpt-5.4-mini \
-CODEX_REASONING=low \
-bash scripts/run-theme-workflow.sh
-```
+Legacy compatibility still works:
 
-To generate locally without opening a PR:
+- `bash scripts/run-theme-workflow.sh`
+
+## Environment Variables
+
+- `THEME_FACTORY_MODE`: `hybrid`, `codex-only`, or `ollama-only`
+- `THEME_PROMPT_FILE`: path to the prompt file in `prompts/pending/`
+- `OLLAMA_MODEL`: required for Ollama modes; for example `qwen2.5-coder:14b`
+- `CODEX_COMMAND`: full Codex command prefix, for example `codex` or `codex --model gpt-5.5 --reasoning high`
+- `THEME_SLUG`: override the next versioned slug if you need to target a specific generated run
+
+## Ollama-Only Example
 
 ```bash
-SKIP_THEME_PR=1 bash scripts/run-theme-workflow.sh
-```
-
-The old command still works as a wrapper:
-
-```bash
+THEME_FACTORY_MODE=ollama-only \
+THEME_PROMPT_FILE=prompts/pending/web-dev-company-local-ollama-theme.txt \
+OLLAMA_MODEL=qwen2.5-coder:14b \
 bash scripts/run-hybrid-theme-workflow.sh
 ```
 
-## Validate
+## Validation
+
+Run validation for a generated theme with:
 
 ```bash
-bash scripts/validate-theme.sh nolan-showcase-theme-01
+bash scripts/validate-all.sh nolan-showcase-theme-01
 ```
 
-Or:
+If you omit the slug, the validator scans all generated themes. If none exist, it reports that fact and exits cleanly.
 
-```bash
-bash scripts/validate-all.sh
-```
+## Packaging
 
-Validation blocks unsafe patterns including secrets, placeholder content, remote preview dependencies, and unsanitized SVG media upload support. Committed local SVG assets are allowed.
-
-## Package
+Package a theme ZIP with:
 
 ```bash
 bash scripts/package-theme.sh nolan-showcase-theme-01
 ```
 
-The ZIP is written to `dist/zipped-themes/<theme-slug>.zip`.
+The package script keeps the ZIP in `dist/zipped-themes/` and includes the theme folder itself.
 
-## Preview
+## Preview Gallery
 
-GitHub Pages deploys the `docs/` folder from `main`. Each generated preview must be linked from `docs/index.html` and should closely match the WordPress theme layout, copy, navigation, and visual system.
-
-## Pull Requests
-
-After a theme passes validation, `scripts/run-theme-workflow.sh` automatically creates a branch, commits the generated output, pushes it to GitHub, and opens a PR.
-
-To run that step manually:
-
-```bash
-bash scripts/create-theme-pr.sh nolan-showcase-theme-01
-```
-
-The script stages only:
-- `wp-content/themes/<theme-slug>/`
-- `docs/themes/<theme-slug>/`
-- `dist/zipped-themes/<theme-slug>.zip`
-- `docs/index.html`
-
-Set `SKIP_THEME_PR=1` to disable automatic PR creation for a local-only run.
-
-## Repository Layout
-
-- `prompts/pending/`: prompt files ready to run
-- `prompts/completed/`: prompt files after successful runs
-- `wp-content/themes/`: generated WordPress themes
-- `docs/`: GitHub Pages gallery and static previews
-- `dist/zipped-themes/`: packaged upload ZIPs
-- `scripts/`: generation, packaging, and validation scripts
+The gallery is served from `docs/index.html`. Each generated preview must be linked there and use only local assets.

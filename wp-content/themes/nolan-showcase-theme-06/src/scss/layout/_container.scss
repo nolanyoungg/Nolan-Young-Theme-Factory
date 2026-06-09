@@ -1,0 +1,11 @@
+.container,
+.footer-widgets,
+.footer-bottom {
+  width: var(--container);
+  margin-inline: auto;
+}
+
+.container.narrow-copy {
+  max-width: 760px;
+}
+

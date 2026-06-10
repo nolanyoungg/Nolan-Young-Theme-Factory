@@ -138,4 +138,213 @@ gh run list --repo nolanyoungg/Nolan-Young-Theme-Factory --branch main --limit 1
 
 The remote `main` SHA must match local `git rev-parse HEAD`. The latest validation and ZIP freshness runs must be green before treating the repository as updated. The Pages workflow deploys the `docs/` folder and can also be run manually from GitHub Actions.
 
+## How to use
+
+The factory can run all three supported generation modes from the same workflow script:
+
+- `hybrid`: local Ollama planner/builder/preview stages, then one Codex final pass.
+- `ollama-only`: local Ollama stages only. This is the local-only option and does not invoke Codex.
+- `codex-only`: Codex handles the full generation workflow.
+
+Before any run, create a prompt file in `prompts/pending/`. Do not paste the full creative brief directly into the terminal. The workflow reads `.txt` and `.md` files from that folder.
+
+### macOS
+
+Prerequisites:
+
+- Git.
+- Bash, included with macOS.
+- Node.js and npm.
+- PHP, recommended so validation can lint generated theme PHP.
+- `zip` and `unzip`, usually available by default.
+- Ollama, required for `hybrid` and `ollama-only`.
+- A local Ollama model, recommended: `qwen2.5-coder:14b`.
+- Codex CLI, required for `hybrid` and `codex-only`.
+- GitHub CLI `gh`, optional but useful for checking CI after pushing.
+
+Clone and enter the repo:
+
+```bash
+git clone https://github.com/nolanyoungg/Nolan-Young-Theme-Factory.git
+cd Nolan-Young-Theme-Factory
+```
+
+Check local tools:
+
+```bash
+node --version
+npm --version
+php --version
+ollama list
+codex --version
+```
+
+Install the preferred local Ollama model if it is missing:
+
+```bash
+ollama pull qwen2.5-coder:14b
+```
+
+Add a prompt:
+
+```bash
+mkdir -p prompts/pending
+nano prompts/pending/my-theme-brief.txt
+```
+
+Run interactively and choose a mode from the menu:
+
+```bash
+bash scripts/run-hybrid-theme-workflow.sh
+```
+
+Run Hybrid noninteractively:
+
+```bash
+THEME_FACTORY_MODE=hybrid \
+THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
+OLLAMA_MODEL=qwen2.5-coder:14b \
+CODEX_COMMAND=codex \
+bash scripts/run-hybrid-theme-workflow.sh
+```
+
+Run Ollama only:
+
+```bash
+THEME_FACTORY_MODE=ollama-only \
+THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
+OLLAMA_MODEL=qwen2.5-coder:14b \
+bash scripts/run-hybrid-theme-workflow.sh
+```
+
+Run Codex only:
+
+```bash
+THEME_FACTORY_MODE=codex-only \
+THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
+CODEX_COMMAND=codex \
+bash scripts/run-hybrid-theme-workflow.sh
+```
+
+Validate and package a generated theme:
+
+```bash
+bash scripts/validate-all.sh nolan-showcase-theme-01
+bash scripts/package-theme.sh nolan-showcase-theme-01
+```
+
+After a successful run, review these outputs:
+
+```text
+wp-content/themes/<theme-slug>/
+docs/themes/<theme-slug>/
+dist/zipped-themes/<theme-slug>.zip
+reports/runs/<theme-slug>/
+```
+
+### Windows PowerShell
+
+Prerequisites:
+
+- Git for Windows, including Git Bash. The PowerShell wrapper calls Bash internally.
+- PowerShell 5+ or PowerShell 7+.
+- Node.js and npm.
+- PHP, recommended so validation can lint generated theme PHP.
+- Ollama, required for `hybrid` and `ollama-only`.
+- A local Ollama model, recommended: `qwen2.5-coder:14b`.
+- Codex CLI, required for `hybrid` and `codex-only`.
+- GitHub CLI `gh`, optional but useful for checking CI after pushing.
+
+Clone and enter the repo:
+
+```powershell
+git clone https://github.com/nolanyoungg/Nolan-Young-Theme-Factory.git
+Set-Location Nolan-Young-Theme-Factory
+```
+
+Check local tools:
+
+```powershell
+node --version
+npm --version
+php --version
+bash --version
+ollama list
+codex --version
+```
+
+Install the preferred local Ollama model if it is missing:
+
+```powershell
+ollama pull qwen2.5-coder:14b
+```
+
+Add a prompt:
+
+```powershell
+New-Item -ItemType Directory -Force prompts\pending
+notepad prompts\pending\my-theme-brief.txt
+```
+
+Run interactively and choose a mode from the menu:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
+```
+
+Run Hybrid noninteractively:
+
+```powershell
+$env:THEME_FACTORY_MODE = 'hybrid'
+$env:THEME_PROMPT_FILE = 'prompts/pending/my-theme-brief.txt'
+$env:OLLAMA_MODEL = 'qwen2.5-coder:14b'
+$env:CODEX_COMMAND = 'codex'
+powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
+```
+
+Run Ollama only:
+
+```powershell
+$env:THEME_FACTORY_MODE = 'ollama-only'
+$env:THEME_PROMPT_FILE = 'prompts/pending/my-theme-brief.txt'
+$env:OLLAMA_MODEL = 'qwen2.5-coder:14b'
+powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
+```
+
+Run Codex only:
+
+```powershell
+$env:THEME_FACTORY_MODE = 'codex-only'
+$env:THEME_PROMPT_FILE = 'prompts/pending/my-theme-brief.txt'
+$env:CODEX_COMMAND = 'codex'
+powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
+```
+
+Validate and package a generated theme:
+
+```powershell
+bash scripts/validate-all.sh nolan-showcase-theme-01
+bash scripts/package-theme.sh nolan-showcase-theme-01
+```
+
+Clear run environment variables when you are done:
+
+```powershell
+Remove-Item Env:\THEME_FACTORY_MODE -ErrorAction SilentlyContinue
+Remove-Item Env:\THEME_PROMPT_FILE -ErrorAction SilentlyContinue
+Remove-Item Env:\OLLAMA_MODEL -ErrorAction SilentlyContinue
+Remove-Item Env:\CODEX_COMMAND -ErrorAction SilentlyContinue
+Remove-Item Env:\THEME_SLUG -ErrorAction SilentlyContinue
+```
+
+### Choosing a mode
+
+Use `ollama-only` when you want a local-only run and have the preferred model installed. Use `hybrid` when you want local generation plus one Codex finalization pass. Use `codex-only` when Ollama is unavailable or when you want Codex to handle the full generation.
+
+For all modes, the final output is expected to include the WordPress theme, static preview, ZIP package, and run report. Every finished run should pass:
+
+```bash
+bash scripts/validate-all.sh <theme-slug>
+```
+
 

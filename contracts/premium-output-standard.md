@@ -16,6 +16,7 @@ Generated themes must feel like complete premium company websites, not structure
 The homepage must include finished, visually staged sections:
 
 - strong hero with headline, support copy, CTA buttons, and local industry-appropriate imagery
+- hero composition that feels specifically designed for the generated company, with trust/proof cues, polished responsive framing, and a clear first-viewport visual signal
 - services overview
 - featured work or portfolio preview
 - brand trust or proof section
@@ -25,10 +26,13 @@ The homepage must include finished, visually staged sections:
 - blog/resource preview
 - strong bottom CTA
 - fully styled footer
+- footer with brand summary, meaningful navigation groups, contact or conversion path, local visual styling, and responsive layout quality
 
 ## Visual Standard
 
 Use premium spacing, clear hierarchy, refined typography, prompt-appropriate surfaces, local industry-specific imagery, styled buttons, polished cards, hover states, and responsive layouts. Avoid gray boxes, skeleton sections, unfinished labels, and generic filler.
+
+The hero and footer are mandatory quality checkpoints. A generated theme should fail review if the hero is just oversized generic text, if the hero imagery is weak or disconnected from the prompt, or if the footer is a bare copyright/nav strip with no premium closing experience.
 
 ## Static Preview Standard
 

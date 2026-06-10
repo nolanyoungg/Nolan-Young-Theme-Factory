@@ -1,0 +1,1 @@
+<section class="page-hero"><div class="container"><p class="eyebrow">Meridian Strategy Group</p><h1><?php the_title(); ?></h1><p><?php echo wp_kses_post( get_the_excerpt() ); ?></p></div></section><section class="section"><div class="container"><div class="content-panel"><?php the_content(); ?></div></div></section>

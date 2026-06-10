@@ -1,0 +1,1 @@
+<?php get_header(); ?><section class="page-hero"><div class="container"><p class="eyebrow">Meridian Strategy Group</p><h1>Page not found</h1><p>That page does not exist in this preview theme. Use the navigation to return to the homepage or one of the internal pages.</p></div></section><?php get_footer(); ?>

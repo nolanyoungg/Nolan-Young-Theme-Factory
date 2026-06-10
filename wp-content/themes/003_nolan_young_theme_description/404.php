@@ -1,0 +1,1 @@
+<?php get_header(); ?><section class="page-hero"><div class="container"><p class="eyebrow">Aster & Field Landscape Studio</p><h1>Page not found</h1><p>The resource may have moved. Use the navigation to continue exploring Aster & Field Landscape Studio.</p></div></section><?php get_footer(); ?>

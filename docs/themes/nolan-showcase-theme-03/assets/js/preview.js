@@ -29,6 +29,20 @@
     header.classList.toggle('is-scrolled', window.scrollY > 12);
   };
 
+  const resetState = () => {
+    active = null;
+    triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
+    panels.forEach((panel) => {
+      panel.hidden = true;
+      panel.setAttribute('aria-hidden', 'true');
+    });
+    if (backdrop) backdrop.hidden = true;
+    body.classList.remove('nolan-menu-open');
+    if (mobileDrawer) mobileDrawer.hidden = true;
+    if (mobileToggle) mobileToggle.setAttribute('aria-expanded', 'false');
+    body.classList.remove('nolan-mobile-open');
+  };
+
   const closePanels = () => {
     active = null;
     triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
@@ -106,6 +120,7 @@
     });
   }
 
+  resetState();
   window.addEventListener('scroll', setScrolled, { passive: true });
   setScrolled();
 })();

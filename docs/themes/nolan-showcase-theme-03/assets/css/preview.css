@@ -135,27 +135,33 @@ button, input, textarea, select { font: inherit; }
   left: 50%;
   top: 82px;
   transform: translateX(-50%);
-  width: min(1120px, calc(100vw - 32px));
-  background: var(--panel);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow);
+  width: min(1220px, calc(100vw - 32px));
+  background: linear-gradient(180deg, rgba(255,253,248,.98) 0%, rgba(246,241,233,.98) 100%);
+  border: 1px solid rgba(22,33,29,.10);
+  box-shadow: 0 34px 72px rgba(16,24,22,.18);
   z-index: 1001;
-  border-radius: 10px;
-  padding: 22px;
+  border-radius: 14px;
+  padding: 20px;
 }
 .nolan-dropdown-shell {
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 22px;
+  grid-template-columns: 316px 1fr;
+  gap: 18px;
 }
 .nolan-dropdown-intro {
-  background: linear-gradient(180deg, #f3efe8 0%, #edf3ee 100%);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: linear-gradient(180deg, #f4efe7 0%, #edf2eb 100%);
+  border: 1px solid rgba(22,33,29,.08);
+  border-radius: 12px;
   padding: 18px;
   display: grid;
   gap: 16px;
   align-content: start;
+}
+.nolan-dropdown-intro img {
+  aspect-ratio: 16 / 11;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid rgba(22,33,29,.08);
 }
 .menu-stat-grid {
   display: grid;
@@ -163,10 +169,10 @@ button, input, textarea, select { font: inherit; }
   gap: 10px;
 }
 .menu-stat-grid div {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 12px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(22,33,29,.08);
+  border-radius: 8px;
+  padding: 12px 12px 10px;
 }
 .menu-stat-grid span {
   display: block;
@@ -178,18 +184,20 @@ button, input, textarea, select { font: inherit; }
   display: grid;
   grid-template-columns: 250px 1fr;
   gap: 20px;
+  align-items: start;
 }
 .nolan-rail {
   display: grid;
   gap: 8px;
   align-content: start;
+  padding-right: 6px;
 }
 .nolan-rail button {
   text-align: left;
-  border: 1px solid var(--line);
-  background: #f3eee7;
-  padding: 12px 14px;
-  border-radius: 6px;
+  border: 1px solid rgba(22,33,29,.09);
+  background: rgba(255,255,255,.72);
+  padding: 14px 14px 13px;
+  border-radius: 8px;
   color: var(--ink);
   font-weight: 700;
 }
@@ -199,7 +207,7 @@ button, input, textarea, select { font: inherit; }
   background: #fff8ed;
 }
 .nolan-rail-content {
-  min-height: 240px;
+  min-height: 280px;
   padding: 0 2px;
 }
 .menu-panel-grid {
@@ -208,12 +216,13 @@ button, input, textarea, select { font: inherit; }
   gap: 14px;
 }
 .menu-card {
-  background: #faf7f2;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: rgba(255,255,255,.9);
+  border: 1px solid rgba(22,33,29,.09);
+  border-radius: 10px;
   padding: 16px;
   display: grid;
   gap: 10px;
+  box-shadow: 0 10px 18px rgba(16,24,22,.04);
 }
 .menu-card h4,
 .menu-card p,
@@ -228,6 +237,10 @@ button, input, textarea, select { font: inherit; }
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 12px;
+}
+.nolan-dropdown .button.secondary {
+  background: rgba(255,255,255,.82);
+  border-color: rgba(15,23,21,.18);
 }
 .nolan-mobile-drawer {
   position: fixed;
@@ -616,6 +629,15 @@ select:focus-visible,
   .resource-feature h3 { font-size: 26px; }
   .timeline-item { grid-template-columns: 1fr; }
   .nolan-dropdown { display: none; }
+}
+body.nolan-menu-open .nolan-dropdown,
+body.nolan-menu-open .nolan-menu-backdrop {
+  display: block;
+}
+body:not(.nolan-menu-open) .nolan-dropdown,
+body:not(.nolan-menu-open) .nolan-menu-backdrop,
+.nolan-dropdown[hidden] {
+  display: none !important;
 }
 @media (max-width: 640px) {
   .hero h1 { font-size: 38px; }

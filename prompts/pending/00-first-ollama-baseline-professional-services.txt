@@ -1,6 +1,6 @@
 Create the first clean baseline theme after the generated-output reset.
 
-Use the theme slug `nolan-showcase-theme-01`.
+Use the theme slug `001_nolan_young_theme_landscape_design`.
 
 Build a premium classic WordPress theme for a polished professional service company. Use one cohesive business concept: a high-end operations and compliance consulting firm for growing healthcare, wellness, and professional-services organizations. The brand should feel precise, calm, senior, and expensive without looking like a generic agency site.
 

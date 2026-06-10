@@ -24,6 +24,8 @@ The next slug is determined across:
 - `dist/zipped-themes/`
 - `reports/runs/`
 
+Legacy `nolan-showcase-theme-*` outputs may still exist in the repo from earlier runs, but new generated themes should use the numeric `NNN_nolan_young_theme_description` convention.
+
 ## Workflow Scripts
 
 - `bash scripts/run-hybrid-theme-workflow.sh`
@@ -229,8 +231,8 @@ bash scripts/run-hybrid-theme-workflow.sh
 Validate and package a generated theme:
 
 ```bash
-bash scripts/validate-all.sh nolan-showcase-theme-01
-bash scripts/package-theme.sh nolan-showcase-theme-01
+bash scripts/validate-all.sh 001_nolan_young_theme_landscape_design
+bash scripts/package-theme.sh 001_nolan_young_theme_landscape_design
 ```
 
 After a successful run, review these outputs:
@@ -323,8 +325,8 @@ powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.p
 Validate and package a generated theme:
 
 ```powershell
-bash scripts/validate-all.sh nolan-showcase-theme-01
-bash scripts/package-theme.sh nolan-showcase-theme-01
+bash scripts/validate-all.sh 001_nolan_young_theme_landscape_design
+bash scripts/package-theme.sh 001_nolan_young_theme_landscape_design
 ```
 
 Clear run environment variables when you are done:

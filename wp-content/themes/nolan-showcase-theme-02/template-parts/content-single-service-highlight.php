@@ -1,0 +1,1 @@
+<section class="page-hero"><div class="container"><p class="eyebrow">Marlow & Finch Studio</p><h1>Editorial Wedding Photography</h1><p>Marlow &amp; Finch Studio specializes in editorial weddings, creating timeless and elegant images that tell your love story.</p></div></section>

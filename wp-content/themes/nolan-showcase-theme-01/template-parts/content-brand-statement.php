@@ -1,0 +1,1 @@
+<section class="section alt"><div class="container"><h2>Calm systems, clear owners, stronger service.</h2><p>Meridian Strategy Group designs the processes, compliance rhythms, client experience systems, and leadership dashboards that let founder-led healthcare, wellness, and professional-services teams scale with control.</p></div></section>

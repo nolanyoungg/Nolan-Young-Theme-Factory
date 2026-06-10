@@ -145,7 +145,7 @@ theme_factory_check_prompt_file() {
 }
 
 theme_factory_slug_pattern() {
-  printf '^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$'
+  printf '^(nolan-showcase-theme-[0-9]{2}|[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9])$'
 }
 
 theme_factory_validate_slug() {
@@ -166,9 +166,6 @@ theme_factory_slug_description() {
 }
 
 theme_factory_get_next_slug() {
-  local descriptor
-  descriptor="$(theme_factory_slug_description "${1:-generated_theme}")"
-
   local root_dir
   root_dir="$(theme_factory_repo_root)"
 
@@ -184,7 +181,13 @@ theme_factory_get_next_slug() {
   for scan_path in "${scan_paths[@]}"; do
     [ -d "$scan_path" ] || continue
     while IFS= read -r name; do
-      if [[ "$name" =~ ^([0-9][0-9][0-9])_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9](\.zip)?$ ]]; then
+      if [[ "$name" =~ ^nolan-showcase-theme-([0-9][0-9])(\.zip)?$ ]]; then
+        number="${BASH_REMATCH[1]}"
+        number="$((10#$number))"
+        if [ "$number" -gt "$max" ]; then
+          max="$number"
+        fi
+      elif [[ "$name" =~ ^([0-9][0-9][0-9])_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9](\.zip)?$ ]]; then
         number="${BASH_REMATCH[1]}"
         number="$((10#$number))"
         if [ "$number" -gt "$max" ]; then
@@ -194,7 +197,7 @@ theme_factory_get_next_slug() {
     done < <(find "$scan_path" -mindepth 1 -maxdepth 1 -printf '%f\n' 2>/dev/null || find "$scan_path" -mindepth 1 -maxdepth 1 -exec basename {} \;)
   done
 
-  printf '%03d_nolan_young_theme_%s\n' "$((max + 1))" "$descriptor"
+  printf 'nolan-showcase-theme-%02d\n' "$((max + 1))"
 }
 
 theme_factory_list_ollama_models() {

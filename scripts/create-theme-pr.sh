@@ -7,7 +7,7 @@ fail() {
 }
 
 valid_slug() {
-  [[ "$1" =~ ^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]]
+  [[ "$1" =~ ^(nolan-showcase-theme-[0-9]{2}|[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9])$ ]]
 }
 
 usage() {
@@ -41,7 +41,7 @@ remote="${THEME_PR_REMOTE:-origin}"
 command -v git >/dev/null 2>&1 || fail "git is required."
 command -v gh >/dev/null 2>&1 || fail "GitHub CLI is required to create PRs. Install gh or run manually."
 
-bash scripts/validate-theme.sh "$slug"
+bash scripts/validate-all.sh "$slug"
 
 if [ "$(git rev-parse --abbrev-ref HEAD)" != "$branch" ]; then
   if git show-ref --verify --quiet "refs/heads/$branch"; then
@@ -70,5 +70,5 @@ else
     --base "$base" \
     --head "$branch" \
     --title "Add $slug" \
-    --body "Adds generated WordPress theme \`$slug\`, its matching GitHub Pages preview, gallery link, and ZIP package.\n\nValidated with:\n\n\`\`\`bash\nbash scripts/validate-theme.sh $slug\n\`\`\`"
+    --body "Adds generated WordPress theme \`$slug\`, its matching GitHub Pages preview, gallery link, and ZIP package.\n\nValidated with:\n\n\`\`\`bash\nbash scripts/validate-all.sh $slug\n\`\`\`"
 fi

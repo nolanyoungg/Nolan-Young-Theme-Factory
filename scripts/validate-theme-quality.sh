@@ -70,7 +70,7 @@ if [ -d "$preview_dir" ]; then
 fi
 
 if [ -f "$root_dir/docs/index.html" ]; then
-  grep -q "themes/$slug/index.html" "$root_dir/docs/index.html" || fail "docs/index.html does not link to $slug preview"
+  grep -Eq "themes/$slug/(index|homepage_preview)\\.html" "$root_dir/docs/index.html" || fail "docs/index.html does not link to $slug preview"
 else
   fail "Missing docs/index.html"
 fi

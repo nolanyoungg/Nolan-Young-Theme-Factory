@@ -1,0 +1,1 @@
+<?php if ( post_password_required() ) { return; } ?><section class="section"><div class="container"><div class="content-panel"><h2>Comments</h2><p>Comments are available when the WordPress content model requires them.</p></div></div></section>

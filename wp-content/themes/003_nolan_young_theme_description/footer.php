@@ -1,0 +1,7 @@
+</main>
+<footer class="site-footer">
+  <div class="footer-strap"><div><p class="eyebrow">Meridian Strategy Group</p><p class="footer-brand-note">Meridian Strategy Group builds operating systems for regulated service companies that need clearer ownership, stronger compliance routines, and calmer growth.</p></div><div><p class="eyebrow">Typical engagements</p><p class="footer-meta">Operating model design, compliance readiness, client experience systems, and leadership dashboards.</p></div></div><div class="footer-grid"><div><h3>What we do</h3><a href="<?php echo esc_url( home_url( '/services/' ) ); ?>">Services</a><a href="<?php echo esc_url( home_url( '/work/' ) ); ?>">Work</a><a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>">Journal</a></div><div><h3>Industries</h3><a href="<?php echo esc_url( home_url( '/services/' ) ); ?>">Healthcare</a><a href="<?php echo esc_url( home_url( '/services/' ) ); ?>">Wellness</a><a href="<?php echo esc_url( home_url( '/services/' ) ); ?>">Professional services</a></div><div><h3>Company</h3><a href="<?php echo esc_url( home_url( '/about-us/' ) ); ?>">About</a><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact</a><a href="<?php echo esc_url( home_url( '/single-service/' ) ); ?>">Service detail</a></div><div><h3>Contact</h3><p class="footer-meta">Chicago / Remote advisory</p><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Book a readiness call</a></div></div>
+</footer>
+<?php wp_footer(); ?>
+</body>
+</html>

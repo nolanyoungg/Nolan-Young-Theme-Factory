@@ -1,0 +1,56 @@
+Create a premium classic WordPress theme for a boutique photography studio.
+
+The brand should feel editorial, warm, cinematic, and high-end. Build a complete, installable classic WordPress theme with polished responsive layouts and a matching static GitHub Pages preview.
+
+Required site sections and pages:
+- Home
+- About Us
+- Services
+- Work
+- Blog
+- Contact
+- Policies
+
+Homepage requirements:
+- Strong hero with a clear brand statement and booking-oriented CTA
+- Featured work section
+- Services overview
+- Process or approach section
+- Testimonials
+- Blog or journal preview
+- Final contact or booking CTA
+
+Design direction:
+- Use local assets only
+- Avoid remote CDNs, external fonts, and stock-looking filler
+- Use real, specific copy with a refined visual system
+- Make navigation, spacing, typography, and image treatment feel polished and intentional
+
+Content requirements:
+- Write believable copy for a real studio, not placeholder text
+- Include service details, work examples, contact language, and policy content
+- Keep the tone professional, confident, and human
+
+Build and output requirements:
+- Produce a complete classic WordPress theme with compiled local assets
+- Produce a matching static preview for GitHub Pages
+- Produce all seven required static preview pages:
+  - homepage_preview.html
+  - services_preview.html
+  - about-us_preview.html
+  - contact_preview.html
+  - single_services_preview.html
+  - blog_preview.html
+  - work_preview.html
+- Make each static preview feel like a static render of the matching WordPress template with the same header, footer, section order, classes, image assets, cards, and buttons
+- Implement the Nolan-menu header system:
+  - desktop layout is logo, Services/About/Work/Blog primary nav, and a right-side Contact Us CTA
+  - Contact is not a primary desktop nav item
+  - Services, About, and Blog open accessible Nolan-menu panels
+  - Work is a direct link
+  - mobile drawer works without hover
+- Because this prompt is for a photography studio, use local copyright-safe raster photography assets for hero, portfolio, service cards, editorial sections, and proof sections
+- Package the theme as a ZIP ready for WordPress upload
+- Validate structure, quality, security, preview linkage, and ZIP freshness
+
+Do not use lorem ipsum, TODO placeholders, gray image boxes, hotlinked images, CDN assets, or weak fallback pages.

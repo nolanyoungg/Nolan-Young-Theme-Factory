@@ -1,0 +1,1 @@
+<section class="section"><div class="container"><h1><?php echo esc_html( nolan_showcase_theme_01_policy_title() ); ?></h1><p>Marlow & Finch Studio keeps policy language clear, operational, and aligned with the way service teams work.</p></div></section>

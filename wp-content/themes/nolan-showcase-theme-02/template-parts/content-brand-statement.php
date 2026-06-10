@@ -1,0 +1,1 @@
+<section class="section alt"><div class="container"><h2>Quiet luxury, human emotion, and editorial finish.</h2><p>Marlow &amp; Finch Studio creates editorial wedding, portrait, brand, and event photography for clients who want quiet luxury, human emotion, and a finished visual story with depth.</p></div></section>

@@ -1,1 +1,0 @@
-<section class="page-hero"><div class="container"><p class="eyebrow">Meridian Strategy Group</p><h1>Operating Model Design</h1><p>Roles, decision rights, handoffs, cadence, and team rhythm for companies that have outgrown founder memory.</p></div></section>

@@ -1,1 +1,0 @@
-<?php get_header(); ?><section class="page-hero"><div class="container"><p class="eyebrow">Meridian Strategy Group</p><h1>Access restricted</h1><p>This page is not available in the current preview build.</p></div></section><?php get_footer(); ?>

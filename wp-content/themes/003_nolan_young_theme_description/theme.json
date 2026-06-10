@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "ink",
+          "color": "#142b2d",
+          "name": "Ink"
+        },
+        {
+          "slug": "accent",
+          "color": "#b8894f",
+          "name": "Accent"
+        }
+      ]
+    }
+  }
+}

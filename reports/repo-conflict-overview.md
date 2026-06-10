@@ -1,10 +1,12 @@
 # Repo Conflict Overview
 
-This note records the prompt-related and naming-related surfaces in the repo that can confuse future runs.
+This note records the prompt-related and naming-related surfaces in the repo after the cleanup pass.
 
 ## Removed
 
 - `prompts/examples/premium-photography-theme.txt`
+- Generated 003 and 004 theme outputs
+- Legacy showcase-named 01/02 theme outputs were renamed to numeric slugs
 
 ## Prompt Folder State
 
@@ -14,11 +16,11 @@ The `prompts/` folder should now be limited to:
 - `prompts/pending/`
 - `prompts/completed/`
 
-## Remaining Conflict Surfaces To Review
+## Current State
 
-- Legacy showcase theme references still exist in historical reports and some generated theme artifacts.
-- `docs/index.html` still lists the older `nolan-showcase-theme-01` and `nolan-showcase-theme-02` preview cards alongside the numeric `003` theme.
-- Older run artifacts under `reports/runs/nolan-showcase-theme-01/` and `reports/runs/nolan-showcase-theme-02/` still use the showcase naming scheme.
+- The active generated themes now use numeric slugs only.
+- `docs/index.html` links to the renamed 001 and 002 preview cards.
+- The historical run outputs were renamed to the numeric convention so future runs stay consistent.
 
 ## Recommendation
 

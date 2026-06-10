@@ -1,0 +1,1 @@
+<div class="proof-card"><h2><?php esc_html_e( 'No matching resources found', '001_nolan_young_theme_meridian_strategy_group' ); ?></h2><p><?php esc_html_e( 'Try a different search or return to the service overview.', '001_nolan_young_theme_meridian_strategy_group' ); ?></p></div>

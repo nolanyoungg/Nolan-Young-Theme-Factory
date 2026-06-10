@@ -1,0 +1,9 @@
+{
+  "name": "002_nolan_young_theme_marlow_finch_studio",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

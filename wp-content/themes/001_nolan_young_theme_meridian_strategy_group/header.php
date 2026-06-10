@@ -1,0 +1,46 @@
+<?php
+/**
+ * Theme header.
+ *
+ * @package Nolan_Showcase_Theme_01
+ */
+?><!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+  <meta charset="<?php bloginfo( 'charset' ); ?>">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', '001_nolan_young_theme_meridian_strategy_group' ); ?></a>
+<header class="nolan-site-header" data-site-header>
+  <div class="nolan-header-inner">
+    <a class="nolan-brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>">
+      <span class="nolan-mark">MS</span>
+      <span>Meridian Strategy Group</span>
+    </a>
+    <nav class="nolan-primary-nav" aria-label="<?php esc_attr_e( 'Primary navigation', '001_nolan_young_theme_meridian_strategy_group' ); ?>">
+      <button class="nolan-menu-trigger" type="button" data-menu-item="services" aria-controls="nolan-menu-services" aria-expanded="false">Services</button>
+      <button class="nolan-menu-trigger" type="button" data-menu-item="about" aria-controls="nolan-menu-about" aria-expanded="false">About</button>
+      <a href="<?php echo esc_url( home_url( '/work/' ) ); ?>">Work</a>
+      <button class="nolan-menu-trigger" type="button" data-menu-item="blog" aria-controls="nolan-menu-blog" aria-expanded="false">Blog</button>
+    </nav>
+    <div class="nolan-header-actions">
+      <a class="nolan-header-cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact Us</a>
+      <button class="nolan-mobile-toggle" type="button" data-mobile-toggle aria-controls="nolan-mobile-drawer" aria-expanded="false">Menu</button>
+    </div>
+  </div>
+  <div class="nolan-menu-backdrop" data-menu-backdrop hidden></div>
+  <?php get_template_part( 'template-parts/content', 'mega-menu' ); ?>
+  <div class="nolan-mobile-drawer" id="nolan-mobile-drawer" data-mobile-drawer hidden>
+    <nav aria-label="<?php esc_attr_e( 'Mobile navigation', '001_nolan_young_theme_meridian_strategy_group' ); ?>">
+      <a href="<?php echo esc_url( home_url( '/services/' ) ); ?>">Services</a>
+      <a href="<?php echo esc_url( home_url( '/about-us/' ) ); ?>">About</a>
+      <a href="<?php echo esc_url( home_url( '/work/' ) ); ?>">Work</a>
+      <a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>">Blog</a>
+      <a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact Us</a>
+    </nav>
+  </div>
+</header>
+<main id="primary" class="site-main">

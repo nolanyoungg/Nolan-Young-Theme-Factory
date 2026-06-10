@@ -1,0 +1,9 @@
+{
+  "name": "001_nolan_young_theme_meridian_strategy_group",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

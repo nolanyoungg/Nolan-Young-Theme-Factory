@@ -1,1 +1,0 @@
-<div class="proof-card"><h2><?php esc_html_e( 'No matching resources found', 'nolan-showcase-theme-02' ); ?></h2><p><?php esc_html_e( 'Try a different search or return to the service overview.', 'nolan-showcase-theme-02' ); ?></p></div>

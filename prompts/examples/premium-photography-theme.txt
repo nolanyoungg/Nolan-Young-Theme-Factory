@@ -1,5 +1,0 @@
-Create a premium classic WordPress theme for a boutique photography studio specializing in editorial portraits, intimate weddings, brand campaigns, and heirloom family sessions.
-
-The site should feel refined, warm, cinematic, and highly professional. Include pages for Home, About Us, Services, Work, Blog, Contact, and Policies. The homepage should include a strong hero section, service highlights, featured work, process, testimonials, editorial content preview, and a final booking call to action.
-
-Use realistic copy, accessible navigation, local visual assets, polished responsive layouts, and a matching static GitHub Pages preview. Avoid remote CDN dependencies and avoid filler copy.

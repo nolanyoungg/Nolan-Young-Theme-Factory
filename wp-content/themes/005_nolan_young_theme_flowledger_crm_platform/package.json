@@ -1,0 +1,9 @@
+{
+  "name": "005_nolan_young_theme_flowledger_crm_platform",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

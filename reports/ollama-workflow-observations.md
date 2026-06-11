@@ -64,3 +64,22 @@ Result:
 Token-efficiency note:
 
 The optimized Ollama path is behaving better when the model only plans and emits compact JSON. The deterministic renderer should keep absorbing structure, validation, asset, and packaging requirements so prompt files do not need repo details and local models are not asked to stream thousands of file blocks.
+
+## 005 FlowLedger CRM Test
+
+The first FlowLedger CRM run completed validation, but post-run review showed the output was not acceptable. The normalized spec drifted into logistics/freight defaults because category detection saw the prompt's negative quality-bar phrase saying the site should not look like a logistics site. Since logistics was checked before CRM/SaaS/product language, the renderer topped up the model's partial CRM JSON with freight services, freight resources, freight proof, and logistics visual CSS.
+
+Fix applied:
+
+1. CRM/SaaS/product language now has category-detection priority over logistics.
+2. Category detection ignores sentences containing negative steering phrases such as not, avoid, should not, must not, and without.
+3. The bad `005_nolan_young_theme_flowledger_crm_platform` artifacts were removed through the repo removal utility.
+4. The same FlowLedger prompt was restored to `prompts/pending/` for a clean rerun.
+
+Final rerun result:
+
+1. `qwen2.5-coder:14b` produced a CRM/product-focused plan and compact JSON spec.
+2. The renderer normalized the spec to `FlowLedger CRM` and filled weak model sections with CRM-specific defaults instead of freight, lawn, restaurant, or insurance defaults.
+3. Generated content now centers on pipeline management, contact/account records, task automation, reporting dashboards, role-based views, implementation support, CRM resources, customer stories, and export-ready form entries.
+4. Legacy design-token names from older service-site output were neutralized before writing generated CSS and `theme.json`, so the final 005 artifacts use generic `--color-*` tokens and `primary`/`surface` palette slugs.
+5. The prompt was archived to `prompts/completed/005_nolan_young_theme_flowledger_crm_platform__flowledger-crm-platform.md`, `prompts/pending/` returned to only `.gitkeep`, and full validation passed after ZIP packaging.

@@ -4,10 +4,5 @@ param(
 )
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$bash = Get-Command bash -ErrorAction SilentlyContinue
-if (-not $bash) {
-  throw "bash is required to run the hybrid workflow from PowerShell."
-}
-
-& bash "$scriptDir/run-hybrid-theme-workflow.sh" @Arguments
+& powershell.exe -ExecutionPolicy Bypass -File (Join-Path $scriptDir 'workflows/run-hybrid-ollama-codex-theme-generation.ps1') @Arguments
 exit $LASTEXITCODE

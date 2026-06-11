@@ -1,0 +1,3 @@
+GPL-2.0-or-later
+
+Generated classic WordPress theme for distribution under the GPL.

@@ -24,7 +24,7 @@ Instead:
 
 - the planner writes a concise implementation plan
 - the builder writes one compact JSON site specification
-- `scripts/render-theme-from-spec.js` deterministically renders the required WordPress theme, static preview, local raster images, source files, compiled assets, docs, and gallery card from that specification
+- `scripts/renderer/render-theme-and-preview-from-site-specification.js` deterministically renders the required WordPress theme, static preview, local raster images, source files, compiled assets, docs, and gallery card from that specification
 - validation remains deterministic and strict
 - no Codex process is used in `ollama-only`
 
@@ -148,7 +148,7 @@ See `contracts/nolan-menu-header.md`.
 
 ## Local Image Rules
 
-Generated themes must use local, copyright-safe demo images that fit the generated business category.
+Generated themes must use local, copyright-safe demo images that fit the generated business, product, or organization category.
 
 Do not use:
 
@@ -185,7 +185,7 @@ If `CODEX_COMMAND` is supplied as `codex` or `codex --model ...`, the workflow n
 Run interactively:
 
 ```bash
-bash scripts/run-hybrid-theme-workflow.sh
+bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
 ```
 
 Run Ollama-only:
@@ -194,7 +194,7 @@ Run Ollama-only:
 THEME_FACTORY_MODE=ollama-only \
 THEME_PROMPT_FILE=prompts/pending/premium-landscape-design-company.txt \
 OLLAMA_MODEL=qwen2.5-coder:14b \
-bash scripts/run-hybrid-theme-workflow.sh
+bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
 ```
 
 Run Hybrid:
@@ -204,7 +204,7 @@ THEME_FACTORY_MODE=hybrid \
 THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
 OLLAMA_MODEL=qwen2.5-coder:14b \
 CODEX_COMMAND="codex exec" \
-bash scripts/run-hybrid-theme-workflow.sh
+bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
 ```
 
 Run Codex-only:
@@ -213,7 +213,7 @@ Run Codex-only:
 THEME_FACTORY_MODE=codex-only \
 THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
 CODEX_COMMAND="codex exec" \
-bash scripts/run-hybrid-theme-workflow.sh
+bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
 ```
 
 Windows PowerShell wrapper:
@@ -222,7 +222,7 @@ Windows PowerShell wrapper:
 $env:THEME_FACTORY_MODE = 'ollama-only'
 $env:THEME_PROMPT_FILE = 'prompts/pending/premium-landscape-design-company.txt'
 $env:OLLAMA_MODEL = 'qwen2.5-coder:14b'
-powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
+powershell.exe -ExecutionPolicy Bypass -File scripts\workflows\run-hybrid-ollama-codex-theme-generation.ps1
 ```
 
 ## Build, Package, Validate
@@ -237,19 +237,19 @@ npm run build
 Package a generated theme:
 
 ```bash
-bash scripts/package-theme.sh 000_nolan_young_theme_premium_landscape_design_company
+bash scripts/packaging/package-generated-wordpress-theme-zip.sh 000_nolan_young_theme_premium_landscape_design_company
 ```
 
 Validate a generated theme:
 
 ```bash
-bash scripts/validate-all.sh 000_nolan_young_theme_premium_landscape_design_company
+bash scripts/validation/validate-generated-theme-all.sh 000_nolan_young_theme_premium_landscape_design_company
 ```
 
 Validate all generated themes:
 
 ```bash
-bash scripts/validate-all.sh
+bash scripts/validation/validate-generated-theme-all.sh
 ```
 
 If no generated themes exist, validation exits cleanly with `No generated themes found.`
@@ -272,7 +272,7 @@ After a full cleanup, the first local run should use:
 THEME_FACTORY_MODE=ollama-only \
 THEME_PROMPT_FILE=prompts/pending/premium-landscape-design-company.txt \
 OLLAMA_MODEL=qwen2.5-coder:14b \
-bash scripts/run-hybrid-theme-workflow.sh
+bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
 ```
 
 Expected first outputs:
@@ -283,3 +283,78 @@ docs/themes/000_nolan_young_theme_premium_landscape_design_company/
 dist/zipped-themes/000_nolan_young_theme_premium_landscape_design_company.zip
 reports/runs/000_nolan_young_theme_premium_landscape_design_company/
 ```
+
+## Remove A Generated Theme
+
+Use the removal utility when a generated theme should be completely removed from the repo.
+
+Preview what would be removed:
+
+```bash
+bash scripts/repo/remove-generated-theme-and-artifacts.sh 005_nolan_young_theme_example --dry-run
+```
+
+Remove the generated theme artifacts:
+
+```bash
+bash scripts/repo/remove-generated-theme-and-artifacts.sh 005_nolan_young_theme_example --yes
+```
+
+PowerShell:
+
+```powershell
+powershell.exe -ExecutionPolicy Bypass -File scripts\repo\remove-generated-theme-and-artifacts.ps1 005_nolan_young_theme_example -DryRun
+powershell.exe -ExecutionPolicy Bypass -File scripts\repo\remove-generated-theme-and-artifacts.ps1 005_nolan_young_theme_example -Yes
+```
+
+The removal utility deletes:
+
+- `wp-content/themes/<slug>/`
+- `docs/themes/<slug>/`
+- `dist/zipped-themes/<slug>.zip`
+- `reports/runs/<slug>/`
+- `prompts/completed/<slug>__*.txt`
+- `prompts/completed/<slug>__*.md`
+- the matching preview card in `docs/index.html`
+
+Root-level scripts such as `scripts/remove-theme.sh`, `scripts/validate-all.sh`, and `scripts/run-hybrid-theme-workflow.sh` remain as compatibility wrappers. New work should use the role-based script names documented in `scripts/README.md`.
+
+## Detailed Walkthrough
+
+### 2026-06-11
+
+The Nolan Young Theme Factory turns a creative brief into a complete installable classic WordPress theme, a static preview, a ZIP package, and run reports. The prompt belongs in `prompts/pending/` as a `.md` or `.txt` file. The prompt should describe the business, product, audience, page content, visual style, color system, navigation needs, forms, accessibility expectations, and conversion goals. It should not mention repo paths, commands, validation, packaging, generated slugs, workflow modes, CI, GitHub Pages, or implementation filenames. See `prompts/template prompts/` for fill-in skeletons.
+
+The factory supports three modes:
+
+- `ollama-only`: uses the selected local Ollama model for planning and compact JSON site-spec generation, then renders the theme deterministically without Codex.
+- `hybrid`: uses Ollama for the local draft/spec/render path, then runs one Codex senior-engineer final pass.
+- `codex-only`: uses Codex to generate the complete output directly when selected.
+
+In Ollama modes, the workflow verifies Ollama is installed, asks for or validates an installed model such as `qwen2.5-coder:14b`, runs the planner stage, then asks Ollama for one compact JSON site specification. The local renderer reads that specification and creates the WordPress theme, static preview pages, local raster images, source files, compiled assets, docs, and gallery card. This keeps local models focused on creative and structural decisions instead of streaming hundreds of files.
+
+The renderer is intentionally category-aware but must not be category-locked. It can use strong defaults for known categories such as software, CRM/SaaS, logistics, finance, food, local services, healthcare/wellness, ecommerce, education, nonprofit, and general business. If the prompt describes a CRM or full software product, the generated site should use product-specific copy, dashboard-style imagery, feature pages, customer stories, demo CTAs, and form-admin/export language rather than drifting into a lawn care, landscape, insurance, logistics, or generic agency website.
+
+After rendering, the workflow runs the generated theme build with `npm install` and `npm run build`, packages the ZIP, and validates the result. Validation checks required theme structure, compiled assets, local image usage, preview pages, header/menu behavior, security, ZIP freshness, prompt hygiene, and prompt lifecycle. A successful run moves the selected prompt from `prompts/pending/` into `prompts/completed/` with the generated slug as a prefix, and records a lifecycle note in the run report.
+
+Script naming is role-based:
+
+- workflow scripts live in `scripts/workflows/`
+- Ollama scripts live in `scripts/ollama/`
+- Codex scripts live in `scripts/codex/`
+- renderer scripts live in `scripts/renderer/`
+- validators live in `scripts/validation/`
+- packaging scripts live in `scripts/packaging/`
+- repo utilities live in `scripts/repo/`
+- release helpers live in `scripts/release/`
+
+The normal local Ollama-only command is:
+
+```bash
+THEME_FACTORY_MODE=ollama-only \
+THEME_PROMPT_FILE=prompts/pending/my-theme-brief.md \
+OLLAMA_MODEL=qwen2.5-coder:14b \
+bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
+```
+
+Before writing a new prompt from scratch, copy one of the skeletons from `prompts/template prompts/`, fill in the brackets, remove unused optional sections, and keep the brief focused on the website the user wants generated.

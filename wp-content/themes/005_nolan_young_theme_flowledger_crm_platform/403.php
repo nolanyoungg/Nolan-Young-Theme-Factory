@@ -1,0 +1,1 @@
+<?php get_header(); ?><section class="section"><div class="container"><h1><?php esc_html_e( 'Access is restricted.', '005_nolan_young_theme_flowledger_crm_platform' ); ?></h1><p><?php esc_html_e( 'This page is not available for public viewing.', '005_nolan_young_theme_flowledger_crm_platform' ); ?></p></div></section><?php get_footer(); ?>

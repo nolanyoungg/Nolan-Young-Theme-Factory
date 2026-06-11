@@ -1,0 +1,140 @@
+{
+  "brandName": "FlowLedger CRM",
+  "industry": "CRM software, customer operations platform, sales pipeline dashboard, account management workspace, and form intake system",
+  "region": "by appointment",
+  "tone": "modern, trustworthy, operational, sharp, calm, product-led, and practical",
+  "heroTitle": "FlowLedger CRM gives growing teams one clear place to manage pipeline, clients, tasks, and follow-up.",
+  "heroText": "FlowLedger CRM is presented as a polished CRM product website with dashboard-style visuals, role-based benefits, proof, resources, forms, and conversion paths for demos and consultations.",
+  "eyebrow": "FlowLedger CRM",
+  "services": [
+    {
+      "title": "Pipeline Management",
+      "text": "Organize leads, opportunities, stages, owners, next steps, and follow-up health in one visible workspace."
+    },
+    {
+      "title": "Contact and Account Records",
+      "text": "Keep notes, activity history, company context, files, and relationship details easy for teams to trust."
+    },
+    {
+      "title": "Task and Follow-Up Automation",
+      "text": "Route reminders, owner assignments, renewal prompts, handoffs, and customer touchpoints before work slips."
+    },
+    {
+      "title": "Reporting Dashboards",
+      "text": "Show pipeline value, conversion rates, stalled deals, response times, customer health, and team activity."
+    },
+    {
+      "title": "Role-Based Team Views",
+      "text": "Give sales, service, leadership, and admin teams tailored views without creating separate data silos."
+    },
+    {
+      "title": "Implementation Support",
+      "text": "Map fields, imports, permissions, workflows, and training plans so adoption is not left to chance."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Sales Pipeline Relaunch",
+      "text": "A growing team moved from scattered spreadsheets to defined stages, owner views, reminders, and weekly reporting."
+    },
+    {
+      "title": "Client Service Workspace",
+      "text": "Account history, support notes, renewal dates, and escalation signals were brought into one customer view."
+    },
+    {
+      "title": "Founder Visibility Dashboard",
+      "text": "Leadership gained a cleaner view of pipeline, follow-ups, revenue risk, and customer health signals."
+    },
+    {
+      "title": "Onboarding Workflow Buildout",
+      "text": "New customer steps, kickoff details, task owners, and first-value checkpoints became a repeatable workflow."
+    },
+    {
+      "title": "Data Cleanup Migration",
+      "text": "Duplicate contacts, missing fields, stale stages, and inconsistent tags were normalized before launch."
+    },
+    {
+      "title": "Support Handoff System",
+      "text": "Sales-to-service handoffs gained required notes, task templates, ownership, and confirmation checkpoints."
+    },
+    {
+      "title": "Renewal Alert Program",
+      "text": "Upcoming renewals, risk flags, and outreach tasks surfaced before important customer dates arrived."
+    },
+    {
+      "title": "Lead Routing Ruleset",
+      "text": "Inbound inquiries were sorted by fit, territory, service type, urgency, and owner availability."
+    },
+    {
+      "title": "Executive Forecast Board",
+      "text": "Forecast categories, weighted value, close confidence, and stalled opportunity notes became easier to review."
+    },
+    {
+      "title": "Customer Health Monitor",
+      "text": "Usage signals, open issues, sentiment notes, and support load created a clearer account health story."
+    },
+    {
+      "title": "Field Team CRM View",
+      "text": "Mobile-friendly records helped field staff confirm tasks, customer notes, and next actions on the go."
+    },
+    {
+      "title": "Operations Audit Trail",
+      "text": "Important record changes, form submissions, and admin exports gained a clearer review path."
+    }
+  ],
+  "resources": [
+    {
+      "title": "CRM Readiness Checklist",
+      "text": "How to know whether your team is ready to move from spreadsheets into a shared customer system."
+    },
+    {
+      "title": "Pipeline Stages That Teams Actually Use",
+      "text": "A guide to naming stages, exit criteria, required fields, and follow-up expectations."
+    },
+    {
+      "title": "Cleaning Data Before Migration",
+      "text": "The duplicate records, missing fields, old tags, and unclear owners to resolve before launch."
+    },
+    {
+      "title": "What Leaders Should Track Weekly",
+      "text": "Pipeline value, response times, stalled deals, renewal risk, and customer health metrics that matter."
+    },
+    {
+      "title": "CRM Adoption Mistakes to Avoid",
+      "text": "Why teams resist new systems and how workflows, training, and role-based views reduce friction."
+    },
+    {
+      "title": "Designing Better Intake Forms",
+      "text": "How clear form fields, service selectors, and routing logic improve customer handoffs from the start."
+    }
+  ],
+  "process": [
+    {
+      "title": "Map the customer journey",
+      "text": "Define lifecycle stages, owners, required fields, handoffs, service types, and decision points."
+    },
+    {
+      "title": "Configure the workspace",
+      "text": "Shape pipelines, views, permissions, automations, dashboards, and forms around real team behavior."
+    },
+    {
+      "title": "Migrate and clean data",
+      "text": "Normalize records, remove duplicates, confirm fields, and prepare imports before teams rely on reporting."
+    },
+    {
+      "title": "Train by role",
+      "text": "Give sales, service, leadership, and admin users clear examples for their actual daily workflows."
+    },
+    {
+      "title": "Review and optimize",
+      "text": "Use usage patterns, stuck records, missed follow-ups, and reporting gaps to refine the CRM over time."
+    }
+  ],
+  "proof": [
+    "360 degree customer records",
+    "Role-based dashboards",
+    "Export-ready form entries"
+  ],
+  "testimonial": "FlowLedger CRM made our customer follow-up visible, cleaned up the handoff between teams, and gave leadership numbers we could finally trust.",
+  "imageDirection": "local generated dashboard-style raster assets showing CRM pipeline boards, customer timelines, account health cards, form-entry tables, task queues, admin export screens, and reporting charts. Images should feel like product UI visuals, not generic office stock"
+}

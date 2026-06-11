@@ -1,6 +1,6 @@
 # Premium Output Standard
 
-Generated themes must feel like complete premium company websites, not structure-only demos.
+Generated themes must feel like complete premium business, product, or organization websites, not structure-only demos.
 
 ## Creative Direction
 
@@ -16,7 +16,7 @@ Generated themes must feel like complete premium company websites, not structure
 The homepage must include finished, visually staged sections:
 
 - strong hero with headline, support copy, CTA buttons, and local industry-appropriate imagery
-- hero composition that feels specifically designed for the generated company, with trust/proof cues, polished responsive framing, and a clear first-viewport visual signal
+- hero composition that feels specifically designed for the generated business, product, or organization, with trust/proof cues, polished responsive framing, and a clear first-viewport visual signal
 - services overview
 - featured work or portfolio preview
 - brand trust or proof section

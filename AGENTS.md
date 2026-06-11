@@ -250,20 +250,37 @@ Nolan-Young-Theme-Factory/
 │   └── runs/
 │
 ├── scripts/
-│   ├── run-hybrid-theme-workflow.sh
-│   ├── run-hybrid-theme-workflow.ps1
-│   ├── run-ollama-stage.sh
-│   ├── run-codex-final-pass.sh
-│   ├── get-next-theme-version.sh
-│   ├── validate-all.sh
-│   ├── validate-theme-structure.sh
-│   ├── validate-theme-quality.sh
-│   ├── validate-preview.sh
-│   ├── validate-nolan-menu.sh
-│   ├── validate-security.sh
-│   ├── validate-zip-freshness.sh
-│   ├── package-theme.sh
-│   └── package-theme.ps1
+│   ├── README.md
+│   ├── workflows/
+│   │   ├── run-hybrid-ollama-codex-theme-generation.sh
+│   │   ├── run-hybrid-ollama-codex-theme-generation.ps1
+│   │   └── run-theme-generation-workflow.sh
+│   ├── ollama/
+│   │   └── run-ollama-generation-stage.sh
+│   ├── codex/
+│   │   └── run-codex-automation-pass.sh
+│   ├── renderer/
+│   │   └── render-theme-and-preview-from-site-specification.js
+│   ├── validation/
+│   │   ├── validate-generated-theme-all.sh
+│   │   ├── validate-wordpress-theme-required-structure.sh
+│   │   ├── validate-wordpress-theme-quality-bar.sh
+│   │   ├── validate-static-preview-pages.sh
+│   │   ├── validate-nolan-menu-header-contract.sh
+│   │   ├── validate-generated-theme-security.sh
+│   │   ├── validate-theme-zip-is-fresh.sh
+│   │   ├── validate-pending-and-template-prompt-files.sh
+│   │   └── validate-prompt-lifecycle-archives.sh
+│   ├── packaging/
+│   │   ├── package-generated-wordpress-theme-zip.sh
+│   │   └── package-generated-wordpress-theme-zip.ps1
+│   ├── repo/
+│   │   ├── theme-factory-shared-functions.sh
+│   │   ├── print-next-generated-theme-slug.sh
+│   │   ├── remove-generated-theme-and-artifacts.sh
+│   │   └── remove-generated-theme-and-artifacts.ps1
+│   └── release/
+│       └── create-github-pr-for-generated-theme.sh
 │
 └── .github/
     └── workflows/
@@ -1155,18 +1172,18 @@ Validation scripts must be deterministic and must not use AI.
 Main validator:
 
 ```bash
-bash scripts/validate-all.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-generated-theme-all.sh NNN_nolan_young_theme_description
 ```
 
 This must run:
 
 ```bash
-bash scripts/validate-theme-structure.sh NNN_nolan_young_theme_description
-bash scripts/validate-theme-quality.sh NNN_nolan_young_theme_description
-bash scripts/validate-preview.sh NNN_nolan_young_theme_description
-bash scripts/validate-nolan-menu.sh NNN_nolan_young_theme_description
-bash scripts/validate-security.sh NNN_nolan_young_theme_description
-bash scripts/validate-zip-freshness.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-wordpress-theme-required-structure.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-wordpress-theme-quality-bar.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-static-preview-pages.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-nolan-menu-header-contract.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-generated-theme-security.sh NNN_nolan_young_theme_description
+bash scripts/validation/validate-theme-zip-is-fresh.sh NNN_nolan_young_theme_description
 ```
 
 If no generated themes exist yet, repo-level validation should not fail the repository. It should clearly explain that no generated themes are present.

@@ -1,1 +1,0 @@
-<section class="page-hero"><div class="container"><p class="eyebrow">Meridian Strategy Group</p><h1>Operating clarity for regulated growth</h1><p>Meridian Strategy Group designs the processes, compliance rhythms, client experience systems, and leadership dashboards that let founder-led healthcare, wellness, and professional-services teams scale with control.</p></div></section>

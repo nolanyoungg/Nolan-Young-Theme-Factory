@@ -16,6 +16,7 @@ Required files:
 - `assets/js/preview.js`
 - `assets/images/README.md`
 - local raster images in `assets/images/`
+- `README.md`
 
 `index.html` should link to `homepage_preview.html` and may act as the preview landing page. Each preview page must use the same header, footer, class names, section order, copy style, image assets, buttons, and cards as the matching WordPress template.
 

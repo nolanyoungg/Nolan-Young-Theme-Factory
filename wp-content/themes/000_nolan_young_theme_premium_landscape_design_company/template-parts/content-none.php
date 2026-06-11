@@ -1,0 +1,1 @@
+<article class="proof-card"><h2><?php esc_html_e( 'No matching garden notes were found.', '000_nolan_young_theme_premium_landscape_design_company' ); ?></h2><p><?php esc_html_e( 'Try another search or visit the services overview.', '000_nolan_young_theme_premium_landscape_design_company' ); ?></p></article>

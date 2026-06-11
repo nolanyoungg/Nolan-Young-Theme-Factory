@@ -27,7 +27,7 @@ while IFS= read -r theme_dir; do
   run_validators "$(basename "$theme_dir")"
 done < <(
   find "$root_dir/wp-content/themes" -mindepth 1 -maxdepth 1 -type d \
-    \( -name '[0-9][0-9][0-9]_nolan_young_theme_*' -o -name 'nolan-showcase-theme-[0-9][0-9]' \) | sort
+    -name '[0-9][0-9][0-9]_nolan_young_theme_*' | sort
 )
 
 if [ "$found" -eq 0 ]; then

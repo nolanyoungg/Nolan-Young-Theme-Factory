@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           if [ -d wp-content/themes ]; then
-            for theme_dir in wp-content/themes/nolan-showcase-theme-[0-9][0-9] wp-content/themes/[0-9][0-9][0-9]_nolan_young_theme_*; do
+            for theme_dir in wp-content/themes/[0-9][0-9][0-9]_nolan_young_theme_*; do
               [ -d "$theme_dir" ] || continue
               bash scripts/validate-zip-freshness.sh "$(basename "$theme_dir")"
             done

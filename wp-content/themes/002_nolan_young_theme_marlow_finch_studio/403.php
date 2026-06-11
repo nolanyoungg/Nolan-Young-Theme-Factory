@@ -1,1 +1,0 @@
-<?php get_header(); ?><section class="page-hero"><div class="container"><p class="eyebrow">Marlow & Finch Studio</p><h1>Access restricted</h1><p>This resource is not available for public viewing.</p></div></section><?php get_footer(); ?>

@@ -1,1 +1,0 @@
-<section class="page-hero"><div class="container"><p class="eyebrow">Meridian Strategy Group</p><h1>Operating Model Design</h1><p>We map the work, remove ambiguous ownership, and install practical rhythms for intake, delivery, escalation, quality review, and leadership reporting.</p></div></section>

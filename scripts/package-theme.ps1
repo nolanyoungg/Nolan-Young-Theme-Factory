@@ -15,7 +15,7 @@ if (-not $ThemeSlug) {
   Fail "Usage: .\scripts\package-theme.ps1 <theme-slug>"
 }
 
-if ($ThemeSlug -notmatch '^(\d{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]|nolan-showcase-theme-\d{2})$') {
+if ($ThemeSlug -notmatch '^\d{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$') {
   Fail "Invalid theme slug: $ThemeSlug"
 }
 

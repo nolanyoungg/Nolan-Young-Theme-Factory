@@ -1,1 +1,0 @@
-<?php if ( post_password_required() ) { return; } ?><section class="comments-area"><h2><?php esc_html_e( 'Discussion', '001_nolan_young_theme_meridian_strategy_group' ); ?></h2><?php comment_form(); ?></section>

@@ -1,1 +1,0 @@
-<?php if ( post_password_required() ) { return; } ?><section class="comments-area"><h2><?php esc_html_e( 'Discussion', '002_nolan_young_theme_marlow_finch_studio' ); ?></h2><?php comment_form(); ?></section>

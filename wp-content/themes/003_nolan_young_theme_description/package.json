@@ -1,9 +1,0 @@
-{
-  "name": "003_nolan_young_theme_description",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "node build/webpack.config.js"
-  },
-  "dependencies": {},
-  "devDependencies": {}
-}

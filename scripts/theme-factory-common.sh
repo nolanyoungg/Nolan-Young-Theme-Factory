@@ -142,6 +142,10 @@ theme_factory_check_prompt_file() {
   if grep -I -n -E 'OPENAI_API_KEY|sk-[A-Za-z0-9_-]{20,}|BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|password[[:space:]]*[:=][[:space:]]*|token[[:space:]]*[:=][[:space:]]*|AWS_SECRET_ACCESS_KEY' "$prompt_file" >/dev/null 2>&1; then
     theme_factory_fail "Prompt file appears to contain secrets or credentials: $prompt_file"
   fi
+
+  if grep -I -n -E 'wp-content/|docs/themes|docs/index\.html|dist/zipped-themes|reports/runs|prompts/(pending|completed)|contracts/|scripts/|\.github|nolan_young_theme|NNN_nolan_young_theme|THEME_SLUG|THEME_FACTORY_MODE|OLLAMA_MODEL|CODEX_COMMAND|Codex-only|Ollama-only|Hybrid mode|Nolan-menu|Nolan menu|WordPress theme|classic WordPress theme|PHP lint|PHP syntax|JavaScript requirements|No jQuery|jQuery dependency|validation scripts?|validate-all|package the ZIP|ZIP artifact|GitHub Pages|repo validation|repository validation|this repo|the repo|CI checks?|GitHub Actions|static preview|npm install|npm run|package\.json|package-lock\.json|theme\.json|style\.css|functions\.php' "$prompt_file" >/dev/null 2>&1; then
+    theme_factory_fail "Prompt files must be repo-agnostic creative briefs only. Remove repository paths, slugs, validation, packaging, CI, and factory-internal instructions from: $prompt_file"
+  fi
 }
 
 theme_factory_slug_pattern() {
@@ -443,8 +447,10 @@ theme_factory_write_run_metadata() {
   } > "$run_dir/run-metadata.md"
 }
 
-theme_factory_offer_complete_prompt() {
+theme_factory_complete_prompt_after_success() {
   local prompt_file="$1"
+  local slug="$2"
+  local run_dir="${3:-}"
   local root_dir
   root_dir="$(theme_factory_repo_root)"
 
@@ -453,10 +459,7 @@ theme_factory_offer_complete_prompt() {
     *) return 0 ;;
   esac
 
-  theme_factory_is_interactive || return 0
-  theme_factory_prompt_yes_no "Move the selected prompt to prompts/completed/?" "n" || return 0
-
-  local completed_dir base name ext candidate counter
+  local completed_dir base name ext candidate counter source action
   completed_dir="$root_dir/prompts/completed"
   mkdir -p "$completed_dir"
   base="$(basename "$prompt_file")"
@@ -466,13 +469,39 @@ theme_factory_offer_complete_prompt() {
     ext=".${base##*.}"
   fi
 
-  candidate="$completed_dir/$base"
+  candidate="$completed_dir/${slug}__${base}"
   counter=1
   while [ -e "$candidate" ]; do
-    candidate="$completed_dir/$name-$counter$ext"
+    candidate="$completed_dir/${slug}__${name}-$counter$ext"
     counter="$((counter + 1))"
   done
 
-  mv "$prompt_file" "$candidate"
-  printf 'Moved prompt to %s\n' "${candidate#$root_dir/}"
+  source="$prompt_file"
+  action="moved"
+  if [ -f "$source" ]; then
+    mv "$source" "$candidate"
+  else
+    source=""
+    if [ -n "$run_dir" ] && [ -f "$run_dir/selected-prompt.md" ]; then
+      source="$run_dir/selected-prompt.md"
+    elif [ -n "$run_dir" ] && [ -f "$run_dir/selected-prompt.txt" ]; then
+      source="$run_dir/selected-prompt.txt"
+    fi
+    [ -n "$source" ] || theme_factory_fail "Prompt file disappeared before completion archive could be created: $prompt_file"
+    cp "$source" "$candidate"
+    action="copied from run report"
+  fi
+
+  if [ -n "$run_dir" ]; then
+    {
+      printf '# Prompt Lifecycle\n\n'
+      printf '%s\n' "- Theme slug: $slug"
+      printf '%s\n' "- Original prompt file: $prompt_file"
+      printf '%s\n' "- Completed prompt file: ${candidate#$root_dir/}"
+      printf '%s\n' "- Completion action: $action"
+      printf '%s\n' "- Completed: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+    } > "$run_dir/prompt-lifecycle.md"
+  fi
+
+  printf 'Archived completed prompt to %s\n' "${candidate#$root_dir/}"
 }

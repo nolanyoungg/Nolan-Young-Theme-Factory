@@ -1,0 +1,68 @@
+Create a premium website for a local service business.
+
+Business:
+- Business name:
+- Service category:
+- Service area:
+- Ideal customer:
+- Main services:
+- Brand promise:
+
+Website goals:
+- Make the business feel reputable, local, and easy to trust.
+- Explain services clearly.
+- Show workmanship, process, guarantees, or customer proof.
+- Make it easy to request an estimate or consultation.
+
+Core pages:
+- Homepage
+- Services
+- Single service
+- About
+- Work, projects, or results
+- Blog or helpful guides
+- Contact
+
+Homepage direction:
+- Strong local hero
+- Customer problem section
+- Services overview
+- Featured work or results
+- Process
+- Service area proof
+- Reviews or testimonials
+- Helpful guide preview
+- FAQ
+- Final call to action
+
+Visual direction:
+- Mood:
+- Color palette:
+- Typography feel:
+- Image direction:
+- Local details:
+- Trust-building details:
+
+Header and navigation:
+- Clear brand area
+- Services, About, Work, Blog, and Contact paths
+- Prominent estimate or consultation call to action
+- Mobile-friendly navigation
+
+Footer:
+- Large call-to-action band
+- Contact details
+- Service area
+- Services links
+- Company links
+- Resource links
+- Small inquiry area
+- Legal row
+
+Accessibility and interaction expectations:
+- Keyboard-friendly navigation
+- Visible focus states
+- High contrast
+- Labeled forms
+- Reduced-motion-friendly effects
+- No placeholder copy

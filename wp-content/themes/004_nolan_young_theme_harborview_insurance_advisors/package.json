@@ -1,0 +1,9 @@
+{
+  "name": "004_nolan_young_theme_harborview_insurance_advisors",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

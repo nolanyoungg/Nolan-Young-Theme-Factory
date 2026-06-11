@@ -1,0 +1,132 @@
+{
+  "brandName": "Astragrid Systems",
+  "industry": "AI automation, analytics, dashboards, and internal software systems",
+  "region": "by appointment",
+  "tone": "dark-mode-first, technical, sharp, and approachable",
+  "heroTitle": "Automation systems for the work your team should not be doing by hand.",
+  "heroText": "AstraGrid Systems maps messy workflows into custom dashboards, internal tools, AI-assisted processes, and cleaner reporting infrastructure for small teams that need operational clarity.",
+  "eyebrow": "Astragrid Systems",
+  "services": [
+    {
+      "title": "AI Workflow Automation",
+      "text": "Replace recurring manual steps with reviewed automation systems, routing logic, alerts, and AI-assisted handoffs."
+    },
+    {
+      "title": "Custom Dashboards",
+      "text": "Build decision-ready dashboards that combine metrics, exceptions, pipeline health, and team visibility."
+    },
+    {
+      "title": "Internal Tools",
+      "text": "Create lightweight portals, request systems, admin interfaces, and team software around the way work actually moves."
+    },
+    {
+      "title": "CRM & Data Cleanup",
+      "text": "Normalize records, fields, tags, imports, and reporting inputs before leadership relies on the numbers."
+    },
+    {
+      "title": "WordPress Integrations",
+      "text": "Connect marketing sites, forms, lead routing, content operations, and reporting flows without fragile plugin sprawl."
+    },
+    {
+      "title": "Reporting Systems",
+      "text": "Turn scattered spreadsheets and exports into repeatable reporting cadences with trustworthy definitions."
+    }
+  ],
+  "projects": [
+    {
+      "title": "Field Service Command Center",
+      "text": "Dispatch, job status, invoicing exceptions, and daily capacity signals unified in one operations board."
+    },
+    {
+      "title": "Ecommerce Margin Console",
+      "text": "Product, order, return, and ad-spend data shaped into daily margin visibility for a lean team."
+    },
+    {
+      "title": "CRM Cleanup Pipeline",
+      "text": "Duplicate records, stale stages, source fields, and follow-up gaps cleaned before executive reporting."
+    },
+    {
+      "title": "AI Intake Assistant",
+      "text": "Inbound requests triaged into service type, urgency, missing fields, and next-step recommendations."
+    },
+    {
+      "title": "Inventory Alert Grid",
+      "text": "Supplier delays, reorder thresholds, and stockout risk routed into a practical exception queue."
+    },
+    {
+      "title": "Reporting Rhythm System",
+      "text": "Weekly leadership metrics moved out of manual spreadsheets into repeatable dashboard snapshots."
+    },
+    {
+      "title": "Client Portal Prototype",
+      "text": "A private project hub organized approvals, requests, assets, and status notes for a service company."
+    },
+    {
+      "title": "Lead Routing Workflow",
+      "text": "Forms, qualification signals, territories, and assignment rules connected into a cleaner sales handoff."
+    },
+    {
+      "title": "Operations Health Monitor",
+      "text": "SLA misses, blocked tickets, overdue tasks, and high-risk accounts surfaced before review meetings."
+    },
+    {
+      "title": "Analytics Definition Map",
+      "text": "Conflicting metric names and source fields became a shared glossary for reporting decisions."
+    },
+    {
+      "title": "WordPress Form Integration",
+      "text": "Website inquiries moved through validation, CRM creation, internal notifications, and audit logging."
+    },
+    {
+      "title": "Founder Visibility Dashboard",
+      "text": "A practical overview gave a founder clear signals without waiting for end-of-month reporting."
+    }
+  ],
+  "resources": [
+    {
+      "title": "Automation Readiness Checklist",
+      "text": "How to decide which manual workflow should be automated first without creating brittle systems."
+    },
+    {
+      "title": "Dashboard Planning Guide",
+      "text": "The questions that define useful dashboards before charts and metrics multiply."
+    },
+    {
+      "title": "AI Chatbot Use Cases",
+      "text": "Where small businesses can use assistants safely for intake, triage, drafting, and internal support."
+    },
+    {
+      "title": "Data Cleanup Before Reporting",
+      "text": "Why duplicate records, unclear fields, and stale stages make dashboards look better than they are."
+    },
+    {
+      "title": "Internal Tools vs. Spreadsheets",
+      "text": "How to know when a spreadsheet has become an operational dependency that needs a system."
+    },
+    {
+      "title": "Workflow Routing Patterns",
+      "text": "Common ways to move requests, approvals, alerts, and exceptions through a small team."
+    }
+  ],
+  "process": [
+    {
+      "title": "Listen and map",
+      "text": "Document priorities, constraints, audience needs, and what success must feel like."
+    },
+    {
+      "title": "Design and specify",
+      "text": "Turn the strategy into layouts, content structure, materials, and build-ready decisions."
+    },
+    {
+      "title": "Build and refine",
+      "text": "Coordinate implementation, test the experience, and prepare long-term care notes."
+    }
+  ],
+  "proof": [
+    "42 workflows mapped",
+    "18 dashboards shipped",
+    "0 external runtime APIs"
+  ],
+  "testimonial": "AstraGrid helped us see where work was getting stuck, then turned the messy parts into a system our team could actually use.",
+  "imageDirection": "local abstract AI operations dashboards, automation node maps, analytics consoles, workflow routing diagrams, and system health monitors"
+}

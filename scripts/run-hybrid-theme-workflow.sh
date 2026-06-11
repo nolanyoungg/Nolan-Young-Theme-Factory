@@ -127,34 +127,26 @@ append_repo_context() {
 
 write_planner_prompt() {
   local output="$1"
-  write_prompt_header "$output" "Ollama Planner Stage"
+  {
+    printf '# Ollama Planner Stage\n\n'
+    printf 'You are planning a premium website from the selected creative brief.\n\n'
+  } > "$output"
   cat >> "$output" <<EOF
-Read these files before planning:
-- AGENTS.md
-- agents/00-orchestrator.md
-- agents/01-planner.md
-- instructions/00-global-instructions.md
-- instructions/01-planning-instructions.md
-- contracts/theme-versioning.md
-- contracts/required-theme-structure.md
-- contracts/premium-output-standard.md
-- contracts/nolan-menu-header.md
-- contracts/local-image-rules.md
 
 Task:
-- create a concise implementation plan for the next generated theme
-- preserve the prompt intent exactly
-- identify the page map, content direction, design direction, risks, and execution priorities
-- plan the seven required static preview pages and how they mirror WordPress templates
-- plan the Nolan-menu header and local image asset set
+- create a concise creative execution brief for the generated website
+- preserve the selected prompt intent exactly
+- identify the page map, content direction, design direction, interaction direction, image/art direction, risks, and execution priorities
+- keep the plan business-facing and website-facing
+- do not mention repository paths, generated slugs, validation, ZIP files, CI, contracts, script names, implementation filenames, or code
+- do not mention WordPress, PHP, HTML, CSS, JavaScript, static preview filenames, internal factory names, or workflow modes
 - do not write theme files
 - do not output file blocks
+- keep the response under 90 concise lines
 
-Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
 
 EOF
-  append_premium_output_standard "$output"
   cat >> "$output" <<EOF
 
 ## User Prompt
@@ -453,7 +445,7 @@ package_theme() {
 }
 
 validate_theme() {
-  bash "$script_dir/validate-all.sh" "$slug" 2>&1 | tee "$run_dir/validation-output.txt"
+  THEME_FACTORY_SKIP_PROMPT_LIFECYCLE=1 bash "$script_dir/validate-all.sh" "$slug" 2>&1 | tee "$run_dir/validation-output.txt"
 }
 
 run_ollama_stage() {
@@ -577,7 +569,8 @@ if [ "$mode" != "ollama-only" ]; then
 fi
 
 theme_factory_update_gallery_index "$slug" "$(theme_factory_theme_name_from_style "$theme_dir/style.css")"
-theme_factory_offer_complete_prompt "$prompt_file"
+theme_factory_complete_prompt_after_success "$prompt_file" "$slug" "$run_dir"
+bash "$script_dir/validate-prompt-lifecycle.sh" "$slug" 2>&1 | tee -a "$run_dir/validation-output.txt"
 
 printf '\nComplete:\n'
 printf 'Theme: %s\n' "$theme_dir/"

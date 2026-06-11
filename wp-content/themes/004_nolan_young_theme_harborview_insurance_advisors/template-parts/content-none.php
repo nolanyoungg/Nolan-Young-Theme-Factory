@@ -1,0 +1,1 @@
+<article class="proof-card"><h2><?php esc_html_e( 'No matching resources were found.', '004_nolan_young_theme_harborview_insurance_advisors' ); ?></h2><p><?php esc_html_e( 'Try another search or visit the services overview.', '004_nolan_young_theme_harborview_insurance_advisors' ); ?></p></article>

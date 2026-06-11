@@ -1,0 +1,68 @@
+Create a premium website for a software, automation, analytics, or AI studio.
+
+Business:
+- Business name:
+- Studio focus:
+- Primary audience:
+- Typical client problems:
+- Core services:
+- Brand promise:
+
+Website goals:
+- Make complex technical work feel clear and approachable.
+- Show that the studio can understand messy operations and turn them into reliable systems.
+- Communicate trust, precision, and practical execution.
+- Encourage qualified prospects to request a consultation.
+
+Core pages:
+- Homepage
+- Services
+- Single featured service
+- About
+- Work or case studies
+- Blog or resources
+- Contact
+
+Homepage direction:
+- Command-center style hero
+- Clear problem statement
+- Services grid
+- Workflow or system map section
+- Dashboard or reporting showcase
+- Featured project preview
+- Process
+- Technical principles
+- Proof or testimonials
+- Resource preview
+- FAQ
+- Final call to action
+
+Visual direction:
+- Dark, premium, technical, and polished
+- Interface panels, gridlines, node maps, dashboards, command cards, metric tiles, and workflow diagrams
+- Deep navy, near-black blue, graphite, electric blue, cyan, white text, muted steel, and small lime-green accents
+- Crisp motion that feels fast but not distracting
+
+Header and navigation:
+- Brand-first navigation
+- Services, About, Work, Blog, and Contact paths
+- Rich dropdown or panel behavior where useful
+- Mobile drawer navigation
+
+Footer:
+- Large consultation call-to-action
+- Brand statement
+- Services column
+- Company column
+- Resources column
+- Contact block
+- Small inquiry or newsletter area
+- Bottom legal row
+
+Accessibility and interaction expectations:
+- Keyboard-friendly menus
+- Visible focus states
+- Reduced-motion-friendly effects
+- Labeled forms
+- Filtering or carousel behavior where it improves the work page
+- No placeholder copy

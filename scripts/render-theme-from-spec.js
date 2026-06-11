@@ -18,6 +18,15 @@ const rawSpec = readIfExists(specFile);
 const spec = normalizeSpec(parseSpec(rawSpec), prompt, plan, slug);
 const td = slug;
 const prefix = `nytf_${slug.slice(0, 3)}`;
+const categoryText = `${slug}\n${prompt}\n${plan}\n${rawSpec}\n${spec.industry}`;
+const hasLogisticsTheme = /\b(logistics|trucking|freight|fleet|dispatch|warehouse|transport|transportation|delivery|shipment|shipments|route|routes|carrier|shipper|shippers|ironline)\b/i.test(categoryText);
+const hasFinanceTheme = /\b(insurance|financial|finance|advisor|advisory|benefits|coverage|policy|policies|accounting|lending|wealth|risk|risks|claims|renewal|renewals)\b/i.test(categoryText);
+const hasFoodTheme = /\b(restaurant|cafe|bakery|market|food|hospitality|menu|dining|catering|chef|kitchen|culinary|seasonal menu)\b/i.test(categoryText);
+const hasTechTheme = /\b(ai automation|artificial intelligence|automation studio|custom software|software studio|software platform|dashboard|dashboards|analytics|internal tools|astragrid)\b/i.test(categoryText);
+const isLogisticsTheme = hasLogisticsTheme;
+const isFinanceTheme = !isLogisticsTheme && hasFinanceTheme;
+const isFoodTheme = !isLogisticsTheme && !isFinanceTheme && hasFoodTheme;
+const isTechTheme = !isLogisticsTheme && !isFinanceTheme && !isFoodTheme && hasTechTheme;
 
 function readIfExists(file) {
   return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
@@ -108,26 +117,103 @@ function safeArrayObjects(value, fallback) {
     }));
 }
 
+function completeArrayObjects(value, fallback, targetCount) {
+  const items = safeArrayObjects(value, fallback).slice(0, targetCount);
+  const seen = new Set(items.map((item) => item.title.toLowerCase()));
+  for (const item of fallback) {
+    if (items.length >= targetCount) break;
+    if (seen.has(item.title.toLowerCase())) continue;
+    items.push(item);
+    seen.add(item.title.toLowerCase());
+  }
+  return items;
+}
+
 function inferBrand(promptText, fallbackSlug) {
   const quoted = promptText.match(/(?:named|called|brand(?:ed)? as)\s+["“]([^"”]+)["”]/i);
   if (quoted) return quoted[1].trim();
+  const called = promptText.match(/\bcalled\s+([A-Z][A-Za-z0-9]*(?:\s+[A-Z][A-Za-z0-9]*){0,4})/);
+  if (called) return called[1].replace(/[.:,;]+$/, '').trim();
   const concept = promptText.match(/Business concept:\s*([^\n.]+)/i);
   if (concept) return concept[1].replace(/^A\s+/i, '').trim();
   return titleCase(fallbackSlug.replace(/^\d{3}_nolan_young_theme_/, ''));
 }
 
 function normalizeSpec(input, promptText, planText, fallbackSlug) {
-  const isLandscape = /landscape|garden|outdoor|planting|stone|terrace/i.test(`${promptText}\n${planText}`);
+  const categoryInput = `${promptText}\n${planText}\n${fallbackSlug}`;
+  const isLandscape = /landscape|garden|outdoor|planting|stone|terrace/i.test(categoryInput);
+  const hasLogistics = /\b(logistics|trucking|freight|fleet|dispatch|warehouse|transport|transportation|delivery|shipment|shipments|route|routes|carrier|shipper|shippers|ironline)\b/i.test(categoryInput);
+  const hasFinance = /\b(insurance|financial|finance|advisor|advisory|benefits|coverage|policy|policies|accounting|lending|wealth|risk|risks|claims|renewal|renewals)\b/i.test(categoryInput);
+  const hasFood = /\b(restaurant|cafe|bakery|market|food|hospitality|menu|dining|catering|chef|kitchen|culinary|seasonal menu)\b/i.test(categoryInput);
+  const hasTech = /\b(ai automation|artificial intelligence|automation studio|custom software|software studio|software platform|dashboard|dashboards|analytics|internal tools|astragrid)\b/i.test(categoryInput);
+  const isLogistics = hasLogistics;
+  const isFinance = !isLogistics && hasFinance;
+  const isFood = !isLogistics && !isFinance && hasFood;
+  const isTech = !isLogistics && !isFinance && !isFood && hasTech;
   const brandName = text(input.brandName || input.businessName || input.name, inferBrand(promptText, fallbackSlug));
-  const industry = text(input.industry, isLandscape ? 'landscape design and outdoor living' : 'premium professional services');
+  const industry = text(input.industry,
+    isTech ? 'AI automation, analytics, dashboards, and internal software systems' :
+    isLogistics ? 'freight operations, dispatch coordination, fleet visibility, and logistics service support' :
+    isFinance ? 'insurance guidance, financial planning, client risk reviews, and advisory service support' :
+    isFood ? 'restaurant hospitality, seasonal menus, guest experience, and local food service' :
+    isLandscape ? 'landscape design and outdoor living' :
+    'premium professional services');
   const region = text(input.region, 'by appointment');
-  const tone = text(input.tone, isLandscape ? 'refined, grounded, editorial, and warm' : 'clear, premium, and practical');
-  const heroTitle = text(input.heroTitle, isLandscape ? 'Outdoor rooms with the calm precision of architecture.' : `${brandName} builds complete client experiences with quiet confidence.`);
-  const heroText = text(input.heroText, isLandscape
+  const tone = text(input.tone,
+    isTech ? 'dark-mode-first, technical, sharp, and approachable' :
+    isLogistics ? 'command-center clear, industrial, dependable, and fast-moving' :
+    isFinance ? 'calm, trustworthy, editorial, precise, and advisory' :
+    isFood ? 'warm, sensory, crafted, local, and hospitality-focused' :
+    isLandscape ? 'refined, grounded, editorial, and warm' :
+    'clear, premium, and practical');
+  const heroTitle = text(input.heroTitle,
+    isTech ? 'Automation systems for the work your team should not be doing by hand.' :
+    isLogistics ? 'Freight coordination built for clearer routes, faster answers, and steadier operations.' :
+    isFinance ? 'Insurance and advisory guidance that turns complicated decisions into clear next steps.' :
+    isFood ? 'Seasonal food, warm service, and a guest experience designed around every detail.' :
+    isLandscape ? 'Outdoor rooms with the calm precision of architecture.' :
+    `${brandName} builds complete client experiences with quiet confidence.`);
+  const heroText = text(input.heroText, isTech
+    ? 'AstraGrid Systems maps messy workflows into custom dashboards, internal tools, AI-assisted processes, and cleaner reporting infrastructure for small teams that need operational clarity.'
+    : isLogistics
+    ? `${brandName} helps shippers, operators, and field teams move from reactive updates to a clearer freight experience with stronger dispatch visibility, service communication, and route confidence.`
+    : isFinance
+    ? `${brandName} gives households and business owners a calmer way to compare coverage, understand risk, prepare decisions, and move forward with practical advisory support.`
+    : isFood
+    ? `${brandName} brings a complete hospitality story to the page with seasonal offerings, thoughtful service details, local flavor, and clear reservation or inquiry paths.`
+    : isLandscape
     ? 'Design, construction coordination, planting, lighting, and stewardship are shaped into one clear path for homeowners who want the outdoors to feel resolved.'
     : 'A complete website system with services, proof, process, resources, and contact paths that feel finished from the first visit.');
 
-  const defaultServices = isLandscape ? [
+  const defaultServices = isTech ? [
+    { title: 'AI Workflow Automation', text: 'Replace recurring manual steps with reviewed automation systems, routing logic, alerts, and AI-assisted handoffs.' },
+    { title: 'Custom Dashboards', text: 'Build decision-ready dashboards that combine metrics, exceptions, pipeline health, and team visibility.' },
+    { title: 'Internal Tools', text: 'Create lightweight portals, request systems, admin interfaces, and team software around the way work actually moves.' },
+    { title: 'CRM & Data Cleanup', text: 'Normalize records, fields, tags, imports, and reporting inputs before leadership relies on the numbers.' },
+    { title: 'WordPress Integrations', text: 'Connect marketing sites, forms, lead routing, content operations, and reporting flows without fragile plugin sprawl.' },
+    { title: 'Reporting Systems', text: 'Turn scattered spreadsheets and exports into repeatable reporting cadences with trustworthy definitions.' },
+  ] : isLogistics ? [
+    { title: 'Regional freight coordination', text: 'Plan pickup windows, route expectations, carrier handoffs, and delivery communication around real operating constraints.' },
+    { title: 'Fleet and dispatch visibility', text: 'Give operations teams clearer daily views of driver status, route exceptions, yard timing, and service priorities.' },
+    { title: 'Dedicated shipper support', text: 'Create a steady contact path for quotes, freight questions, account expectations, and proactive service updates.' },
+    { title: 'Last-mile delivery programs', text: 'Coordinate local delivery schedules, proof points, service notes, and customer communication without scattered follow-up.' },
+    { title: 'Warehouse transfer support', text: 'Support recurring transfer lanes, staging windows, dock timing, and handoff documentation for busy teams.' },
+    { title: 'Logistics reporting rhythm', text: 'Turn route activity, exceptions, and on-time patterns into useful reviews for better planning.' },
+  ] : isFinance ? [
+    { title: 'Coverage review sessions', text: 'Compare current policies, gaps, deductibles, exposures, and renewal questions in plain language.' },
+    { title: 'Business risk planning', text: 'Help owners understand liability, property, key person, cyber, and continuity considerations before a claim.' },
+    { title: 'Family protection planning', text: 'Map life, home, auto, disability, and umbrella coverage into one easier decision path.' },
+    { title: 'Benefits guidance', text: 'Organize health, retirement, and workplace benefits education for teams that need clear enrollment support.' },
+    { title: 'Annual advisory check-ins', text: 'Review life changes, policy updates, budget shifts, and new risk factors before renewals become rushed.' },
+    { title: 'Claims preparation support', text: 'Give clients a calm process for documentation, next steps, and communication when something goes wrong.' },
+  ] : isFood ? [
+    { title: 'Seasonal dining', text: 'Menus, specials, and service rhythms shaped around fresh ingredients, local sourcing, and a memorable guest experience.' },
+    { title: 'Private events', text: 'Plan gatherings with menus, timing, room details, and hospitality touches that feel personal without being fragile.' },
+    { title: 'Catering and pickup', text: 'Offer polished off-site food programs, online inquiry paths, and clear service expectations for hosts.' },
+    { title: 'Chef-led tasting menus', text: 'Create a focused, story-driven dining experience with thoughtful pacing and seasonal pairings.' },
+    { title: 'Market goods', text: 'Feature pantry items, prepared foods, coffee, pastries, or packaged goods with clear pickup details.' },
+    { title: 'Hospitality partnerships', text: 'Support local producers, event venues, and community programs with a consistent food point of view.' },
+  ] : isLandscape ? [
     { title: 'Garden design and build', text: 'Site planning, planting structure, stonework coordination, and final installation leadership in one accountable studio path.' },
     { title: 'Outdoor living rooms', text: 'Terraces, courtyards, poolside planting, dining areas, and kitchens planned around real daily use.' },
     { title: 'Lighting and materials', text: 'Warm lighting plans, limestone, bronze, clay, gravel, and wood specified for durability and restraint.' },
@@ -139,7 +225,47 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     { title: 'Ongoing refinement', text: 'Review performance signals and keep the experience aligned with client needs.' },
   ];
 
-  const defaultProjects = isLandscape ? [
+  const defaultProjects = isTech ? [
+    { title: 'Field Service Command Center', text: 'Dispatch, job status, invoicing exceptions, and daily capacity signals unified in one operations board.' },
+    { title: 'Ecommerce Margin Console', text: 'Product, order, return, and ad-spend data shaped into daily margin visibility for a lean team.' },
+    { title: 'CRM Cleanup Pipeline', text: 'Duplicate records, stale stages, source fields, and follow-up gaps cleaned before executive reporting.' },
+    { title: 'AI Intake Assistant', text: 'Inbound requests triaged into service type, urgency, missing fields, and next-step recommendations.' },
+    { title: 'Inventory Alert Grid', text: 'Supplier delays, reorder thresholds, and stockout risk routed into a practical exception queue.' },
+    { title: 'Reporting Rhythm System', text: 'Weekly leadership metrics moved out of manual spreadsheets into repeatable dashboard snapshots.' },
+    { title: 'Client Portal Prototype', text: 'A private project hub organized approvals, requests, assets, and status notes for a service company.' },
+    { title: 'Lead Routing Workflow', text: 'Forms, qualification signals, territories, and assignment rules connected into a cleaner sales handoff.' },
+    { title: 'Operations Health Monitor', text: 'SLA misses, blocked tickets, overdue tasks, and high-risk accounts surfaced before review meetings.' },
+    { title: 'Analytics Definition Map', text: 'Conflicting metric names and source fields became a shared glossary for reporting decisions.' },
+    { title: 'WordPress Form Integration', text: 'Website inquiries moved through validation, CRM creation, internal notifications, and audit logging.' },
+    { title: 'Founder Visibility Dashboard', text: 'A practical overview gave a founder clear signals without waiting for end-of-month reporting.' },
+  ] : isLogistics ? [
+    { title: 'Regional route visibility board', text: 'Dispatch, customer service, and yard teams aligned around lane updates, route status, and exception notes.' },
+    { title: 'Dedicated shipper onboarding', text: 'A recurring shipper received clearer contact paths, quote expectations, lane details, and service standards.' },
+    { title: 'Last-mile delivery refresh', text: 'Delivery windows, proof-of-delivery expectations, and driver communication were staged into a cleaner customer journey.' },
+    { title: 'Cold-chain transfer program', text: 'Temperature-sensitive transfer notes, timing expectations, and dock coordination were clarified for operators.' },
+    { title: 'Fleet maintenance communication', text: 'Service windows, driver notes, and availability status were organized for better daily planning.' },
+    { title: 'Warehouse shuttle lane', text: 'Recurring warehouse transfers were mapped with handoff points, staging details, and service recovery paths.' },
+    { title: 'Emergency load response', text: 'A time-sensitive freight request moved through qualification, route planning, and customer updates without delay.' },
+    { title: 'Retail replenishment loop', text: 'Multi-stop replenishment work gained clearer schedule communication and exception reporting.' },
+    { title: 'Construction supply run', text: 'Jobsite material deliveries were planned around staging limits, crew timing, and safer unload communication.' },
+    { title: 'LTL coordination desk', text: 'Partial loads, carrier notes, and delivery updates were organized into a clearer service rhythm.' },
+    { title: 'Expedited freight recovery', text: 'A delayed shipment received a practical recovery plan with customer updates and revised timing.' },
+    { title: 'Manufacturing parts lane', text: 'Recurring parts movement gained predictable pickup notes, route expectations, and exception escalation.' },
+  ] : isFinance ? [
+    { title: 'Family coverage reset', text: 'A household compared auto, home, umbrella, and life coverage in one organized advisory session.' },
+    { title: 'Small business risk review', text: 'A growing service company clarified liability, property, cyber, and employment risk priorities.' },
+    { title: 'Benefits education hub', text: 'Employees received clearer plan explanations, enrollment reminders, and decision support resources.' },
+    { title: 'Renewal planning system', text: 'Policy renewal questions, rate changes, and coverage recommendations were staged before deadline pressure.' },
+    { title: 'Claims readiness guide', text: 'A client-facing guide clarified documentation, contact paths, and first steps for stressful moments.' },
+    { title: 'Founder protection map', text: 'A business owner reviewed disability, key person, continuity, and personal planning considerations together.' },
+  ] : isFood ? [
+    { title: 'Seasonal supper series', text: 'A monthly dining event gained a clearer menu story, reservation path, and editorial photo direction.' },
+    { title: 'Market counter launch', text: 'Prepared goods, pantry staples, pastries, and pickup details were organized into a polished retail experience.' },
+    { title: 'Private event tasting', text: 'Hosts reviewed menu options, timing, service flow, and room styling through one guided inquiry path.' },
+    { title: 'Chef collaboration night', text: 'A special event highlighted producers, courses, pairings, and guest expectations without clutter.' },
+    { title: 'Neighborhood catering program', text: 'Office lunches and home gatherings received clear package options, minimums, and ordering guidance.' },
+    { title: 'Local producer feature', text: 'A sourcing story connected farmers, seasonal ingredients, and menu decisions in a credible way.' },
+  ] : isLandscape ? [
     { title: 'Courtyard retreat', text: 'A narrow rear garden became a calm sequence of limestone, evergreen structure, and evening seating.' },
     { title: 'Stone garden room', text: 'Hand-selected paving, low walls, shade planting, and soft lighting created a durable outdoor room.' },
     { title: 'Dining terrace', text: 'A terrace plan balanced cooking, dining, drainage, and planted enclosure without visual clutter.' },
@@ -149,7 +275,35 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     { title: 'Operations-ready website', text: 'Page templates, forms, and documentation were prepared for launch and future updates.' },
   ];
 
-  const defaultResources = isLandscape ? [
+  const defaultResources = isTech ? [
+    { title: 'Automation Readiness Checklist', text: 'How to decide which manual workflow should be automated first without creating brittle systems.' },
+    { title: 'Dashboard Planning Guide', text: 'The questions that define useful dashboards before charts and metrics multiply.' },
+    { title: 'AI Chatbot Use Cases', text: 'Where small businesses can use assistants safely for intake, triage, drafting, and internal support.' },
+    { title: 'Data Cleanup Before Reporting', text: 'Why duplicate records, unclear fields, and stale stages make dashboards look better than they are.' },
+    { title: 'Internal Tools vs. Spreadsheets', text: 'How to know when a spreadsheet has become an operational dependency that needs a system.' },
+    { title: 'Workflow Routing Patterns', text: 'Common ways to move requests, approvals, alerts, and exceptions through a small team.' },
+  ] : isLogistics ? [
+    { title: 'What shippers should prepare before requesting a quote', text: 'The freight details that reduce back-and-forth and improve route planning from the first conversation.' },
+    { title: 'How dispatch teams handle route exceptions', text: 'A practical look at delays, missed windows, weather, driver updates, and customer communication.' },
+    { title: 'Choosing a regional freight partner', text: 'Service standards, lane familiarity, communication habits, and reliability signals that matter.' },
+    { title: 'Why proof of delivery expectations matter', text: 'How documentation, timing, and customer updates protect both the shipper and the carrier.' },
+    { title: 'Planning recurring warehouse transfers', text: 'What to define before setting up a steady shuttle lane between facilities.' },
+    { title: 'Fleet communication basics', text: 'The status notes that help teams stay ahead of daily freight questions.' },
+  ] : isFinance ? [
+    { title: 'Questions to ask before policy renewal', text: 'How to review coverage, deductibles, risk changes, and budget before accepting another renewal.' },
+    { title: 'Understanding umbrella coverage', text: 'Where additional liability protection can support families, business owners, and higher-risk households.' },
+    { title: 'Business insurance terms in plain language', text: 'A practical guide to liability, property, cyber, workers compensation, and policy exclusions.' },
+    { title: 'How to prepare for a claims conversation', text: 'The notes, photos, documents, and contact details that make next steps less stressful.' },
+    { title: 'Benefits education for small teams', text: 'Ways employers can help employees understand plans without overwhelming them.' },
+    { title: 'When life changes should trigger a coverage review', text: 'Homes, vehicles, dependents, business changes, and income shifts that deserve attention.' },
+  ] : isFood ? [
+    { title: 'How the seasonal menu is planned', text: 'The sourcing, prep, and hospitality choices behind a menu that changes with the market.' },
+    { title: 'Planning a private dinner', text: 'What hosts should think through before choosing food, service timing, and room setup.' },
+    { title: 'Pairing pantry goods with weeknight meals', text: 'Simple ways to use market shelves, prepared foods, and sauces at home.' },
+    { title: 'What makes a tasting menu flow', text: 'A practical look at pacing, contrast, temperature, texture, and guest comfort.' },
+    { title: 'Catering questions to answer early', text: 'Guest counts, dietary needs, service style, access, and timing details that shape a smoother event.' },
+    { title: 'Local producer stories', text: 'How farms, makers, and seasonal constraints influence the food on the table.' },
+  ] : isLandscape ? [
     { title: 'How early should a garden plan begin?', text: 'Why winter planning improves pricing, plant availability, and construction sequencing.' },
     { title: 'Choosing stone that will age well', text: 'A practical guide to limestone, gravel, clay pavers, and bronze details in residential gardens.' },
     { title: 'Seasonal care after installation', text: 'The pruning, lighting, soil, and editing rhythm that keeps a new garden improving.' },
@@ -158,6 +312,10 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     { title: 'How to organize resource content', text: 'A practical approach to categories, summaries, and calls to action.' },
     { title: 'What makes a homepage feel complete', text: 'The core sections that turn a concept into a credible business website.' },
   ];
+  const servicesTarget = (isTech || isLogistics || isFinance || isFood) ? 6 : 4;
+  const projectsTarget = isTech ? 12 : isLogistics ? 12 : (isFinance || isFood) ? 6 : 3;
+  const resourcesTarget = (isTech || isLogistics || isFinance || isFood) ? 6 : 3;
+  const processTarget = isTech ? 4 : 3;
 
   return {
     brandName,
@@ -167,19 +325,51 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     heroTitle,
     heroText,
     eyebrow: text(input.eyebrow, brandName),
-    services: safeArrayObjects(input.services, defaultServices).slice(0, 4),
-    projects: safeArrayObjects(input.projects || input.work, defaultProjects).slice(0, 3),
-    resources: safeArrayObjects(input.resources || input.blog, defaultResources).slice(0, 3),
-    process: safeArrayObjects(input.process, [
+    services: completeArrayObjects(input.services, defaultServices, servicesTarget),
+    projects: completeArrayObjects(input.projects || input.work, defaultProjects, projectsTarget),
+    resources: completeArrayObjects(input.resources || input.blog, defaultResources, resourcesTarget),
+    process: safeArrayObjects(input.process, isLogistics ? [
+      { title: 'Map the lane', text: 'Confirm shipment details, route constraints, pickup windows, service expectations, and communication owners.' },
+      { title: 'Plan the handoffs', text: 'Align dispatch, driver notes, warehouse timing, proof points, and customer updates before freight moves.' },
+      { title: 'Run and review', text: 'Track service quality, exceptions, on-time patterns, and improvements for the next shipment.' },
+    ] : isFinance ? [
+      { title: 'Clarify the risk picture', text: 'Review current coverage, life changes, business exposures, budget, and decision deadlines.' },
+      { title: 'Compare practical options', text: 'Explain tradeoffs, exclusions, deductibles, and recommendations in language clients can use.' },
+      { title: 'Support the next review', text: 'Document decisions, prepare renewal reminders, and keep the advisory path organized.' },
+    ] : isFood ? [
+      { title: 'Shape the occasion', text: 'Understand guests, timing, menu needs, room flow, and the service tone that should be felt.' },
+      { title: 'Craft the menu story', text: 'Connect seasonal ingredients, preparation, presentation, and hospitality details into one experience.' },
+      { title: 'Host with consistency', text: 'Coordinate service notes, guest questions, follow-up, and future booking paths.' },
+    ] : [
       { title: 'Listen and map', text: 'Document priorities, constraints, audience needs, and what success must feel like.' },
       { title: 'Design and specify', text: 'Turn the strategy into layouts, content structure, materials, and build-ready decisions.' },
       { title: 'Build and refine', text: 'Coordinate implementation, test the experience, and prepare long-term care notes.' },
-    ]).slice(0, 3),
-    proof: list(input.proof, isLandscape ? ['18 estate gardens stewarded', '5 integrated design-build disciplines', '12 month care plans'] : ['7 page preview system', 'Local assets only', 'Validation-ready output']).slice(0, 3),
-    testimonial: text(input.testimonial, isLandscape
+    ]).slice(0, processTarget),
+    proof: list(input.proof,
+      isTech ? ['42 workflows mapped', '18 dashboards shipped', '0 external runtime APIs'] :
+      isLogistics ? ['24 active lane reviews', '6 service regions coordinated', '98 percent update discipline'] :
+      isFinance ? ['17 annual review categories', 'Plain-language coverage notes', 'Renewal calendar support'] :
+      isFood ? ['Seasonal menu cadence', 'Private event planning', 'Local producer relationships'] :
+      isLandscape ? ['18 estate gardens stewarded', '5 integrated design-build disciplines', '12 month care plans'] :
+      ['7 page preview system', 'Local assets only', 'Validation-ready output']).slice(0, 3),
+    testimonial: text(input.testimonial, isTech
+      ? 'AstraGrid helped us see where work was getting stuck, then turned the messy parts into a system our team could actually use.'
+      : isLogistics
+      ? 'The team gave us clearer freight communication, fewer repeated calls, and a route plan everyone could understand before the first pickup.'
+      : isFinance
+      ? 'They made our coverage questions feel manageable and gave us a clear path for decisions we had been delaying.'
+      : isFood
+      ? 'Every detail felt intentional, from the menu language to the way guests knew exactly what to expect.'
+      : isLandscape
       ? 'Aster Grove gave us a garden that feels established, intentional, and easy to live in. The process was calm from start to finish.'
       : `${brandName} made the work clear, organized, and ready for review without losing the character of the business.`),
-    imageDirection: text(input.imageDirection, isLandscape ? 'garden pathway, outdoor terrace, planting plan, stonework, dining terrace, and seasonal texture' : 'editorial workspace, service details, project boards, and client review moments'),
+    imageDirection: text(input.imageDirection,
+      isTech ? 'local abstract AI operations dashboards, automation node maps, analytics consoles, workflow routing diagrams, and system health monitors' :
+      isLogistics ? 'local abstract freight route maps, dispatch boards, truck lane diagrams, warehouse transfer grids, and route status panels' :
+      isFinance ? 'local abstract advisory documents, coverage maps, calm office textures, risk review panels, and financial planning diagrams' :
+      isFood ? 'local abstract dining tables, seasonal ingredient textures, menu cards, market shelves, warm kitchen details, and hospitality scenes' :
+      isLandscape ? 'garden pathway, outdoor terrace, planting plan, stonework, dining terrace, and seasonal texture' :
+      'editorial workspace, service details, project boards, and client review moments'),
   };
 }
 
@@ -236,7 +426,67 @@ function makePng(width, height, start, end, accent) {
   ]);
 }
 
-const imageSet = [
+const imageSet = isTechTheme ? [
+  ['hero/brand-hero-01.png', [5, 10, 24], [18, 92, 160], [75, 230, 255]],
+  ['hero/brand-hero-02.png', [3, 7, 18], [33, 44, 74], [179, 255, 70]],
+  ['portfolio/project-01.png', [8, 18, 40], [15, 120, 190], [70, 220, 255]],
+  ['portfolio/project-02.png', [9, 16, 32], [42, 76, 116], [185, 255, 72]],
+  ['portfolio/project-03.png', [4, 9, 20], [21, 58, 95], [62, 232, 255]],
+  ['portfolio/project-04.png', [6, 13, 30], [28, 90, 150], [180, 255, 84]],
+  ['portfolio/project-05.png', [7, 17, 38], [24, 104, 170], [81, 220, 255]],
+  ['portfolio/project-06.png', [4, 8, 18], [39, 64, 100], [176, 255, 60]],
+  ['portfolio/project-07.png', [8, 19, 42], [19, 92, 160], [70, 230, 255]],
+  ['portfolio/project-08.png', [6, 11, 26], [36, 82, 126], [190, 255, 80]],
+  ['portfolio/project-09.png', [5, 14, 34], [12, 110, 174], [88, 235, 255]],
+  ['portfolio/project-10.png', [8, 14, 28], [48, 72, 112], [178, 255, 74]],
+  ['portfolio/project-11.png', [3, 8, 20], [25, 94, 150], [78, 224, 255]],
+  ['portfolio/project-12.png', [9, 18, 36], [32, 62, 108], [190, 255, 86]],
+  ['texture/detail-01.png', [2, 8, 20], [28, 75, 130], [80, 226, 255]],
+  ['texture/detail-02.png', [6, 14, 32], [46, 60, 88], [180, 255, 80]],
+  ['texture/detail-03.png', [4, 10, 24], [13, 130, 172], [88, 220, 255]],
+] : isLogisticsTheme ? [
+  ['hero/brand-hero-01.png', [10, 18, 28], [50, 88, 122], [255, 132, 40]],
+  ['hero/brand-hero-02.png', [17, 26, 38], [88, 98, 105], [247, 181, 78]],
+  ['portfolio/project-01.png', [20, 31, 42], [72, 101, 124], [255, 122, 46]],
+  ['portfolio/project-02.png', [11, 20, 34], [43, 79, 118], [240, 188, 80]],
+  ['portfolio/project-03.png', [31, 35, 40], [113, 113, 100], [255, 146, 68]],
+  ['portfolio/project-04.png', [8, 18, 29], [62, 93, 128], [255, 116, 54]],
+  ['portfolio/project-05.png', [21, 28, 37], [84, 108, 132], [246, 182, 78]],
+  ['portfolio/project-06.png', [16, 24, 35], [74, 78, 90], [255, 138, 40]],
+  ['portfolio/project-07.png', [9, 19, 31], [52, 94, 140], [245, 178, 70]],
+  ['portfolio/project-08.png', [24, 30, 38], [102, 102, 88], [255, 132, 48]],
+  ['portfolio/project-09.png', [13, 22, 33], [58, 96, 128], [255, 146, 54]],
+  ['portfolio/project-10.png', [27, 33, 40], [116, 108, 90], [246, 184, 68]],
+  ['portfolio/project-11.png', [8, 17, 30], [42, 88, 130], [255, 124, 44]],
+  ['portfolio/project-12.png', [19, 27, 38], [90, 105, 124], [248, 176, 70]],
+  ['texture/detail-01.png', [33, 35, 36], [112, 112, 97], [255, 122, 48]],
+  ['texture/detail-02.png', [11, 20, 32], [40, 82, 126], [247, 188, 76]],
+  ['texture/detail-03.png', [20, 27, 35], [88, 98, 112], [255, 144, 54]],
+] : isFinanceTheme ? [
+  ['hero/brand-hero-01.png', [14, 34, 48], [175, 164, 132], [80, 145, 172]],
+  ['hero/brand-hero-02.png', [24, 43, 58], [218, 207, 179], [139, 117, 80]],
+  ['portfolio/project-01.png', [15, 38, 52], [190, 183, 152], [87, 142, 165]],
+  ['portfolio/project-02.png', [31, 52, 68], [226, 219, 194], [149, 124, 82]],
+  ['portfolio/project-03.png', [20, 42, 56], [161, 176, 170], [78, 139, 166]],
+  ['portfolio/project-04.png', [11, 30, 45], [207, 196, 164], [144, 116, 76]],
+  ['portfolio/project-05.png', [29, 49, 62], [231, 222, 198], [92, 148, 170]],
+  ['portfolio/project-06.png', [17, 36, 52], [173, 167, 145], [148, 121, 83]],
+  ['texture/detail-01.png', [229, 222, 203], [91, 126, 143], [28, 58, 76]],
+  ['texture/detail-02.png', [182, 170, 142], [23, 52, 68], [141, 116, 80]],
+  ['texture/detail-03.png', [31, 60, 76], [215, 205, 177], [87, 142, 168]],
+] : isFoodTheme ? [
+  ['hero/brand-hero-01.png', [80, 28, 24], [228, 163, 96], [250, 221, 154]],
+  ['hero/brand-hero-02.png', [48, 30, 24], [190, 104, 64], [106, 145, 75]],
+  ['portfolio/project-01.png', [101, 39, 31], [224, 156, 92], [246, 222, 164]],
+  ['portfolio/project-02.png', [56, 36, 29], [176, 90, 58], [120, 151, 82]],
+  ['portfolio/project-03.png', [111, 48, 35], [238, 180, 110], [246, 226, 166]],
+  ['portfolio/project-04.png', [70, 36, 28], [204, 116, 66], [111, 151, 82]],
+  ['portfolio/project-05.png', [93, 42, 32], [226, 158, 96], [245, 213, 146]],
+  ['portfolio/project-06.png', [50, 33, 27], [168, 88, 56], [116, 145, 74]],
+  ['texture/detail-01.png', [245, 219, 166], [150, 73, 45], [110, 143, 76]],
+  ['texture/detail-02.png', [203, 143, 86], [79, 36, 28], [248, 222, 160]],
+  ['texture/detail-03.png', [94, 121, 70], [232, 170, 98], [108, 48, 34]],
+] : [
   ['hero/brand-hero-01.png', [34, 55, 42], [210, 192, 160], [126, 151, 92]],
   ['hero/brand-hero-02.png', [25, 38, 34], [176, 137, 91], [96, 118, 77]],
   ['portfolio/project-01.png', [57, 75, 53], [217, 206, 178], [145, 114, 78]],
@@ -253,16 +503,68 @@ function createImages() {
     write(path.join(themeDir, 'assets', 'images', name), buffer);
     write(path.join(previewDir, 'assets', 'images', path.basename(name)), buffer);
   }
-  write(path.join(themeDir, 'screenshot.png'), makePng(1200, 900, [32, 51, 40], [216, 197, 160], [133, 150, 93]));
+  const screenshotPalette = isTechTheme
+    ? [[3, 8, 20], [16, 90, 150], [75, 225, 255]]
+    : isLogisticsTheme
+    ? [[10, 18, 28], [70, 96, 120], [255, 132, 40]]
+    : isFinanceTheme
+    ? [[16, 37, 52], [210, 201, 174], [86, 145, 168]]
+    : isFoodTheme
+    ? [[76, 30, 24], [224, 150, 88], [246, 222, 160]]
+    : [[32, 51, 40], [216, 197, 160], [133, 150, 93]];
+  write(path.join(themeDir, 'screenshot.png'), makePng(1200, 900, screenshotPalette[0], screenshotPalette[1], screenshotPalette[2]));
 }
 
-const css = `
+const baseCss = `
 :root{--ink:#20251f;--garden:#263d2f;--moss:#718154;--limestone:#e7dfcc;--cream:#f8f2e5;--bronze:#9a724b;--clay:#b65f43;--charcoal:#2f332e;--display:Georgia,"Times New Roman",serif;--body:"Trebuchet MS",Verdana,sans-serif;--shadow:0 24px 60px rgba(32,37,31,.14);--large:30px;--card:20px}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--cream);font-family:var(--body);line-height:1.7}a{color:inherit}img{max-width:100%;display:block;border-radius:var(--card)}.skip-link{position:absolute;left:-999px}.skip-link:focus{left:1rem;top:1rem;z-index:1000;background:var(--ink);color:#fff;padding:.75rem 1rem}.container{width:min(1140px,calc(100% - 36px));margin:0 auto}.section{padding:clamp(4rem,8vw,7rem) 0}.section.alt{background:linear-gradient(135deg,#efe6d3,#d9d0b9)}.eyebrow{letter-spacing:.14em;text-transform:uppercase;font-size:.76rem;color:var(--bronze);font-weight:800}h1,h2,h3,h4{font-family:var(--display);line-height:1.05;color:var(--garden);margin:0 0 1rem}h1{font-size:clamp(3.4rem,7vw,7rem);letter-spacing:-.055em}h2{font-size:clamp(2.3rem,5vw,4.6rem);letter-spacing:-.04em}h3{font-size:clamp(1.35rem,2vw,2rem)}p{margin:0 0 1.1rem}.lede{font-size:clamp(1.08rem,1.6vw,1.32rem);max-width:760px;color:rgba(32,37,31,.76)}.button{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--garden);background:var(--garden);color:white;text-decoration:none;padding:.9rem 1.25rem;border-radius:999px;font-weight:800;cursor:pointer}.button:hover{background:#14251c;transform:translateY(-2px)}.button.ghost{background:transparent;color:var(--garden)}
 .nolan-site-header{position:sticky;top:0;z-index:100;background:rgba(248,242,229,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(38,61,47,.12)}.nolan-header-inner{width:min(1180px,calc(100% - 28px));margin:0 auto;min-height:84px;display:flex;align-items:center;gap:1.25rem}.nolan-brand{text-decoration:none;display:inline-flex;align-items:center;gap:.65rem;font-weight:900;color:var(--garden)}.nolan-mark{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:var(--garden);color:var(--cream);font-family:var(--display)}.nolan-primary-nav{margin-left:auto;display:flex;align-items:center;gap:.45rem}.nolan-primary-nav a,.nolan-menu-trigger{border:0;background:transparent;color:var(--ink);text-decoration:none;font:inherit;font-weight:800;padding:.75rem .85rem;cursor:pointer;border-radius:999px}.nolan-primary-nav a:hover,.nolan-menu-trigger:hover,.nolan-menu-trigger[aria-expanded=true]{background:rgba(38,61,47,.09)}.nolan-header-actions{display:flex;gap:.75rem;align-items:center}.nolan-header-cta{text-decoration:none;background:var(--bronze);color:white;border-radius:999px;padding:.78rem 1rem;font-weight:900}.nolan-mobile-toggle{display:none;border:1px solid rgba(38,61,47,.28);background:transparent;border-radius:999px;padding:.7rem .95rem;font-weight:900}.nolan-menu-backdrop{position:fixed;inset:84px 0 0;background:rgba(32,37,31,.18)}.nolan-menu-dropdown{position:fixed;left:50%;top:86px;transform:translateX(-50%);width:min(1060px,calc(100vw - 32px));background:#fbf7ed;border:1px solid rgba(38,61,47,.14);border-radius:28px;box-shadow:var(--shadow);padding:1.2rem;z-index:130}.nolan-menu-panel{display:grid;grid-template-columns:260px 1fr;gap:1rem}.nolan-menu-rail{display:grid;gap:.5rem;align-content:start;border-right:1px solid rgba(38,61,47,.14);padding-right:1rem}.nolan-menu-rail button{text-align:left;border:0;background:transparent;padding:.85rem;border-radius:16px;font-weight:900;color:var(--garden);cursor:pointer}.nolan-menu-rail button[aria-expanded=true]{background:var(--limestone)}.nolan-rail-content[hidden],.nolan-menu-dropdown[hidden],.nolan-menu-backdrop[hidden],.nolan-mobile-drawer[hidden]{display:none}.nolan-menu-link-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin-top:1rem}.nolan-menu-card{border:1px solid rgba(38,61,47,.14);border-radius:18px;padding:1rem;text-decoration:none;background:white}.nolan-mobile-drawer{position:fixed;inset:84px 16px auto;background:var(--garden);color:white;border-radius:24px;padding:1.25rem;z-index:140;box-shadow:var(--shadow)}.nolan-mobile-drawer nav{display:grid;gap:.8rem}.nolan-mobile-drawer a{color:white;text-decoration:none;font-size:1.25rem;font-weight:900}body.nolan-menu-open{overflow:hidden}
 .hero{padding:clamp(5rem,9vw,8rem) 0;background:radial-gradient(circle at 75% 20%,rgba(154,114,75,.25),transparent 34%),linear-gradient(135deg,#f8f2e5,#dfd4bd);overflow:hidden}.hero-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(320px,.88fr);gap:clamp(2rem,5vw,5rem);align-items:center}.hero-media{position:relative;min-height:520px}.hero-media img:first-child{width:82%;height:460px;object-fit:cover;box-shadow:var(--shadow)}.hero-media img:last-child{position:absolute;right:0;bottom:0;width:52%;height:260px;object-fit:cover;border:10px solid var(--cream);box-shadow:var(--shadow)}.hero-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-top:2rem}.proof-chip{background:rgba(255,255,255,.62);border:1px solid rgba(38,61,47,.12);border-radius:18px;padding:1rem}.proof-chip strong{display:block;color:var(--garden);font-family:var(--display);font-size:1.35rem}.grid-2,.grid-3,.grid-4{display:grid;gap:1rem}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}.card,.proof-card,.service-card,.work-card,.post-card{background:rgba(255,255,255,.72);border:1px solid rgba(38,61,47,.12);border-radius:var(--card);padding:clamp(1.25rem,2.4vw,2rem);box-shadow:0 16px 44px rgba(32,37,31,.08)}.service-card{min-height:270px;display:flex;flex-direction:column}.service-card .button{margin-top:auto;align-self:flex-start}.work-card img{height:250px;width:100%;object-fit:cover;margin-bottom:1rem}.texture-band{background:var(--garden);color:var(--cream);padding:4rem 0}.texture-band h2,.texture-band h3{color:var(--cream)}.process-list{counter-reset:process;display:grid;gap:1rem}.process-item{counter-increment:process;display:grid;grid-template-columns:72px 1fr;gap:1rem;align-items:start;padding:1.2rem;border-radius:20px;background:rgba(255,255,255,.62);border:1px solid rgba(38,61,47,.12)}.process-item:before{content:counter(process,decimal-leading-zero);font-family:var(--display);font-size:2rem;color:var(--bronze)}.testimonial{font-family:var(--display);font-size:1.55rem;color:var(--garden)}.cta-banner{border-radius:var(--large);padding:clamp(2rem,5vw,4rem);background:linear-gradient(135deg,var(--garden),#16261d);color:white}.cta-banner h2{color:white}.site-footer{background:var(--charcoal);color:var(--cream);padding:4rem 0 2rem}.footer-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:2rem}.site-footer a{color:var(--cream);text-decoration:none;display:block;margin:.45rem 0}.form-grid{display:grid;gap:1rem}label{display:grid;gap:.35rem;font-weight:800;color:var(--garden)}input,textarea,select{width:100%;border:1px solid rgba(38,61,47,.22);border-radius:16px;padding:.9rem 1rem;background:white;font:inherit}textarea{min-height:150px}.page-hero{padding:5rem 0 3rem;background:linear-gradient(135deg,#f8f2e5,#e5dbc6)}
 @media(max-width:900px){.nolan-primary-nav,.nolan-header-cta{display:none}.nolan-mobile-toggle{display:inline-flex}.hero-grid,.grid-2,.grid-3,.grid-4,.footer-grid,.nolan-menu-panel{grid-template-columns:1fr}.hero-media{min-height:390px}.hero-media img:first-child{height:340px}.hero-proof{grid-template-columns:1fr}.nolan-menu-dropdown{top:82px}}
 `;
+
+const techCss = `
+:root{--ink:#f4fbff;--garden:#e7fbff;--moss:#55e8ff;--limestone:#0d1728;--cream:#050914;--bronze:#48e7ff;--clay:#b8ff53;--charcoal:#020611;--display:"Trebuchet MS",Verdana,sans-serif;--body:"Lucida Sans",Verdana,sans-serif;--shadow:0 24px 80px rgba(0,0,0,.42)}
+body{background:radial-gradient(circle at 20% 0%,rgba(38,190,255,.18),transparent 32%),linear-gradient(180deg,#050914,#0a1020 44%,#050914);color:#e9f7ff}
+h1,h2,h3,h4{color:#f7fcff}.lede,p{color:rgba(233,247,255,.76)}.eyebrow{color:#6beeff}.section.alt{background:linear-gradient(135deg,rgba(17,28,52,.92),rgba(5,9,20,.96))}.page-hero{background:linear-gradient(135deg,#071022,#101b32)}
+.nolan-site-header{background:rgba(5,9,20,.9);border-bottom:1px solid rgba(85,232,255,.16)}.nolan-brand,.nolan-primary-nav a,.nolan-menu-trigger{color:#eefbff}.nolan-mark{background:linear-gradient(135deg,#1dbdff,#b8ff53);color:#03101b}.nolan-header-cta,.button{background:linear-gradient(135deg,#1bbfff,#78f6ff);border-color:transparent;color:#03101b}.button.ghost{background:rgba(85,232,255,.08);color:#e9f7ff;border-color:rgba(85,232,255,.28)}.nolan-primary-nav a:hover,.nolan-menu-trigger:hover,.nolan-menu-trigger[aria-expanded=true]{background:rgba(85,232,255,.12)}
+.nolan-menu-dropdown{background:#07101f;border-color:rgba(85,232,255,.2)}.nolan-menu-rail{border-right-color:rgba(85,232,255,.16)}.nolan-menu-rail button{color:#e9f7ff}.nolan-menu-rail button[aria-expanded=true],.nolan-menu-card,.card,.proof-card,.service-card,.work-card,.post-card{background:linear-gradient(180deg,rgba(20,35,63,.9),rgba(7,16,31,.9));border-color:rgba(85,232,255,.16);box-shadow:0 20px 70px rgba(0,0,0,.28)}.nolan-mobile-drawer{background:#07101f;border:1px solid rgba(85,232,255,.2)}
+.hero{position:relative;background:radial-gradient(circle at 78% 20%,rgba(85,232,255,.22),transparent 30%),radial-gradient(circle at 20% 20%,rgba(184,255,83,.11),transparent 24%),linear-gradient(135deg,#050914,#101b32 54%,#061627);overflow:hidden}.hero:before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(85,232,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(85,232,255,.08) 1px,transparent 1px);background-size:54px 54px;mask-image:radial-gradient(circle at 60% 20%,black,transparent 75%);pointer-events:none}.hero .container{position:relative}.hero-media img{border:1px solid rgba(85,232,255,.22);background:#07101f}.proof-chip{background:rgba(8,19,38,.8);border-color:rgba(85,232,255,.18)}.proof-chip strong{color:#b8ff53}.texture-band{background:linear-gradient(135deg,#07101f,#071d34)}.process-item{background:rgba(14,29,54,.88);border-color:rgba(85,232,255,.16)}.process-item:before{color:#55e8ff}.testimonial{color:#f4fbff}.cta-banner{background:linear-gradient(135deg,#123d74,#07101f 62%,#1a2b19);border:1px solid rgba(85,232,255,.2)}.site-footer{background:#020611;border-top:1px solid rgba(85,232,255,.14)}label{color:#f4fbff}input,textarea,select{background:#07101f;color:#f4fbff;border-color:rgba(85,232,255,.22)}
+.dashboard-band{position:relative;overflow:hidden}.dashboard-band:before{content:"";position:absolute;inset:12%;border:1px solid rgba(85,232,255,.12);border-radius:34px;box-shadow:0 0 80px rgba(85,232,255,.08);pointer-events:none}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}.metric-card{background:rgba(8,19,38,.84);border:1px solid rgba(85,232,255,.18);border-radius:20px;padding:1.25rem}.metric-card strong{display:block;color:#b8ff53;font-size:2rem}.faq-list{display:grid;gap:1rem}.faq-list details{background:rgba(8,19,38,.84);border:1px solid rgba(85,232,255,.16);border-radius:18px;padding:1rem}.faq-list summary{cursor:pointer;font-weight:900;color:#f4fbff}
+@media(max-width:900px){.metric-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.metric-grid{grid-template-columns:1fr}}
+`;
+
+const logisticsCss = `
+:root{--ink:#f7f3ec;--garden:#f5f0e5;--moss:#f97316;--limestone:#111827;--cream:#0d141f;--bronze:#f97316;--clay:#fbbf24;--charcoal:#080d14;--display:"Trebuchet MS",Verdana,sans-serif;--body:"Lucida Sans",Verdana,sans-serif;--shadow:0 24px 70px rgba(0,0,0,.34)}
+body{background:linear-gradient(180deg,#0d141f,#141c29 44%,#0d141f);color:#f7f3ec}
+h1,h2,h3,h4{color:#fff8ed}.lede,p{color:rgba(247,243,236,.78)}.eyebrow{color:#fbbf24}.section.alt,.page-hero{background:linear-gradient(135deg,#172231,#111827)}
+.nolan-site-header{background:rgba(13,20,31,.92);border-bottom:1px solid rgba(249,115,22,.2)}.nolan-brand,.nolan-primary-nav a,.nolan-menu-trigger{color:#fff8ed}.nolan-mark{background:linear-gradient(135deg,#f97316,#fbbf24);color:#111827}.nolan-header-cta,.button{background:#f97316;border-color:#f97316;color:#111827}.button.ghost{background:rgba(249,115,22,.08);color:#fff8ed;border-color:rgba(249,115,22,.32)}
+.nolan-menu-dropdown,.nolan-mobile-drawer{background:#111827;border-color:rgba(249,115,22,.22)}.nolan-menu-rail button{color:#fff8ed}.nolan-menu-rail button[aria-expanded=true],.nolan-menu-card,.card,.proof-card,.service-card,.work-card,.post-card{background:linear-gradient(180deg,rgba(31,43,58,.95),rgba(15,23,34,.96));border-color:rgba(249,115,22,.18);box-shadow:0 18px 60px rgba(0,0,0,.24)}
+.hero{background:radial-gradient(circle at 76% 24%,rgba(249,115,22,.22),transparent 30%),linear-gradient(135deg,#0d141f,#1f2b3a 56%,#111827)}.hero:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(251,191,36,.07) 0 2px,transparent 2px 74px);pointer-events:none}.proof-chip,.process-item{background:rgba(31,43,58,.82);border-color:rgba(249,115,22,.18)}.proof-chip strong,.process-item:before{color:#fbbf24}.texture-band,.site-footer{background:#080d14}.testimonial{color:#fff8ed}.cta-banner{background:linear-gradient(135deg,#f97316,#4b250c);color:#111827}label{color:#fff8ed}input,textarea,select{background:#111827;color:#fff8ed;border-color:rgba(249,115,22,.28)}
+`;
+
+const financeCss = `
+:root{--ink:#1d2f3d;--garden:#163448;--moss:#507f95;--limestone:#e7dfcc;--cream:#f8f4ea;--bronze:#9a7a45;--clay:#b8834d;--charcoal:#142535;--display:Georgia,"Times New Roman",serif;--body:"Trebuchet MS",Verdana,sans-serif;--shadow:0 24px 60px rgba(22,52,72,.16)}
+body{background:#f8f4ea;color:#1d2f3d}.hero{background:radial-gradient(circle at 78% 20%,rgba(80,127,149,.22),transparent 32%),linear-gradient(135deg,#f8f4ea,#e8dfca)}.section.alt,.page-hero{background:linear-gradient(135deg,#eef0ec,#ded3bd)}
+.nolan-site-header{background:rgba(248,244,234,.93);border-bottom-color:rgba(22,52,72,.14)}.nolan-mark,.button{background:#163448;color:#fff8ed}.nolan-header-cta{background:#9a7a45;color:#fff8ed}.nolan-menu-trigger[aria-expanded=true],.nolan-primary-nav a:hover,.nolan-menu-trigger:hover{background:rgba(80,127,149,.14)}
+.nolan-menu-dropdown,.nolan-menu-card,.card,.proof-card,.service-card,.work-card,.post-card{border-color:rgba(22,52,72,.14)}.proof-chip strong,.process-item:before{color:#9a7a45}.texture-band,.cta-banner,.site-footer{background:linear-gradient(135deg,#163448,#142535)}.texture-band h2,.texture-band h3,.cta-banner h2{color:#fff8ed}.testimonial{color:#163448}
+`;
+
+const foodCss = `
+:root{--ink:#352218;--garden:#5c2d22;--moss:#78984f;--limestone:#f1dcc0;--cream:#fff5e7;--bronze:#b55b32;--clay:#d98b43;--charcoal:#2c1a14;--display:Georgia,"Times New Roman",serif;--body:"Trebuchet MS",Verdana,sans-serif;--shadow:0 24px 60px rgba(70,35,20,.18)}
+body{background:#fff5e7;color:#352218}.hero{background:radial-gradient(circle at 74% 18%,rgba(217,139,67,.26),transparent 32%),linear-gradient(135deg,#fff5e7,#f1dcc0)}.section.alt,.page-hero{background:linear-gradient(135deg,#faead4,#efd2b3)}
+.nolan-site-header{background:rgba(255,245,231,.93);border-bottom-color:rgba(92,45,34,.14)}.nolan-mark,.button{background:#5c2d22;color:#fff5e7}.nolan-header-cta{background:#b55b32;color:#fff5e7}.button.ghost{color:#5c2d22;border-color:#5c2d22}.nolan-menu-trigger[aria-expanded=true],.nolan-primary-nav a:hover,.nolan-menu-trigger:hover{background:rgba(181,91,50,.13)}
+.nolan-menu-dropdown,.nolan-menu-card,.card,.proof-card,.service-card,.work-card,.post-card{border-color:rgba(92,45,34,.14)}.proof-chip strong,.process-item:before{color:#b55b32}.texture-band,.cta-banner,.site-footer{background:linear-gradient(135deg,#5c2d22,#2c1a14)}.texture-band h2,.texture-band h3,.cta-banner h2{color:#fff5e7}.testimonial{color:#5c2d22}
+`;
+
+const css = [
+  baseCss,
+  isTechTheme ? techCss : '',
+  isLogisticsTheme ? logisticsCss : '',
+  isFinanceTheme ? financeCss : '',
+  isFoodTheme ? foodCss : '',
+].filter(Boolean).join('\n');
 
 const js = `
 (() => {
@@ -340,7 +642,7 @@ function cards(items, className, link) {
 
 function workCards(preview = false) {
   return spec.projects.map((item, index) => {
-    const file = `project-0${index + 1}.png`;
+    const file = `project-${String(index + 1).padStart(2, '0')}.png`;
     const src = preview ? `assets/images/${file}` : `<?php echo esc_url( get_template_directory_uri() . '/assets/images/portfolio/${file}' ); ?>`;
     const alt = `${item.title} visual detail`;
     return `<article class="work-card"><img src="${src}" alt="${preview ? escHtml(alt) : `<?php esc_attr_e( '${phpString(alt)}', '${td}' ); ?>`}"><h3>${escHtml(item.title)}</h3><p>${escHtml(item.text)}</p></article>`;

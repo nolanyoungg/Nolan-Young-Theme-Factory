@@ -1,0 +1,1 @@
+<article class="proof-card"><h2><?php esc_html_e( 'No matching resources were found.', '002_nolan_young_theme_astragrid_systems' ); ?></h2><p><?php esc_html_e( 'Try another search or visit the services overview.', '002_nolan_young_theme_astragrid_systems' ); ?></p></article>

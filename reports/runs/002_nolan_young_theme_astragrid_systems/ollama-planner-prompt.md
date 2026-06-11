@@ -1,0 +1,266 @@
+# Ollama Planner Stage
+
+Theme slug: `002_nolan_young_theme_astragrid_systems`
+
+Prompt file: `/c/Users/NolanYoung/codex-ggi-nolan-local/repos/Nolan-Young-Theme-Factory/prompts/pending/astragrid-systems.txt`
+
+Repository root: `/c/Users/NolanYoung/codex-ggi-nolan-local/repos/Nolan-Young-Theme-Factory`
+
+Read these files before planning:
+- AGENTS.md
+- agents/00-orchestrator.md
+- agents/01-planner.md
+- instructions/00-global-instructions.md
+- instructions/01-planning-instructions.md
+- contracts/theme-versioning.md
+- contracts/required-theme-structure.md
+- contracts/premium-output-standard.md
+- contracts/nolan-menu-header.md
+- contracts/local-image-rules.md
+
+Task:
+- create a concise creative execution brief for the generated website
+- preserve the selected prompt intent exactly
+- identify the page map, content direction, design direction, interaction direction, image/art direction, risks, and execution priorities
+- keep the plan business-facing and website-facing
+- do not mention repository paths, generated slugs, validation, ZIP files, CI, contracts, script names, implementation filenames, or code
+- do not mention WordPress, PHP, HTML, CSS, JavaScript, static preview filenames, or internal factory names
+- do not write theme files
+- do not output file blocks
+- keep the response under 90 concise lines
+
+Theme slug: 002_nolan_young_theme_astragrid_systems
+Selected Ollama model: qwen2.5-coder:14b
+
+
+## Non-Negotiable Premium Output Standard
+
+Follow the selected user prompt as the creative brief. Do not produce a generic agency site unless the prompt asks for one.
+Use the required WordPress structure as the scaffold, but make the design, copy, imagery, and page staging fit the prompt.
+The final output must look like a polished premium company website, not a file checklist.
+Build a complete sticky Nolan-menu header with logo, Services/About/Work/Blog nav, and a right-side Contact Us CTA. Contact must not be a primary desktop nav item.
+Use the exact Nolan-menu data attributes and ARIA behavior from contracts/nolan-menu-header.md.
+Use local copyright-safe image assets that match the generated business category. Do not hotlink images or use CDNs.
+Create matching WordPress templates and static preview pages with the same header, footer, classes, section order, image assets, and visual hierarchy.
+Create all seven required static preview pages: homepage_preview.html, services_preview.html, about-us_preview.html, contact_preview.html, single_services_preview.html, blog_preview.html, and work_preview.html.
+Do not use lorem ipsum, placeholder copy, gray boxes, sample text, TODOs, or generic filler.
+
+Read and obey these contracts:
+- contracts/premium-output-standard.md
+- contracts/nolan-menu-header.md
+- contracts/local-image-rules.md
+- contracts/required-preview-structure.md
+- contracts/required-theme-structure.md
+- contracts/quality-rules.md
+
+## User Prompt
+
+Create a premium website for AstraGrid Systems, an AI automation, analytics, and custom software studio.
+
+AstraGrid Systems helps small businesses and operations teams replace messy manual workflows with automation systems, internal software, dashboards, reporting tools, AI-assisted processes, and cleaner data infrastructure.
+
+Audience:
+- Small businesses
+- Operations teams
+- Service companies
+- Ecommerce teams
+- Logistics teams
+- Field-service businesses
+- Founders who need clearer operational visibility
+
+Brand positioning:
+- AstraGrid Systems should feel like an intelligent operations grid.
+- The studio is technical but approachable.
+- The brand promise is operational clarity: cleaner workflows, clearer dashboards, better data, and practical automation that small teams can actually maintain.
+- The site should communicate precision, calm control, and strong business outcomes without feeling cold or generic.
+
+Design direction:
+- Modern AI operations platform
+- Premium software studio
+- Dark-mode-first, sharp, polished, and conversion-focused
+- Layered interface panels
+- Gridline systems
+- Orbiting data nodes
+- Command-map visuals
+- Workflow-routing diagrams
+- Metric consoles
+- Glowing connection paths
+- Premium dark editorial sections
+
+Color palette:
+- Deep navy
+- Near-black blue
+- Graphite slate
+- Electric blue
+- Cyan
+- White text
+- Muted steel text
+- Small lime-green micro accents
+
+Layout rhythm:
+- Command-grid hero
+- Split-screen diagnostic sections
+- Angular cards
+- Metric panels
+- System-map sections
+- Horizontal workflow bands
+- Case-study cards
+- Dashboard panels
+- High-contrast call-to-action blocks
+
+Artwork direction:
+- Original abstract interface artwork and iconography
+- AI operations dashboard
+- Automation node map
+- Internal tools interface
+- Analytics console
+- Workflow routing diagram
+- CRM cleanup pipeline
+- Reporting dashboard
+- Assistant panel
+- System health monitor
+- Orbital data grid
+- Terminal card
+- Project command center
+- Avoid stock photos, celebrity images, watermarked assets, and gray placeholder boxes.
+
+Header and navigation:
+- Brand/logo area: AstraGrid Systems
+- Desktop navigation should include Services, About Us, Work, and Blog.
+- Contact Us should be a prominent right-side call-to-action.
+- Services should open a rich full-width panel.
+- About Us should open a rich full-width panel.
+- Blog should open a rich full-width panel.
+- Work should link directly to the work page.
+- Panels should feel fast, clear, and accessible.
+- Only one panel should be open at a time.
+- The same trigger should toggle its active panel closed.
+- Outside click and Escape should close active panels.
+- A dark backdrop should appear while a panel is open.
+- Right-side panel content should update when a visitor explores left rail items.
+- Panel backgrounds should be readable dark navy or slate.
+- The mobile header should use a dedicated drawer with accordions for Services, About Us, and Blog plus direct links for Work and Contact.
+
+Services panel rail labels:
+- AI Workflow Automation
+- Custom Dashboards
+- Internal Tools
+- CRM and Data Cleanup
+- WordPress Integrations
+- Reporting Systems
+
+About Us panel rail labels:
+- Engineering Approach
+- How We Scope Work
+- Support Standards
+
+Blog panel cards:
+- Automation Readiness Checklist
+- Dashboard Planning Guide
+- AI Chatbot Use Cases
+- Data Cleanup Before Reporting
+
+Homepage requirements:
+- Build a complete, impressive homepage with at least twelve fully developed sections.
+- Include a command-grid hero with a subtle shooting-star or moving-signal background effect.
+- Include a problem statement section.
+- Include a services grid.
+- Include an automation workflow section.
+- Include a dashboard and reporting showcase.
+- Include a featured work or project preview with filtering.
+- Include a process section.
+- Include a technology and style pillars section.
+- Include testimonials or proof.
+- Include a blog/resources preview.
+- Include an FAQ section.
+- Include a final call-to-action section.
+- The homepage must feel premium and finished, not like a scaffold.
+
+Footer requirements:
+- Polished dark SaaS-style footer
+- Large call-to-action top band
+- Brand statement
+- Services column
+- Company column
+- Blog/resources column
+- Contact block
+- Mini inquiry or newsletter form
+- Bottom legal row
+- Fully responsive layout
+- Strong spacing and polished styling
+
+About Us page:
+- Engineering story
+- Values
+- Process
+- Client experience
+- Support standards
+- Call to action
+
+Services page:
+- Service overview
+- Detailed service sections
+- Comparison grid
+- Process
+- FAQ
+- Call to action
+
+Single service page:
+- Focus on AI workflow automation.
+- Explain ideal fit, discovery, workflow mapping, build phase, review loop, deliverables, timeline, and next steps.
+
+Work page:
+- This should be the strongest visual internal page.
+- Include at least twelve project cards.
+- Include filters.
+- Include a featured case study.
+- Include dashboard and system visuals.
+- Include a call to action.
+
+Blog/resources page:
+- Include a resource library.
+- Include at least six helpful article cards.
+- Include topic cards.
+- Emphasize automation and analytics education.
+- Include a call to action.
+
+Contact page:
+- Accessible inquiry form
+- Name
+- Email
+- Company
+- Website
+- Service type
+- Budget range
+- Timeline
+- Message
+- Contact details
+- Process expectations
+- FAQ
+- Final call to action
+
+Interaction expectations:
+- Fast, crisp, and minimal motion
+- Reduced-motion-friendly animation
+- Header menu behavior
+- Mobile drawer behavior
+- Rail panel switching
+- Portfolio filtering
+- Carousel or testimonial behavior where useful
+- Scroll reveal where it improves the experience
+- Optional interactive pieces should fail gracefully if a page does not include them.
+
+Accessibility expectations:
+- Skip link
+- Semantic landmarks
+- Proper heading order
+- Visible focus states
+- Keyboard-friendly navigation
+- Keyboard-friendly accordions
+- Clear expanded and collapsed states
+- Labeled forms
+- Strong text contrast
+
+Quality bar:
+- The finished site should look like a real premium AI automation and software studio website.
+- It should be fully responsive, polished on mobile, complete in the header, complete in the footer, complete on the homepage, visually impressive, and ready for a business owner to review.

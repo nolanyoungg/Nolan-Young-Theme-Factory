@@ -1,0 +1,198 @@
+# Ollama Planner Stage
+
+You are planning a premium website from the selected creative brief.
+
+
+Task:
+- create a concise creative execution brief for the generated website
+- preserve the selected prompt intent exactly
+- identify the page map, content direction, design direction, interaction direction, image/art direction, risks, and execution priorities
+- keep the plan business-facing and website-facing
+- do not mention repository paths, generated slugs, validation, ZIP files, CI, contracts, script names, implementation filenames, or code
+- do not mention WordPress, PHP, HTML, CSS, JavaScript, static preview filenames, internal factory names, or workflow modes
+- do not write theme files
+- do not output file blocks
+- keep the response under 90 concise lines
+
+Selected Ollama model: qwen2.5-coder:14b
+
+
+## User Prompt
+
+Create a premium website for Harborview Insurance Advisors, an independent insurance and risk advisory firm serving families, homeowners, small business owners, and professional service companies.
+
+Business positioning:
+- Harborview Insurance Advisors helps clients understand coverage, compare options, prepare for renewals, and make calm decisions before stressful moments happen.
+- The firm should feel trustworthy, precise, warm, editorial, and highly organized.
+- The site should communicate clarity, protection, practical guidance, and long-term advisory support.
+
+Audience:
+- Families reviewing home, auto, life, and umbrella coverage
+- Homeowners with complex properties or changing needs
+- Small business owners comparing liability and property coverage
+- Professional service companies that need clear risk guidance
+- Founders who want a steady advisory partner
+- Clients who feel overwhelmed by policy language and renewal decisions
+
+Design direction:
+- Premium advisory office with a calm editorial feel
+- Trustworthy and modern without looking corporate or generic
+- Refined document layouts, coverage comparison cards, risk maps, client journey panels, renewal calendars, and soft nautical or harbor-inspired visual cues
+- Warm but not casual
+- Precise but not cold
+- Avoid fear-based insurance marketing and avoid generic handshake imagery.
+
+Color palette:
+- Deep harbor blue
+- Warm ivory
+- Slate gray
+- Soft brass
+- Fog blue
+- White
+- Muted sea glass accents
+
+Layout rhythm:
+- Calm advisory hero
+- Coverage clarity section
+- Services grid
+- Risk review pathway
+- Family and business protection panels
+- Renewal planning section
+- Client scenario cards
+- Education/resource preview
+- High-trust call-to-action sections
+
+Artwork direction:
+- Abstract coverage maps
+- Advisory document stacks
+- Renewal calendar panels
+- Home and business protection diagrams
+- Risk review dashboards
+- Claims preparation checklists
+- Harbor-inspired line art
+- Client decision pathway graphics
+- Avoid celebrity images, watermarked stock, and empty gray placeholder boxes.
+
+Header and navigation:
+- Brand/logo area: Harborview Insurance Advisors
+- Desktop navigation should include Services, About, Work, and Resources.
+- Schedule a Coverage Review should be the prominent right-side call-to-action.
+- Services should open a rich panel with service categories.
+- About should open a rich panel with firm standards.
+- Resources should open a rich panel with helpful planning guides.
+- Work should link directly to client scenarios or advisory case studies.
+- The mobile header should use a dedicated drawer with organized service and resource sections.
+
+Services panel rail labels:
+- Personal Coverage Reviews
+- Home and Umbrella Guidance
+- Life and Income Protection
+- Business Liability Reviews
+- Benefits Education
+- Renewal Planning
+
+About panel rail labels:
+- Advisory Philosophy
+- How Reviews Work
+- Client Care Standards
+
+Resources panel cards:
+- Annual Coverage Review Checklist
+- Understanding Umbrella Coverage
+- Preparing for a Claims Conversation
+- Insurance Terms in Plain Language
+
+Homepage requirements:
+- Build a complete homepage with a calm, high-trust advisory hero.
+- Include a problem statement about confusing policies, rushed renewals, and unclear coverage gaps.
+- Include a services grid.
+- Include a coverage clarity or risk map section.
+- Include family and business advisory panels.
+- Include a review process timeline.
+- Include trust and proof elements.
+- Include client scenario cards.
+- Include testimonials or advisory proof.
+- Include helpful resource previews.
+- Include an FAQ section.
+- Include a strong final coverage review call-to-action.
+
+Footer requirements:
+- Large coverage review call-to-action band
+- Brand statement
+- Services column
+- Company column
+- Resources column
+- Contact block
+- Small question or newsletter form
+- Bottom legal row
+
+About page:
+- Firm story
+- Advisory philosophy
+- Review standards
+- Client communication principles
+- Ongoing support standards
+- Call to action
+
+Services page:
+- Service overview
+- Detailed service sections
+- Comparison grid for coverage review types
+- Review process
+- FAQ
+- Call to action
+
+Single service page:
+- Focus on annual coverage reviews.
+- Explain ideal fit, policy gathering, risk questions, comparison notes, coverage gap review, renewal planning, and next steps.
+
+Work page:
+- Include at least six client scenario cards.
+- Include filters by personal, business, and renewal planning.
+- Include a featured advisory case study.
+- Include coverage map, document, and planning visuals.
+- Include a coverage review call-to-action.
+
+Resources page:
+- Include a planning library.
+- Include at least six helpful article cards.
+- Include topic cards for personal coverage, business risk, renewals, claims, and benefits education.
+- Include a call to action.
+
+Contact page:
+- Coverage review inquiry form
+- Name
+- Email
+- Phone
+- Coverage type
+- Current concern
+- Renewal timeline
+- Household or company context
+- Message
+- Contact details
+- Review expectations
+- FAQ
+- Final call to action
+
+Interaction expectations:
+- Calm, minimal motion
+- Reduced-motion-friendly effects
+- Header panel behavior
+- Mobile drawer behavior
+- Scenario filtering
+- Testimonials or client proof behavior where useful
+- Scroll reveal where it helps the story
+
+Accessibility expectations:
+- Clear navigation
+- Keyboard-friendly menus
+- Visible focus states
+- Labeled forms
+- Strong contrast
+- Clear expanded and collapsed states
+- Proper heading order
+- No placeholder copy
+
+Quality bar:
+- The finished site should look like a real premium independent insurance advisory firm website.
+- It should feel calm, trustworthy, responsive on mobile, specific to insurance and advisory work, and ready for a business owner to review.

@@ -1,0 +1,1 @@
+<?php get_header(); ?><section class="section"><div class="container"><h1><?php esc_html_e( 'Access is restricted.', '002_nolan_young_theme_astragrid_systems' ); ?></h1><p><?php esc_html_e( 'This page is not available for public viewing.', '002_nolan_young_theme_astragrid_systems' ); ?></p></div></section><?php get_footer(); ?>

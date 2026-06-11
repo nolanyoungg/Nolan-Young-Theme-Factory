@@ -1,0 +1,68 @@
+Create a premium website for a logistics, trucking, fleet, delivery, warehousing, or transport company.
+
+Business:
+- Business name:
+- Transport category:
+- Service region:
+- Primary customers:
+- Core services:
+- Brand promise:
+
+Website goals:
+- Communicate reliability, speed, safety, and operational clarity.
+- Explain service lanes, fleet capabilities, tracking, support, and quote process.
+- Build confidence with proof, process, compliance, and customer outcomes.
+- Encourage quote requests or account conversations.
+
+Core pages:
+- Homepage
+- Services
+- Single service or featured lane
+- About
+- Work, case studies, or capabilities
+- Blog or resources
+- Contact or quote request
+
+Homepage direction:
+- Strong operational hero
+- Customer problem section
+- Services grid
+- Fleet or network overview
+- Process and handoff section
+- Proof or metrics
+- Safety or compliance section
+- Case-study preview
+- Resource preview
+- FAQ
+- Final quote call to action
+
+Visual direction:
+- Mood:
+- Color palette:
+- Typography feel:
+- Image or illustration direction:
+- Operational details:
+- Trust-building details:
+
+Header and navigation:
+- Clear brand area
+- Services, About, Work, Blog, and Contact paths
+- Prominent quote request call to action
+- Mobile-friendly navigation
+
+Footer:
+- Large quote call-to-action
+- Service links
+- Company links
+- Resources links
+- Contact and dispatch details
+- Small inquiry form
+- Legal row
+
+Accessibility and interaction expectations:
+- Keyboard-friendly navigation
+- Visible focus states
+- High contrast
+- Labeled forms
+- Reduced-motion-friendly effects
+- No placeholder copy

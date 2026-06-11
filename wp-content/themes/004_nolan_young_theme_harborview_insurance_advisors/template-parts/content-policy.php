@@ -1,0 +1,1 @@
+<section class="section"><div class="container"><h1><?php echo esc_html( nytf_004_policy_title() ); ?></h1><p><?php esc_html_e( 'Project schedules, asset choices, and care recommendations are confirmed in writing for each engagement.', '004_nolan_young_theme_harborview_insurance_advisors' ); ?></p></div></section>

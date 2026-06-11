@@ -71,11 +71,23 @@ Existing generated slugs must not be overwritten or reused.
 
 Prompt files must be `.txt` or `.md` files in `prompts/pending/`.
 
-The selected prompt is the creative brief. Short prompts may be expanded intelligently. Detailed prompts should be preserved closely unless they conflict with security, WordPress correctness, required structure, preview requirements, or release artifacts.
+The selected prompt is the creative brief for the theme only. It should describe the business, audience, content, pages, design direction, interactions, accessibility expectations, and local asset style.
+
+Prompt files must not know about this repository. Do not include repo paths, generated slugs, CI/check instructions, packaging instructions, GitHub Pages/gallery instructions, script names, or validation commands. The factory adds those technical requirements separately.
+
+Reusable repo-agnostic prompt starters live in `prompts/template prompts/`. Copy one into `prompts/pending/`, rename it, and customize only the business, audience, content, look, feel, and website goals.
 
 Prompt files must not contain secrets, API keys, tokens, passwords, private keys, or unpublished customer data.
 
-After a successful interactive run, the workflow asks whether to move the selected prompt to `prompts/completed/`. The default is no. If moved, existing completed prompts are not overwritten.
+After a successful run, the workflow moves the exact selected prompt to `prompts/completed/` using the generated slug as a filename prefix. It also records the prompt lifecycle in the run report. Completed prompt archives are never overwritten.
+
+Example completed prompt archive:
+
+```text
+prompts/completed/002_nolan_young_theme_landscape_design__premium-landscape-design-company.txt
+```
+
+To reuse a prior creative brief, copy a completed prompt back into `prompts/pending/` with a new descriptive filename and edit it for the next run. Do not rerun stale completed prompt text by accident.
 
 ## Required Theme Structure
 

@@ -1,0 +1,9 @@
+{
+  "name": "002_nolan_young_theme_astragrid_systems",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

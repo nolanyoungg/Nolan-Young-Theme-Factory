@@ -559,17 +559,39 @@ User prompts must be stored in:
 prompts/pending/
 ```
 
-After a successful run, the workflow may ask whether to move the selected prompt into:
+Prompt files must be repo-agnostic creative briefs. They should describe the theme, business, audience, design, content, pages, interactions, accessibility expectations, and asset direction only.
+
+Prompt files must not mention repository paths, generated slugs, validation scripts, packaging scripts, CI checks, GitHub Pages, `docs/index.html`, environment variables, contracts, scripts, or factory-internal names. The workflow injects those technical requirements separately.
+
+Reusable creative-brief starters may live in:
+
+```text
+prompts/template prompts/
+```
+
+Templates must follow the same repo-agnostic rule and should work for any generation mode.
+
+After a successful run, the workflow must move the selected prompt into:
 
 ```text
 prompts/completed/
 ```
 
-The default should be **no** unless the user confirms.
+The completed filename must be prefixed with the generated theme slug so every successful run has a durable prompt archive.
+
+Example:
+
+```text
+prompts/completed/002_nolan_young_theme_landscape_design__premium-landscape-design-company.txt
+```
 
 The workflow must not overwrite completed prompts.
 
 If moving a prompt would overwrite an existing file, create a safe unique filename.
+
+The run report must keep a selected prompt copy and a prompt lifecycle note.
+
+To reuse a completed prompt, copy it back into `prompts/pending/` with a new descriptive filename and edit stale run-specific language before generating the next theme.
 
 Prompt files may be `.txt` or `.md`.
 

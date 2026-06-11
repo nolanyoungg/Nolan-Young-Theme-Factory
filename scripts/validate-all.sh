@@ -6,6 +6,8 @@ source "$script_dir/theme-factory-common.sh"
 root_dir="$(theme_factory_repo_root)"
 cd "$root_dir"
 
+bash "$script_dir/validate-prompt-files.sh"
+
 run_validators() {
   local slug="$1"
   bash "$script_dir/validate-theme-structure.sh" "$slug"
@@ -14,6 +16,9 @@ run_validators() {
   bash "$script_dir/validate-nolan-menu.sh" "$slug"
   bash "$script_dir/validate-security.sh" "$slug"
   bash "$script_dir/validate-zip-freshness.sh" "$slug"
+  if [ "${THEME_FACTORY_SKIP_PROMPT_LIFECYCLE:-0}" != "1" ]; then
+    bash "$script_dir/validate-prompt-lifecycle.sh" "$slug"
+  fi
 }
 
 if [ "${1:-}" != "" ]; then

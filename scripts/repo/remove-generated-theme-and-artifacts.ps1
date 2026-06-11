@@ -1,6 +1,7 @@
 param(
   [Parameter(Mandatory = $true)]
-  [string] $Slug,
+  [Alias('Slug')]
+  [string] $Theme,
 
   [switch] $Yes,
   [switch] $DryRun
@@ -8,7 +9,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$argsForBash = @('scripts/repo/remove-generated-theme-and-artifacts.sh', $Slug)
+$argsForBash = @('scripts/repo/remove-generated-theme-and-artifacts.sh', $Theme)
 if ($Yes) {
   $argsForBash += '--yes'
 }

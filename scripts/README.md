@@ -41,7 +41,7 @@ Canonical scripts are grouped by responsibility. Root-level scripts are compatib
 
 - `repo/theme-factory-shared-functions.sh` contains shared namespaced shell functions.
 - `repo/print-next-generated-theme-slug.sh` prints the next available generated theme slug.
-- `repo/remove-generated-theme-and-artifacts.sh` removes one generated theme and all known generated artifacts.
+- `repo/remove-generated-theme-and-artifacts.sh` removes one generated theme and all known generated artifacts by theme number or full slug, then scans for lingering exact slug references.
 - `repo/remove-generated-theme-and-artifacts.ps1` is the PowerShell wrapper for removal.
 - `repo/show-github-actions-check-runs-for-commit.sh` prints GitHub Actions check-run status for a commit without fragile inline shell quoting.
 

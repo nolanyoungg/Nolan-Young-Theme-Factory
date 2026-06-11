@@ -52,4 +52,6 @@ Do not place secrets, API keys, tokens, passwords, private keys, or unpublished 
 
 Reusable starting prompts live in `prompts/template prompts/`.
 
-To use one, copy it into `prompts/pending/`, rename it for the new business concept, then edit it until it is specific and repo-agnostic.
+The main skeleton is `prompts/template prompts/wordpress-theme-generation-prompt-skeleton-template.md`.
+
+To use it, copy it into `prompts/pending/`, rename it for the new business concept, then replace the bracketed placeholders with specific business, page, form, design, accessibility, and conversion details. Keep generated reports, ZIP notes, preview cleanup notes, and other repo-maintenance items out of `prompts/pending/`.

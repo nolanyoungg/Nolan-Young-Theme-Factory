@@ -75,7 +75,7 @@ The selected prompt is the creative brief for the theme only. It should describe
 
 Prompt files must not know about this repository. Do not include repo paths, generated slugs, CI/check instructions, packaging instructions, GitHub Pages/gallery instructions, script names, or validation commands. The factory adds those technical requirements separately.
 
-Reusable repo-agnostic prompt starters live in `prompts/template prompts/`. Copy one into `prompts/pending/`, rename it, and customize only the business, audience, content, look, feel, and website goals.
+Reusable prompt starters live in `prompts/template prompts/`. Review `prompts/template prompts/wordpress-theme-generation-prompt-skeleton-template.md` before a run, copy it into `prompts/pending/`, rename it for the business, and replace the bracketed placeholders with specific business, audience, content, look, feel, form, page, and conversion details.
 
 Prompt files must not contain secrets, API keys, tokens, passwords, private keys, or unpublished customer data.
 
@@ -87,7 +87,7 @@ Example completed prompt archive:
 prompts/completed/002_nolan_young_theme_landscape_design__premium-landscape-design-company.txt
 ```
 
-To reuse a prior creative brief, copy a completed prompt back into `prompts/pending/` with a new descriptive filename and edit it for the next run. Do not rerun stale completed prompt text by accident.
+To reuse a prior creative brief, copy a completed prompt back into `prompts/pending/` with a new descriptive filename and edit it for the next run. Do not rerun stale completed prompt text by accident, and do not leave generated reports, ZIP notes, preview references, run notes, or other repo-generated cleanup items sitting in `prompts/pending/`.
 
 ## Required Theme Structure
 
@@ -169,6 +169,8 @@ See `contracts/local-image-rules.md`.
 The `templates/wordpress-theme/` and `templates/static-preview/` folders are optional reference blueprints. They document conventions for generated output, but the workflow does not copy them as a rigid scaffold.
 
 Generated themes must still satisfy the required structure contract and validation scripts.
+
+Prompt skeletons live separately in `prompts/template prompts/`. These are user-facing creative brief starters, not generated outputs. Fill in the skeleton, remove unused optional lines, then place the finished `.md` or `.txt` prompt in `prompts/pending/` for the next run.
 
 ## Environment Variables
 
@@ -286,28 +288,44 @@ reports/runs/000_nolan_young_theme_premium_landscape_design_company/
 
 ## Remove A Generated Theme
 
-Use the removal utility when a generated theme should be completely removed from the repo.
+Use the removal utility when one generated theme should be completely removed from the repo. The utility targets a single generated theme by either its three-digit number or its full generated slug.
 
-Preview what would be removed:
+Identify the theme from one of these locations:
+
+- `wp-content/themes/<slug>/`
+- `docs/themes/<slug>/`
+- `dist/zipped-themes/<slug>.zip`
+- `reports/runs/<slug>/`
+- `prompts/completed/<slug>__<original-prompt-name>.md`
+- `prompts/completed/<slug>__<original-prompt-name>.txt`
+- the matching preview card in `docs/index.html`
+
+Preview what would be removed by number:
 
 ```bash
-bash scripts/repo/remove-generated-theme-and-artifacts.sh 005_nolan_young_theme_example --dry-run
+bash scripts/repo/remove-generated-theme-and-artifacts.sh 005 --dry-run
+```
+
+Preview what would be removed by full slug:
+
+```bash
+bash scripts/repo/remove-generated-theme-and-artifacts.sh <full-theme-slug> --dry-run
 ```
 
 Remove the generated theme artifacts:
 
 ```bash
-bash scripts/repo/remove-generated-theme-and-artifacts.sh 005_nolan_young_theme_example --yes
+bash scripts/repo/remove-generated-theme-and-artifacts.sh 005 --yes
 ```
 
 PowerShell:
 
 ```powershell
-powershell.exe -ExecutionPolicy Bypass -File scripts\repo\remove-generated-theme-and-artifacts.ps1 005_nolan_young_theme_example -DryRun
-powershell.exe -ExecutionPolicy Bypass -File scripts\repo\remove-generated-theme-and-artifacts.ps1 005_nolan_young_theme_example -Yes
+powershell.exe -ExecutionPolicy Bypass -File scripts\repo\remove-generated-theme-and-artifacts.ps1 005 -DryRun
+powershell.exe -ExecutionPolicy Bypass -File scripts\repo\remove-generated-theme-and-artifacts.ps1 005 -Yes
 ```
 
-The removal utility deletes:
+Theme removal deletes:
 
 - `wp-content/themes/<slug>/`
 - `docs/themes/<slug>/`
@@ -317,44 +335,47 @@ The removal utility deletes:
 - `prompts/completed/<slug>__*.md`
 - the matching preview card in `docs/index.html`
 
+After deleting the known generated files, the utility scans the repo for lingering exact slug references. This catches leftover preview entries, report references, completed prompt references, ZIP references, metadata references, or other generated artifacts that still point to the removed theme. If any exact slug references remain, the removal fails and prints the files to inspect.
+
+After removal, verify:
+
+- the theme folder no longer exists in `wp-content/themes/`
+- the static preview folder no longer exists in `docs/themes/`
+- the ZIP is gone from `dist/zipped-themes/`
+- the run report is gone from `reports/runs/`
+- the completed prompt archive is gone from `prompts/completed/`
+- the theme card is gone from `docs/index.html`
+- `rg "<slug>"` returns no unintended references
+- `bash scripts/validation/validate-generated-theme-all.sh` still passes for the remaining generated themes
+
 Root-level scripts such as `scripts/remove-theme.sh`, `scripts/validate-all.sh`, and `scripts/run-hybrid-theme-workflow.sh` remain as compatibility wrappers. New work should use the role-based script names documented in `scripts/README.md`.
 
 ## Detailed Walkthrough
 
 ### 2026-06-11
 
-The Nolan Young Theme Factory turns a creative brief into a complete installable classic WordPress theme, a static preview, a ZIP package, and run reports. The prompt belongs in `prompts/pending/` as a `.md` or `.txt` file. The prompt should describe the business, product, audience, page content, visual style, color system, navigation needs, forms, accessibility expectations, and conversion goals. It should not mention repo paths, commands, validation, packaging, generated slugs, workflow modes, CI, GitHub Pages, or implementation filenames. See `prompts/template prompts/` for fill-in skeletons.
+The Nolan Young Theme Factory turns a user creative brief into a complete installable classic WordPress theme, a static preview site, a distributable ZIP, and run reports. The repo is not a loose prompt scratchpad. It is meant to behave like a controlled generation pipeline where prompt input, generated source, previews, ZIP artifacts, validation output, and archived prompts all stay organized.
 
-The factory supports three modes:
+A theme run starts with a `.md` or `.txt` prompt in `prompts/pending/`. That prompt is the business and website brief. It should explain the business name, industry, audience, visual style, brand voice, colors, navigation, pages, page purposes, service requirements, work or portfolio needs, form fields, homepage flow, footer expectations, accessibility needs, and quality bar. It should not carry generated artifacts, stale report notes, ZIP notes, preview cleanup notes, run logs, or repo-maintenance tasks. Those items belong in their generated output folders or in normal repo documentation, not in `/pending/`.
 
-- `ollama-only`: uses the selected local Ollama model for planning and compact JSON site-spec generation, then renders the theme deterministically without Codex.
-- `hybrid`: uses Ollama for the local draft/spec/render path, then runs one Codex senior-engineer final pass.
-- `codex-only`: uses Codex to generate the complete output directly when selected.
+Before starting a new run, review `prompts/template prompts/wordpress-theme-generation-prompt-skeleton-template.md`. Copy it into `prompts/pending/`, rename the copy for the business concept, fill in the bracketed placeholders, and remove optional lines that do not apply. Template prompts matter because they give the AI enough structured information to build any kind of site, including a local service business, agency, ecommerce brand, restaurant, insurance firm, SaaS product, or full CRM-style product website. The prompt should describe pages by business purpose, not by PHP filenames or implementation paths. The generator decides the WordPress templates, page templates, template parts, routes, preview sections, assets, and navigation links.
 
-In Ollama modes, the workflow verifies Ollama is installed, asks for or validates an installed model such as `qwen2.5-coder:14b`, runs the planner stage, then asks Ollama for one compact JSON site specification. The local renderer reads that specification and creates the WordPress theme, static preview pages, local raster images, source files, compiled assets, docs, and gallery card. This keeps local models focused on creative and structural decisions instead of streaming hundreds of files.
+The factory supports three workflow modes. `ollama-only` runs the local Ollama planner and builder-spec stages, then renders the theme and preview deterministically without Codex. `hybrid` runs the same Ollama draft/spec/render path, then runs one Codex senior-engineer final pass. `codex-only` lets Codex perform the complete generation directly. No mode should silently replace another mode, and Hybrid should not run extra Codex fixer passes without explicit approval.
 
-The renderer is intentionally category-aware but must not be category-locked. It can use strong defaults for known categories such as software, CRM/SaaS, logistics, finance, food, local services, healthcare/wellness, ecommerce, education, nonprofit, and general business. If the prompt describes a CRM or full software product, the generated site should use product-specific copy, dashboard-style imagery, feature pages, customer stories, demo CTAs, and form-admin/export language rather than drifting into a lawn care, landscape, insurance, logistics, or generic agency website.
+Ollama is used as a focused local planning and specification engine. In Ollama modes, the workflow verifies the `ollama` command, checks the selected installed model such as `qwen2.5-coder:14b`, runs a planner stage, then asks the model for a compact JSON site specification. That specification captures the brand, category, tone, page map, services, work cards, resources, process, proof, testimonials, forms, image direction, and other creative decisions. The deterministic renderer then builds the WordPress theme, static preview pages, local raster images, source files, compiled assets, docs, and preview gallery card from the same normalized spec. This keeps local models from getting buried in raw file streaming while still preserving the selected prompt as the creative brief.
 
-After rendering, the workflow runs the generated theme build with `npm install` and `npm run build`, packages the ZIP, and validates the result. Validation checks required theme structure, compiled assets, local image usage, preview pages, header/menu behavior, security, ZIP freshness, prompt hygiene, and prompt lifecycle. A successful run moves the selected prompt from `prompts/pending/` into `prompts/completed/` with the generated slug as a prefix, and records a lifecycle note in the run report.
+Codex is used for complete generation in `codex-only` mode or for one final engineering pass in `hybrid` mode. In a final pass, Codex should preserve the prompt direction and generated design intent while fixing broken PHP, missing required files, build errors, validation failures, security issues, preview mismatches, weak styling, and accessibility problems. Codex should not ignore the prompt, replace the site with a generic layout, or run repeated paid/final passes without user approval.
 
-Script naming is role-based:
+After generation, the workflow installs and builds the generated theme assets, packages the ZIP, validates the theme structure, validates preview pages, checks Nolan-menu behavior, checks local image usage, scans for obvious security problems, checks ZIP freshness, and checks prompt lifecycle behavior. A successful run moves the selected prompt from `prompts/pending/` into `prompts/completed/` with the generated slug as a prefix. The run report keeps the plan, model outputs, normalized spec, validation notes, and prompt lifecycle notes under `reports/runs/<slug>/`.
 
-- workflow scripts live in `scripts/workflows/`
-- Ollama scripts live in `scripts/ollama/`
-- Codex scripts live in `scripts/codex/`
-- renderer scripts live in `scripts/renderer/`
-- validators live in `scripts/validation/`
-- packaging scripts live in `scripts/packaging/`
-- repo utilities live in `scripts/repo/`
-- release helpers live in `scripts/release/`
+Generated content is organized by slug:
 
-The normal local Ollama-only command is:
+- prompt input starts in `prompts/pending/<brief>.md`
+- completed prompt archives move to `prompts/completed/<slug>__<brief>.md`
+- WordPress themes live in `wp-content/themes/<slug>/`
+- static previews live in `docs/themes/<slug>/`
+- preview gallery links live in `docs/index.html`
+- ZIP packages live in `dist/zipped-themes/<slug>.zip`
+- run reports live in `reports/runs/<slug>/`
 
-```bash
-THEME_FACTORY_MODE=ollama-only \
-THEME_PROMPT_FILE=prompts/pending/my-theme-brief.md \
-OLLAMA_MODEL=qwen2.5-coder:14b \
-bash scripts/workflows/run-hybrid-ollama-codex-theme-generation.sh
-```
-
-Before writing a new prompt from scratch, copy one of the skeletons from `prompts/template prompts/`, fill in the brackets, remove unused optional sections, and keep the brief focused on the website the user wants generated.
+If a generated theme needs to be removed, use `scripts/repo/remove-generated-theme-and-artifacts.sh` rather than manually deleting only one folder. The removal utility clears the theme folder, preview folder, ZIP, run report, completed prompt archive, gallery card, and lingering exact slug references so the repo does not keep half-removed generated content.

@@ -8,6 +8,7 @@ cd "$root_dir"
 
 slug="${1:-}"
 [ -n "$slug" ] || theme_factory_fail "Usage: bash scripts/validate-theme-structure.sh <theme-slug>"
+theme_factory_validate_slug "$slug"
 
 theme_dir="$root_dir/wp-content/themes/$slug"
 failures=0
@@ -54,8 +55,40 @@ required_files=(
   LICENSE.txt
   CHANGELOG.md
   build/webpack.config.js
+  assets/css/bundle.css
+  assets/js/bundle.js
+  assets/icons/icon1.svg
+  assets/icons/README.md
   src/js/main.js
   src/scss/main.scss
+  src/scss/abstracts/_variables.scss
+  src/scss/abstracts/_mixins.scss
+  src/scss/abstracts/_functions.scss
+  src/scss/base/_reset.scss
+  src/scss/base/_typography.scss
+  src/scss/base/_accessibility.scss
+  src/scss/base/_forms.scss
+  src/scss/base/_newsletter.scss
+  src/scss/components/_buttons.scss
+  src/scss/components/_cards.scss
+  src/scss/components/_forms.scss
+  src/scss/components/_badges.scss
+  src/scss/components/_accordion.scss
+  src/scss/components/_carousel.scss
+  src/scss/components/_portfolio-filter.scss
+  src/scss/components/_before-after.scss
+  src/scss/layout/_container.scss
+  src/scss/layout/_header.scss
+  src/scss/layout/_footer.scss
+  src/scss/layout/_grid.scss
+  src/scss/layout/_sections.scss
+  src/scss/pages/_homepage.scss
+  src/scss/pages/_contact.scss
+  src/scss/pages/_about-us.scss
+  src/scss/pages/_services.scss
+  src/scss/pages/_work.scss
+  src/scss/pages/_blog.scss
+  src/scss/pages/_policy.scss
   blocks/README.md
   docs/getting-started.md
   docs/customization.md
@@ -125,18 +158,6 @@ required_template_parts=(
   template-parts/content-blog-preview.php
   template-parts/content-cta-banner.php
   template-parts/content-footer-widgets.php
-  template-parts/content-home-hero.php
-  template-parts/content-home-services.php
-  template-parts/content-home-work.php
-  template-parts/content-home-process.php
-  template-parts/content-home-testimonials.php
-  template-parts/content-home-cta.php
-  template-parts/content-services.php
-  template-parts/content-about.php
-  template-parts/content-work.php
-  template-parts/content-contact.php
-  template-parts/content-blog.php
-  template-parts/content-single-service.php
 )
 
 for file in "${required_template_parts[@]}"; do

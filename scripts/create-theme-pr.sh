@@ -7,7 +7,7 @@ fail() {
 }
 
 valid_slug() {
-  [[ "$1" =~ ^([0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]|nolan-showcase-theme-[0-9]{2})$ ]]
+  [[ "$1" =~ ^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]]
 }
 
 usage() {

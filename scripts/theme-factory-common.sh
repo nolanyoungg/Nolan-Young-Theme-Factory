@@ -145,7 +145,7 @@ theme_factory_check_prompt_file() {
 }
 
 theme_factory_slug_pattern() {
-  printf '^([0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]|nolan-showcase-theme-[0-9]{2})$'
+  printf '^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$'
 }
 
 theme_factory_validate_slug() {
@@ -161,15 +161,20 @@ theme_factory_slug_description() {
   base="$(basename "$source")"
   base="${base%.*}"
   base="$(printf '%s' "$base" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/_/g; s/^_+//; s/_+$//; s/_+/_/g')"
+  base="$(printf '%s' "$base" | sed -E 's/^[0-9]+_//; s/^nolan_young_theme_//')"
+  base="$(printf '%s' "$base" | cut -c 1-64 | sed -E 's/_+$//')"
   [ -n "$base" ] || base="generated_theme"
   printf '%s\n' "$base"
 }
 
 theme_factory_get_next_slug() {
+  local prompt_file="${1:-generated_theme}"
   local root_dir
   root_dir="$(theme_factory_repo_root)"
 
-  local max=0
+  local max=-1
+  local description
+  description="$(theme_factory_slug_description "$prompt_file")"
   local scan_paths=(
     "$root_dir/wp-content/themes"
     "$root_dir/docs/themes"
@@ -187,17 +192,30 @@ theme_factory_get_next_slug() {
         if [ "$number" -gt "$max" ]; then
           max="$number"
         fi
-      elif [[ "$name" =~ ^nolan-showcase-theme-([0-9][0-9])(\.zip)?$ ]]; then
-        number="${BASH_REMATCH[1]}"
-        number="$((10#$number))"
-        if [ "$number" -gt "$max" ]; then
-          max="$number"
-        fi
       fi
     done < <(find "$scan_path" -mindepth 1 -maxdepth 1 -printf '%f\n' 2>/dev/null || find "$scan_path" -mindepth 1 -maxdepth 1 -exec basename {} \;)
   done
 
-  printf '%03d_nolan_young_theme_description\n' "$((max + 1))"
+  printf '%03d_nolan_young_theme_%s\n' "$((max + 1))" "$description"
+}
+
+theme_factory_slug_exists() {
+  local slug="$1"
+  local root_dir
+  root_dir="$(theme_factory_repo_root)"
+
+  [ -e "$root_dir/wp-content/themes/$slug" ] && return 0
+  [ -e "$root_dir/docs/themes/$slug" ] && return 0
+  [ -e "$root_dir/dist/zipped-themes/$slug.zip" ] && return 0
+  [ -e "$root_dir/reports/runs/$slug" ] && return 0
+  return 1
+}
+
+theme_factory_assert_slug_available() {
+  local slug="$1"
+  if theme_factory_slug_exists "$slug"; then
+    theme_factory_fail "Theme slug already exists in generated outputs and will not be reused: $slug"
+  fi
 }
 
 theme_factory_list_ollama_models() {
@@ -228,6 +246,30 @@ theme_factory_select_ollama_model() {
 
   theme_factory_is_interactive || theme_factory_fail "OLLAMA_MODEL is required for noninteractive runs."
   theme_factory_choose_from_menu "Choose installed Ollama model:" 1 "${models[@]}"
+}
+
+theme_factory_normalize_codex_command() {
+  local raw="${1:-codex exec}"
+  if [ "$raw" = "codex" ]; then
+    printf 'codex exec\n'
+    return 0
+  fi
+  case "$raw" in
+    "codex "*)
+      case "$raw" in
+        "codex exec"|\
+        "codex exec "*)
+          printf '%s\n' "$raw"
+          ;;
+        *)
+          printf 'codex exec %s\n' "${raw#codex }"
+          ;;
+      esac
+      ;;
+    *)
+      printf '%s\n' "$raw"
+      ;;
+  esac
 }
 
 theme_factory_theme_name_from_style() {
@@ -268,10 +310,6 @@ function writeBlock(relativePath, content) {
   let cleanedPath = String(relativePath || '').trim();
   if (!cleanedPath) fail('Encountered an empty file block path.');
 
-  if (/^\/+(wp-content|docs|dist|reports|agents|instructions|contracts|codex|templates|scripts|prompts)\//.test(cleanedPath)) {
-    cleanedPath = cleanedPath.replace(/^\/+/, '');
-  }
-
   if (path.isAbsolute(cleanedPath) || cleanedPath.includes('..')) {
     fail(`Rejected unsafe file block path: ${cleanedPath}`);
   }
@@ -311,9 +349,6 @@ if (count === 0) {
       if (entry.type === 'directory') {
         let cleanedPath = String(entry.path || '').trim();
         if (!cleanedPath) fail('Encountered an empty directory path in JSON file_blocks.');
-        if (/^\/+(wp-content|docs|dist|reports|agents|instructions|contracts|codex|templates|scripts|prompts)\//.test(cleanedPath)) {
-          cleanedPath = cleanedPath.replace(/^\/+/, '');
-        }
         if (path.isAbsolute(cleanedPath) || cleanedPath.includes('..')) {
           fail(`Rejected unsafe directory path: ${cleanedPath}`);
         }
@@ -375,7 +410,7 @@ const card = [
 
 let updated = file;
 if (updated.includes('data-empty-state')) {
-  updated = updated.replace(/\s*<article class="empty-state" data-empty-state>/, `\n${card}        <article class="empty-state" data-empty-state>`);
+  updated = updated.replace(/\s*<article class="empty-state" data-empty-state>[\s\S]*?<\/article>/, `\n${card}`);
 } else {
   updated = updated.replace(/\s*<\/section>\s*<\/main>/, `\n${card}      </section>\n    </main>`);
 }
@@ -406,4 +441,38 @@ theme_factory_write_run_metadata() {
     fi
     printf '%s\n' "- Started: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
   } > "$run_dir/run-metadata.md"
+}
+
+theme_factory_offer_complete_prompt() {
+  local prompt_file="$1"
+  local root_dir
+  root_dir="$(theme_factory_repo_root)"
+
+  case "$prompt_file" in
+    "$root_dir/prompts/pending/"*) ;;
+    *) return 0 ;;
+  esac
+
+  theme_factory_is_interactive || return 0
+  theme_factory_prompt_yes_no "Move the selected prompt to prompts/completed/?" "n" || return 0
+
+  local completed_dir base name ext candidate counter
+  completed_dir="$root_dir/prompts/completed"
+  mkdir -p "$completed_dir"
+  base="$(basename "$prompt_file")"
+  name="${base%.*}"
+  ext=""
+  if [ "$base" != "$name" ]; then
+    ext=".${base##*.}"
+  fi
+
+  candidate="$completed_dir/$base"
+  counter=1
+  while [ -e "$candidate" ]; do
+    candidate="$completed_dir/$name-$counter$ext"
+    counter="$((counter + 1))"
+  done
+
+  mv "$prompt_file" "$candidate"
+  printf 'Moved prompt to %s\n' "${candidate#$root_dir/}"
 }

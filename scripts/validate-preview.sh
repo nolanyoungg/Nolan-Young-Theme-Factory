@@ -8,6 +8,7 @@ cd "$root_dir"
 
 slug="${1:-}"
 [ -n "$slug" ] || theme_factory_fail "Usage: bash scripts/validate-preview.sh <theme-slug>"
+theme_factory_validate_slug "$slug"
 
 preview_dir="$root_dir/docs/themes/$slug"
 failures=0
@@ -21,6 +22,7 @@ fail() {
 [ -f "$preview_dir/assets/css/preview.css" ] || fail "Missing preview CSS"
 [ -f "$preview_dir/assets/js/preview.js" ] || fail "Missing preview JS"
 [ -f "$preview_dir/README.md" ] || fail "Missing preview README"
+[ -f "$preview_dir/assets/images/README.md" ] || fail "Missing preview images README"
 
 required_preview_files=(
   homepage_preview.html

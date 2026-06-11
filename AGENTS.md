@@ -21,6 +21,7 @@ Authoritative supporting contracts:
 
 ```text
 contracts/premium-output-standard.md
+contracts/required-theme-structure.md
 contracts/nolan-menu-header.md
 contracts/local-image-rules.md
 contracts/required-preview-structure.md
@@ -45,13 +46,13 @@ The system must support three generation modes:
 
    * Codex performs the complete theme generation.
    * This mode must still produce a full, polished, client-quality website.
-   * This is the preferred fallback when Ollama is unavailable.
+   * This is a supported full-generation path when selected or when Ollama is unavailable.
 
 3. **Ollama-Only Mode**
 
    * Ollama performs the local generation workflow.
    * No Codex pass is used.
-   * This mode is useful for local-only experimentation and lower-cost draft generation.
+   * This mode is a complete local-only generation path, not a weaker draft workflow.
 
 The repository must not behave like a loose prompt playground. It must behave like a controlled software factory:
 
@@ -284,10 +285,14 @@ NNN_nolan_young_theme_description
 Use three-digit numbering plus a short description:
 
 ```text
-001_nolan_young_theme_landscape_design
-002_nolan_young_theme_restaurant_group
-003_nolan_young_theme_software_platform
+000_nolan_young_theme_landscape_design
+001_nolan_young_theme_restaurant_group
+002_nolan_young_theme_software_platform
 ```
+
+After a clean reset, the first generated theme must be numbered `000`.
+
+The description segment must be derived from the selected prompt filename unless `THEME_SLUG` is explicitly supplied.
 
 The next version must be determined by checking all relevant output locations:
 
@@ -350,7 +355,7 @@ docs/index.html
 
 ## 7. Required WordPress Theme Structure
 
-Every generated WordPress theme must follow this structure exactly:
+Every generated WordPress theme must include at least this minimum structure:
 
 ```text
 wp-content/themes/NNN_nolan_young_theme_description/
@@ -488,7 +493,7 @@ Required files must not be renamed.
 
 Required folders must not be moved.
 
-Additional files may be added only when they support the generated theme and do not conflict with this structure.
+Additional files may be added when they support the generated theme and do not conflict with this structure. Extra page templates belong in `page-templates/`, reusable PHP sections in `template-parts/`, helpers in `inc/`, styles in `src/scss/`, JavaScript in `src/js/`, and theme images in `assets/images/`.
 
 ---
 
@@ -588,7 +593,7 @@ The user must choose the mode in the terminal unless a valid noninteractive envi
 
 ### Mode 1: Hybrid
 
-Hybrid mode is the preferred power-user workflow.
+Hybrid mode is a supported workflow for combining local draft generation with one Codex finalization pass.
 
 It should:
 
@@ -596,9 +601,9 @@ It should:
 2. select installed Ollama model
 3. confirm Codex command
 4. run Ollama planner stage
-5. run Ollama builder stage
+5. run Ollama builder-spec stage
 6. run npm build
-7. run Ollama static preview stage
+7. render the static preview from the same local Ollama site specification
 8. package ZIP
 9. validate
 10. run Ollama review/fix stage if needed or requested
@@ -630,9 +635,9 @@ Ollama-only mode should:
 1. select prompt file
 2. select installed Ollama model
 3. run Ollama planner stage
-4. run Ollama builder stage
+4. run Ollama builder-spec stage
 5. run npm build
-6. run Ollama static preview stage
+6. render the static preview from the same local Ollama site specification
 7. package ZIP
 8. validate
 9. run Ollama review/fix stage if validation fails
@@ -677,16 +682,16 @@ Before any Codex mode starts, the workflow must:
 2. ask the user to confirm or enter the full Codex command
 3. display the selected command before running it
 
-Default Codex command:
+Default Codex command for automated workflow passes:
 
 ```bash
-codex
+codex exec
 ```
 
 Advanced example:
 
 ```bash
-codex --model gpt-5.5 --reasoning high
+codex exec --model gpt-5.5 --reasoning high
 ```
 
 The exact Codex command must remain configurable per run.
@@ -698,7 +703,7 @@ The workflow must save the selected Codex command in the run metadata.
 If the user supplied:
 
 ```bash
-CODEX_COMMAND="codex --model gpt-5.5 --reasoning high"
+CODEX_COMMAND="codex exec --model gpt-5.5 --reasoning high"
 ```
 
 the script may use it, but should still print it clearly.
@@ -736,8 +741,8 @@ Supported stages:
 
 ```text
 planner
-builder
-preview
+builder-spec
+preview-render
 review-fix
 ```
 
@@ -773,20 +778,15 @@ Planner output does not need file blocks.
 
 The planner must not build the theme.
 
-### Builder Stage
+### Builder-Spec Stage
 
 Purpose:
 
-* create the WordPress theme
-* create the full required file tree
-* write PHP templates
-* write `inc/` files
-* write SCSS source
-* write JS source
-* write build tooling
-* write real content
-* create local visual assets
-* create a complete client-quality theme draft
+* read the user prompt and planner output
+* produce a compact JSON site specification
+* identify brand name, industry, tone, hero direction, services, work cards, resources, process, proof, testimonial, region, and local image direction
+* keep the local model task bounded and token-efficient
+* provide enough structured direction for the deterministic renderer to create the complete client-quality theme draft
 
 Inputs:
 
@@ -803,7 +803,6 @@ instructions/03-wordpress-build-instructions.md
 instructions/04-design-style-instructions.md
 instructions/05-content-instructions.md
 contracts/required-theme-structure.md
-contracts/file-block-format.md
 reports/runs/NNN_nolan_young_theme_description/plan.md
 selected prompt file
 ```
@@ -811,18 +810,29 @@ selected prompt file
 Output:
 
 ```text
-wp-content/themes/NNN_nolan_young_theme_description/
+reports/runs/NNN_nolan_young_theme_description/ollama-builder-spec-raw.md
+reports/runs/NNN_nolan_young_theme_description/ollama-builder-spec-clean.md
+reports/runs/NNN_nolan_young_theme_description/ollama-normalized-spec.json
 ```
 
-Builder output must use file blocks.
+Builder-spec output should be one JSON object only. It must not emit file blocks, Markdown fences, guides, apologies, or implementation prose.
 
-### Preview Stage
+The repository renderer then creates:
+
+```text
+wp-content/themes/NNN_nolan_young_theme_description/
+docs/themes/NNN_nolan_young_theme_description/
+docs/index.html update
+```
+
+### Preview-Render Stage
 
 Purpose:
 
 * create a static GitHub Pages preview
 * visually mirror the generated WordPress theme
 * update the preview gallery
+* reuse the same local site specification as the generated WordPress templates
 
 Inputs:
 
@@ -833,10 +843,10 @@ agents/06-static-preview-builder.md
 instructions/00-global-instructions.md
 instructions/06-static-preview-instructions.md
 contracts/required-preview-structure.md
-contracts/file-block-format.md
 reports/runs/NNN_nolan_young_theme_description/plan.md
 selected prompt file
-generated theme summary/listing
+reports/runs/NNN_nolan_young_theme_description/ollama-normalized-spec.json
+generated theme summary/listing if available
 ```
 
 Output:
@@ -846,7 +856,7 @@ docs/themes/NNN_nolan_young_theme_description/
 docs/index.html
 ```
 
-Preview output must use file blocks.
+Preview output is rendered by deterministic repository code. The local model should not be asked to stream full preview HTML pages for normal generation.
 
 ### Review/Fix Stage
 
@@ -894,7 +904,7 @@ File blocks are optional for review-fix, but if present, they must be parsed and
 
 ## 13. Ollama File Block Protocol
 
-Ollama builder, preview, and fixer outputs must use this exact file block protocol:
+Ollama fixer outputs may use this exact file block protocol when changing existing files:
 
 ```text
 ---FILE: relative/path/from/repo/root---
@@ -905,14 +915,14 @@ file contents here
 Example:
 
 ```text
----FILE: wp-content/themes/001_nolan_young_theme_landscape_design/style.css---
+---FILE: wp-content/themes/000_nolan_young_theme_landscape_design/style.css---
 /*
-Theme Name: Nolan Young Theme 001 - Landscape Design
+Theme Name: Nolan Young Theme 000 - Landscape Design
 Theme URI: https://example.com/
 Author: Nolan Young
 Description: Generated classic WordPress theme.
 Version: 1.0.0
-Text Domain: 001_nolan_young_theme_landscape_design
+Text Domain: 000_nolan_young_theme_landscape_design
 */
 ---END FILE---
 ```
@@ -932,9 +942,11 @@ This protocol exists because Ollama cannot safely edit repo files directly unles
 
 The planner stage may output normal Markdown.
 
-The review-fix stage may output Markdown plus optional file blocks.
+The builder-spec stage must output compact JSON only.
 
-The builder and preview stages must output file blocks.
+The preview-render stage is deterministic repository code and does not require model file blocks.
+
+The review-fix stage may output Markdown plus optional file blocks.
 
 ---
 

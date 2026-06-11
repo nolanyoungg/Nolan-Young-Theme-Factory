@@ -1,1 +1,0 @@
-<section class="section"><div class="container"><div class="proof-card"><h2>Ready to make the operating system visible?</h2><p>Bring us the messy handoffs, the unclear ownership, and the dashboards no one trusts. We will help you decide what needs to be fixed first.</p><a class="button" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact Us</a></div></div></section>

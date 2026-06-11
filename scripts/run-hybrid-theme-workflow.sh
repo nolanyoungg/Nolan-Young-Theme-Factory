@@ -27,6 +27,7 @@ prompt_file="$(theme_factory_select_prompt_file)"
 theme_factory_check_prompt_file "$prompt_file"
 slug="${THEME_SLUG:-$(theme_factory_get_next_slug "$prompt_file")}"
 theme_factory_validate_slug "$slug"
+theme_factory_assert_slug_available "$slug"
 run_dir="$root_dir/reports/runs/$slug"
 theme_dir="$root_dir/wp-content/themes/$slug"
 preview_dir="$root_dir/docs/themes/$slug"
@@ -66,12 +67,13 @@ if [ "$mode" != "ollama-only" ]; then
   codex_command="${CODEX_COMMAND:-}"
   if [ -z "$codex_command" ]; then
     if theme_factory_is_interactive; then
-      read -r -p "Enter Codex command [codex]: " codex_command
-      codex_command="${codex_command:-codex}"
+      read -r -p "Enter Codex command [codex exec]: " codex_command
+      codex_command="${codex_command:-codex exec}"
     else
-      codex_command="codex"
+      codex_command="codex exec"
     fi
   fi
+  codex_command="$(theme_factory_normalize_codex_command "$codex_command")"
   theme_factory_require_cmd "${codex_command%% *}"
 fi
 
@@ -189,17 +191,42 @@ The plan file is:
 - $plan_file
 
 Task:
-- create the complete classic WordPress theme at wp-content/themes/$slug/
-- emit only file blocks using the required protocol
-- include all required files, expanded template parts, premium header, local assets, and real prompt-specific content
-- create local image assets under wp-content/themes/$slug/assets/images/ and reference them from the templates
-- implement Nolan-menu desktop and mobile behavior in local JS
-- implement complete CSS for sticky header, Nolan-menu panels, mobile drawer, homepage, services, work, blog, contact, footer, and responsive states
-- do not use remote assets, CDN assets, placeholder text, TODOs, or lorem ipsum
-- keep the design polished, finished, and installable
+- produce a compact JSON site specification for the deterministic local renderer
+- do not emit files, file blocks, Markdown, code fences, implementation guides, apologies, or commentary
+- output one JSON object only
+- keep strings short and concrete so the local renderer can produce the required WordPress theme and static preview
+- include prompt-specific business name, industry, tone, hero headline, hero copy, services, work/project cards, resource/blog cards, process steps, proof chips, testimonial, region, and image direction
+- do not include remote asset URLs, CDN references, secrets, placeholder copy, TODOs, lorem ipsum, sample services, or unfinished notes
+- the renderer will create the complete theme, local raster images, Nolan-menu behavior, static preview, build files, and required structure from this JSON
 
 Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
+
+Required JSON shape:
+{
+  "brandName": "Short business name",
+  "industry": "Specific industry",
+  "region": "Service area or appointment note",
+  "tone": "Short tone phrase",
+  "eyebrow": "Short brand/category label",
+  "heroTitle": "Premium homepage headline",
+  "heroText": "One sentence homepage lede",
+  "services": [
+    { "title": "Service name", "text": "Specific service description" }
+  ],
+  "projects": [
+    { "title": "Work card title", "text": "Specific work result" }
+  ],
+  "resources": [
+    { "title": "Resource title", "text": "Specific resource summary" }
+  ],
+  "process": [
+    { "title": "Process step", "text": "Specific process description" }
+  ],
+  "proof": ["Short proof chip", "Short proof chip", "Short proof chip"],
+  "testimonial": "Believable client quote without client secrets",
+  "imageDirection": "Local demo image subjects that fit the business"
+}
 
 EOF
   append_premium_output_standard "$output"
@@ -246,6 +273,8 @@ Task:
 - implement Nolan-menu behavior in local preview JS
 - use only local assets
 - emit only file blocks using the required protocol
+- do not answer with a guide, apology, explanation, checklist, Markdown prose, or refusal
+- start your response with the first required file block
 - update docs/index.html so it links to the preview
 
 Theme slug: $slug
@@ -315,6 +344,92 @@ EOF
   cat "$prompt_file" >> "$output"
 }
 
+write_codex_final_prompt() {
+  local output="$1"
+  {
+    printf '# Codex Final Pass\n\n'
+    printf 'Theme slug: `%s`\n\n' "$slug"
+    printf 'Codex command: `%s`\n\n' "$codex_command"
+    printf 'This is Hybrid mode. An Ollama draft already exists. Use Codex as the final senior-engineer pass, not as a full rewrite.\n\n'
+    printf 'Read these files before editing:\n'
+    printf '%s\n' '- AGENTS.md'
+    printf '%s\n' '- agents/00-orchestrator.md'
+    printf '%s\n' '- codex/codex-final-pass.md'
+    printf '%s\n' '- instructions/00-global-instructions.md'
+    printf '%s\n' '- instructions/10-release-instructions.md'
+    printf '%s\n' '- contracts/required-theme-structure.md'
+    printf '%s\n' '- contracts/required-preview-structure.md'
+    printf '%s\n' '- contracts/quality-rules.md'
+    printf '%s\n' '- contracts/release-artifact-rules.md'
+    printf '%s\n' '- contracts/premium-output-standard.md'
+    printf '%s\n' '- contracts/nolan-menu-header.md'
+    printf '%s\n' '- contracts/local-image-rules.md'
+    printf '\nTask:\n'
+    printf '%s\n' '- finalize the existing generated theme'
+    printf '%s\n' '- preserve the prompt direction and the existing design intent'
+    printf '%s\n' '- fix broken PHP, styling, preview mismatch, build issues, accessibility issues, Nolan-menu behavior, local images, and release readiness problems'
+    printf '%s\n' '- ensure all seven static preview pages exist and visually match the WordPress templates'
+    printf '%s\n' '- ensure the homepage feels premium, complete, and prompt-specific'
+    printf '%s\n' '- do not start from scratch unless the output is unrecoverable'
+    printf '%s\n' '- do not run a second Codex pass without explicit user confirmation'
+  } > "$output"
+  append_premium_output_standard "$output"
+  {
+    printf '\n## User Prompt\n\n'
+    cat "$prompt_file"
+  } >> "$output"
+}
+
+write_codex_full_generation_prompt() {
+  local output="$1"
+  {
+    printf '# Codex Full Generation Pass\n\n'
+    printf 'Theme slug: `%s`\n\n' "$slug"
+    printf 'Codex command: `%s`\n\n' "$codex_command"
+    printf 'This is Codex-only mode. No Ollama draft exists. Create the complete generated output directly in this repository.\n\n'
+    printf 'Read these files before editing:\n'
+    printf '%s\n' '- AGENTS.md'
+    printf '%s\n' '- agents/00-orchestrator.md'
+    printf '%s\n' '- agents/02-theme-architect.md'
+    printf '%s\n' '- agents/03-wordpress-builder.md'
+    printf '%s\n' '- agents/04-design-director.md'
+    printf '%s\n' '- agents/05-content-writer.md'
+    printf '%s\n' '- agents/06-static-preview-builder.md'
+    printf '%s\n' '- codex/codex-full-generation-pass.md'
+    printf '%s\n' '- instructions/00-global-instructions.md'
+    printf '%s\n' '- instructions/02-theme-scaffolding-instructions.md'
+    printf '%s\n' '- instructions/03-wordpress-build-instructions.md'
+    printf '%s\n' '- instructions/04-design-style-instructions.md'
+    printf '%s\n' '- instructions/05-content-instructions.md'
+    printf '%s\n' '- instructions/06-static-preview-instructions.md'
+    printf '%s\n' '- instructions/10-release-instructions.md'
+    printf '%s\n' '- contracts/required-theme-structure.md'
+    printf '%s\n' '- contracts/required-preview-structure.md'
+    printf '%s\n' '- contracts/quality-rules.md'
+    printf '%s\n' '- contracts/security-rules.md'
+    printf '%s\n' '- contracts/release-artifact-rules.md'
+    printf '%s\n' '- contracts/premium-output-standard.md'
+    printf '%s\n' '- contracts/nolan-menu-header.md'
+    printf '%s\n' '- contracts/local-image-rules.md'
+    printf '\nTask:\n'
+    printf '%s\n' "- create the complete classic WordPress theme at wp-content/themes/$slug/"
+    printf '%s\n' "- create the complete static preview at docs/themes/$slug/"
+    printf '%s\n' '- update docs/index.html so the new preview is linked'
+    printf '%s\n' '- include every required theme file, source file, compiled asset, local image asset, template part, page template, README, changelog, docs, and accessibility note'
+    printf '%s\n' '- implement a premium prompt-specific homepage with hero, services, work, trust/proof, process, testimonials or proof, industry-appropriate imagery, blog/resource preview, CTA, and footer'
+    printf '%s\n' '- implement the Nolan-menu header in WordPress templates and static previews'
+    printf '%s\n' '- use local copyright-safe raster images that match the prompt business category'
+    printf '%s\n' '- create package.json, package-lock.json, build/webpack.config.js, src/scss/main.scss, src/js/main.js, assets/css/bundle.css, and assets/js/bundle.js'
+    printf '%s\n' '- use direct repository edits; do not merely write a plan'
+    printf '%s\n' '- do not use remote assets, CDN dependencies, placeholder copy, TODOs, lorem ipsum, sample services, or unfinished preview blocks'
+  } > "$output"
+  append_premium_output_standard "$output"
+  {
+    printf '\n## User Prompt\n\n'
+    cat "$prompt_file"
+  } >> "$output"
+}
+
 build_theme_summary() {
   local output="$1"
   {
@@ -366,23 +481,26 @@ fi
 
 if [ "$mode" != "codex-only" ]; then
   planner_prompt="$run_dir/ollama-planner-prompt.md"
-  builder_prompt="$run_dir/ollama-builder-prompt.md"
+  builder_prompt="$run_dir/ollama-builder-spec-prompt.md"
   preview_prompt="$run_dir/ollama-preview-prompt.md"
   review_prompt="$run_dir/ollama-review-fix-prompt.md"
   plan_file="$run_dir/plan.md"
   theme_summary_file="$run_dir/theme-summary.txt"
+  builder_spec_raw="$run_dir/ollama-builder-spec-raw.md"
 
   write_planner_prompt "$planner_prompt"
   run_ollama_stage planner "$planner_prompt"
 
   write_builder_prompt "$builder_prompt" "$plan_file"
-  run_ollama_stage builder "$builder_prompt"
+  run_ollama_stage builder-spec "$builder_prompt"
+
+  theme_factory_require_cmd node
+  node "$script_dir/render-theme-from-spec.js" "$slug" "$prompt_file" "$plan_file" "$builder_spec_raw" "$root_dir"
 
   run_npm_build
 
   build_theme_summary "$theme_summary_file"
-  write_preview_prompt "$preview_prompt" "$plan_file" "$theme_summary_file"
-  run_ollama_stage preview "$preview_prompt"
+  printf 'Static preview rendered from the same Ollama site specification for token efficiency.\n' > "$run_dir/ollama-preview-render-note.md"
 
   package_theme
 
@@ -404,37 +522,13 @@ if [ "$mode" != "codex-only" ]; then
 fi
 
 if [ "$mode" != "ollama-only" ]; then
-  codex_prompt="$run_dir/codex-final-prompt.md"
-  {
-    printf '# Codex Final Pass\n\n'
-    printf 'Theme slug: `%s`\n\n' "$slug"
-    printf 'Codex command: `%s`\n\n' "$codex_command"
-    printf 'Read these files before editing:\n'
-    printf '%s\n' '- AGENTS.md'
-    printf '%s\n' '- agents/00-orchestrator.md'
-    printf '%s\n' '- codex/codex-final-pass.md'
-    printf '%s\n' '- instructions/00-global-instructions.md'
-    printf '%s\n' '- instructions/10-release-instructions.md'
-    printf '%s\n' '- contracts/quality-rules.md'
-    printf '%s\n' '- contracts/release-artifact-rules.md'
-    printf '%s\n' '- contracts/premium-output-standard.md'
-    printf '%s\n' '- contracts/nolan-menu-header.md'
-    printf '%s\n' '- contracts/local-image-rules.md'
-    printf '%s\n' '- contracts/required-preview-structure.md'
-    printf '\nTask:\n'
-    printf '%s\n' '- finalize the existing generated theme'
-    printf '%s\n' '- preserve the prompt direction and the existing design intent'
-    printf '%s\n' '- fix broken PHP, styling, preview mismatch, build issues, accessibility issues, Nolan-menu behavior, local images, and release readiness problems'
-    printf '%s\n' '- ensure all seven static preview pages exist and visually match the WordPress templates'
-    printf '%s\n' '- ensure the homepage feels premium, complete, and prompt-specific'
-    printf '%s\n' '- do not start from scratch unless the output is unrecoverable'
-    printf '%s\n' '- do not run a second Codex pass without explicit user confirmation'
-  } > "$codex_prompt"
-  append_premium_output_standard "$codex_prompt"
-  {
-    printf '\n## User Prompt\n\n'
-    cat "$prompt_file"
-  } >> "$codex_prompt"
+  if [ "$mode" = "codex-only" ]; then
+    codex_prompt="$run_dir/codex-full-generation-prompt.md"
+    write_codex_full_generation_prompt "$codex_prompt"
+  else
+    codex_prompt="$run_dir/codex-final-prompt.md"
+    write_codex_final_prompt "$codex_prompt"
+  fi
 
   run_codex_final_pass "$codex_prompt"
   run_npm_build
@@ -483,6 +577,7 @@ if [ "$mode" != "ollama-only" ]; then
 fi
 
 theme_factory_update_gallery_index "$slug" "$(theme_factory_theme_name_from_style "$theme_dir/style.css")"
+theme_factory_offer_complete_prompt "$prompt_file"
 
 printf '\nComplete:\n'
 printf 'Theme: %s\n' "$theme_dir/"

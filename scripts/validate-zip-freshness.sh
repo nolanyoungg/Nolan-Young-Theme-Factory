@@ -8,6 +8,7 @@ cd "$root_dir"
 
 slug="${1:-}"
 [ -n "$slug" ] || theme_factory_fail "Usage: bash scripts/validate-zip-freshness.sh <theme-slug>"
+theme_factory_validate_slug "$slug"
 
 theme_dir="$root_dir/wp-content/themes/$slug"
 zip_path="$root_dir/dist/zipped-themes/$slug.zip"

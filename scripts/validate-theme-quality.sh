@@ -8,6 +8,7 @@ cd "$root_dir"
 
 slug="${1:-}"
 [ -n "$slug" ] || theme_factory_fail "Usage: bash scripts/validate-theme-quality.sh <theme-slug>"
+theme_factory_validate_slug "$slug"
 
 theme_dir="$root_dir/wp-content/themes/$slug"
 preview_dir="$root_dir/docs/themes/$slug"
@@ -55,7 +56,7 @@ else
   grep -R -I -n -E 'wp_enqueue_style|wp_enqueue_script' "$theme_dir/inc" "$theme_dir/functions.php" >/dev/null 2>&1 || fail "Missing asset enqueue calls"
   grep -R -I -n -E 'wp_enqueue_style' "$theme_dir/inc" "$theme_dir/functions.php" >/dev/null 2>&1 || fail "Missing wp_enqueue_style call"
   grep -R -I -n -E 'wp_enqueue_script' "$theme_dir/inc" "$theme_dir/functions.php" >/dev/null 2>&1 || fail "Missing wp_enqueue_script call"
-  grep -R -I -n -E 'front-page|content-home-hero|content-home-services|content-home-work|content-home-process|content-home-testimonials|content-home-cta' "$theme_dir/front-page.php" "$theme_dir/template-parts" >/dev/null 2>&1 || fail "Homepage template parts are missing or not referenced"
+  grep -R -I -n -E 'content-hero|content-all-services|content-featured-work|content-process|content-testimonials|content-blog-preview|content-cta-banner|hero|services|work|portfolio|process|testimonial|proof|blog|cta' "$theme_dir/front-page.php" "$theme_dir/template-parts" >/dev/null 2>&1 || fail "Homepage content sections are missing or not referenced"
   grep -R -I -n -E '\.(jpg|jpeg|png|webp)' "$theme_dir" >/dev/null 2>&1 || fail "Theme does not reference local raster images"
   [ -f "$theme_dir/README.md" ] || fail "Missing theme README"
   [ -f "$theme_dir/CHANGELOG.md" ] || fail "Missing CHANGELOG"

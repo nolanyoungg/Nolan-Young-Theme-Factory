@@ -8,6 +8,7 @@ cd "$root_dir"
 
 slug="${1:-}"
 [ -n "$slug" ] || theme_factory_fail "Usage: bash scripts/validate-security.sh <theme-slug>"
+theme_factory_validate_slug "$slug"
 
 theme_dir="$root_dir/wp-content/themes/$slug"
 preview_dir="$root_dir/docs/themes/$slug"

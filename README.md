@@ -1,84 +1,107 @@
 # Nolan Young Theme Factory
 
-This repository is a controlled factory for generating installable classic WordPress themes from prompt files in `prompts/pending/`.
+This repository is a controlled factory for generating complete, installable classic WordPress themes from prompt files in `prompts/pending/`.
 
-It supports three modes:
+The README describes the intended repo behavior. Scripts, contracts, validation, CI, and generated outputs should be kept aligned to this behavior.
 
-1. Hybrid: Ollama draft stages, then one Codex final pass.
-2. Codex only: Codex handles the full generation.
-3. Ollama only: local Ollama stages only, with no Codex invocation.
+## Supported Modes
 
-## Core Outputs
+The workflow supports three honest generation modes:
 
-Each generated theme run should produce:
+1. `ollama-only`: local Ollama planner plus compact builder-spec generation, deterministic local theme/preview rendering, build, package, validation, and optional local review/fix. This is a complete local-only workflow and must never invoke Codex.
+2. `hybrid`: Ollama creates the local draft through the same planner/spec/render path, then Codex runs one senior-engineer final pass.
+3. `codex-only`: Codex performs the full generation directly when selected. This path has a separate full-generation prompt because no Ollama draft exists.
 
-- `wp-content/themes/NNN_nolan_young_theme_description/`
-- `docs/themes/NNN_nolan_young_theme_description/`
-- `dist/zipped-themes/NNN_nolan_young_theme_description.zip`
-- `reports/runs/NNN_nolan_young_theme_description/`
+No mode should silently replace another mode. Hybrid should not run a surprise second Codex pass.
 
-The next slug is determined across:
+## Ollama Efficiency Model
+
+The Ollama-only path is optimized for local models such as `qwen2.5-coder:14b`.
+
+The model is not asked to stream every WordPress, preview, CSS, JS, image, and documentation file as raw file blocks. That approach is slow, expensive in tokens, and unreliable for 14B local models.
+
+Instead:
+
+- the planner writes a concise implementation plan
+- the builder writes one compact JSON site specification
+- `scripts/render-theme-from-spec.js` deterministically renders the required WordPress theme, static preview, local raster images, source files, compiled assets, docs, and gallery card from that specification
+- validation remains deterministic and strict
+- no Codex process is used in `ollama-only`
+
+This keeps Ollama-only strong and local while making the model’s task clear and bounded.
+
+## Canonical Outputs
+
+Each generated run produces:
+
+- `wp-content/themes/NNN_nolan_young_theme_<description>/`
+- `docs/themes/NNN_nolan_young_theme_<description>/`
+- `dist/zipped-themes/NNN_nolan_young_theme_<description>.zip`
+- `reports/runs/NNN_nolan_young_theme_<description>/`
+
+Generated slugs must use this pattern only:
+
+```text
+NNN_nolan_young_theme_<description>
+```
+
+The first generated theme after a clean reset is:
+
+```text
+000_nolan_young_theme_<description>
+```
+
+The description segment is derived from the selected prompt filename unless `THEME_SLUG` is explicitly supplied. For example:
+
+```text
+prompts/pending/premium-landscape-design-company.txt
+000_nolan_young_theme_premium_landscape_design_company
+```
+
+The next number is determined across:
 
 - `wp-content/themes/`
 - `docs/themes/`
 - `dist/zipped-themes/`
 - `reports/runs/`
 
-Legacy `nolan-showcase-theme-*` outputs may still exist in the repo from earlier runs, but new generated themes should use the numeric `NNN_nolan_young_theme_description` convention.
+Existing generated slugs must not be overwritten or reused.
 
-## Workflow Scripts
+## Prompt Workflow
 
-- `bash scripts/run-hybrid-theme-workflow.sh`
-- `bash scripts/run-hybrid-theme-workflow.sh codex-only`
-- `bash scripts/run-hybrid-theme-workflow.sh ollama-only`
-- `powershell.exe -File scripts/run-hybrid-theme-workflow.ps1`
+Prompt files must be `.txt` or `.md` files in `prompts/pending/`.
 
-Legacy compatibility still works:
+The selected prompt is the creative brief. Short prompts may be expanded intelligently. Detailed prompts should be preserved closely unless they conflict with security, WordPress correctness, required structure, preview requirements, or release artifacts.
 
-- `bash scripts/run-theme-workflow.sh`
+Prompt files must not contain secrets, API keys, tokens, passwords, private keys, or unpublished customer data.
 
-## Environment Variables
+After a successful interactive run, the workflow asks whether to move the selected prompt to `prompts/completed/`. The default is no. If moved, existing completed prompts are not overwritten.
 
-- `THEME_FACTORY_MODE`: `hybrid`, `codex-only`, or `ollama-only`
-- `THEME_PROMPT_FILE`: path to the prompt file in `prompts/pending/`
-- `OLLAMA_MODEL`: required for Ollama modes; for example `qwen2.5-coder:14b`
-- `CODEX_COMMAND`: full Codex command prefix, for example `codex` or `codex --model gpt-5.5 --reasoning high`
-- `THEME_SLUG`: override the next versioned slug if you need to target a specific generated run
+## Required Theme Structure
 
-## Ollama-Only Example
+Every final generated theme must include the minimum WordPress structure documented in:
 
-```bash
-THEME_FACTORY_MODE=ollama-only \
-THEME_PROMPT_FILE=prompts/pending/web-dev-company-local-ollama-theme.txt \
-OLLAMA_MODEL=qwen2.5-coder:14b \
-bash scripts/run-hybrid-theme-workflow.sh
+```text
+contracts/required-theme-structure.md
 ```
 
-## Validation
+That includes required root PHP files, `inc/` files, compiled assets, local image folders, source SCSS and JS, template parts, page templates, build files, docs, and accessibility notes.
 
-Run validation for a generated theme with:
+Generated themes may add extra files when useful:
 
-```bash
-bash scripts/validate-all.sh NNN_nolan_young_theme_description
-```
+- Extra page templates belong in `page-templates/`.
+- Extra reusable PHP sections belong in `template-parts/`.
+- Extra PHP helpers belong in `inc/`.
+- Extra styles belong in `src/scss/` and compile into `assets/css/bundle.css`.
+- Extra JavaScript belongs in `src/js/` and compiles into `assets/js/bundle.js`.
+- Extra theme images belong in `assets/images/`.
+- Extra static preview images belong in `docs/themes/<slug>/assets/images/`.
 
-If you omit the slug, the validator scans all generated themes. If none exist, it reports that fact and exits cleanly.
+Required files must not be removed, renamed, or moved.
 
-## Packaging
+## Static Preview Requirements
 
-Package a theme ZIP with:
-
-```bash
-bash scripts/package-theme.sh NNN_nolan_young_theme_description
-```
-
-The package script keeps the ZIP in `dist/zipped-themes/` and includes the theme folder itself.
-
-## Preview Gallery
-
-The gallery is served from `docs/index.html`. Each generated preview card links to `docs/themes/<theme-slug>/homepage_preview.html`.
-
-Each generated preview directory must include:
+Every generated theme must include a static preview at `docs/themes/<slug>/` with:
 
 - `index.html`
 - `homepage_preview.html`
@@ -90,263 +113,161 @@ Each generated preview directory must include:
 - `work_preview.html`
 - `assets/css/preview.css`
 - `assets/js/preview.js`
+- `assets/images/README.md`
 - local raster images in `assets/images/`
+- `README.md`
 
-The preview pages must visually match the WordPress templates. They should use the same header, footer, class names, section order, copy style, local images, button styles, cards, and responsive assumptions.
+The preview must work without WordPress or PHP, use local assets only, link between all seven required pages, include Nolan-menu behavior, and visually match the WordPress templates as closely as possible.
+
+`docs/index.html` is the GitHub Pages gallery shell. Generated runs add preview cards to that file.
 
 ## Nolan-Menu Header
 
-Generated themes must implement the Nolan-menu header system:
+Generated themes and static previews must implement the Nolan-menu header system:
 
 - Desktop header layout: logo, primary nav, Contact Us CTA.
 - Primary nav items: `Services`, `About`, `Work`, `Blog`.
 - Contact is only the right-side CTA, not a primary nav item.
-- Services, About, and Blog use dropdown panels with the required `data-menu-item` and `data-menu-dropdown` attributes.
+- Services, About, and Blog use dropdown panels with required `data-menu-item` and `data-menu-dropdown` attributes.
 - Dropdown rails use matching `data-rail-item` and `data-rail-content` keys.
-- JavaScript must handle open/close, one active panel, Escape, outside click, scroll lock, backdrop, rail switching, and mobile drawer behavior.
+- Local JavaScript handles open/close, one active panel, Escape, outside click, scroll lock, backdrop, rail switching, and mobile drawer behavior.
 
 See `contracts/nolan-menu-header.md`.
 
-## Image Assets
+## Local Image Rules
 
-Generated themes must use local, copyright-safe demo images that fit the generated business category. A restaurant theme should use restaurant imagery; a landscaping theme should use landscaping imagery; a photography theme should use photography imagery. Store theme images in:
+Generated themes must use local, copyright-safe demo images that fit the generated business category.
 
-```text
-wp-content/themes/<theme-slug>/assets/images/
-```
+Do not use:
 
-Store static preview images in:
+- hotlinked images
+- CDN images
+- random web images
+- watermarked stock photos
+- celebrity photos
+- client photos
+- gray placeholder boxes
 
-```text
-docs/themes/<theme-slug>/assets/images/
-```
+Theme images belong in `wp-content/themes/<slug>/assets/images/`. Preview images belong in `docs/themes/<slug>/assets/images/`.
 
-Do not use hotlinked images, CDN images, random web images, watermarked stock, client photos, celebrity photos, or gray placeholder boxes. Do not force every theme into a photography, wedding, portrait, or MNY Photo-style visual direction.
+See `contracts/local-image-rules.md`.
 
-## CI And Live Verification
+## Templates
 
-Every pushed generated theme should pass these GitHub Actions workflows on `main`:
+The `templates/wordpress-theme/` and `templates/static-preview/` folders are optional reference blueprints. They document conventions for generated output, but the workflow does not copy them as a rigid scaffold.
 
-- `Validate Theme`
-- `Check ZIP Freshness`
-- `Deploy Preview`
+Generated themes must still satisfy the required structure contract and validation scripts.
 
-After pushing, verify the live remote and workflow status:
+## Environment Variables
 
-```bash
-git ls-remote origin refs/heads/main
-gh run list --repo nolanyoungg/Nolan-Young-Theme-Factory --branch main --limit 10
-```
+- `THEME_FACTORY_MODE`: `ollama-only`, `hybrid`, or `codex-only`
+- `THEME_PROMPT_FILE`: path to a prompt file in `prompts/pending/`
+- `OLLAMA_MODEL`: installed Ollama model for Ollama modes, for example `qwen2.5-coder:14b`
+- `CODEX_COMMAND`: full Codex automation command, default `codex exec`
+- `THEME_SLUG`: optional explicit slug override using `NNN_nolan_young_theme_<description>`
 
-The remote `main` SHA must match local `git rev-parse HEAD`. The latest validation and ZIP freshness runs must be green before treating the repository as updated. The Pages workflow deploys the `docs/` folder and can also be run manually from GitHub Actions.
+If `CODEX_COMMAND` is supplied as `codex` or `codex --model ...`, the workflow normalizes it to `codex exec ...` for automated passes.
 
-## How to use
+## Run Commands
 
-The factory can run all three supported generation modes from the same workflow script:
-
-- `hybrid`: local Ollama planner/builder/preview stages, then one Codex final pass.
-- `ollama-only`: local Ollama stages only. This is the local-only option and does not invoke Codex.
-- `codex-only`: Codex handles the full generation workflow.
-
-Before any run, create a prompt file in `prompts/pending/`. Do not paste the full creative brief directly into the terminal. The workflow reads `.txt` and `.md` files from that folder.
-
-### macOS
-
-Prerequisites:
-
-- Git.
-- Bash, included with macOS.
-- Node.js and npm.
-- PHP, recommended so validation can lint generated theme PHP.
-- `zip` and `unzip`, usually available by default.
-- Ollama, required for `hybrid` and `ollama-only`.
-- A local Ollama model, recommended: `qwen2.5-coder:14b`.
-- Codex CLI, required for `hybrid` and `codex-only`.
-- GitHub CLI `gh`, optional but useful for checking CI after pushing.
-
-Clone and enter the repo:
-
-```bash
-git clone https://github.com/nolanyoungg/Nolan-Young-Theme-Factory.git
-cd Nolan-Young-Theme-Factory
-```
-
-Check local tools:
-
-```bash
-node --version
-npm --version
-php --version
-ollama list
-codex --version
-```
-
-Install the preferred local Ollama model if it is missing:
-
-```bash
-ollama pull qwen2.5-coder:14b
-```
-
-Add a prompt:
-
-```bash
-mkdir -p prompts/pending
-nano prompts/pending/my-theme-brief.txt
-```
-
-Run interactively and choose a mode from the menu:
+Run interactively:
 
 ```bash
 bash scripts/run-hybrid-theme-workflow.sh
 ```
 
-Run Hybrid noninteractively:
+Run Ollama-only:
+
+```bash
+THEME_FACTORY_MODE=ollama-only \
+THEME_PROMPT_FILE=prompts/pending/premium-landscape-design-company.txt \
+OLLAMA_MODEL=qwen2.5-coder:14b \
+bash scripts/run-hybrid-theme-workflow.sh
+```
+
+Run Hybrid:
 
 ```bash
 THEME_FACTORY_MODE=hybrid \
 THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
 OLLAMA_MODEL=qwen2.5-coder:14b \
-CODEX_COMMAND=codex \
+CODEX_COMMAND="codex exec" \
 bash scripts/run-hybrid-theme-workflow.sh
 ```
 
-Run Ollama only:
-
-```bash
-THEME_FACTORY_MODE=ollama-only \
-THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
-OLLAMA_MODEL=qwen2.5-coder:14b \
-bash scripts/run-hybrid-theme-workflow.sh
-```
-
-Run Codex only:
+Run Codex-only:
 
 ```bash
 THEME_FACTORY_MODE=codex-only \
 THEME_PROMPT_FILE=prompts/pending/my-theme-brief.txt \
-CODEX_COMMAND=codex \
+CODEX_COMMAND="codex exec" \
 bash scripts/run-hybrid-theme-workflow.sh
 ```
 
-Validate and package a generated theme:
-
-```bash
-bash scripts/validate-all.sh 001_nolan_young_theme_landscape_design
-bash scripts/package-theme.sh 001_nolan_young_theme_landscape_design
-```
-
-After a successful run, review these outputs:
-
-```text
-wp-content/themes/<theme-slug>/
-docs/themes/<theme-slug>/
-dist/zipped-themes/<theme-slug>.zip
-reports/runs/<theme-slug>/
-```
-
-### Windows PowerShell
-
-Prerequisites:
-
-- Git for Windows, including Git Bash. The PowerShell wrapper calls Bash internally.
-- PowerShell 5+ or PowerShell 7+.
-- Node.js and npm.
-- PHP, recommended so validation can lint generated theme PHP.
-- Ollama, required for `hybrid` and `ollama-only`.
-- A local Ollama model, recommended: `qwen2.5-coder:14b`.
-- Codex CLI, required for `hybrid` and `codex-only`.
-- GitHub CLI `gh`, optional but useful for checking CI after pushing.
-
-Clone and enter the repo:
-
-```powershell
-git clone https://github.com/nolanyoungg/Nolan-Young-Theme-Factory.git
-Set-Location Nolan-Young-Theme-Factory
-```
-
-Check local tools:
-
-```powershell
-node --version
-npm --version
-php --version
-bash --version
-ollama list
-codex --version
-```
-
-Install the preferred local Ollama model if it is missing:
-
-```powershell
-ollama pull qwen2.5-coder:14b
-```
-
-Add a prompt:
-
-```powershell
-New-Item -ItemType Directory -Force prompts\pending
-notepad prompts\pending\my-theme-brief.txt
-```
-
-Run interactively and choose a mode from the menu:
-
-```powershell
-powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
-```
-
-Run Hybrid noninteractively:
-
-```powershell
-$env:THEME_FACTORY_MODE = 'hybrid'
-$env:THEME_PROMPT_FILE = 'prompts/pending/my-theme-brief.txt'
-$env:OLLAMA_MODEL = 'qwen2.5-coder:14b'
-$env:CODEX_COMMAND = 'codex'
-powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
-```
-
-Run Ollama only:
+Windows PowerShell wrapper:
 
 ```powershell
 $env:THEME_FACTORY_MODE = 'ollama-only'
-$env:THEME_PROMPT_FILE = 'prompts/pending/my-theme-brief.txt'
+$env:THEME_PROMPT_FILE = 'prompts/pending/premium-landscape-design-company.txt'
 $env:OLLAMA_MODEL = 'qwen2.5-coder:14b'
 powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
 ```
 
-Run Codex only:
+## Build, Package, Validate
 
-```powershell
-$env:THEME_FACTORY_MODE = 'codex-only'
-$env:THEME_PROMPT_FILE = 'prompts/pending/my-theme-brief.txt'
-$env:CODEX_COMMAND = 'codex'
-powershell.exe -ExecutionPolicy Bypass -File scripts\run-hybrid-theme-workflow.ps1
-```
-
-Validate and package a generated theme:
-
-```powershell
-bash scripts/validate-all.sh 001_nolan_young_theme_landscape_design
-bash scripts/package-theme.sh 001_nolan_young_theme_landscape_design
-```
-
-Clear run environment variables when you are done:
-
-```powershell
-Remove-Item Env:\THEME_FACTORY_MODE -ErrorAction SilentlyContinue
-Remove-Item Env:\THEME_PROMPT_FILE -ErrorAction SilentlyContinue
-Remove-Item Env:\OLLAMA_MODEL -ErrorAction SilentlyContinue
-Remove-Item Env:\CODEX_COMMAND -ErrorAction SilentlyContinue
-Remove-Item Env:\THEME_SLUG -ErrorAction SilentlyContinue
-```
-
-### Choosing a mode
-
-Use `ollama-only` when you want a local-only run and have the preferred model installed. Use `hybrid` when you want local generation plus one Codex finalization pass. Use `codex-only` when Ollama is unavailable or when you want Codex to handle the full generation.
-
-For all modes, the final output is expected to include the WordPress theme, static preview, ZIP package, and run report. Every finished run should pass:
+Every generated theme must support:
 
 ```bash
-bash scripts/validate-all.sh <theme-slug>
+npm install
+npm run build
 ```
 
+Package a generated theme:
 
+```bash
+bash scripts/package-theme.sh 000_nolan_young_theme_premium_landscape_design_company
+```
+
+Validate a generated theme:
+
+```bash
+bash scripts/validate-all.sh 000_nolan_young_theme_premium_landscape_design_company
+```
+
+Validate all generated themes:
+
+```bash
+bash scripts/validate-all.sh
+```
+
+If no generated themes exist, validation exits cleanly with `No generated themes found.`
+
+## CI
+
+GitHub Actions run:
+
+- `Validate Theme`
+- `Check ZIP Freshness`
+- `Deploy Preview`
+
+Validation checks required theme files, compiled CSS and JS, local image presence, static preview structure, Nolan-menu attributes and behavior, no remote runtime dependencies, no obvious secrets, and ZIP freshness.
+
+## First Fresh Run
+
+After a full cleanup, the first local run should use:
+
+```bash
+THEME_FACTORY_MODE=ollama-only \
+THEME_PROMPT_FILE=prompts/pending/premium-landscape-design-company.txt \
+OLLAMA_MODEL=qwen2.5-coder:14b \
+bash scripts/run-hybrid-theme-workflow.sh
+```
+
+Expected first outputs:
+
+```text
+wp-content/themes/000_nolan_young_theme_premium_landscape_design_company/
+docs/themes/000_nolan_young_theme_premium_landscape_design_company/
+dist/zipped-themes/000_nolan_young_theme_premium_landscape_design_company.zip
+reports/runs/000_nolan_young_theme_premium_landscape_design_company/
+```

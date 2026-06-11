@@ -43,6 +43,7 @@ Canonical scripts are grouped by responsibility. Root-level scripts are compatib
 - `repo/print-next-generated-theme-slug.sh` prints the next available generated theme slug.
 - `repo/remove-generated-theme-and-artifacts.sh` removes one generated theme and all known generated artifacts.
 - `repo/remove-generated-theme-and-artifacts.ps1` is the PowerShell wrapper for removal.
+- `repo/show-github-actions-check-runs-for-commit.sh` prints GitHub Actions check-run status for a commit without fragile inline shell quoting.
 
 ## Release
 

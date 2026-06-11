@@ -117,11 +117,9 @@ const fs = require('fs');
 const indexPath = process.argv[2];
 const slug = process.argv[3];
 const input = fs.readFileSync(indexPath, 'utf8');
-const escaped = slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-let output = input.replace(new RegExp(`\\s*<article class="theme-card">[\\s\\S]*?<p class="eyebrow">${escaped}<\\/p>[\\s\\S]*?<\\/article>`, 'g'), '');
-if (output === input) {
-  output = input.replace(new RegExp(`\\s*<article class="theme-card">[\\s\\S]*?themes\\/${escaped}\\/homepage_preview\\.html[\\s\\S]*?<\\/article>`, 'g'), '');
-}
+const output = input.replace(/\s*<article class="theme-card">[\s\S]*?<\/article>/g, (block) => {
+  return block.includes(slug) ? '' : block;
+});
 fs.writeFileSync(indexPath, output, 'utf8');
 NODE
 fi

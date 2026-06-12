@@ -1,8 +1,0 @@
-Prompt file validation passed.
-Structure validation passed for 004_nolan_young_theme_harborview_insurance_advisors.
-Quality validation passed for 004_nolan_young_theme_harborview_insurance_advisors.
-Preview validation passed for 004_nolan_young_theme_harborview_insurance_advisors.
-Nolan-menu validation passed for 004_nolan_young_theme_harborview_insurance_advisors.
-Security validation passed for 004_nolan_young_theme_harborview_insurance_advisors.
-ZIP freshness validation passed for 004_nolan_young_theme_harborview_insurance_advisors.
-Prompt lifecycle validation passed for 004_nolan_young_theme_harborview_insurance_advisors.

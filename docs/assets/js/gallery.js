@@ -8,4 +8,12 @@
   if (cards.length > 0 && emptyState) {
     emptyState.hidden = true;
   }
+
+  cards.forEach((card) => {
+    const frame = card.querySelector('iframe');
+    if (!frame) return;
+    frame.addEventListener('load', () => {
+      card.dataset.previewLoaded = 'true';
+    });
+  });
 })();

@@ -1,0 +1,1 @@
+:root{--color-ink:#111827;--color-paper:#f8fafc;--color-accent:#2563eb}body{margin:0;color:var(--color-ink);background:var(--color-paper);font-family:system-ui,sans-serif}.site-header,.site-footer,.template-section{padding:32px}.template-container{width:min(100%,1180px);margin:0 auto}.template-section{border-top:1px solid rgba(17,24,39,.12)}

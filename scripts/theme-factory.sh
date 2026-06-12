@@ -13,6 +13,8 @@ Usage:
   bash scripts/theme-factory.sh validate <theme-slug> [template-name]
   bash scripts/theme-factory.sh quality <theme-slug>
   bash scripts/theme-factory.sh check <theme-slug> [template-name]
+  bash scripts/theme-factory.sh ollama-pass <theme-slug> <prompt-file> [model]
+  bash scripts/theme-factory.sh ollama-only <prompt-file> [template-name] [model]
   bash scripts/theme-factory.sh preview <theme-slug>
   bash scripts/theme-factory.sh preview-index
   bash scripts/theme-factory.sh package <theme-slug>
@@ -49,6 +51,28 @@ case "$cmd" in
       bash scripts/validate-theme-from-template.sh "$slug"
     fi
     bash scripts/theme-quality-check.sh "$slug"
+    ;;
+  ollama-pass)
+    bash scripts/run-ollama-theme-pass.sh "$@"
+    ;;
+  ollama-only)
+    prompt_file="${1:-}"
+    template_name="${2:-NOLAN-YOUNG-theme-000}"
+    model="${3:-qwen2.5-coder:14b}"
+    [ -n "$prompt_file" ] || { usage; exit 1; }
+    prepare_output="$(bash scripts/prepare-theme-from-template.sh "$prompt_file" "$template_name")"
+    printf '%s\n' "$prepare_output"
+    slug="$(printf '%s\n' "$prepare_output" | sed -n 's|^Prepared theme folder: wp-content/themes/||p' | head -n 1)"
+    [ -n "$slug" ] || {
+      printf 'Could not determine prepared theme slug.\n' >&2
+      exit 1
+    }
+    bash scripts/run-ollama-theme-pass.sh "$slug" "$prompt_file" "$model"
+    bash scripts/validate-theme-from-template.sh "$slug" "$template_name"
+    bash scripts/theme-quality-check.sh "$slug"
+    node scripts/generate-static-preview.js "$slug"
+    bash scripts/package-theme.sh "$slug"
+    node scripts/rebuild-preview-gallery.js
     ;;
   preview)
     node scripts/generate-static-preview.js "$@"

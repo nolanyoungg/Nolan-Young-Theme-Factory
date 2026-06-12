@@ -327,7 +327,10 @@ Task:
 - inspect the generated theme and preview
 - fix issues needed to pass validation and meet the premium output standard
 - preserve the prompt direction
-- emit file blocks only if files need to change
+- the validation output above is already supplied; do not ask the user to provide it again
+- if validation failed or output issues are present, return only file blocks using the required protocol
+- do not answer with a guide, apology, explanation, checklist, Markdown prose, or refusal when file edits are needed
+- start your response with the first required file block when file edits are needed
 
 Theme slug: $slug
 Selected Ollama model: ${ollama_model:-unknown}
@@ -481,6 +484,7 @@ if [ "$mode" != "codex-only" ]; then
   plan_file="$run_dir/plan.md"
   theme_summary_file="$run_dir/theme-summary.txt"
   builder_spec_raw="$run_dir/ollama-builder-spec-raw.md"
+  builder_spec_clean="$run_dir/ollama-builder-spec-clean.md"
 
   write_planner_prompt "$planner_prompt"
   run_ollama_stage planner "$planner_prompt"
@@ -489,7 +493,9 @@ if [ "$mode" != "codex-only" ]; then
   run_ollama_stage builder-spec "$builder_prompt"
 
   theme_factory_require_cmd node
-  node "$root_dir/scripts/renderer/render-theme-and-preview-from-site-specification.js" "$slug" "$prompt_file" "$plan_file" "$builder_spec_raw" "$root_dir"
+  builder_spec_for_render="$builder_spec_raw"
+  [ -f "$builder_spec_clean" ] && builder_spec_for_render="$builder_spec_clean"
+  node "$root_dir/scripts/renderer/render-theme-and-preview-from-site-specification.js" "$slug" "$prompt_file" "$plan_file" "$builder_spec_for_render" "$root_dir"
 
   run_npm_build
 

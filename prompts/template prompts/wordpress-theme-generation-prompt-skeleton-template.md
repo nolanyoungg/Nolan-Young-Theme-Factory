@@ -126,7 +126,7 @@ Examples:
 
 ### Image Direction
 
-Use royalty-free, non-copyright, safe stock-style imagery or CSS-generated visual placeholders that match the business.
+Use royalty-free, non-copyright, safe stock-style imagery or CSS-generated visual treatments that match the business.
 
 [FILL IN PHOTO / ILLUSTRATION STYLE HERE]
 
@@ -139,7 +139,7 @@ Examples:
 - Nature and outdoor scenes
 - Editorial lifestyle photography
 
-Do not use broken image links. Prefer local assets or generated CSS placeholders when appropriate.
+Do not use broken image links. Prefer local assets or generated CSS interface graphics when appropriate.
 
 ---
 
@@ -465,12 +465,12 @@ Create a complete footer with:
 - Service links
 - Resource links
 - Contact details
-- Social links or placeholders
+- Social links or inactive social labels if needed
 - Newsletter/signup area if appropriate
 - Copyright line
 - Privacy / Terms links if appropriate
 
-All footer links should point to real generated pages, real sections, or safe placeholders only when unavoidable.
+All footer links should point to real generated pages, real sections, or safe non-navigating labels only when unavoidable.
 
 ---
 
@@ -504,7 +504,7 @@ Avoid:
 
 - Lorem ipsum
 - Empty cards
-- Placeholder nav items
+- Empty nav items
 - Broken links
 - Duplicate sections with only minor text changes
 - Generic "About Us" filler

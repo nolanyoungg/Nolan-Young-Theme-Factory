@@ -1,0 +1,9 @@
+{
+  "name": "006_nolan_young_theme_veridian_codeworks_software_development_company",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build/webpack.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

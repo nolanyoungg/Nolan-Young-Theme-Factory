@@ -48,17 +48,152 @@ function stripAnsi(input) {
     .replace(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]\s*/g, '');
 }
 
-function parseSpec(input) {
+function balancedObjectText(input) {
   const clean = stripAnsi(input);
   const fenced = clean.match(/```json\s*([\s\S]*?)\s*```/i);
-  if (fenced) {
+  if (fenced) return fenced[1];
+
+  const start = clean.indexOf('{');
+  if (start === -1) return '';
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < clean.length; i += 1) {
+    const ch = clean[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === '{') depth += 1;
+    else if (ch === '}') {
+      depth -= 1;
+      if (depth === 0) return clean.slice(start, i + 1);
+    }
+  }
+  return clean.slice(start);
+}
+
+function cleanupLooseValue(value) {
+  const compact = stripAnsi(value)
+    .replace(/```json|```/gi, '')
+    .replace(/"text"\s*:\s*/gi, '')
+    .replace(/"title"\s*:\s*/gi, '')
+    .replace(/\r?\n+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.,;:!?])/g, '$1')
+    .trim()
+    .replace(/^"+|"+$/g, '')
+    .replace(/[;,]+$/g, '')
+    .trim();
+
+  const words = compact.split(/\s+/);
+  const kept = [];
+  for (let i = 0; i < words.length; i += 1) {
+    const current = words[i];
+    const next = words[i + 1] || '';
+    const currentCore = current.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '');
+    const nextCore = next.toLowerCase().replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '');
+    if (currentCore.length >= 1 && nextCore.length > currentCore.length && nextCore.startsWith(currentCore)) continue;
+    if (currentCore.length >= 3 && currentCore === nextCore) continue;
+    kept.push(current);
+  }
+  return kept.join(' ').replace(/\s+([.,;:!?])/g, '$1').trim();
+}
+
+function extractLooseString(block, key) {
+  const pattern = new RegExp(`"${key}"\\s*:\\s*"([\\s\\S]*?)"\\s*(?=,\\s*"[^"]+"\\s*:|,\\s*\\]|\\s*\\}|\\s*\\n\\s*"[^"]+"\\s*:|$)`, 'i');
+  const match = block.match(pattern);
+  return match ? cleanupLooseValue(match[1]) : '';
+}
+
+function extractLooseArrayBlock(block, key) {
+  const keyMatch = new RegExp(`"${key}"\\s*:\\s*\\[`, 'i').exec(block);
+  if (!keyMatch) return '';
+  let start = keyMatch.index + keyMatch[0].length - 1;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let i = start; i < block.length; i += 1) {
+    const ch = block[i];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (ch === '\\') escaped = true;
+      else if (ch === '"') inString = false;
+      continue;
+    }
+    if (ch === '"') inString = true;
+    else if (ch === '[') depth += 1;
+    else if (ch === ']') {
+      depth -= 1;
+      if (depth === 0) return block.slice(start, i + 1);
+    }
+  }
+  return '';
+}
+
+function extractLooseObjectArray(block, key) {
+  const arrayBlock = extractLooseArrayBlock(block, key);
+  if (!arrayBlock) return [];
+  const items = [];
+  const objectPattern = /\{\s*"title"\s*:\s*"([\s\S]*?)"\s*,\s*"text"\s*:\s*"([\s\S]*?)"\s*\}/gi;
+  let match;
+  while ((match = objectPattern.exec(arrayBlock))) {
+    const title = cleanupLooseValue(match[1]);
+    const textValue = cleanupLooseValue(match[2]);
+    if (title && textValue) items.push({ title, text: textValue });
+  }
+  return items;
+}
+
+function extractLooseStringArray(block, key) {
+  const arrayBlock = extractLooseArrayBlock(block, key);
+  if (!arrayBlock) return [];
+  const values = [];
+  const stringPattern = /"([^"\r\n][^"]*?)"/g;
+  let match;
+  while ((match = stringPattern.exec(arrayBlock))) {
+    const value = cleanupLooseValue(match[1]);
+    if (value && !/^(title|text)$/i.test(value)) values.push(value);
+  }
+  return values;
+}
+
+function parseLooseSpec(input) {
+  const block = balancedObjectText(input);
+  if (!block) return {};
+  const spec = {};
+  for (const key of ['brandName', 'businessName', 'name', 'industry', 'region', 'tone', 'eyebrow', 'heroTitle', 'headline', 'heroText', 'heroCopy', 'testimonial', 'imageDirection']) {
+    const value = extractLooseString(block, key);
+    if (value) spec[key] = value;
+  }
+  for (const key of ['services', 'projects', 'resources', 'process']) {
+    const items = extractLooseObjectArray(block, key);
+    if (items.length) spec[key] = items;
+  }
+  const proof = extractLooseStringArray(block, 'proof');
+  if (proof.length) spec.proof = proof;
+  if (!spec.imageDirection) {
+    const imageItems = extractLooseStringArray(block, 'imageDirection');
+    if (imageItems.length) spec.imageDirection = imageItems.join(', ');
+  }
+  return spec;
+}
+
+function parseSpec(input) {
+  const objectText = balancedObjectText(input);
+  if (objectText) {
     try {
-      return JSON.parse(fenced[1]);
+      return JSON.parse(objectText);
     } catch (_) {
-      // Fall through to balanced object extraction.
+      const loose = parseLooseSpec(objectText);
+      if (Object.keys(loose).length) return loose;
     }
   }
 
+  const clean = stripAnsi(input);
   const start = clean.indexOf('{');
   if (start === -1) return {};
   let depth = 0;
@@ -80,12 +215,14 @@ function parseSpec(input) {
         try {
           return JSON.parse(clean.slice(start, i + 1));
         } catch (_) {
-          return {};
+          const loose = parseLooseSpec(clean.slice(start, i + 1));
+          return Object.keys(loose).length ? loose : {};
         }
       }
     }
   }
-  return {};
+  const loose = parseLooseSpec(clean);
+  return Object.keys(loose).length ? loose : {};
 }
 
 function text(value, fallback) {
@@ -163,8 +300,12 @@ function detectSiteProfile(input) {
     .split(/(?<=[.!?])\s+|\r?\n+/)
     .filter((sentence) => !/\b(not|avoid|do not|does not|should not|must not|shouldn['’]?t|mustn['’]?t|isn['’]?t|is not|without)\b/i.test(sentence))
     .join('\n');
+  const softwareServicesPattern = /\b(software development company|software engineering studio|software studio|engineering services|development agency|custom software development|custom software|internal tools|workflow automation|business dashboard|dashboards and reporting|data and tool integrations|systems integration|software maintenance)\b/i;
+  const explicitProductPattern = /\b(crm product|customer relationship management product|saas product|software product|subscription software|product platform|app platform|customer support software|helpdesk software|ticketing software)\b/i;
+  if (softwareServicesPattern.test(textInput) && !explicitProductPattern.test(textInput)) return 'tech';
+
   const checks = [
-    ['product', /\b(crm|customer relationship|sales pipeline|client portal|customer portal|saas|software as a service|web app|product platform|app platform|platform|subscription software|account management|ticketing|helpdesk|customer support software)\b/i],
+    ['product', explicitProductPattern],
     ['tech', /\b(ai automation|artificial intelligence|automation studio|custom software|software studio|software platform|dashboard|dashboards|analytics|internal tools|data platform|api|workflow automation)\b/i],
     ['logistics', /\b(logistics|trucking|freight|fleet|dispatch|warehouse|transport|transportation|delivery|shipment|shipments|route|routes|carrier|shipper|shippers|last-mile|last mile)\b/i],
     ['finance', /\b(insurance|financial|finance|advisor|advisory|benefits|coverage|policy|policies|accounting|lending|wealth|claims|renewal|renewals)\b/i],
@@ -331,7 +472,7 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
   const detectedFallback = profileDefaults(profile, brandName, promptIndustry);
   const industry = text(input.industry || promptIndustry,
     isProduct ? detectedFallback.industry :
-    isTech ? 'AI automation, analytics, dashboards, and internal software systems' :
+    isTech ? 'custom software development, internal tools, workflow automation, dashboards, integrations, and software maintenance' :
     isLogistics ? 'freight operations, dispatch coordination, fleet visibility, and logistics service support' :
     isFinance ? 'insurance guidance, financial planning, client risk reviews, and advisory service support' :
     isFood ? 'restaurant hospitality, seasonal menus, guest experience, and local food service' :
@@ -349,7 +490,7 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     fallback.tone);
   const heroTitle = text(input.heroTitle || input.headline || promptHero,
     isProduct ? fallback.heroTitle :
-    isTech ? 'Automation systems for the work your team should not be doing by hand.' :
+    isTech ? `${brandName} builds software systems for the work your team should not be doing by hand.` :
     isLogistics ? 'Freight coordination built for clearer routes, faster answers, and steadier operations.' :
     isFinance ? 'Insurance and advisory guidance that turns complicated decisions into clear next steps.' :
     isFood ? 'Seasonal food, warm service, and a guest experience designed around every detail.' :
@@ -358,7 +499,7 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
   const heroText = text(input.heroText || input.heroCopy, isProduct
     ? fallback.heroText
     : isTech
-    ? 'AstraGrid Systems maps messy workflows into custom dashboards, internal tools, AI-assisted processes, and cleaner reporting infrastructure for small teams that need operational clarity.'
+    ? `${brandName} maps messy workflows into custom dashboards, internal tools, automation support, and cleaner reporting infrastructure for teams that need operational clarity.`
     : isLogistics
     ? `${brandName} helps shippers, operators, and field teams move from reactive updates to a clearer freight experience with stronger dispatch visibility, service communication, and route confidence.`
     : isFinance
@@ -373,8 +514,8 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     { title: 'AI Workflow Automation', text: 'Replace recurring manual steps with reviewed automation systems, routing logic, alerts, and AI-assisted handoffs.' },
     { title: 'Custom Dashboards', text: 'Build decision-ready dashboards that combine metrics, exceptions, pipeline health, and team visibility.' },
     { title: 'Internal Tools', text: 'Create lightweight portals, request systems, admin interfaces, and team software around the way work actually moves.' },
-    { title: 'CRM & Data Cleanup', text: 'Normalize records, fields, tags, imports, and reporting inputs before leadership relies on the numbers.' },
-    { title: 'WordPress Integrations', text: 'Connect marketing sites, forms, lead routing, content operations, and reporting flows without fragile plugin sprawl.' },
+    { title: 'Data Cleanup and Reporting Inputs', text: 'Normalize records, fields, tags, imports, and reporting inputs before leadership relies on the numbers.' },
+    { title: 'Tool and Website Integrations', text: 'Connect marketing sites, forms, lead routing, content operations, and reporting flows without fragile plugin sprawl.' },
     { title: 'Reporting Systems', text: 'Turn scattered spreadsheets and exports into repeatable reporting cadences with trustworthy definitions.' },
   ] : isLogistics ? [
     { title: 'Regional freight coordination', text: 'Plan pickup windows, route expectations, carrier handoffs, and delivery communication around real operating constraints.' },
@@ -529,7 +670,7 @@ function normalizeSpec(input, promptText, planText, fallbackSlug) {
     testimonial: text(input.testimonial, isProduct
       ? fallback.testimonial
       : isTech
-      ? 'AstraGrid helped us see where work was getting stuck, then turned the messy parts into a system our team could actually use.'
+      ? `${brandName} helped us see where work was getting stuck, then turned the messy parts into a system our team could actually use.`
       : isLogistics
       ? 'The team gave us clearer freight communication, fewer repeated calls, and a route plan everyone could understand before the first pickup.'
       : isFinance
@@ -844,12 +985,25 @@ function workCards(preview = false) {
   }).join('');
 }
 
+function safeAltText(value, fallback) {
+  const cleaned = String(value || '')
+    .replace(/\b(use|prefer|royalty-free|non-copyright|safe stock-style|css-generated|do not use|broken image links|when appropriate)\b/gi, '')
+    .replace(/\b(placeholders?|lorem ipsum|todo|sample text|gray boxes?|dummy content)\b/gi, '')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+([.,;:!?])/g, '$1')
+    .trim()
+    .replace(/^[,.;:\s-]+|[,.;:\s-]+$/g, '');
+  return cleaned || fallback;
+}
+
 function heroPart(preview = false) {
   const contact = preview ? 'contact_preview.html' : `<?php echo esc_url( home_url( '/contact/' ) ); ?>`;
   const work = preview ? 'work_preview.html' : `<?php echo esc_url( home_url( '/work/' ) ); ?>`;
   const hero1 = preview ? 'assets/images/brand-hero-01.png' : `<?php echo esc_url( get_template_directory_uri() . '/assets/images/hero/brand-hero-01.png' ); ?>`;
   const hero2 = preview ? 'assets/images/detail-01.png' : `<?php echo esc_url( get_template_directory_uri() . '/assets/images/texture/detail-01.png' ); ?>`;
-  return `<section class="hero"><div class="container hero-grid"><div><p class="eyebrow">${escHtml(spec.eyebrow)}</p><h1>${escHtml(spec.heroTitle)}</h1><p class="lede">${escHtml(spec.heroText)}</p><p><a class="button" href="${contact}">Start a conversation</a> <a class="button ghost" href="${work}">View work</a></p><div class="hero-proof">${spec.proof.map((p) => `<div class="proof-chip"><strong>${escHtml(p.split(' ')[0])}</strong>${escHtml(p.split(' ').slice(1).join(' ') || p)}</div>`).join('')}</div></div><div class="hero-media"><img src="${hero1}" alt="${escHtml(spec.imageDirection)}"><img src="${hero2}" alt="${escHtml(spec.industry)} detail study"></div></div></section>`;
+  const heroAlt = safeAltText(spec.imageDirection, `${spec.brandName} software interface visual`);
+  const detailAlt = safeAltText(`${spec.industry} detail study`, `${spec.brandName} work detail`);
+  return `<section class="hero"><div class="container hero-grid"><div><p class="eyebrow">${escHtml(spec.eyebrow)}</p><h1>${escHtml(spec.heroTitle)}</h1><p class="lede">${escHtml(spec.heroText)}</p><p><a class="button" href="${contact}">Start a conversation</a> <a class="button ghost" href="${work}">View work</a></p><div class="hero-proof">${spec.proof.map((p) => `<div class="proof-chip"><strong>${escHtml(p.split(' ')[0])}</strong>${escHtml(p.split(' ').slice(1).join(' ') || p)}</div>`).join('')}</div></div><div class="hero-media"><img src="${hero1}" alt="${escHtml(heroAlt)}"><img src="${hero2}" alt="${escHtml(detailAlt)}"></div></div></section>`;
 }
 
 function contactForm(preview = false) {

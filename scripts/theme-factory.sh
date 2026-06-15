@@ -15,6 +15,8 @@ Usage:
   bash scripts/theme-factory.sh check <theme-slug> [template-name]
   bash scripts/theme-factory.sh ollama-pass <theme-slug> <prompt-file> [model]
   bash scripts/theme-factory.sh ollama-only <prompt-file> [template-name] [model]
+  bash scripts/theme-factory.sh run <mode> <prompt-file> [template-name] [ollama-model] [codex-model] [codex-reasoning]
+  bash scripts/theme-factory.sh resume <theme-slug>
   bash scripts/theme-factory.sh preview <theme-slug>
   bash scripts/theme-factory.sh preview-index
   bash scripts/theme-factory.sh package <theme-slug>
@@ -78,6 +80,28 @@ case "$cmd" in
     bash scripts/package-theme.sh "$slug"
     node scripts/rebuild-preview-gallery.js
     node scripts/validate-preview-gallery.js
+    ;;
+  run)
+    mode="${1:-}"
+    prompt="${2:-}"
+    template="${3:-}"
+    ollama_model="${4:-}"
+    codex_model="${5:-}"
+    codex_reasoning="${6:-}"
+    extra_args=()
+    if [ "$#" -gt 6 ]; then
+      extra_args=("${@:7}")
+    fi
+    args=(--mode "$mode" --prompt "$prompt")
+    [ -n "$template" ] && args+=(--template "$template")
+    [ -n "$ollama_model" ] && args+=(--ollama-model "$ollama_model")
+    [ -n "$codex_model" ] && args+=(--codex-model "$codex_model")
+    [ -n "$codex_reasoning" ] && args+=(--codex-reasoning "$codex_reasoning")
+    args+=("${extra_args[@]}")
+    node scripts/run-theme-workflow.js "${args[@]}"
+    ;;
+  resume)
+    node scripts/run-theme-workflow.js --resume "${1:-}"
     ;;
   preview)
     node scripts/generate-static-preview.js "$@"

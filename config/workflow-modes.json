@@ -1,0 +1,44 @@
+{
+  "ollama-only": {
+    "prepare_theme": "script",
+    "create_generation_brief": "script",
+    "create_template_manifest": "script",
+    "ollama_generation_pass": "ollama",
+    "codex_generation_pass": "skip",
+    "validate_before_finish": "script",
+    "codex_finish_pass": "skip",
+    "generate_preview": "script",
+    "rebuild_preview_gallery": "script",
+    "package_theme": "script",
+    "final_validate": "script",
+    "write_run_summary": "script"
+  },
+  "codex-only": {
+    "prepare_theme": "script",
+    "create_generation_brief": "script",
+    "create_template_manifest": "script",
+    "ollama_generation_pass": "skip",
+    "codex_generation_pass": "codex",
+    "validate_before_finish": "script",
+    "codex_finish_pass": "codex",
+    "generate_preview": "script",
+    "rebuild_preview_gallery": "script",
+    "package_theme": "script",
+    "final_validate": "script",
+    "write_run_summary": "script"
+  },
+  "hybrid": {
+    "prepare_theme": "script",
+    "create_generation_brief": "script",
+    "create_template_manifest": "script",
+    "ollama_generation_pass": "ollama",
+    "codex_generation_pass": "skip",
+    "validate_before_finish": "script",
+    "codex_finish_pass": "codex",
+    "generate_preview": "script",
+    "rebuild_preview_gallery": "script",
+    "package_theme": "script",
+    "final_validate": "script",
+    "write_run_summary": "script"
+  }
+}

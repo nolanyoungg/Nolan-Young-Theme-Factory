@@ -56,3 +56,17 @@ Codex usage is reserved for creative/code-heavy theme generation only. Determini
 Validation is template-aware. A generated theme must contain every file from its selected template in the same relative path. Extra files are allowed.
 
 Separate quality checks cover practical WordPress concerns: PHP syntax, required root files, secrets, CDN references, and bad repo-local paths.
+
+## Workflow Contract
+
+The shared workflow lives in `scripts/run-theme-workflow.js` and is driven by `config/workflow-modes.json` and `config/theme-factory.defaults.json`.
+
+The supported first-class modes are:
+
+* `ollama-only`
+* `codex-only`
+* `hybrid`
+
+`bash scripts/theme-factory.sh run ...` and `node scripts/run-theme-workflow.js ...` are the primary entry points. Existing commands remain available for compatibility.
+
+Run reports belong in `reports/runs/{theme_slug}/`. Do not store secrets there.

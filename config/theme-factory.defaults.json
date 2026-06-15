@@ -1,0 +1,27 @@
+{
+  "default_mode": "hybrid",
+  "default_template": "NOLAN-YOUNG-theme-000",
+  "ollama": {
+    "model": "qwen2.5-coder:14b"
+  },
+  "codex": {
+    "model": "gpt-5.5",
+    "reasoning": "high"
+  },
+  "paths": {
+    "templates": "wordpress-themplate-themes",
+    "themes": "wp-content/themes",
+    "zips": "dist/zipped-themes",
+    "previews": "docs/Preview-Themes-Github",
+    "run_reports": "reports/runs"
+  },
+  "validation": {
+    "max_repair_attempts": 2,
+    "require_template_manifest": true,
+    "require_preview": true,
+    "require_zip": true
+  },
+  "retry": {
+    "repair_attempts": 2
+  }
+}

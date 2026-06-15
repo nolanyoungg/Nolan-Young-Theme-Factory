@@ -192,7 +192,7 @@ function failRun(reportDir, state, message) {
 }
 
 function buildThemeAssets(themeSlug, reportDir) {
-  const result = run('bash', ['scripts/build-theme-assets.sh', themeSlug]);
+  const result = run('node', ['scripts/build-theme-assets.js', themeSlug]);
   fs.writeFileSync(path.join(reportDir, 'build.output.txt'), `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
   return result.status === 0;
 }
@@ -208,7 +208,7 @@ function finalizeTheme(themeSlug, templateName, reportDir, state, validationFina
   const galleryValidation = run('node', ['scripts/validate-preview-gallery.js']);
   fs.appendFileSync(path.join(reportDir, 'preview.output.txt'), `${galleryValidation.stdout || ''}${galleryValidation.stderr || ''}`, 'utf8');
   if (galleryValidation.status !== 0) failRun(reportDir, state, 'Preview gallery validation failed.');
-  const pack = run('bash', ['scripts/package-theme.sh', themeSlug]);
+  const pack = run('node', ['scripts/package-theme.js', themeSlug]);
   fs.writeFileSync(path.join(reportDir, 'package.output.txt'), `${pack.stdout || ''}${pack.stderr || ''}`, 'utf8');
   if (pack.status !== 0) failRun(reportDir, state, 'Theme packaging failed.');
   const finalReport = run('node', ['scripts/write-theme-validation-report.js', themeSlug, templateName, validationFinalPath, 'final']);
@@ -312,7 +312,7 @@ if (dryRun) {
   process.exit(0);
 }
 
-const prep = run('bash', ['scripts/prepare-theme-from-template.sh', promptFile, templateName]);
+const prep = run('node', ['scripts/prepare-theme-from-template.js', promptFile, templateName]);
 if (prep.status !== 0) fail('Theme preparation failed.');
 themeSlug = parsePreparedSlug(`${prep.stdout}${prep.stderr}`);
 reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
@@ -331,21 +331,25 @@ state.status = mode === 'ollama-only' ? 'ollama-complete' : 'prepared';
 writeState(reportDir, state);
 
 if (stages.ollama_generation_pass === 'ollama') {
-  const ollama = run('bash', ['scripts/run-ollama-theme-pass.sh', themeSlug, promptFile, ollamaModel]);
+  const ollama = run('node', ['scripts/run-ollama-theme-pass.js', themeSlug, promptFile, ollamaModel]);
   fs.writeFileSync(path.join(reportDir, 'ollama.pass.output.txt'), `${ollama.stdout}${ollama.stderr}`, 'utf8');
   if (ollama.status !== 0) fail('Ollama generation failed.');
+  if (stages.build_theme_assets === 'script' && !buildThemeAssets(themeSlug, reportDir)) {
+    failRun(reportDir, state, 'Theme asset build failed after Ollama generation.');
+  }
 }
 
 const preFinish = run('node', ['scripts/write-theme-validation-report.js', themeSlug, templateName, validationBeforePath, 'pre-finish']);
 if (preFinish.status !== 0) failRun(reportDir, state, 'Pre-finish validation report failed.');
-const templateCheck = run('bash', ['scripts/validate-theme-from-template.sh', themeSlug, templateName]);
+const templateCheck = run('node', ['scripts/validate-theme-from-template.js', themeSlug, templateName]);
 if (templateCheck.status !== 0) failRun(reportDir, state, 'Template-aware validation failed.');
-let qualityCheck = run('bash', ['scripts/theme-quality-check.sh', themeSlug]);
+let qualityCheck = run('node', ['scripts/theme-quality-check.js', themeSlug]);
 if (qualityCheck.status !== 0 && mode === 'ollama-only') {
-  const repair = run('bash', ['scripts/run-ollama-quality-repair-pass.sh', themeSlug, promptFile, ollamaModel]);
+  const repair = run('node', ['scripts/run-ollama-quality-repair-pass.js', themeSlug, promptFile, ollamaModel]);
   fs.writeFileSync(path.join(reportDir, 'ollama.quality-repair.output.txt'), `${repair.stdout}${repair.stderr}`, 'utf8');
   if (repair.status !== 0) failRun(reportDir, state, 'Ollama quality repair failed.');
-  qualityCheck = run('bash', ['scripts/theme-quality-check.sh', themeSlug]);
+  if (!buildThemeAssets(themeSlug, reportDir)) failRun(reportDir, state, 'Theme asset build failed after Ollama quality repair.');
+  qualityCheck = run('node', ['scripts/theme-quality-check.js', themeSlug]);
 }
 if (qualityCheck.status !== 0 && mode === 'ollama-only') failRun(reportDir, state, 'Theme quality check failed after Ollama generation.');
 

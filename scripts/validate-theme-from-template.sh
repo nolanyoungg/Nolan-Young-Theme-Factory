@@ -8,6 +8,15 @@ fail() {
   exit 1
 }
 
+canonical_path() {
+  local target="$1"
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -m "$target"
+  else
+    (cd "$target" && pwd)
+  fi
+}
+
 theme_slug="${1:-}"
 template_name="${2:-${THEME_TEMPLATE:-}}"
 
@@ -17,8 +26,10 @@ template_name="${2:-${THEME_TEMPLATE:-}}"
 theme_dir="$repo_root/wp-content/themes/$theme_slug"
 [ -d "$theme_dir" ] || fail "Generated theme folder not found: wp-content/themes/$theme_slug"
 
-case "$(cd "$theme_dir" && pwd)" in
-  "$repo_root/wp-content/themes/"*) ;;
+themes_root="$(canonical_path "$repo_root/wp-content/themes")"
+resolved_theme_dir="$(canonical_path "$theme_dir")"
+case "$resolved_theme_dir" in
+  "$themes_root"/*) ;;
   *) fail "Generated theme is outside wp-content/themes: $theme_dir" ;;
 esac
 

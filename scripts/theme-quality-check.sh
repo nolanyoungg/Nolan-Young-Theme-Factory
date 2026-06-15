@@ -10,6 +10,15 @@ fail() {
   failures=$((failures + 1))
 }
 
+canonical_path() {
+  local target="$1"
+  if command -v cygpath >/dev/null 2>&1; then
+    cygpath -m "$target"
+  else
+    (cd "$target" && pwd)
+  fi
+}
+
 [ -n "$theme_slug" ] || {
   printf 'Usage: bash scripts/theme-quality-check.sh <theme-slug>\n' >&2
   exit 1
@@ -21,8 +30,10 @@ theme_dir="$repo_root/wp-content/themes/$theme_slug"
 [ -d "$theme_dir" ] || fail "Theme folder is missing: wp-content/themes/$theme_slug"
 
 if [ -d "$theme_dir" ]; then
-  case "$(cd "$theme_dir" && pwd)" in
-    "$repo_root/wp-content/themes/"*) ;;
+  themes_root="$(canonical_path "$repo_root/wp-content/themes")"
+  resolved_theme_dir="$(canonical_path "$theme_dir")"
+  case "$resolved_theme_dir" in
+    "$themes_root"/*) ;;
     *) fail "Theme folder resolves outside wp-content/themes" ;;
   esac
 

@@ -34,10 +34,13 @@ function includeThemeSlug(slug) {
   const hasPreview = fs.existsSync(path.join(previewRoot, slug, 'homepage_preview.html')) || fs.existsSync(path.join(previewRoot, slug, 'index.html'));
   const status = workflowStatus(slug);
   if (hasPreview) return true;
+  if (['completed'].includes(status)) return false;
   return !['codex-build-pending', 'codex-finish-pending', 'codex-repair-pending', 'failed'].includes(status);
 }
 
-const slugs = Array.from(new Set([...listSlugs(themesRoot).filter(includeThemeSlug), ...listSlugs(previewRoot)])).sort();
+const slugs = Array.from(new Set([...listSlugs(themesRoot).filter(includeThemeSlug), ...listSlugs(previewRoot)])).filter((slug) => {
+  return fs.existsSync(path.join(previewRoot, slug, 'homepage_preview.html')) || fs.existsSync(path.join(previewRoot, slug, 'index.html'));
+}).sort();
 
 function escapeHtml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

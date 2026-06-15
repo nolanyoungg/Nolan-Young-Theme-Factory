@@ -1,1 +1,0 @@
-Theme assets and code are intended for project use under the repository workflow. Replace this file with the final distribution license text if a public release requires a specific license notice.

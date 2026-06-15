@@ -1,3 +1,3 @@
 # Preview Images
 
-Local preview images may be copied here after generation.
+Preview pages use generated theme CSS, local SVGs, and local theme assets.

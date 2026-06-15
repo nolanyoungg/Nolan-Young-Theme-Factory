@@ -80,6 +80,8 @@ fi
 
 grep -q "$theme_slug" docs/index.html || fail "Preview gallery does not link to $theme_slug"
 
+node scripts/validate-preview-gallery.js
+
 if [ "$failures" -gt 0 ]; then
   printf 'Generated theme validation failed for %s with %s issue(s).\n' "$theme_slug" "$failures" >&2
   exit 1

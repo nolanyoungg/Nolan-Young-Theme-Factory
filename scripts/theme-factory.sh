@@ -77,13 +77,16 @@ case "$cmd" in
     node scripts/generate-static-preview.js "$slug"
     bash scripts/package-theme.sh "$slug"
     node scripts/rebuild-preview-gallery.js
+    node scripts/validate-preview-gallery.js
     ;;
   preview)
     node scripts/generate-static-preview.js "$@"
     node scripts/rebuild-preview-gallery.js
+    node scripts/validate-preview-gallery.js
     ;;
   preview-index)
     node scripts/rebuild-preview-gallery.js
+    node scripts/validate-preview-gallery.js
     ;;
   package)
     bash scripts/package-theme.sh "$@"

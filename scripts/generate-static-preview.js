@@ -33,71 +33,111 @@ function escapeHtml(value) {
     .replace(/"/g, '&quot;');
 }
 
-const themeName = readStyle('Theme Name') || slug;
+function titleFromSlug(value) {
+  return value.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function readThemeFile(relativePath) {
+  const file = path.join(themeDir, relativePath);
+  return fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+}
+
+function stripPhpToStatic(html) {
+  return html
+    .replace(/\r\n/g, '\n')
+    .replace(/^<\?php[^\n]*\?>\n\?>\n/, '')
+    .replace(/<\?php[\s\S]*?get_header\s*\([^)]*\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?get_footer\s*\([^)]*\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?wp_head\s*\([^)]*\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?wp_footer\s*\([^)]*\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?the_custom_logo\s*\([^)]*\)\s*;?[\s\S]*?\?>/g, '<span class="preview-logo-mark">NY</span>')
+    .replace(/<\?php[\s\S]*?wp_nav_menu\s*\([\s\S]*?\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?bloginfo\s*\([\s\S]*?\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?body_class\s*\([\s\S]*?\)\s*;?[\s\S]*?\?>/g, '')
+    .replace(/<\?php[\s\S]*?language_attributes\s*\([\s\S]*?\)\s*;?[\s\S]*?\?>/g, 'lang="en"')
+    .replace(/<\?php[\s\S]*?\?>/g, '')
+    .replace(/^\?>\s*/gm, '')
+    .replace(/\bhref=(["'])\#\1/g, 'href="#"')
+    .trim();
+}
+
+function copyIfExists(sourceRelative, targetRelative) {
+  const source = path.join(themeDir, sourceRelative);
+  if (!fs.existsSync(source)) return false;
+  const target = path.join(previewDir, targetRelative);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.copyFileSync(source, target);
+  return true;
+}
+
+const themeName = readStyle('Theme Name') || titleFromSlug(slug);
 const description = readStyle('Description') || 'Generated WordPress theme preview.';
 const pages = [
-  ['index.html', 'Overview'],
-  ['homepage_preview.html', 'Homepage'],
-  ['services_preview.html', 'Services'],
-  ['about-us_preview.html', 'About'],
-  ['contact_preview.html', 'Contact'],
-  ['single_services_preview.html', 'Single Service'],
-  ['blog_preview.html', 'Blog'],
-  ['work_preview.html', 'Work']
+  ['index.html', 'Overview', 'front-page.php'],
+  ['homepage_preview.html', 'Homepage', 'front-page.php'],
+  ['services_preview.html', 'Services', 'page-templates/template-services.php'],
+  ['about-us_preview.html', 'About', 'page-templates/template-about-us.php'],
+  ['contact_preview.html', 'Contact', 'page-templates/template-contact.php'],
+  ['single_services_preview.html', 'Single Service', 'page-templates/template-single-service.php'],
+  ['blog_preview.html', 'Blog', 'page-templates/template-blog.php'],
+  ['work_preview.html', 'Work', 'page-templates/template-work.php']
 ];
 
 const nav = pages
+  .filter(([file]) => file !== 'index.html')
   .map(([file, label]) => `<a href="${file}">${escapeHtml(label)}</a>`)
   .join('');
 
-const css = `:root{--ink:#17201c;--paper:#f7f8f5;--accent:#1d6b5d;--line:#d8dfd8}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,sans-serif;line-height:1.55}.wrap{width:min(1120px,calc(100% - 40px));margin:0 auto}.site-header{padding:24px 0;border-bottom:1px solid var(--line)}.brand{font-weight:800}.nav{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}.nav a{color:var(--accent);font-weight:700;text-decoration:none}.hero{padding:80px 0}.hero h1{max-width:820px;font-size:4rem;line-height:1;margin:0 0 18px}.section{padding:42px 0;border-top:1px solid var(--line)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}.card{padding:20px;border:1px solid var(--line);border-radius:8px;background:#fff}@media(max-width:720px){.hero h1{font-size:2.5rem}}`;
+const fallbackCss = `:root{--ink:#111827;--paper:#f7f8fb;--accent:#2563eb;--line:#dbe3ee}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,sans-serif;line-height:1.55}.container,.wrap{width:min(1120px,calc(100% - 40px));margin:0 auto}.preview-header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line)}.preview-header-inner{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:24px}.preview-brand{font-weight:800}.preview-nav{display:flex;flex-wrap:wrap;gap:12px}.preview-nav a{color:var(--accent);font-weight:700;text-decoration:none}.preview-footer{padding:32px 0;border-top:1px solid var(--line);background:#fff}.hero,section{padding:56px 0}.btn-primary,.btn-secondary,.button{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:8px;text-decoration:none;font-weight:800}@media(max-width:760px){.preview-header-inner{align-items:flex-start;flex-direction:column;padding:18px 0}}`;
 
-function page(title) {
+fs.rmSync(previewDir, { recursive: true, force: true });
+fs.mkdirSync(path.join(previewDir, 'assets', 'css'), { recursive: true });
+fs.mkdirSync(path.join(previewDir, 'assets', 'js'), { recursive: true });
+fs.mkdirSync(path.join(previewDir, 'assets', 'images'), { recursive: true });
+
+if (!copyIfExists('assets/css/bundle.css', 'assets/css/preview.css')) {
+  fs.writeFileSync(path.join(previewDir, 'assets', 'css', 'preview.css'), fallbackCss);
+} else {
+  fs.appendFileSync(path.join(previewDir, 'assets', 'css', 'preview.css'), `\n${fallbackCss}\n`);
+}
+
+copyIfExists('assets/js/bundle.js', 'assets/js/preview.js') || fs.writeFileSync(path.join(previewDir, 'assets', 'js', 'preview.js'), '');
+fs.writeFileSync(path.join(previewDir, 'assets', 'images', 'README.md'), '# Preview Images\n\nPreview pages use generated theme CSS, local SVGs, and local theme assets.\n');
+fs.writeFileSync(path.join(previewDir, 'README.md'), `# ${themeName}\n\nStatic preview for ${slug}.\n`);
+
+function renderPage(file, label, sourceRelative) {
+  const source = readThemeFile(sourceRelative) || readThemeFile('index.php');
+  const body = stripPhpToStatic(source) || `<main><section class="hero"><div class="container"><h1>${escapeHtml(label)}</h1><p>${escapeHtml(description)}</p></div></section></main>`;
+
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${escapeHtml(themeName)} - ${escapeHtml(title)}</title>
+    <title>${escapeHtml(themeName)} - ${escapeHtml(label)}</title>
     <link rel="stylesheet" href="assets/css/preview.css">
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrap">
-        <div class="brand">${escapeHtml(themeName)}</div>
-        <nav class="nav" aria-label="Preview navigation">${nav}</nav>
+    <header class="preview-header" data-nolan-menu-header>
+      <div class="container preview-header-inner">
+        <a class="preview-brand" href="homepage_preview.html">${escapeHtml(themeName)}</a>
+        <nav class="preview-nav" aria-label="Preview navigation">${nav}</nav>
       </div>
     </header>
-    <main>
-      <section class="hero">
-        <div class="wrap">
-          <p>${escapeHtml(slug)}</p>
-          <h1>${escapeHtml(title)} Preview</h1>
-          <p>${escapeHtml(description)}</p>
-        </div>
-      </section>
-      <section class="section">
-        <div class="wrap grid">
-          <article class="card"><h2>Design</h2><p>Static preview generated from the prepared WordPress theme folder.</p></article>
-          <article class="card"><h2>Content</h2><p>Generation should replace template filler with prompt-specific website content.</p></article>
-          <article class="card"><h2>Assets</h2><p>Theme assets must remain local and live inside the generated theme folder.</p></article>
-        </div>
-      </section>
-    </main>
+${body}
+    <footer class="preview-footer">
+      <div class="container">
+        <strong>${escapeHtml(themeName)}</strong>
+        <p>${escapeHtml(description)}</p>
+      </div>
+    </footer>
+    <script src="assets/js/preview.js"></script>
   </body>
 </html>`;
 }
 
-fs.mkdirSync(path.join(previewDir, 'assets', 'css'), { recursive: true });
-fs.writeFileSync(path.join(previewDir, 'assets', 'css', 'preview.css'), css);
-fs.mkdirSync(path.join(previewDir, 'assets', 'js'), { recursive: true });
-fs.writeFileSync(path.join(previewDir, 'assets', 'js', 'preview.js'), '');
-fs.mkdirSync(path.join(previewDir, 'assets', 'images'), { recursive: true });
-fs.writeFileSync(path.join(previewDir, 'assets', 'images', 'README.md'), '# Preview Images\n\nLocal preview images may be copied here after generation.\n');
-fs.writeFileSync(path.join(previewDir, 'README.md'), `# ${themeName}\n\nStatic preview for ${slug}.\n`);
-
-for (const [file, title] of pages) {
-  fs.writeFileSync(path.join(previewDir, file), page(title));
+for (const [file, label, sourceRelative] of pages) {
+  fs.writeFileSync(path.join(previewDir, file), renderPage(file, label, sourceRelative));
 }
 
 console.log(`Generated docs/Preview-Themes-Github/${slug}`);

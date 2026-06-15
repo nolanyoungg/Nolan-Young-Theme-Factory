@@ -54,6 +54,14 @@ if [ -d "$theme_dir" ]; then
   if grep -R -I -n -E --exclude-dir=node_modules 'C:\\Users\\|/Users/|codex-ggi-nolan-local|docs/Preview-Themes-Github|dist/zipped-themes' "$theme_dir" >/dev/null 2>&1; then
     fail "Theme contains repo-local, preview, dist, or machine-specific paths"
   fi
+
+  if grep -R -I -n -E \
+    --include='*.php' --include='*.css' --include='*.js' --include='README.md' \
+    --exclude-dir=node_modules --exclude-dir=.generation \
+    'Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder' \
+    "$theme_dir" >/dev/null 2>&1; then
+    fail "Theme contains unfinished placeholder/runtime copy"
+  fi
 fi
 
 if [ "$failures" -gt 0 ]; then

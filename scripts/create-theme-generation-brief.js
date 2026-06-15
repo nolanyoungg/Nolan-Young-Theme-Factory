@@ -25,7 +25,7 @@ const source = path.join(themeDir, '.theme-template-source');
 const templateSource = fs.existsSync(source) ? fs.readFileSync(source, 'utf8').trim() : 'template=unknown';
 const prompt = fs.readFileSync(promptFile, 'utf8').trim();
 const relTheme = `wp-content/themes/${slug}`;
-const briefPath = path.join(themeDir, '.generation', 'theme-generation-brief.md');
+const briefPath = path.join(root, 'reports', 'runs', slug, 'ollama-generation', 'theme-generation-brief.md');
 
 const brief = `# Theme Generation Brief
 

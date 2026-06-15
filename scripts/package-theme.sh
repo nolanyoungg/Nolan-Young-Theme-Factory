@@ -26,6 +26,8 @@ if command -v zip >/dev/null 2>&1; then
     zip -qr "../../dist/zipped-themes/$theme_slug.zip" "$theme_slug" \
       -x "$theme_slug/node_modules/*" \
       -x "$theme_slug/.git/*" \
+      -x "$theme_slug/.generation/*" \
+      -x "$theme_slug/reports/*" \
       -x "$theme_slug/*.log" \
       -x "$theme_slug/**/*.log" \
       -x "$theme_slug/**/*.map"
@@ -40,7 +42,7 @@ elif command -v powershell.exe >/dev/null 2>&1; then
   THEME_FACTORY_PACKAGE_SOURCE="$ps_theme_dir" \
     THEME_FACTORY_PACKAGE_ZIP="$ps_zip_path" \
     powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \
-      "\$ErrorActionPreference='Stop'; Compress-Archive -LiteralPath \$env:THEME_FACTORY_PACKAGE_SOURCE -DestinationPath \$env:THEME_FACTORY_PACKAGE_ZIP -Force"
+      "\$ErrorActionPreference='Stop'; \$source=Get-Item -LiteralPath \$env:THEME_FACTORY_PACKAGE_SOURCE; \$tempRoot=Join-Path ([IO.Path]::GetTempPath()) ('theme-package-' + [guid]::NewGuid().ToString()); New-Item -ItemType Directory -Path \$tempRoot | Out-Null; try { Copy-Item -LiteralPath \$source.FullName -Destination \$tempRoot -Recurse -Force; \$tempTheme=Join-Path \$tempRoot \$source.Name; foreach (\$name in @('node_modules','.git','.generation','reports')) { Remove-Item -LiteralPath (Join-Path \$tempTheme \$name) -Recurse -Force -ErrorAction SilentlyContinue }; Compress-Archive -LiteralPath \$tempTheme -DestinationPath \$env:THEME_FACTORY_PACKAGE_ZIP -Force } finally { Remove-Item -LiteralPath \$tempRoot -Recurse -Force -ErrorAction SilentlyContinue }"
 else
   fail "Packaging requires zip or powershell.exe"
 fi

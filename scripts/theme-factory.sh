@@ -69,7 +69,11 @@ case "$cmd" in
     }
     bash scripts/run-ollama-theme-pass.sh "$slug" "$prompt_file" "$model"
     bash scripts/validate-theme-from-template.sh "$slug" "$template_name"
-    bash scripts/theme-quality-check.sh "$slug"
+    if ! bash scripts/theme-quality-check.sh "$slug"; then
+      printf 'Running Ollama quality repair pass for %s\n' "$slug"
+      bash scripts/run-ollama-quality-repair-pass.sh "$slug" "$prompt_file" "$model"
+      bash scripts/theme-quality-check.sh "$slug"
+    fi
     node scripts/generate-static-preview.js "$slug"
     bash scripts/package-theme.sh "$slug"
     node scripts/rebuild-preview-gallery.js

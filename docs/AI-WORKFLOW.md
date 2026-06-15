@@ -21,6 +21,7 @@ Common stages:
 * `codex_generation_pass`
 * `validate_before_finish`
 * `codex_finish_pass`
+* `build_theme_assets`
 * `generate_preview`
 * `rebuild_preview_gallery`
 * `package_theme`
@@ -31,7 +32,7 @@ Common stages:
 
 ### `ollama-only`
 
-Scripts prepare the theme, Ollama generates inside the prepared folder, scripts validate, build previews, rebuild the gallery, package the ZIP, and write the run summary.
+Scripts prepare the theme, Ollama generates inside the prepared folder, scripts validate, build theme assets, build previews, rebuild the gallery, package the ZIP, and write the run summary.
 
 Example:
 
@@ -46,7 +47,7 @@ Scripts prepare the theme and generate Codex brief artifacts. The workflow recor
 Example:
 
 ```bash
-node scripts/run-theme-workflow.js --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.5 --codex-reasoning high
+node scripts/run-theme-workflow.js --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.4 --codex-reasoning medium
 ```
 
 ### `hybrid`
@@ -56,7 +57,7 @@ Scripts prepare the theme, Ollama drafts it, scripts validate, then Codex receiv
 Example:
 
 ```bash
-node scripts/run-theme-workflow.js --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.5 --codex-reasoning high
+node scripts/run-theme-workflow.js --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.4 --codex-reasoning medium
 ```
 
 ## Dry Run
@@ -96,6 +97,7 @@ Key files:
 
 After generation and validation:
 
+* theme assets are built with `bash scripts/build-theme-assets.sh {theme_slug}`
 * static preview is written to `docs/Preview-Themes-Github/{theme_slug}/`
 * the gallery is rebuilt in `docs/index.html`
 * the ZIP is written to `dist/zipped-themes/{theme_slug}.zip`

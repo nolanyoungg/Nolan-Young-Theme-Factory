@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "ink",
+          "color": "#111827",
+          "name": "Ink"
+        },
+        {
+          "slug": "paper",
+          "color": "#f8fafc",
+          "name": "Paper"
+        },
+        {
+          "slug": "accent",
+          "color": "#2563eb",
+          "name": "Accent"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1180px"
+    }
+  }
+}

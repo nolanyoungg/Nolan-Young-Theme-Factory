@@ -1,0 +1,41 @@
+@import 'variables';
+@import 'mixins';
+body { font-family: $font-stack; margin: 0; padding: 0; background-color: #ffffff; color: #111827; }
+.header { display: flex; justify-content: space-between; align-items: center; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 1000; padding: $spacing-lg 2rem; }
+.header__logo { font-size: rem(24); color: $primary-color; text-decoration: none; }
+.header__nav { display: flex; gap: rem(16); list-style: none; margin: 0; padding: 0; }
+.header__nav li a { color: #111827; text-decoration: none; font-weight: bold; }
+.header__nav li a:hover { color: $muted-text-color; }
+.hero { background-color: #f4f7fb; padding: rem(96) 2rem; display: flex; justify-content: center; align-items: center; text-align: center; }
+.hero__title { font-size: rem(48); margin-bottom: rem(16); color: $dark-background-color; }
+.hero__subtitle { font-size: rem(20); margin-bottom: rem(32); color: $muted-text-color; }
+.hero__cta { background-color: $primary-color; color: #ffffff; padding: rem(8) rem(16); border-radius: rem(4); text-decoration: none; font-weight: bold; transition: background-color 0.3s ease; }
+.hero__cta:hover { background-color: darken($primary-color, 10%); }
+.trust-bar { display: flex; justify-content: center; gap: rem(24); padding: rem(72) 2rem; background-color: #ffffff; }
+.trust-bar__item { text-align: center; }
+.trust-bar__item img { width: rem(48); height: auto; margin-bottom: rem(8); }
+.trust-bar__item p { font-size: rem(16); color: $muted-text-color; }
+.services-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: rem(24); padding: rem(72) 2rem; background-color: #f4f7fb; }
+.service-card { border-radius: rem(8); overflow: hidden; box-shadow: 0 rem(4) rem(6) rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+.service-card:hover { transform: translateY(-rem(5)); }
+.service-card__content { padding: rem(16); }
+.service-card__title { font-size: rem(20); color: $dark-background-color; margin-bottom: rem(8); }
+.service-card__description { font-size: rem(16); color: $muted-text-color; }
+.problem-solution { padding: rem(72) 2rem; background-color: #ffffff; text-align: center; }
+.problem-solution__title { font-size: rem(32); margin-bottom: rem(16); color: $dark-background-color; }
+.problem-solution__subtitle { font-size: rem(20); color: $muted-text-color; }
+.process { padding: rem(72) 2rem; background-color: #f4f7fb; }
+.process__step { display: flex; align-items: center; gap: rem(16); margin-bottom: rem(16); }
+.process__step img { width: rem(64); height: auto; }
+.process__step p { font-size: rem(16); color: $muted-text-color; }
+.featured-work { padding: rem(72) 2rem; background-color: #ffffff; }
+.case-study { border-radius: rem(8); overflow: hidden; box-shadow: 0 rem(4) rem(6) rgba(0, 0, 0, 0.1); margin-bottom: rem(16); transition: transform 0.3s ease; }
+.case-study:hover { transform: translateY(-rem(5)); }
+.case-study__content { padding: rem(16); }
+.case-study__title { font-size: rem(20); color: $dark-background-color; margin-bottom: rem(8); }
+.case-study__description { font-size: rem(16); color: $muted-text-color; }
+.footer { background-color: $dark-background-color; color: #ffffff; padding: rem(72) 2rem; text-align: center; }
+.footer__nav, .footer__services, .footer__resources { display: flex; justify-content: center; gap: rem(16); margin-bottom: rem(16); list-style: none; }
+.footer__nav li a, .footer__services li a, .footer__resources li a { color: #ffffff; text-decoration: none; font-weight: bold; transition: color 0.3s ease; }
+.footer__nav li a:hover, .footer__services li a:hover, .footer__resources li a:hover { color: $secondary-brand-color; }
+.footer__contact { margin-top: rem(24); font-size: rem(14); color: #ffffff; }

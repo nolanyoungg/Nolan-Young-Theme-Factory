@@ -1,0 +1,1 @@
+<?php get_header(); ?><main id="primary" class="site-main"><section class="template-section"><h1><?php esc_html_e( 'Access restricted', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'This area is protected. Use the navigation above to return to the site or contact the team for access support.', 'nolan-young-template' ); ?></p></section></main><?php get_footer(); ?>

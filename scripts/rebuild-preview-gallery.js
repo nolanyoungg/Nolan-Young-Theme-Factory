@@ -8,6 +8,7 @@ const themesRoot = path.join(root, 'wp-content', 'themes');
 const zipRoot = path.join(root, 'dist', 'zipped-themes');
 const previewRoot = path.join(docsDir, 'Preview-Themes-Github');
 const indexPath = path.join(docsDir, 'index.html');
+const reportsRoot = path.join(root, 'reports', 'runs');
 
 fs.mkdirSync(previewRoot, { recursive: true });
 
@@ -19,7 +20,24 @@ function listSlugs(dir) {
     .filter((name) => /^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(name));
 }
 
-const slugs = Array.from(new Set([...listSlugs(themesRoot), ...listSlugs(previewRoot)])).sort();
+function workflowStatus(slug) {
+  const statePath = path.join(reportsRoot, slug, 'workflow.state.json');
+  if (!fs.existsSync(statePath)) return '';
+  try {
+    return JSON.parse(fs.readFileSync(statePath, 'utf8')).status || '';
+  } catch (error) {
+    return '';
+  }
+}
+
+function includeThemeSlug(slug) {
+  const hasPreview = fs.existsSync(path.join(previewRoot, slug, 'homepage_preview.html')) || fs.existsSync(path.join(previewRoot, slug, 'index.html'));
+  const status = workflowStatus(slug);
+  if (hasPreview) return true;
+  return !['codex-build-pending', 'codex-finish-pending', 'codex-repair-pending', 'failed'].includes(status);
+}
+
+const slugs = Array.from(new Set([...listSlugs(themesRoot).filter(includeThemeSlug), ...listSlugs(previewRoot)])).sort();
 
 function escapeHtml(value) {
   return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

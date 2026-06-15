@@ -21,13 +21,21 @@ slugify() {
 
 next_number() {
   local max=-1 name number
-  mkdir -p "$repo_root/wp-content/themes"
+  mkdir -p "$repo_root/wp-content/themes" "$repo_root/docs/Preview-Themes-Github" "$repo_root/dist/zipped-themes" "$repo_root/reports/runs"
   while IFS= read -r name; do
     if [[ "$name" =~ ^([0-9][0-9][0-9])_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]]; then
       number="$((10#${BASH_REMATCH[1]}))"
       [ "$number" -gt "$max" ] && max="$number"
+    elif [[ "$name" =~ ^([0-9][0-9][0-9])_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]\.zip$ ]]; then
+      number="$((10#${BASH_REMATCH[1]}))"
+      [ "$number" -gt "$max" ] && max="$number"
     fi
-  done < <(find "$repo_root/wp-content/themes" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null || true)
+  done < <(
+    find "$repo_root/wp-content/themes" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null || true
+    find "$repo_root/docs/Preview-Themes-Github" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null || true
+    find "$repo_root/dist/zipped-themes" -mindepth 1 -maxdepth 1 -type f -name '*.zip' -printf '%f\n' 2>/dev/null || true
+    find "$repo_root/reports/runs" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' 2>/dev/null || true
+  )
   printf '%03d\n' "$((max + 1))"
 }
 

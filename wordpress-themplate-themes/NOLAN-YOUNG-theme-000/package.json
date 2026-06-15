@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "webpack --config build/webpack.config.js"
+    "build": "webpack --config build/webpack.config.js && sass --no-source-map src/scss/main.scss assets/css/bundle.css --style=compressed",
+    "watch": "webpack --watch --config build/webpack.config.js"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",

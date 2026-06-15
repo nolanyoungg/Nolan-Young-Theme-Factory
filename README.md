@@ -10,10 +10,11 @@ Clean template-first tooling for generating classic WordPress themes.
 3. Run the selected AI mode inside the prepared folder
 4. Validate against the selected template
 5. Run WordPress quality checks
-6. Generate or update the static preview
-7. Rebuild the preview gallery
-8. Package the ZIP
-9. Write run reports
+6. Build theme assets with `npm run build`
+7. Generate or update the static preview
+8. Rebuild the preview gallery
+9. Package the ZIP
+10. Write run reports
 ```
 
 ## Main Command
@@ -26,7 +27,7 @@ bash scripts/theme-factory.sh check 001_nolan_young_theme_example
 bash scripts/theme-factory.sh preview 001_nolan_young_theme_example
 bash scripts/theme-factory.sh package 001_nolan_young_theme_example
 bash scripts/theme-factory.sh preview-index
-bash scripts/theme-factory.sh run hybrid prompts/pending/000-testing.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.5 high
+bash scripts/theme-factory.sh run hybrid prompts/pending/000-testing.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.4 medium
 bash scripts/theme-factory.sh resume 001_nolan_young_theme_example
 ```
 

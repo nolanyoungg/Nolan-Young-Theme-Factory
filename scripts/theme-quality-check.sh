@@ -35,6 +35,23 @@ if [ -d "$theme_dir" ]; then
     grep -q '^Text Domain:' "$theme_dir/style.css" || fail "style.css missing Text Domain header"
   fi
 
+  css_bundle="$theme_dir/assets/css/bundle.css"
+  js_bundle="$theme_dir/assets/js/bundle.js"
+  scss_entry="$theme_dir/src/scss/main.scss"
+  js_entry="$theme_dir/src/js/main.js"
+  [ -f "$css_bundle" ] || fail "Missing compiled CSS bundle: assets/css/bundle.css"
+  [ -f "$js_bundle" ] || fail "Missing compiled JS bundle: assets/js/bundle.js"
+  if [ -f "$css_bundle" ]; then
+    css_size="$(wc -c < "$css_bundle" | tr -d '[:space:]')"
+    [ "$css_size" -ge 2000 ] || fail "Compiled CSS bundle is too small to represent a finished styled theme"
+  fi
+  if [ -f "$scss_entry" ] && [ -f "$css_bundle" ] && [ "$scss_entry" -nt "$css_bundle" ]; then
+    fail "Compiled CSS bundle is older than src/scss/main.scss; run npm run build"
+  fi
+  if [ -f "$js_entry" ] && [ -f "$js_bundle" ] && [ "$js_entry" -nt "$js_bundle" ]; then
+    fail "Compiled JS bundle is older than src/js/main.js; run npm run build"
+  fi
+
   if command -v php >/dev/null 2>&1; then
     while IFS= read -r php_file; do
       php -l "$theme_dir/$php_file" >/dev/null || fail "PHP syntax failed: $php_file"
@@ -47,7 +64,7 @@ if [ -d "$theme_dir" ]; then
     fail "Potential secret or credential found in theme"
   fi
 
-  if grep -R -I -n -E --exclude-dir=node_modules --exclude='*.svg' --exclude='*.png' --exclude='*.jpg' --exclude='*.jpeg' --exclude='*.webp' --exclude='*.gif' '<(script|link|img|source|video|audio)[^>]+(src|href)=["'"'"'][^"'"'"']*https?://|@import[[:space:]]+url\(["'"'"']?https?://|url\(["'"'"']?https?://|//cdn\.|cdnjs|jsdelivr|unpkg|fonts\.google|gstatic' "$theme_dir" 2>/dev/null | grep -v 'https://schemas.wp.org' | grep -v 'https://www.w3.org' >/dev/null; then
+  if grep -R -I -n -E --exclude-dir=node_modules --exclude='package-lock.json' --exclude='npm-shrinkwrap.json' --exclude='*.svg' --exclude='*.png' --exclude='*.jpg' --exclude='*.jpeg' --exclude='*.webp' --exclude='*.gif' '<(script|link|img|source|video|audio)[^>]+(src|href)=["'"'"'][^"'"'"']*https?://|@import[[:space:]]+url\(["'"'"']?https?://|url\(["'"'"']?https?://|//cdn\.|cdnjs|jsdelivr|unpkg|fonts\.google|gstatic' "$theme_dir" 2>/dev/null | grep -v 'https://schemas.wp.org' | grep -v 'https://www.w3.org' | grep -v 'https://gmpg.org/xfn/11' >/dev/null; then
     fail "Remote runtime dependency or CDN reference found"
   fi
 

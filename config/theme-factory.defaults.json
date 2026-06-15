@@ -5,8 +5,8 @@
     "model": "qwen2.5-coder:14b"
   },
   "codex": {
-    "model": "gpt-5.5",
-    "reasoning": "high"
+    "model": "gpt-5.4",
+    "reasoning": "medium"
   },
   "paths": {
     "templates": "wordpress-themplate-themes",

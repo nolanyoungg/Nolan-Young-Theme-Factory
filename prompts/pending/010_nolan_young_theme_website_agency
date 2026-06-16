@@ -1,0 +1,635 @@
+# WordPress Theme Generation Prompt
+
+Create a complete, polished WordPress website theme using the business, content, visual design, page, component, form, accessibility, and conversion requirements defined below.
+
+The completed website must feel intentionally designed for this specific business. It must not resemble a generic template with only the company name and text replaced.
+
+Do not create unfinished sections, empty navigation items, broken links, missing imagery, nonfunctional controls, duplicated page layouts, or pages that use the same design with only their text changed.
+
+## 01. Business Identity
+
+### Business Name
+
+Northstar Websites
+
+### Short Business Description
+
+Northstar Codeworks is a senior software development company that builds custom web applications, internal tools, API integrations, and automation systems for growing service businesses and B2B teams.
+
+The company helps founders and operations leaders replace fragile spreadsheets, disconnected SaaS tools, and manual processes with reliable software that is easier to run, maintain, and scale.
+
+### Industry and Category
+
+Northstar Codeworks is a software development company focused on AI automation, custom software, custom web applications, internal tools, administration portals, API integrations, workflow automation, business dashboards, analytics systems, workflow optimization, legacy system modernization, technical discovery, and software architecture.
+
+### Target Audience
+
+The website should speak directly to small businesses, growing service businesses, operations teams, B2B companies, ecommerce teams, founders, business owners, operations leaders, technical buyers, and companies that need custom software or AI-assisted systems.
+
+These visitors may currently rely on fragile spreadsheets, manual data entry, repetitive administrative work, disconnected SaaS platforms, duplicated information, outdated software, processes that are difficult to scale, or systems that no longer fit the way their business operates.
+
+### Primary Conversion Goal
+
+The primary conversion goal is to encourage qualified visitors to book a consultation for a custom software project, web application, internal tool, automation project, AI system, API integration, technical discovery engagement, or legacy modernization project.
+
+The primary call to action should be **Book a Consultation**.
+
+### Secondary Conversion Goals
+
+Secondary conversion goals include encouraging visitors to explore the service pages, read case studies, understand the development process, request a project planning guide, join a practical software operations newsletter, learn about technical discovery, review available engagement models, and understand ongoing support and maintenance options.
+
+## 02. CSS Requirements
+
+### Overall CSS Direction
+
+The website should use clean white and off-white backgrounds, dark navy text, bright accent colors, rounded cards, soft shadows, large typography, strong call-to-action sections, responsive grids, mobile-first layouts, accessible focus states, consistent spacing, and controlled content widths.
+
+The styling must remain consistent across all pages and components.
+
+### CSS Custom Properties
+
+Use CSS custom properties to establish a reusable design system.
+
+```css
+:root {
+    --nyt-color-dark: #111827;
+    --nyt-color-muted: #6b7280;
+    --nyt-color-light: #f8fafc;
+    --nyt-color-surface: #ffffff;
+    --nyt-color-accent: #2563eb;
+    --nyt-color-accent-2: #7c3aed;
+    --nyt-color-border: #e5e7eb;
+    --nyt-radius-sm: 0.5rem;
+    --nyt-radius-md: 1rem;
+    --nyt-radius-lg: 1.5rem;
+    --nyt-shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.10);
+    --nyt-container: 1180px;
+}
+```
+
+Additional custom properties may be added when they improve consistency across spacing, typography, colors, shadows, responsive behavior, and reusable components.
+
+### Required Styling Coverage
+
+Create complete styling for body content, headings, paragraphs, lists, links, buttons, containers, navigation, dropdowns, mobile navigation, backdrops, footer areas, hero sections, cards, responsive grids, accordions, carousels, portfolio filters, before-and-after placeholders, forms, validation states, comments, search interfaces, archive content, standard pages, service pages, case studies, the 404 page, screen-reader text, skip links, focus states, sticky calls to action, dashboard panels, workflow diagrams, metric panels, and code-inspired interface cards.
+
+### Responsive Requirements
+
+The website must use a mobile-first responsive approach.
+
+Content widths, section spacing, typography, cards, forms, navigation, dashboard visuals, interface panels, and footer columns must respond cleanly across desktop, tablet, and mobile screen sizes.
+
+The completed website must not contain horizontal scrolling, clipped cards, clipped buttons, overflowing menus, oversized headings, overflowing hero graphics, text hidden behind sticky navigation, unstable dropdowns, or layers that appear underneath unrelated page content.
+
+### Interaction States
+
+Interactive elements must have clear default, hover, focus, focus-visible, active, expanded, selected, disabled, validation-error, and validation-success states wherever those states apply.
+
+Focus indicators must remain clearly visible on both light and dark backgrounds.
+
+### Motion and Animation
+
+Animations should support the design without blocking interaction, causing layout shifts, distracting visitors, or reducing readability.
+
+Scroll animations, hero animations, carousel movement, interface transitions, and decorative motion must respect the visitor’s reduced-motion preference.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+    /* Disable or simplify nonessential motion. */
+}
+```
+
+Essential information must never depend entirely on animation.
+
+### Accessibility Requirements
+
+Use semantic HTML, proper heading order, visible focus states, sufficient color contrast, readable text sizes, large enough mobile tap targets, keyboard-accessible controls, accessible dropdowns, accessible accordions, proper image alternative text, reduced-motion support, a working skip-to-content link, and screen-reader utility text.
+
+Hidden controls and links must not remain keyboard-focusable.
+
+Use buttons for actions and links for navigation. Do not use noninteractive elements as controls unless they receive complete semantic and keyboard support.
+
+## 03. Visual Design Direction
+
+### Overall Website Style
+
+Create a modern software company and business portfolio website.
+
+The design should combine modern SaaS command-center styling, premium software consultancy presentation, technical interface details, clean business layouts, strong visual hierarchy, futuristic but practical styling, sharp composition, generous spacing, and high readability.
+
+### Business Category
+
+The visual design should support AI automation, custom software, dashboards, internal tools, analytics, API integrations, workflow optimization, and custom web applications.
+
+### Core Visual Characteristics
+
+Use clean white and off-white backgrounds, deep navy or near-black technical sections, dark navy text, electric blue accents, cyan highlights, white text on dark sections, muted slate panels, optional lime-green micro accents, rounded cards, soft shadows, large typography, strong call-to-action sections, responsive grids, dashboard-style interface panels, metrics, workflow diagrams, system visuals, code-inspired cards, data-inspired graphics, and horizontal feature bands.
+
+The design should feel technical, premium, confident, and modern without becoming crowded or visually noisy.
+
+### Layout Rhythm
+
+Use a deliberate page rhythm that moves visitors through a strong hero, trust or proof content, service information, problem-and-solution messaging, the company process, case studies, testimonials, frequently asked questions, and a final call to action.
+
+Create visual variety through split-screen layouts, dashboard cards, metric panels, system diagrams, code-inspired panels, interface-inspired panels, alternating light and dark sections, horizontal feature bands, controlled asymmetrical layouts, and sticky calls to action where appropriate.
+
+### Interaction Style
+
+Interactions should feel crisp, fast, intentional, minimal, accessible, and safe for visitors who prefer reduced motion.
+
+Do not use excessive animation, distracting parallax, slow transitions, or interactions that interfere with reading and navigation.
+
+### Image and Asset Direction
+
+Prefer local SVG-style visuals and custom interface graphics representing dashboards, automation nodes, data streams, AI assistant panels, workflow maps, terminal cards, analytics charts, system diagrams, API connections, administration interfaces, product mockups, and code review panels.
+
+Where photography is used, prefer clean office imagery, professional team imagery, software planning sessions, code review environments, workflow boards, and product design environments.
+
+Use only royalty-free, non-copyright-restricted imagery.
+
+Do not use broken image links, missing images, remote placeholder graphics, empty visual containers, or imagery that does not match the surrounding content.
+
+Provide meaningful alternative text for meaningful images. Use empty alternative text for imagery that is purely decorative.
+
+## 04. Header
+
+### Desktop Header Layout
+
+Create a polished, responsive, accessible header with the logo on the left, the main navigation in the center, and the primary call-to-action button on the far right.
+
+Keep the spacing tight, balanced, and professional.
+
+### Main Navigation
+
+The main navigation should contain Home, Services, Work, Process, Resources, About, and Contact.
+
+The Services navigation area should include Custom Web Applications, Internal Tools, API Integrations, and Automation Systems.
+
+Every navigation item must connect to a real page, meaningful page section, content archive, or relevant destination.
+
+Do not create empty dropdowns or navigation items without a working destination.
+
+### Desktop Dropdown and Panel Behavior
+
+Desktop dropdowns and navigation panels must use solid readable backgrounds, correct positioning, stable layering, keyboard accessibility, clear active states, and visible focus states.
+
+Panels must open and close when their trigger is selected. Only one panel may remain open at a time. Selecting an active trigger must close its panel. Clicking outside the panel or pressing Escape must close the active panel.
+
+A backdrop should appear while a large navigation panel is open. Body scrolling should lock while the panel is active.
+
+The `aria-expanded` state must update accurately. Use `aria-controls` where appropriate. Closed panels must be hidden from assistive technology and must not leave hidden controls available through keyboard navigation.
+
+Where a panel includes a left navigation rail and a right content area, the right-side content should update when a left-rail item receives pointer hover or keyboard focus.
+
+All panel content must remain readable and appear above the page content.
+
+### Mobile Header
+
+Create a dedicated mobile navigation drawer rather than placing the full desktop navigation directly into the mobile page layout.
+
+The mobile header must include a hamburger open button, accessible navigation drawer, dedicated close button, backdrop, backdrop-click closing, outside-click closing, Escape-key closing, accurate `aria-expanded` behavior, body scroll locking, a solid readable background, a full-width call-to-action button, and protection against horizontal overflow and keyboard traps.
+
+### Mobile Navigation Accordions
+
+Use mobile accordions for Services, About Us, and Blog.
+
+Use direct mobile links for Work and Contact.
+
+Where the completed site uses the labels About and Resources, connect the related mobile items to those actual destinations.
+
+Closed accordions must not leave hidden links available through keyboard navigation.
+
+### Header Accessibility
+
+The header must use semantic navigation markup, descriptive control labels, keyboard-operable controls, accurate expanded and collapsed states, logical focus order, visible focus states, and no hover-only functionality.
+
+Opening and closing the mobile drawer or desktop navigation panels must not create keyboard traps.
+
+## 05. Footer Requirements
+
+### Footer Visual Direction
+
+Create a complete, responsive, conversion-focused footer.
+
+Use a large dark footer that feels like the final conversion area of the website while remaining consistent with the technical and premium visual direction.
+
+### Required Footer Content
+
+Include the business name, a short business summary, main navigation links, service links, resource links, company links, contact details, social links or inactive social labels where necessary, a newsletter or signup area where appropriate, a contact call to action, copyright information, a Privacy link where appropriate, and a Terms link where appropriate.
+
+### Footer Architecture
+
+Separate the footer into clear content areas for company information, services, company navigation, resources or blog content, contact information, the consultation call to action, the newsletter or mini inquiry form, and legal information.
+
+### Footer Link Rules
+
+Every footer link must point to a real page, real archive, real page section, valid contact action, or safe non-navigating label when no destination can reasonably exist.
+
+Do not use broken `#` links for items that appear to be functional navigation.
+
+### Footer Call to Action
+
+Include a strong contact or consultation call to action that clearly explains the next step, links to the contact or consultation page, remains usable on mobile, uses strong contrast, and avoids generic wording.
+
+### Footer Form
+
+Where a mini inquiry form or newsletter form is included, keep it concise, use visible labels, include validation, include accessible status messages, maintain sufficient contrast against the dark background, and do not duplicate the complete contact form.
+
+## 06. Brand Voice and Style
+
+### Brand Personality
+
+The brand should feel technical, precise, premium, polished, calm, trustworthy, practical, confident, modern, experienced, clear, reliable, and led by senior engineering judgment.
+
+Avoid an exaggerated startup tone, vague marketing language, bloated corporate wording, or unnecessary jargon.
+
+### Writing Style
+
+Use clear, direct, benefit-focused copy.
+
+The writing should use confident expert language, explain business outcomes, demonstrate technical credibility, emphasize risk reduction, emphasize implementation quality, emphasize maintainability, explain long-term business value, and clearly communicate what each service solves.
+
+Headings should be crisp and specific.
+
+Supporting copy should explain why the service matters, what problem it solves, how the company approaches the work, what the client receives, what business outcome the system supports, and how the completed system will remain maintainable.
+
+Avoid filler language that could apply to any company.
+
+### Content Density
+
+Use detailed service-page copy with strong conversion sections, realistic project examples, clear deliverables, practical technical detail, business-focused explanations, credible implementation language, relevant frequently asked questions, and clear next steps.
+
+The content should include enough technical specificity to feel credible to founders, operators, and technical buyers without becoming unreadable to a nontechnical business owner.
+
+### Content Quality Rules
+
+Every major section must have a clear purpose.
+
+Do not repeat the same paragraph across multiple pages, reuse identical service copy, create empty cards, use generic “innovative solutions” language, make unsupported performance claims, display fake awards, display fake client logos, present fictional businesses as verified clients, use meaningless statistics, leave visible Latin filler copy in business sections, or create buttons that do not lead anywhere.
+
+Realistic fictional project examples may be used, but they must be presented as portfolio-style examples rather than verified claims involving real clients.
+
+## 07. Color System
+
+### Main Background Color
+
+`#ffffff`
+
+### Secondary Background Color
+
+`#f4f7fb`
+
+### Dark Background Color
+
+`#101827`
+
+### Primary Brand Color
+
+`#2563eb`
+
+### Secondary Brand Color
+
+`#14b8a6`
+
+### Accent Color
+
+`#f97316`
+
+### Primary Text Color
+
+`#111827`
+
+### Muted Text Color
+
+`#64748b`
+
+### Border and Divider Color
+
+`#e2e8f0`
+
+### Primary Button Colors
+
+The primary button background should be `#2563eb`, and its text should be `#ffffff`.
+
+On hover, the background should become `#1d4ed8`, while the text remains `#ffffff`.
+
+### Secondary Button Colors
+
+The secondary button background should be `#ffffff`, its text should be `#111827`, and its border should be `#cbd5e1`.
+
+On hover, the background should become `#f4f7fb`, while the text remains `#111827`.
+
+### Additional Color Rules
+
+Use dark navy sections sparingly for technical proof, system diagrams, metrics, case-study results, and final call-to-action areas.
+
+Use teal accents for successful workflows, connected systems, completed automation steps, positive results, and integration states.
+
+Use orange only for small highlights, alerts, priority indicators, or high-priority call-to-action accents.
+
+Do not allow accent colors to reduce readability or violate contrast requirements.
+
+Maintain consistent colors across buttons, cards, forms, links, icons, navigation, focus indicators, validation states, conversion sections, dashboard visuals, and system diagrams.
+
+## 08. Typography Direction
+
+### Heading Style
+
+Use large, bold, geometric headings with a clean SaaS-style rhythm.
+
+Headings should feel confident, precise, modern, technical, and highly readable.
+
+Create a clear distinction between heading levels while maintaining a consistent visual system.
+
+### Body Text Style
+
+Use highly readable modern sans-serif body copy with comfortable line height, controlled paragraph width, clear hierarchy, consistent spacing, and strong contrast.
+
+Use compact technical copy inside dashboard cards, metric panels, code-inspired interfaces, workflow diagrams, and small feature panels.
+
+Use larger explanatory copy inside service sections, process sections, case studies, About content, and conversion sections.
+
+### Font Rules
+
+Use safe local or system font stacks unless an approved font strategy is already available.
+
+Do not depend on external Google Fonts unless they are explicitly allowed for this project.
+
+The website must remain visually complete when no external font service is available.
+
+### Responsive Typography
+
+Typography must scale smoothly across viewport sizes, remain readable on small mobile screens, avoid oversized headings that overflow, maintain reasonable line lengths, keep buttons and labels readable, preserve heading hierarchy, and avoid text collisions inside cards and interface panels.
+
+## 09. Template Parts to Build Out
+
+### Header Components
+
+Create reusable header components for the site branding, desktop navigation, service navigation panel, mobile navigation drawer, mobile navigation accordions, header call to action, and navigation backdrop.
+
+These components should remain visually and behaviorally consistent across every page.
+
+### Homepage Components
+
+Create reusable homepage components for the hero, trust bar, services preview, problem-and-solution section, process section, featured work, testimonials, frequently asked questions, and final call to action.
+
+Each component should have a distinct visual purpose and should not look like a copy of the section directly above or below it.
+
+### Service Components
+
+Create reusable components for individual service cards, service comparison content, deliverable summaries, process explanations, related project examples, service-specific frequently asked questions, and service conversion sections.
+
+Service components may share a consistent design system, but each service page must still feel individually designed.
+
+### Work and Case-Study Components
+
+Create reusable components for case-study cards, project summaries, challenge-and-solution sections, result panels, technical approach summaries, service labels, project timelines, maintainability notes, and related calls to action.
+
+### Resource Components
+
+Create reusable components for article cards, educational guides, featured resources, topic categories, newsletter prompts, and resource calls to action.
+
+### Proof Components
+
+Create reusable components for testimonials, review-style content, proof statements, client-type indicators, capability panels, metric panels, trust bars, and technical proof sections.
+
+### Interface and Diagram Components
+
+Create reusable interface-style components for dashboard previews, workflow diagrams, automation maps, integration diagrams, analytics panels, terminal-style cards, AI assistant panels, and software system visuals.
+
+These visuals should reinforce the surrounding content rather than appearing as unrelated decoration.
+
+### Form Components
+
+Create reusable components for contact forms, consultation forms, field groups, validation messages, success messages, trust content near forms, and compact newsletter or inquiry forms.
+
+### Footer Components
+
+Create reusable footer components for business information, primary navigation, service navigation, resource navigation, contact information, consultation calls to action, newsletter or mini inquiry content, social labels, and legal information.
+
+### Component Quality Requirements
+
+Every reusable component must be responsive, accessible, visually consistent, and usable in more than one relevant area without duplicating an entire page.
+
+Components must not contain broken links, unavailable images, empty content areas, inaccessible controls, or content that only makes sense on one unrelated page.
+
+## 10. Page Templates to Build Out
+
+### General Page Requirements
+
+Design every page according to its specific business purpose.
+
+Each page must have a distinctive layout, clear content hierarchy, intentional conversion path, working internal links, appropriate calls to action, and relevant supporting content.
+
+Do not create multiple pages that use the same design with only the title and body copy changed.
+
+### Home Page
+
+The purpose of the Home page is to convert qualified software project leads by showing that Northstar Codeworks can design, build, and maintain serious business software.
+
+The primary call to action should be **Book a Consultation**.
+
+The secondary call to action should be **View Case Studies**.
+
+The detailed homepage requirements are defined in Section 12.
+
+### About Page
+
+The purpose of the About page is to build trust around senior engineering judgment, maintainability, communication, reliability, security, and long-term partnership.
+
+The page should explain the company philosophy, senior technical approach, client expectations, values around clarity, reliability, security, maintainable systems, partnership expectations, and the next step for booking a consultation.
+
+### Services Overview Page
+
+The purpose of the Services Overview page is to help visitors understand the core services and select the correct path for their project.
+
+The page should include a service category overview, service comparisons, engagement models, the business problems addressed by each service, guidance for selecting a service, and a call to action for discussing project fit.
+
+### Custom Web Applications Page
+
+Explain how Northstar Codeworks plans, designs, builds, tests, launches, and supports custom web applications for businesses with requirements that cannot be met by standard software.
+
+The page should include a clear value proposition, business problems addressed, expected deliverables, technical approach, development process, realistic example project, expected outcomes, frequently asked questions, trust content, and a consultation call to action.
+
+### Internal Tools and Admin Portals Page
+
+Explain how internal tools and administration portals can replace spreadsheets, reduce repetitive work, centralize information, improve reporting, and provide teams with workflows designed around the way the business actually operates.
+
+The page should include unique content, unique layout details, deliverables, technical considerations, example workflows, a realistic example project, frequently asked questions, and a consultation call to action.
+
+### API Integrations Page
+
+Explain how API integrations connect CRM, billing, scheduling, ecommerce, analytics, communication, and operational systems.
+
+The page should address data consistency, synchronization, authentication, monitoring, failure recovery, maintainability, and long-term integration support.
+
+### Workflow Automation Systems Page
+
+Explain how workflow automation reduces repetitive work, improves handoffs, prevents missed steps, standardizes processes, and provides better operational visibility.
+
+The page should include workflow examples, trigger-and-action explanations, exception handling, monitoring considerations, realistic project examples, and a consultation call to action.
+
+### Legacy System Modernization Page
+
+Explain how Northstar Codeworks evaluates, stabilizes, replaces, or incrementally modernizes aging software systems.
+
+The page should address risk reduction, data migration, phased replacement, compatibility, documentation, testing, security, maintainability, and minimizing business disruption.
+
+### Technical Discovery and Architecture Page
+
+Explain how technical discovery turns a business problem into a clear implementation plan.
+
+The page should address workflow mapping, requirements analysis, system evaluation, architecture, integration planning, risk identification, implementation sequencing, budgeting guidance, and the final technical roadmap.
+
+### Work and Portfolio Page
+
+The purpose of the Work and Portfolio page is to show credible software outcomes through realistic case studies and project summaries.
+
+Include an operations dashboard for a multi-location service business, a client portal for a professional services firm, an API integration layer connecting CRM, billing, and scheduling tools, and a workflow automation system for quote intake and project handoff.
+
+Each showcase item should contain a project summary, client type, challenge, solution, result, services used, timeline, technical approach, and maintainability notes.
+
+Include filtering or categorization only when it works correctly and improves the experience.
+
+### Process Page
+
+The purpose of the Process page is to explain how Northstar Codeworks reduces project risk and keeps software work clear.
+
+The process should cover discovery and business workflow mapping, technical architecture and implementation planning, interface design and prototype review, iterative development, quality assurance, stakeholder feedback, launch, documentation, monitoring, and support.
+
+Each stage should explain what happens, why it matters, what the client provides, what the client receives, and how the stage reduces project risk.
+
+### Resources and Blog Page
+
+The purpose of the Resources and Blog page is to provide educational content that helps business owners make better software decisions.
+
+Include educational resources, guides, article previews, relevant learning content, topic categories, and a newsletter or project-guide call to action.
+
+Suggested content topics include when custom software is more appropriate than another SaaS subscription, how to plan an internal tool project, API integration mistakes that create long-term maintenance problems, and what a technical discovery phase should include.
+
+### Contact Page
+
+The purpose of the Contact page is to convert qualified visitors into consultation requests while clearly explaining expectations.
+
+Include introductory contact copy, the contact form, business contact details, a service-interest selector, the expected response time, guidance for urgent inquiries, trust and support copy, and project-fit guidance.
+
+### Optional Additional Pages
+
+Optional pages may include Pricing and Engagement Models, Technical Discovery, and Support and Maintenance.
+
+Only add these pages when they fit the final business structure and project scope.
+
+Every optional page must be fully designed, contain meaningful information, and connect naturally to the rest of the website. Do not generate empty optional pages.
+
+### Blog, Search, Archive, and Error Content
+
+Create complete designs for the blog index, individual articles, search interface, search results, no-results state, category content, tag content, date-based archives, author content where appropriate, comments, pagination, and the 404 page.
+
+These areas must follow the same visual system and must not look unfinished compared with the main marketing pages.
+
+## 11. Forms
+
+### Form Administration
+
+Create realistic, polished, responsive form experiences.
+
+Form submissions must be viewable from a WordPress administration area named **Forms**.
+
+The administrator must be able to export all form submissions, submissions across all forms, or submissions from one selected form.
+
+The forms must not require an external plugin dependency.
+
+### Contact Form Fields
+
+The contact form should contain Name, Email, Phone, Company or Organization, and Message fields.
+
+### Quote and Consultation Form Fields
+
+The quote or consultation form should contain Name, Email, Phone, Project Type, Business Type, Current Website URL where applicable, Goals, Timeline, and Budget Range fields.
+
+### Form Experience
+
+Forms must use visible labels, clear required-field indicators, helpful instructions, appropriate input types, accessible error messages, accessible success messages, server-side validation, input sanitization, submission protection, clear submission states, keyboard accessibility, and responsive field layouts.
+
+Do not use placeholder text as the only label for a form field.
+
+### Form Security
+
+Form handling must include request verification, server-side validation, input sanitization, output escaping, permission checks for administrative areas, safe export handling, direct-access protection, clear failure states, and protection against exposing sensitive information.
+
+### Conversion Elements
+
+Include repeated calls to action where they support the page content, clear buttons above the fold, a contact call to action in the footer, a call to action after major service explanations, trust indicators near forms, a consultation prompt after case studies, a clear call to action on the Process page, relevant calls to action on resource content, and a final conversion section on major pages.
+
+Calls to action should be relevant to the current content rather than repeating the same generic sentence throughout the website.
+
+## 12. Homepage Section Requirements
+
+### Hero Section
+
+Create a polished hero that strongly grabs the visitor’s attention.
+
+The hero must contain a clear positioning statement, supporting explanation, primary call to action, secondary call to action, product-interface or dashboard visual, animation within the hero, scroll-supported animation where appropriate, a reduced-motion fallback, and a mobile-safe composition.
+
+The hero should clearly communicate that Northstar Codeworks builds serious custom software, internal tools, integrations, and automation systems for growing businesses.
+
+The animation must not interfere with reading, navigation, accessibility, or page performance.
+
+### Trust Bar
+
+Include believable statistics, client types, capability indicators, technical proof points, badges, or outcome categories.
+
+Do not invent recognizable client logos or falsely imply third-party certifications.
+
+### Services Preview
+
+Create service cards that link to the Custom Web Applications, Internal Tools and Admin Portals, API Integrations, Workflow Automation Systems, Legacy System Modernization, and Technical Discovery and Architecture pages.
+
+Each service card should include the service name, a concise explanation, a relevant local icon or interface-style visual, a working destination link, and a consistent visual treatment.
+
+### Problem and Solution Section
+
+Explain why the business exists, the problems caused by fragmented software, the risks of manual workflows, the problems caused by disconnected systems, how custom software improves operations, how reliable architecture supports growth, how automation reduces repetitive work, and how connected systems improve data consistency.
+
+### Process Section
+
+Explain how working with the company progresses through discovery, workflow mapping, architecture, interface design, development, quality assurance, stakeholder review, launch, documentation, monitoring, and support.
+
+The section should clearly explain what clients can expect during each stage.
+
+### Featured Work Section
+
+Show realistic case-study previews for an operations dashboard for a multi-location service business, a client portal for a professional services firm, an API integration layer connecting CRM, billing, and scheduling tools, and a workflow automation system for quote intake and project handoff.
+
+Each preview should contain the challenge, solution, result, service category, relevant technical detail, and a working link to the complete Work page.
+
+### Testimonials and Proof Section
+
+Include realistic review-style proof supporting clear communication, reliability, technical judgment, maintainability, business understanding, and long-term support.
+
+Do not attribute testimonials to recognizable real people or companies unless those details are supplied.
+
+### Frequently Asked Questions
+
+Include questions related to project cost, project timeline, technical discovery, existing system integrations, ownership of completed software, maintenance, support, security, and working with an existing technical team.
+
+Use an accessible accordion implementation.
+
+The accordion must work with keyboard input, update `aria-expanded` accurately, associate triggers with their corresponding panels, hide closed content appropriately, maintain visible focus states, and respect reduced-motion preferences.
+
+### Final Call-to-Action Section
+
+End the homepage with a strong call to action that reinforces the business value, clearly explains the next step, links to the consultation form, remains visually distinct, works correctly on mobile, and uses a dark or high-contrast conversion section.
+
+The primary call to action should be **Book a Consultation**.
+
+The secondary call to action should be **View Case Studies**.
+
+### Homepage Completion Requirements
+
+The completed homepage must contain specific business copy, clear positioning, realistic service descriptions, realistic case-study previews, strong calls to action, responsive polish, consistent buttons, consistent cards, accessible interactions, useful navigation, a complete footer, working imagery, complete sections, and intentional content.
+
+Do not leave broken images, empty sections, duplicated filler sections, visible placeholder text, or nonfunctional controls.
+
+
+

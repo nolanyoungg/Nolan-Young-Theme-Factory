@@ -12,10 +12,6 @@ function fail(message) {
   process.exit(1);
 }
 
-function readJson(file) {
-  return JSON.parse(fs.readFileSync(path.join(root, file), 'utf8'));
-}
-
 function safePath(input, label) {
   if (!input || input.includes('..') || path.isAbsolute(input)) fail(`Unsafe ${label}: ${input}`);
   return path.normalize(input).replace(/\\/g, '/');
@@ -27,10 +23,6 @@ function run(cmd, args, options = {}) {
   if (result.stderr) process.stderr.write(result.stderr);
   if (result.error) console.error(result.error.message);
   return result;
-}
-
-function runWithInput(cmd, args, input = '') {
-  return run(cmd, args, { input });
 }
 
 function hasCommand(command) {
@@ -96,12 +88,6 @@ function parseArgs(argv) {
     }
   }
   return args;
-}
-
-function readTemplateSource(themeSlug) {
-  const file = path.join(root, defaults.paths.themes, themeSlug, '.theme-template-source');
-  if (!fs.existsSync(file)) return 'template=NOLAN-YOUNG-theme-000';
-  return fs.readFileSync(file, 'utf8').trim();
 }
 
 function themeSlugForPrompt(promptFile) {
@@ -171,12 +157,6 @@ function ensureGenerationBrief(themeSlug, promptFile, mode, reportDir) {
   const result = run('node', ['scripts/create-theme-generation-brief.js', themeSlug, promptFile, mode]);
   if (result.status !== 0) fail('Generation brief creation failed.');
   return path.join('reports', 'runs', themeSlug, 'ollama-generation', 'theme-generation-brief.md');
-}
-
-function validateTemplate(themeSlug, templateName, reportDir, phase) {
-  const result = run('node', ['scripts/write-theme-validation-report.js', themeSlug, templateName, path.join(reportDir, phase === 'final' ? 'validation.final.json' : 'validation.before-finish.json'), phase]);
-  if (result.status !== 0) return false;
-  return true;
 }
 
 function validationReportPassed(reportPath) {

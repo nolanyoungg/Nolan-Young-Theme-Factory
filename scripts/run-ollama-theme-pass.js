@@ -80,7 +80,7 @@ Rules:
 - Do not include secrets, tokens, passwords, or API keys.
 - Replace Lorem ipsum in files you write.
 - Do not write TODO comments, placeholder comments, "Add ... here" comments, empty cards, empty sections, or instructions for a future editor.
-- Every section you create must include finished copy and visible content appropriate to the software development company brief.
+- Every section you create must include finished copy and visible content appropriate to the selected creative prompt.
 - header.php and footer.php must not include a standalone ?> line after an inline PHP comment.
 - Preserve WordPress PHP syntax.
 - For PHP template files with HTML, use this valid structure:
@@ -124,16 +124,16 @@ fs.mkdirSync(generationDir, { recursive: true });
 console.log(`Running Ollama model: ${model}`);
 runBatch(brief, generationDir, 'shell',
   '- README.md\n- header.php\n- footer.php\n- front-page.php',
-  'Create the brand shell for Northstar Codeworks. Build a polished software development company homepage structure, responsive header, footer, and README content. The homepage must include finished service cards, proof, process steps, featured work, testimonials or proof, FAQ, and CTA content; do not leave comments that ask someone to add those pieces later.');
+  'Create the brand shell described by the creative prompt. Build the responsive header, footer, README content, and homepage structure exactly around the requested business identity, navigation, dropdown behavior, page goals, sections, and calls to action; do not leave comments that ask someone to add those pieces later.');
 runBatch(brief, generationDir, 'template-parts',
   '- template-parts/content-hero.php\n- template-parts/content-brand-statement.php\n- template-parts/content-featured-work.php\n- template-parts/content-all-services.php\n- template-parts/content-single-service-highlight.php\n- template-parts/content-process.php\n- template-parts/content-style-pillars.php\n- template-parts/content-testimonials.php\n- template-parts/content-blog-preview.php\n- template-parts/content-cta-banner.php\n- template-parts/content-footer-widgets.php',
-  'Create reusable homepage and site sections with specific software development company copy, services, proof, process, case studies, testimonials, FAQ-style content where appropriate, and CTAs.');
+  'Create reusable homepage and site sections that match the selected creative prompt, including the requested copy, services or offerings, proof, process, work examples, testimonials, FAQ-style content where appropriate, and CTAs.');
 runBatch(brief, generationDir, 'pages',
   '- page-templates/template-about-us.php\n- page-templates/template-services.php\n- page-templates/template-single-service.php\n- page-templates/template-work.php\n- page-templates/template-blog.php\n- page-templates/template-contact.php\n- page-templates/template-policy.php\n- page.php\n- single.php\n- archive.php\n- search.php\n- 404.php\n- 403.php',
   'Create page templates and standard WordPress templates with unique page intent for about, services, individual services, work/case studies, resources, contact, policy, search, archive, and error states.');
 runBatch(brief, generationDir, 'assets',
   '- assets/css/bundle.css\n- assets/js/bundle.js\n- src/js/main.js\n- src/scss/main.scss\n- assets/icons/icon1.svg',
-  'Create the visual system, responsive layout, polished SaaS/software styling, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections.');
+  'Create the visual system, responsive layout, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors requested by the creative prompt. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections.');
 runBatch(brief, generationDir, 'forms-helpers',
   '- inc/forms.php\n- inc/newsletter.php\n- inc/helpers.php\n- inc/custom-post-types.php\n- inc/customizer.php\n- inc/policy-routing.php\n- comments.php\n- searchform.php',
   'Create practical WordPress helper code, form handling/admin menu scaffolding, newsletter helper, custom post type setup, policy routing, comments, and search form code without external dependencies. Do not use Lorem ipsum in comments.php or searchform.php.');

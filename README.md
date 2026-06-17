@@ -10,14 +10,14 @@ Clean template-first tooling for generating classic WordPress themes.
 3. Run the selected AI mode inside the prepared folder
 4. Validate against the selected template
 5. Run WordPress quality checks
-6. Build theme assets with `npm run build`
+6. Build theme assets through the workflow build step
 7. Generate or update the static preview
 8. Rebuild the preview gallery
 9. Package the ZIP
 10. Write run reports
 ```
 
-## Main Command
+## Common Commands
 
 ```bash
 bash scripts/theme-factory.sh list-templates
@@ -30,6 +30,8 @@ bash scripts/theme-factory.sh preview-index
 bash scripts/theme-factory.sh run hybrid prompts/pending/000-testing.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.4 medium
 bash scripts/theme-factory.sh resume 001_nolan_young_theme_example
 ```
+
+The prompt paths above are examples. Use whichever file in `prompts/pending/` contains the creative brief for the theme you want to generate.
 
 ## Important Paths
 
@@ -63,6 +65,6 @@ Add a new blank or starter theme folder under `wordpress-themplate-themes/`. The
 
 ## AI Boundary
 
-After `prepare`, give the AI the generated brief from inside the prepared theme folder. The AI must edit only the prepared theme folder. Preview, ZIP, docs, and repo updates happen after generation through scripts.
+After `prepare`, the generated brief is written under `reports/runs/{theme_slug}/`. During theme generation, AI must edit only the prepared theme folder. Preview, ZIP, docs, and repo updates happen after generation through scripts.
 
 See `docs/AI-WORKFLOW.md` for the three-mode workflow, run reports, dry-run behavior, and resume flow.

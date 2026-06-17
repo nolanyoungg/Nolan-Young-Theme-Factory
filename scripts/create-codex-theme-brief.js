@@ -14,9 +14,36 @@ if (!mode || !themeSlug || !templateName || !promptFile || !generationBriefPath 
   fail('Usage: node scripts/create-codex-theme-brief.js <mode> <theme-slug> <template-name> <prompt-file> <generation-brief-path> <manifest-path> <validation-path> <codex-model> <reasoning> <output-md>');
 }
 
+function resolveRepoPath(file) {
+  return path.isAbsolute(file) ? file : path.join(root, file);
+}
+
+function readText(file) {
+  const resolved = resolveRepoPath(file);
+  return fs.existsSync(resolved) ? fs.readFileSync(resolved, 'utf8').trim() : '';
+}
+
+function readGenerationBrief(pointerFile) {
+  const pointerText = readText(pointerFile);
+  const referenced = pointerText.split(/\r?\n/).map((line) => line.trim()).filter(Boolean)[0] || '';
+  if (referenced && fs.existsSync(resolveRepoPath(referenced))) {
+    return {
+      path: referenced,
+      content: readText(referenced)
+    };
+  }
+  return {
+    path: generationBriefPath,
+    content: pointerText
+  };
+}
+
 const themeDir = `wp-content/themes/${themeSlug}`;
 const outputName = path.basename(outputPath).toLowerCase();
 const passType = outputName.includes('build') ? 'build' : outputName.includes('repair') ? 'repair' : 'finish';
+const selectedPrompt = readText(promptFile);
+const generationBrief = readGenerationBrief(generationBriefPath);
+const validationReport = readText(validationPath);
 
 const passInstructions = {
   build: `## Codex-Only Build Pass
@@ -31,7 +58,7 @@ You must:
 - Replace all starter, Lorem ipsum, placeholder, TODO, and future-editor copy.
 - Preserve every required file from the selected template.
 - Add useful files only inside the generated theme folder.
-- Build a polished premium software development company website from the prompt.
+- Build the requested website theme from the selected prompt.
 - Use local assets, inline SVG, CSS interface graphics, and portable WordPress paths.
 - Keep PHP, CSS, JavaScript, content, responsive behavior, forms, and accessibility coherent.
 - Put authored styling in src/scss/main.scss and related source SCSS files, not only in assets/css/bundle.css.
@@ -84,7 +111,7 @@ Theme slug: ${themeSlug}
 Theme directory: ${themeDir}
 Selected template: ${templateName}
 Original prompt: ${promptFile}
-Generation brief: ${generationBriefPath}
+Generation brief: ${generationBrief.path}
 Template manifest: ${manifestPath}
 Validation report: ${validationPath}
 Requested Codex model: ${codexModel}
@@ -113,6 +140,18 @@ ${passInstructions}
 - Remove all Lorem ipsum, placeholder, TODO, FIXME, "Add ... here", and future-editor copy.
 - Use the selected prompt as the authoritative creative brief.
 - Leave the theme ready for scripted validation and finalization.
+
+## Selected Creative Prompt
+
+${selectedPrompt || '(Prompt file could not be read.)'}
+
+## Generated Theme Brief
+
+${generationBrief.content || '(Generation brief could not be read.)'}
+
+## Current Validation Report
+
+${validationReport || '(Validation report is not available yet.)'}
 
 ## Completion Expectation
 

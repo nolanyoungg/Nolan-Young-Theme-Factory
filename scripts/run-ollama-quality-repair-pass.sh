@@ -77,7 +77,7 @@ Rules:
 - Keep the path exactly "$relative_path".
 - Keep output inside wp-content/themes/$theme_slug/.
 - Remove all Lorem ipsum, TODO, FIXME, "Add ... here", and future-editor instructions.
-- Use finished Northstar Codeworks software-development-company copy.
+- Use finished copy aligned with the selected creative prompt.
 - Preserve the file's technical purpose.
 - Preserve valid WordPress PHP syntax for PHP files.
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.

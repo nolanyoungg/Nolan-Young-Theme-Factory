@@ -78,7 +78,7 @@ Rules:
 - Do not include secrets, tokens, passwords, or API keys.
 - Replace Lorem ipsum in files you write.
 - Do not write TODO comments, placeholder comments, "Add ... here" comments, empty cards, empty sections, or instructions for a future editor.
-- Every section you create must include finished copy and visible content appropriate to the software development company brief.
+- Every section you create must include finished copy and visible content appropriate to the selected creative prompt.
 - header.php and footer.php must not include a standalone ?> line after an inline PHP comment.
 - Preserve WordPress PHP syntax.
 - For PHP template files with HTML, use this valid structure:
@@ -103,7 +103,7 @@ run_batch "shell" \
 - header.php
 - footer.php
 - front-page.php" \
-"Create the brand shell for Northstar Codeworks. Build a polished software development company homepage structure, responsive header, footer, and README content. The homepage must include finished service cards, proof, process steps, featured work, testimonials or proof, FAQ, and CTA content; do not leave comments that ask someone to add those pieces later."
+"Create the brand shell described by the creative prompt. Build the responsive header, footer, README content, and homepage structure exactly around the requested business identity, navigation, dropdown behavior, page goals, sections, and calls to action; do not leave comments that ask someone to add those pieces later."
 
 run_batch "template-parts" \
 "- template-parts/content-hero.php
@@ -117,7 +117,7 @@ run_batch "template-parts" \
 - template-parts/content-blog-preview.php
 - template-parts/content-cta-banner.php
 - template-parts/content-footer-widgets.php" \
-"Create reusable homepage and site sections with specific software development company copy, services, proof, process, case studies, testimonials, FAQ-style content where appropriate, and CTAs."
+"Create reusable homepage and site sections that match the selected creative prompt, including the requested copy, services or offerings, proof, process, work examples, testimonials, FAQ-style content where appropriate, and CTAs."
 
 run_batch "pages" \
 "- page-templates/template-about-us.php
@@ -141,7 +141,7 @@ run_batch "assets" \
 - src/js/main.js
 - src/scss/main.scss
 - assets/icons/icon1.svg" \
-"Create the visual system, responsive layout, polished SaaS/software styling, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections."
+"Create the visual system, responsive layout, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors requested by the creative prompt. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections."
 
 run_batch "forms-helpers" \
 "- inc/forms.php

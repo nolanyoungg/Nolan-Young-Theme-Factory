@@ -50,6 +50,8 @@ Example:
 node scripts/run-theme-workflow.js --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.4 --codex-reasoning medium
 ```
 
+The prompt path is only an example. Use the prompt file you want to generate from.
+
 ### `hybrid`
 
 Scripts prepare the theme, Ollama drafts it, scripts validate, then Codex receives a focused finishing brief. The workflow can resume after Codex finishes.
@@ -71,7 +73,7 @@ Dry run prints the resolved stage plan and output paths without mutating the rep
 ## Resume
 
 ```bash
-bash scripts/theme-factory.sh resume 001_nolan_young_theme_premium_landscape_design_company
+bash scripts/theme-factory.sh resume 001_nolan_young_theme_example
 ```
 
 Use resume after a Codex pending state has been written to the run report.
@@ -97,7 +99,8 @@ Key files:
 
 After generation and validation:
 
-* theme assets are built with `bash scripts/build-theme-assets.sh {theme_slug}`
+* theme assets are built by the workflow with `node scripts/build-theme-assets.js {theme_slug}`
+* the build wrapper installs theme-local dependencies if needed and runs `npm run build` inside the generated theme folder
 * static preview is written to `docs/Preview-Themes-Github/{theme_slug}/`
 * the gallery is rebuilt in `docs/index.html`
 * the ZIP is written to `dist/zipped-themes/{theme_slug}.zip`

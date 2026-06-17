@@ -1,6 +1,6 @@
 # Prompt Files
 
-Place user theme prompts in `prompts/pending/` as `.txt` or `.md` files. The workflow reads from this folder and either lets you choose interactively or uses `THEME_PROMPT_FILE` when one is provided.
+Place user theme prompts in `prompts/pending/`. The main workflow reads the prompt file passed with `--prompt`; the lower-level prepare script can also read `THEME_PROMPT_FILE`.
 
 Prompt files are treated as the authoritative creative brief. They should describe the website/theme being generated, not the repository or workflow that generates it.
 
@@ -25,7 +25,7 @@ Do not put repository or factory mechanics in prompt files.
 
 Prompts must not mention:
 
-- repository paths such as `wp-content/`, `docs/themes/`, `dist/`, `reports/`, `contracts/`, or `scripts/`
+- repository paths such as `wp-content/`, `docs/Preview-Themes-Github/`, `dist/`, `reports/`, `contracts/`, or `scripts/`
 - generated slugs or version numbers
 - `THEME_SLUG`, `THEME_FACTORY_MODE`, `OLLAMA_MODEL`, or command-line environment variables
 - CI, GitHub Actions, GitHub Pages, validation scripts, packaging scripts, or ZIP freshness
@@ -36,15 +36,9 @@ The workflow enforces the full theme structure, required preview files, header c
 
 Strong prompts should still describe the desired brand, page content, visual style, image direction, interaction behavior, accessibility expectations, and conversion goals.
 
-After a successful run, the workflow moves the selected prompt to `prompts/completed/` with the generated slug as a filename prefix. This keeps completed prompts aligned with generated previews, ZIPs, and run reports.
+The workflow records the selected prompt path in `reports/runs/{theme_slug}/run.config.json`. It does not move prompt files automatically.
 
-Example:
-
-```text
-prompts/completed/002_nolan_young_theme_landscape_design__premium-landscape-design-company.txt
-```
-
-Completed prompt files are never overwritten. To reuse a completed prompt, copy it back into `prompts/pending/` under a new descriptive filename and remove stale language before running generation again.
+If you want to reuse an older prompt, copy it back into `prompts/pending/` under a descriptive filename and remove stale language before running generation again.
 
 Do not place secrets, API keys, tokens, passwords, private keys, or unpublished customer data in prompt files.
 

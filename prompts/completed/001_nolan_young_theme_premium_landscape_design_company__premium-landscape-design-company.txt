@@ -37,7 +37,7 @@ Assets:
 - Use local, copyright-safe raster demo images that fit landscape design and outdoor living.
 - Image subjects should include garden pathway, outdoor terrace, planting plan detail, stonework, evening lighting, courtyard retreat, outdoor dining, and seasonal planting texture.
 - Store WordPress theme images under the theme's `assets/images/` folders.
-- Store static preview images under `docs/themes/<slug>/assets/images/`.
+- Store static preview images under `docs/Preview-Themes-Github/<slug>/assets/images/`.
 - Do not use remote images, CDNs, hotlinked assets, watermarked stock, client photos, celebrity photos, or gray image boxes.
 
 Technical requirements:

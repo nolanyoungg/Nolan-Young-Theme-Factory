@@ -6,7 +6,7 @@
         
         The generated name must be distinctive, easy to read, suitable for use in a WordPress theme, and free from copied third-party branding.
     
-    ### Business Logo
+  ### Business Logo
     
     Use the supplied business logo when one is available.
     
@@ -14,13 +14,13 @@
     
     The logo must not copy or imitate an existing brand, photographer, studio, agency, or trademarked visual identity.
     
-    ### Business Slogan
+  ### Business Slogan
     
     Use the supplied slogan when one is available.
     
     When no slogan is supplied, create one concise and original photography-focused slogan. The slogan should communicate a premium, personal, image-driven experience without making unverifiable claims.
     
-    ### Business Field
+  ### Business Field
     
     The business is a professional photography studio offering portrait photography, wedding and engagement photography, family photography, event photography, product photography, and brand photography.
     

@@ -1010,8 +1010,7 @@ Document intentional limitations without disguising incomplete functionality as 
 
 ### Validation Checklist
 
-    Before finishing, verify every requirement in this table.
-    
+  Before finishing, verify every requirement in this table.
     | Area | Completion Requirement |
     |---|---|
     | Theme foundation | The theme contains the required WordPress files and activates without fatal errors |

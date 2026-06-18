@@ -236,67 +236,106 @@ Sanitize values before storage and escape values at output.
 
 Do not commit API keys, passwords, access tokens, private keys, local machine paths, or environment-specific secrets.
 
-# 04. Color System ===============================================================================================================================================================================
+## 04. Color System
 
-## main colors
-    Main Background Color
-    #ffffff
-    Secondary Background Color
-    #f4f7fb
-    Dark Background Color
-    #101827
-    Primary Brand Color
-    #2563eb
-    Secondary Brand Color
-    #14b8a6
-    Accent Color
-    #f97316
-    Primary Text Color
-    #111827
-    Muted Text Color
-    #64748b
-    Border and Divider Color
-    #e2e8f0
-    Primary Button Colors
-    
-    The primary button background should be #2563eb, and its text should be #ffffff.
-    
-    On hover, the background should become #1d4ed8, while the text remains #ffffff.
-    
-    Secondary Button Colors
-    
-    The secondary button background should be #ffffff, its text should be #111827, and its border should be #cbd5e1.
-    
-    On hover, the background should become #f4f7fb, while the text remains #111827.
-    
-    Additional Color Rules
-    
-    Use dark navy sections sparingly for technical proof, system diagrams, metrics, case-study results, and final CTA areas.
-    
-    Use teal accents for successful workflows, connected systems, completed automation steps, positive results, and integration states.
-    
-    Use orange only for small highlights, alerts, priority indicators, or high-priority CTA accents.
-    
-    Do not allow accent colors to reduce readability or violate contrast requirements.
-    
-    Maintain consistent colors across buttons, cards, forms, links, icons, navigation, focus indicators, validation states, CTA sections, dashboard visuals, and system diagrams.
-  
+Use the following palette consistently throughout the theme.
 
+| Purpose | Color |
+|---|---|
+| Main background | `#ffffff` |
+| Secondary background | `#f4f7fb` |
+| Dark background | `#101827` |
+| Primary brand | `#2563eb` |
+| Secondary brand | `#14b8a6` |
+| Accent | `#f97316` |
+| Primary text | `#111827` |
+| Muted text | `#64748b` |
+| Border and divider | `#e2e8f0` |
 
+### Primary Button Colors
 
-# 05. Visual Design Direction ====================================================================================================================================================================
+The primary button background must be `#2563eb`, and the text must be `#ffffff`.
 
+On hover, the background must become `#1d4ed8`, while the text remains `#ffffff`.
 
-# 06. Typography Direction =======================================================================================================================================================================
+The focus-visible state must remain highly visible and must not rely on the hover state alone.
 
-## Heading Style
-    [FILL IN HEADING STYLE HERE] - Clean SaaS-style headings
+### Secondary Button Colors
+
+The secondary button background must be `#ffffff`, the text must be `#111827`, and the border must be `#cbd5e1`.
+
+On hover, the background must become `#f4f7fb`, while the text remains `#111827`.
+
+### Additional Color Rules
+
+Use the dark navy background sparingly for proof sections, process explanations, metrics, case studies, final CTA areas, and other high-emphasis content.
+
+Use teal accents for successful form states, completed steps, selected filters, active states, and subtle visual confirmation.
+
+Use orange only for small highlights, priority indicators, warnings, or high-priority CTA accents.
+
+Do not allow accent colors to reduce readability or violate contrast requirements.
+
+Maintain consistent color usage across buttons, cards, forms, links, icons, navigation, focus indicators, validation states, CTA sections, content filters, status indicators, and data visualizations.
+
+Expose the color system through CSS custom properties so components do not duplicate raw color values unnecessarily.
+
+## 05. Visual Design Direction
+
+Create a premium, modern, content-forward business website.
+
+The design must feel polished, clear, credible, and intentional. It should balance strong visual presentation with direct information architecture and conversion-focused calls to action.
+
+Use generous spacing, strong typographic hierarchy, carefully controlled content widths, reusable cards, clear sections, and restrained decorative treatments.
+
+Avoid a generic template appearance, crowded layouts, excessive gradients, unnecessary visual effects, inconsistent component styling, and animation that distracts from the content.
+
+The visual system must support services, company information, case studies, resources, process explanations, proof, and conversion sections without making the site feel fragmented.
+
+Use asymmetrical editorial layouts where appropriate, but maintain predictable reading order and accessible responsive behavior.
+
+Cards should use consistent spacing, image treatment, border styling, and hover behavior.
+
+Work, case-study, and resource sections should prioritize useful content while preserving readable summaries, categories, metadata, and links.
+
+The site must feel complete at every breakpoint. Mobile layouts must be intentionally designed rather than appearing as compressed desktop layouts.
+
+Interactive elements should feel refined and responsive without becoming distracting.
+
+Every page must use a consistent relationship between visual media, headings, supporting text, metadata, and CTAs.
+
+## 06. Typography Direction
+
+### Heading Style
+
+Use clean, editorial headings with strong scale, controlled line breaks, and a premium professional character.
+
+Headings should feel distinctive while remaining readable, restrained, and appropriate for a modern service-based business.
+
+Use fluid sizing with `clamp()` where appropriate.
+
+Avoid oversized headings that overflow or create awkward single-word lines on smaller screens.
 
 ### Body Text Style
 
-    [FILL IN BODY TEXT STYLE HERE] - Highly readable modern sans-serif
+Use a highly readable modern sans-serif style for body copy, navigation, forms, captions, metadata, and supporting content.
 
-    Use safe local/system font stacks. Do not depend on external Fonts if we will need to update or have any maintence. Font should be stress free.
+Use a safe local and system font stack. Do not depend on externally hosted fonts.
+
+A suitable base stack is:
+
+```css
+font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+```
+
+Use a comfortable body line height and keep long-form text within a readable line length.
+
+Use font weight, spacing, and size to establish hierarchy rather than relying only on color.
+
+Typography must remain readable over visual media, dark sections, cards, overlays, and mobile navigation.
+
+Avoid extremely thin font weights for essential information.
+
 
 # 07. Header ==================================================================================================================================================================================
 

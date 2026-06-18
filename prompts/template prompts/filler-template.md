@@ -1025,6 +1025,29 @@ Document intentional limitations without disguising incomplete functionality as 
 
 ## 15. Definition of done
 
+### WordPress Theme Checks
+
+Confirm that `assets/css/bundle.css` and `assets/js/bundle.js` are the required compiled production bundle names.
+
+Confirm that every PHP file passes PHP lint.
+
+Confirm that `style.css` contains a valid WordPress theme header.
+
+Confirm that `functions.php` loads without warnings or fatal errors.
+
+Confirm that all asset paths are valid and case-correct.
+
+Confirm that every required include and template part exists.
+
+Confirm that no hardcoded absolute local-machine paths remain.
+
+Confirm that no API keys, credentials, secrets, or environment-specific tokens were committed.
+
+Confirm that the theme folder is self-contained.
+
+Confirm that the theme does not require external API keys ETC assets at runtime.
+
+
 ### Validation Checklist
 
 Before finishing, verify every requirement in this table.
@@ -1077,26 +1100,3 @@ Before finishing, verify every requirement in this table.
 | Scope safety | The generated theme does not modify files outside its allowed theme folder |
 | Documentation | `README.md`, `CHANGELOG.md`, `LICENSE.txt`, and all required supporting documentation are complete |
 
-### Basic WordPress Theme Checks
-
-Confirm that every required file and directory exists at the exact path defined in the Required Theme Structure.
-
-Confirm that `assets/css/bundle.css` and `assets/js/bundle.js` are the required compiled production bundle names.
-
-Confirm that every PHP file passes PHP lint.
-
-Confirm that `style.css` contains a valid WordPress theme header.
-
-Confirm that `functions.php` loads without warnings or fatal errors.
-
-Confirm that all asset paths are valid and case-correct.
-
-Confirm that every required include and template part exists.
-
-Confirm that no hardcoded absolute local-machine paths remain.
-
-Confirm that no API keys, credentials, secrets, or environment-specific tokens were committed.
-
-Confirm that the theme folder is self-contained.
-
-Confirm that the theme does not require external CDN assets at runtime.

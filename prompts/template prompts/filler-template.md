@@ -1010,39 +1010,39 @@ Document intentional limitations without disguising incomplete functionality as 
 
 ### Validation Checklist
 
-  Before finishing, verify every requirement in this table.
-    | Area | Completion Requirement |
-    |---|---|
-    | Theme foundation | The theme contains the required WordPress files and activates without fatal errors |
-    | Theme header | `style.css` contains a valid WordPress theme header and a correct text domain |
-    | Build system | `npm run dev` and `npm run build` complete successfully |
-    | Compiled CSS | `assets/css/theme.css` exists, is non-trivial, and is enqueued by WordPress |
-    | Compiled JavaScript | `assets/js/theme.js` exists, is non-trivial, and is enqueued by WordPress |
-    | Images | `assets/images/` exists, contains required local assets, and has documented licenses |
-    | Header layout | Desktop header uses logo, centered primary navigation, and Contact Us CTA |
-    | Header panels | Services, About, and Blog panels open and close correctly |
-    | Header rail interaction | Services and About rail hover and keyboard focus update only the internal right-side content |
-    | Blog panel | Blog uses a blog-card grid and does not use the rail interaction |
-    | Header accessibility | ARIA state, focus-visible styling, Escape closing, outside-click closing, backdrop, and scroll locking work correctly |
-    | Mobile header | Logo is left, hamburger is right, drawer opens and closes, and the background remains solid |
-    | Mobile accordions | Services, About, and Blog accordions are keyboard accessible and hide closed links from focus |
-    | Navigation | Every desktop, mobile, footer, service, blog, and CTA link points to a real destination |
-    | Footer | Booking CTA, brand statement, Services, Company, Blog, Contact, and legal areas are complete |
-    | Forms | Contact and Single Service forms validate, store, notify, display in wp-admin, and export correctly |
-    | Newsletter | Signup, duplicate prevention, status tracking, secure unsubscribe, administration, and export work correctly |
-    | Homepage | All fifteen homepage sections are complete and responsive |
-    | Page templates | Every required page template exists and renders without errors |
-    | Template parts | Every required template part exists and is used appropriately |
-    | Static preview | `docs/index.html` exists, loads local assets, and represents the completed visual system |
-    | Responsive behavior | No page creates unintended horizontal overflow |
-    | Accessibility | Keyboard navigation, focus states, reduced motion, semantic markup, contrast, and hidden-content behavior are verified |
-    | PHP quality | Every PHP file passes PHP lint |
-    | JavaScript quality | Browser testing shows no JavaScript console errors |
-    | Security | Nonces, capability checks, sanitization, validation, and context-appropriate escaping are present |
-    | Secrets | No API keys, credentials, tokens, private keys, or local absolute paths are committed |
-    | External dependencies | No external runtime CDN assets are required |
-    | Originality | No copied third-party branding, text, protected images, or direct site recreation is included |
-    | Scope safety | The generated theme does not modify files outside its allowed theme folder |
+Before finishing, verify every requirement in this table.
+| Area | Completion Requirement |
+|---|---|
+| Theme foundation | The theme contains the required WordPress files and activates without fatal errors |
+| Theme header | `style.css` contains a valid WordPress theme header and a correct text domain |
+| Build system | `npm run dev` and `npm run build` complete successfully |
+| Compiled CSS | `assets/css/theme.css` exists, is non-trivial, and is enqueued by WordPress |
+| Compiled JavaScript | `assets/js/theme.js` exists, is non-trivial, and is enqueued by WordPress |
+| Images | `assets/images/` exists, contains required local assets, and has documented licenses |
+| Header layout | Desktop header uses logo, centered primary navigation, and Contact Us CTA |
+| Header panels | Services, About, and Blog panels open and close correctly |
+| Header rail interaction | Services and About rail hover and keyboard focus update only the internal right-side content |
+| Blog panel | Blog uses a blog-card grid and does not use the rail interaction |
+| Header accessibility | ARIA state, focus-visible styling, Escape closing, outside-click closing, backdrop, and scroll locking work correctly |
+| Mobile header | Logo is left, hamburger is right, drawer opens and closes, and the background remains solid |
+| Mobile accordions | Services, About, and Blog accordions are keyboard accessible and hide closed links from focus |
+| Navigation | Every desktop, mobile, footer, service, blog, and CTA link points to a real destination |
+| Footer | Booking CTA, brand statement, Services, Company, Blog, Contact, and legal areas are complete |
+| Forms | Contact and Single Service forms validate, store, notify, display in wp-admin, and export correctly |
+| Newsletter | Signup, duplicate prevention, status tracking, secure unsubscribe, administration, and export work correctly |
+| Homepage | All fifteen homepage sections are complete and responsive |
+| Page templates | Every required page template exists and renders without errors |
+| Template parts | Every required template part exists and is used appropriately |
+| Static preview | `docs/index.html` exists, loads local assets, and represents the completed visual system |
+| Responsive behavior | No page creates unintended horizontal overflow |
+| Accessibility | Keyboard navigation, focus states, reduced motion, semantic markup, contrast, and hidden-content behavior are verified |
+| PHP quality | Every PHP file passes PHP lint |
+| JavaScript quality | Browser testing shows no JavaScript console errors |
+| Security | Nonces, capability checks, sanitization, validation, and context-appropriate escaping are present |
+| Secrets | No API keys, credentials, tokens, private keys, or local absolute paths are committed |
+| External dependencies | No external runtime CDN assets are required |
+| Originality | No copied third-party branding, text, protected images, or direct site recreation is included |
+| Scope safety | The generated theme does not modify files outside its allowed theme folder |
 
 ### Basic WordPress Theme Checks
 

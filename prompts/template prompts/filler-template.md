@@ -1,6 +1,6 @@
 ## 01. Business Identity
 
-    ### Business Name
+  ### Business Name
     
         Use the business name supplied with the project when one is available. When no business name is supplied, create an original, professional photography studio name that is appropriate for portrait, wedding, family, event, product, and brand photography.
         

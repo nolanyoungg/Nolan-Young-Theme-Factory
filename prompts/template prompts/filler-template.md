@@ -589,7 +589,7 @@ page-templates/ please make in this order!
 
 ## 14. README REQUIREMENTS
 
-    Create a complete `README.md`.
+  Create a complete `README.md`.
     
     ### Theme Overview
     

@@ -337,9 +337,9 @@ Typography must remain readable over visual media, dark sections, cards, overlay
 Avoid extremely thin font weights for essential information.
 
 
-# 07. Header ==================================================================================================================================================================================
+## 07. Header =====================================
 
-## Header Layout
+### Header Layout
   
     Logo left, nav center, CTA right
     
@@ -365,7 +365,7 @@ Avoid extremely thin font weights for essential information.
          - CTA should be available in the mobile drawer as a full-width button.
 
 
-## Navigation Panel Content Requirements
+### Navigation Panel Content Requirements
   
     1) Services `nolan-menu` panel
     - Left rail items (exact labels):
@@ -400,7 +400,7 @@ Avoid extremely thin font weights for essential information.
     - Cards should feel editorial and useful, not generic filler.
 
 
-## Dropdown/navigation panel requirements & behavior:
+### Dropdown/navigation panel requirements & behavior:
     - The sticky header must transition into a "scrolled" variant after the user scrolls down.
     - Each dropdown panel must remain correctly positioned beneath the header in both the default and scrolled states.
     - Right-side panel content updates on left rail hover and keyboard focus
@@ -439,11 +439,11 @@ Avoid extremely thin font weights for essential information.
     - All interactive controls must include strong :focus-visible states.
     - The dropdown system must not create keyboard traps.
 
-### Required Data Attributes
+#### Required Data Attributes
 
     Use the following relationships exactly:
     
-    ```html
+  ```html
     <button data-menu-item="services" aria-controls="services-menu">
     <div id="services-menu" data-menu-dropdown="services">
     
@@ -452,7 +452,7 @@ Avoid extremely thin font weights for essential information.
     
     <button data-menu-item="blog" aria-controls="blog-menu">
     <div id="blog-menu" data-menu-dropdown="blog">
-    ```
+   ```
     
     Inside the Services and About panels, use real button elements for the rail controls:
     
@@ -464,14 +464,14 @@ Avoid extremely thin font weights for essential information.
     The key on each rail button must match the key on its corresponding content section.
 
 
-## Inside the Services and About panels:
+#### Inside the Services and About panels:
     - left rail buttons: button[data-rail-item="<key>"]
     - right sections: section[data-rail-content="<key>"]
     - Only one corresponding right-side section may be visible at a time.
 
 
 
-## Mobile Header
+### Mobile Header
 
   #### Mobile nav requirements:
     - Dedicated mobile drawer (not a stacked desktop panel).
@@ -515,177 +515,191 @@ Avoid extremely thin font weights for essential information.
 
 
 
-## 08. Footer  ==================================================================================================================================================================================
+## 08. Footer
 
-Create a polished, full-width footer that feels intentional, premium, and visually consistent with the rest of the website.
+Create a polished, full-width footer that feels intentional, premium, and visually consistent with the overall business design system.
 
-The footer must include a large booking CTA band, brand statement, Services column, Company column, Blog column, Contact block, and bottom legal row.
+The footer must include a large CTA band, brand statement, Services column, Company column, Blog column, Contact block, and bottom legal row.
 
 The complete footer must use strong spacing, clear visual hierarchy, readable typography, and a fully responsive layout.
 
-  Services Column
-  
-  Create a Services column containing links to the primary service pages generated for the website.
-  
-  The Services heading must be visually distinct from the links below it.
-  
-  Each service link must point to a real generated destination.
-  
-  Do not include placeholder links or links to pages that do not exist.
-  
-  Company Column
-  
-  Create a Company column containing links to the primary company-related pages.
-  
-  This section should provide clear access to important pages such as About, Work, Contact, or other relevant company destinations generated for the website.
-  
-  Each link must point to its real generated page destination.
-  
-  Blog Column
-  
-  Create a Blog column that provides access to the Blog archive and relevant blog content.
-  The Blog heading should clearly identify the section.
-  Blog links must point to real generated blog destinations.
-  The column may include the main Blog archive link and selected recent or featured posts when those posts are available.
-  Do not use generic filler links.
-  
-  Contact Block
-  
-  Create a dedicated Contact block containing the company’s available contact information.
-  The Contact block should support the primary contact action and make it easy for users to reach the company.
-  Any displayed email address, phone number, business location, or contact-page link must use the real information supplied elsewhere in the website requirements.
-  Contact details should be interactive where appropriate.
-  
-  Email addresses should use mailto: links.
-  Phone numbers should use tel: links.
-  The Contact block should remain readable and accessible on smaller screens.
-  Footer Navigation and Link Behavior
-  All footer links must use clear and descriptive labels.
-  Links must include strong hover and :focus-visible states.
-  
-  External links must be handled appropriately and should clearly behave as external destinations when applicable.
-  
-  The footer must not contain broken links, placeholder destinations, or links to pages that were not generated.
-  
-  Bottom Legal Row
-  
-  Create a bottom legal row beneath the main footer content.
-  
-  The legal row should include the copyright notice and links to any generated legal pages.
-  
-  The current year should be generated dynamically rather than written as a fixed value.
-  
-  The bottom row should be visually separated from the main footer using spacing, a border, or another subtle design treatment.
-  
-  Legal links must remain readable and accessible across all screen sizes.
-  
-  Responsive Footer Behavior
-  
-  The footer must be fully responsive.
-  
-  On desktop, the footer should use a balanced multi-column layout.
-  
-  On tablet, the columns may reorganize into fewer columns while maintaining clear spacing and hierarchy.
-  
-  On mobile, the footer content should stack into a clean single-column layout.
-  
-  The booking CTA, navigation columns, contact information, and legal row must remain readable and easy to interact with on smaller screens.
-  
-  The responsive layout must not create horizontal overflow.
-  
-  Accessibility and Visual Quality
-  
-  The footer must use semantic footer markup and appropriate navigation landmarks.
-  
-  Text and links must maintain sufficient contrast against the footer background.
-  
-  All interactive elements must support keyboard navigation.
-  
-  Visible focus states must be clear and consistent.
-  
-  The footer should use generous spacing, polished typography, consistent alignment, and restrained decorative styling.
-  
-  The final design must feel complete and intentional rather than like a basic collection of footer links.
+### CTA Band
+
+Place a large CTA band at the top of the footer.
+
+The band must include a strong business-focused headline, concise supporting copy, a primary Contact Us CTA, and an optional secondary link to the Work page.
+
+The CTA band must feel visually distinct from the main footer without appearing disconnected from the site.
+
+Use generous spacing, clear contrast, and responsive alignment.
+
+### Brand Statement
+
+Include the business logo or wordmark and a concise brand statement.
+
+The brand statement should explain the company’s purpose and approach without inventing awards, years of experience, client counts, locations, or other facts that were not supplied.
+
+The footer logo must link to `/`.
+
+### Services Column
+
+Create a Services column containing links to the generated service pages.
+
+The column should include the primary services represented elsewhere in the theme.
+
+Every service link must point to a real generated destination.
+
+Do not include placeholder links or links to pages that do not exist.
+
+### Company Column
+
+Create a Company column containing links to important company pages such as About, Work, Blog, and Contact.
+
+Every link must point to its real generated page destination.
+
+### Blog Column
+
+Create a Blog column that provides access to the Blog archive and relevant recent or featured posts.
+
+The Blog heading must be clearly distinguished from the links beneath it.
+
+Do not use generic filler links.
+
+### Contact Block
+
+Create a dedicated Contact block using only contact information supplied in the project requirements or configured in WordPress.
+
+Email addresses must use `mailto:` links.
+
+Phone numbers must use `tel:` links.
+
+The contact-page link must point to `/contact/`.
+
+When an address, phone number, or email address has not been supplied, omit that detail rather than inventing it.
+
+### Footer Navigation and Link Behavior
+
+All footer links must use clear and descriptive labels.
+
+Links must include visible hover and `:focus-visible` states.
+
+External links must be identified and handled appropriately.
+
+The footer must not contain broken links, placeholder destinations, or links to pages that were not generated.
+
+### Bottom Legal Row
+
+Create a bottom legal row beneath the main footer content.
+
+The legal row must include a copyright notice and links to any legal pages that were actually generated.
+
+Generate the current year dynamically rather than hardcoding it.
+
+Visually separate the legal row from the main footer using spacing, a subtle border, or another restrained design treatment.
+
+Do not fabricate legal text. Policy pages must render content supplied or entered through WordPress.
+
+### Responsive Footer Behavior
+
+On desktop, use a balanced multi-column layout.
+
+On tablet, reorganize the content into fewer columns while preserving hierarchy and spacing.
+
+On mobile, stack the footer into a clean single-column layout.
+
+The CTA band, navigation groups, contact information, and legal row must remain readable and easy to interact with.
+
+The footer must not create horizontal overflow.
+
+### Accessibility and Visual Quality
+
+Use semantic `<footer>` markup and appropriate navigation landmarks.
+
+Maintain sufficient contrast between text, links, controls, and the footer background.
+
+All interactive elements must support keyboard navigation.
+
+The finished footer should feel complete and intentional rather than like a basic collection of links.
 
 ## 09. Forms
 
 ### Required Forms
 
-    | Form | Required Fields | Additional Behavior |
-    |---|---|---|
-    | Contact | Name, email, phone, message | General inquiry form |
-    | Single Service | Name, email, phone, message | Include the related service identifier automatically |
-    
-    Name, email, and message must be required.
-    
-    Phone may be optional unless the project requirements specify otherwise.
-    
-    Use clear labels, inline validation, accessible error messages, success feedback, and server-side validation.
+| Form | Required Fields | Additional Behavior |
+|---|---|---|
+| Contact | Name, email, phone, message | General inquiry form |
+| Single Service | Name, email, phone, message | Include the related service identifier automatically |
+
+Name, email, and message must be required.
+
+Phone may be optional unless the project requirements specify otherwise.
+
+Use clear labels, inline validation, accessible error messages, success feedback, and server-side validation.
 
 ### Required Form Functionality
-    
-    Create a top-level WordPress administration menu named `Forms`.
-    
-    The Forms area must allow authorized administrators to view submissions by form type, inspect individual submissions, filter submissions, select one or more entries, export selected entries, and delete entries securely.
-    
-    Store submissions in a structured, non-public format. A private custom post type or dedicated database table is acceptable when implemented correctly.
-    
-    Separate the storage and administration logic into organized theme modules so it can be migrated to a companion plugin later if needed.
-    
-    Every public form submission must use a nonce, sanitization, validation, spam protection, and clear success or failure handling.
-    
-    Use a honeypot field and reasonable rate limiting. Do not expose the anti-spam field to keyboard or assistive-technology users.
-    
-    Send submission notifications to the configured WordPress administrator or site-owner email.
-    
-    Email failures must not cause a valid submission to be lost.
-    
-    Provide CSV export through an authorized administrative action.
-    
-    CSV output must escape values correctly and must support exporting all submissions, one form type, multiple selected entries, or a filtered result set.
-    
-    Administrators must also be able to email an export or summary to the configured site-owner email.
-    
-    Only users with the appropriate capability may view, export, email, change, or delete submissions.
-    
-    Do not expose submission content through public WordPress queries, feeds, archives, REST endpoints, or search results.
+
+Create a top-level WordPress administration menu named `Forms`.
+
+The Forms area must allow authorized administrators to view submissions by form type, inspect individual submissions, filter submissions, select one or more entries, export selected entries, and delete entries securely.
+
+Store submissions in a structured, non-public format. A private custom post type or dedicated database table is acceptable when implemented correctly.
+
+Separate the storage and administration logic into organized theme modules so it can be migrated to a companion plugin later if needed.
+
+Every public form submission must use a nonce, sanitization, validation, spam protection, and clear success or failure handling.
+
+Use a honeypot field and reasonable rate limiting. Do not expose the anti-spam field to keyboard or assistive-technology users.
+
+Send submission notifications to the configured WordPress administrator or site-owner email.
+
+Email failures must not cause a valid submission to be lost.
+
+Provide CSV export through an authorized administrative action.
+
+CSV output must escape values correctly and must support exporting all submissions, one form type, multiple selected entries, or a filtered result set.
+
+Administrators must also be able to email an export or summary to the configured site-owner email.
+
+Only users with the appropriate capability may view, export, email, change, or delete submissions.
+
+Do not expose submission content through public WordPress queries, feeds, archives, REST endpoints, or search results.
 
 
 ## 10. Newsletter
 
 ### Required Newsletter
 
-    Create a marketing email signup system for collecting newsletter subscribers.
-    
-    The public signup form must require an email address and may optionally request a first name.
-    
-    Do not require unnecessary personal information.
+Create a marketing email signup system for collecting newsletter subscribers.
+
+The public signup form must require an email address and may optionally request a first name.
+
+Do not require unnecessary personal information.
 
 ### Required Newsletter Functionality
 
-    Create a top-level WordPress administration menu named `Newsletter`.
-    
-    The Newsletter area must display the subscriber email, optional name, signup date, current status, and unsubscribe date when applicable.
-    
-    Supported subscriber states must include `Active` and `Unsubscribed`.
-    
-    Normalize email addresses before storage and prevent duplicate active subscriber records.
-    
-    A returning unsubscribed address may be reactivated only through a new explicit signup.
-    
-    Every signup request must use a nonce, sanitization, validation, spam protection, and clear success or failure feedback.
-    
-    Provide a secure unsubscribe mechanism using a unique token that does not expose subscriber identifiers directly.
-    
-    The unsubscribe action must update the subscriber status rather than deleting the historical record automatically.
-    
-    Authorized administrators must be able to filter subscribers by status, select one or more records, export a CSV file, and email an export or summary to the configured site-owner email.
-    
-    CSV output must escape values correctly.
-    
-    Do not expose the subscriber list through public pages, feeds, search, archives, REST endpoints, or unauthenticated requests.
-    
-    This functionality manages the subscriber list only. Do not implement a bulk marketing email sender unless a separate delivery system is explicitly required.
+Create a top-level WordPress administration menu named `Newsletter`.
+
+The Newsletter area must display the subscriber email, optional name, signup date, current status, and unsubscribe date when applicable.
+
+Supported subscriber states must include `Active` and `Unsubscribed`.
+
+Normalize email addresses before storage and prevent duplicate active subscriber records.
+
+A returning unsubscribed address may be reactivated only through a new explicit signup.
+
+Every signup request must use a nonce, sanitization, validation, spam protection, and clear success or failure feedback.
+
+Provide a secure unsubscribe mechanism using a unique token that does not expose subscriber identifiers directly.
+
+The unsubscribe action must update the subscriber status rather than deleting the historical record automatically.
+
+Authorized administrators must be able to filter subscribers by status, select one or more records, export a CSV file, and email an export or summary to the configured site-owner email.
+
+CSV output must escape values correctly.
+
+Do not expose the subscriber list through public pages, feeds, search, archives, REST endpoints, or unauthenticated requests.
+
+This functionality manages the subscriber list only. Do not implement a bulk marketing email sender unless a separate delivery system is explicitly required.
 
 
 

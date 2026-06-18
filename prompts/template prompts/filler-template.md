@@ -98,74 +98,143 @@ Color must not be the only method used to communicate state, validation, selecti
 
 
 
-# 03. Functionality ==============================================================================================================================================================================
 
-## Webpack Build Requirements
+## 03. Functionality
 
-    Create the following Webpack configuration file:
-    
-    build/webpack.config.js
-    
-    The Webpack configuration must compile:
-    
-    src/js/main.js
-    
-    into:
-    
-    assets/js/bundle.js
-    
-    It must also compile:
-    
-    src/scss/main.scss
-    
-    into:
-    
-    assets/css/bundle.css
-    
-    Create a valid package.json containing working development and production commands:
-    
-    npm run dev
-    npm run build
-    
-    The npm run dev command should compile JavaScript and SCSS, 
-    generate source maps where appropriate, 
-    produce development-friendly output, 
-    report compilation errors clearly, 
-    and support active development or watch mode.
-    
-    The npm run build command should compile JavaScript and SCSS, 
-    minify production assets, 
-    produce the exact files enqueued by WordPress, 
-    avoid unnecessary development output, 
-    and exit with an error when compilation fails.
-    
-    The build system must use valid paths, 
-    include all required dependencies, 
-    avoid references to missing files or loaders, 
-    produce deterministic output, 
-    avoid external CDN dependencies, 
-    and keep source files separate from compiled files.
-    
-    The theme may use theme.json for WordPress design settings, editor settings, spacing, colors, 
-    typography, and layout support. Build commands belong in package.json, not theme.json.
+### Webpack Build Requirements
 
+Create the Webpack configuration at this exact path:
 
-  ##  WORDPRESS SECURITY REQUIREMENTS
+```text
+build/webpack.config.js
+```
 
-    Use proper WordPress functions and escaping, including where appropriate:
-    
-    esc_html()
-    esc_attr()
-    esc_url()
-    wp_kses_post()
-    the_permalink()
-    the_title_attribute()
-    body_class()
-    post_class()
-    wp_head()
-    wp_footer()
-    language_attributes()
+The Webpack configuration must compile:
 
+```text
+src/js/main.js
+```
+
+into:
+
+```text
+assets/js/bundle.js
+```
+
+The Webpack configuration must compile:
+
+```text
+src/scss/main.scss
+```
+
+into:
+
+```text
+assets/css/bundle.css
+```
+
+The generated filenames must be exactly `bundle.js` and `bundle.css`.
+
+Do not generate or enqueue `theme.js`, `theme.css`, `main.js`, `main.css`, or alternate production bundle names.
+
+Create a valid `package.json` and committed `package-lock.json`.
+
+The required npm commands are:
+
+```text
+npm run dev
+npm run build
+```
+
+The `npm run dev` command must compile JavaScript and SCSS, generate development source maps where appropriate, report compilation errors clearly, and run in watch mode for active development.
+
+The `npm run build` command must compile JavaScript and SCSS in production mode, minify the output, omit unnecessary development artifacts, and exit with a non-zero status when compilation fails.
+
+The build must produce these exact files:
+
+```text
+assets/css/bundle.css
+assets/js/bundle.js
+```
+
+The build system must use valid paths, include every required dependency, avoid missing loaders or plugins, produce deterministic output, and keep source files separate from compiled assets.
+
+The theme must not require external runtime CDN assets.
+
+The theme may use `theme.json` for WordPress editor settings, design tokens, colors, spacing, typography, and layout support. Build commands belong in `package.json`, not `theme.json`.
+
+### WordPress Asset Enqueue Requirements
+
+Place all enqueue logic in:
+
+```text
+inc/enqueue.php
+```
+
+Load that file from `functions.php`.
+
+WordPress must enqueue these exact compiled files:
+
+```text
+assets/css/bundle.css
+assets/js/bundle.js
+```
+
+Use `get_theme_file_uri()` or another appropriate WordPress theme-path function.
+
+Use file modification times or another reliable local versioning method so browser caches update when compiled assets change.
+
+Do not enqueue source files from `src/`.
+
+Do not enqueue nonexistent fallback bundle names.
+
+### Core WordPress Theme Requirements
+
+The theme must activate without warnings or fatal errors.
+
+Register appropriate theme support for the document title, post thumbnails, custom logo, HTML5 markup, responsive embeds, wide alignment, editor styles, and navigation menus.
+
+Register separate menu locations for the primary navigation and footer navigation.
+
+Use WordPress APIs for asset loading, template inclusion, menu rendering, URLs, titles, images, excerpts, pagination, comments, search, and site information.
+
+JavaScript should use modern vanilla JavaScript unless a WordPress-provided dependency is genuinely required.
+
+### WordPress Security Requirements
+
+Use WordPress escaping and sanitization functions according to context.
+
+Use the following functions where appropriate:
+
+```php
+esc_html()
+esc_attr()
+esc_url()
+wp_kses_post()
+sanitize_text_field()
+sanitize_email()
+sanitize_textarea_field()
+absint()
+wp_unslash()
+wp_verify_nonce()
+check_admin_referer()
+current_user_can()
+the_permalink()
+the_title_attribute()
+body_class()
+post_class()
+wp_head()
+wp_footer()
+language_attributes()
+```
+
+All form submissions, administrative actions, exports, status changes, and deletion operations must use nonces and capability checks.
+
+Never trust request data directly.
+
+Sanitize values before storage and escape values at output.
+
+Do not commit API keys, passwords, access tokens, private keys, local machine paths, or environment-specific secrets.
 
 # 04. Color System ===============================================================================================================================================================================
 

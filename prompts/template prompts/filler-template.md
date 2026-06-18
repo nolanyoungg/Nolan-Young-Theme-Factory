@@ -489,94 +489,148 @@ template-parts/
 
 
 
-# 12. page-templates to fill in/build out ========================================================================================================================================================
+## 12. page-templates to fill in/build out
 
-page-templates/ please make in this order! 
+Create the page templates in this order:
 
+```text
+page-templates/
+├── template-homepage.php
+├── template-services.php
+├── template-single-service.php
+├── template-about-us.php
+├── template-work.php
+├── template-blog.php
+├── template-contact.php
+└── template-policy.php
+```
 
-## template-homepage.php
-    Homepage:
-    Build a complete, finished photography homepage with at least 14 polished sections:
-    
-    1. Fullscreen photographic hero
-       - Large real/local hero image
-       - Cinematic headline
-       - Supporting copy
-       - Two CTAs
-       - Small trust/stat row
-       - Editorial overlay treatment
-    
-    2. Featured work strip
-       - Horizontal image-forward preview
-       - Real/local photos
-       - Links to Work page
-    
-    3. Brand statement section
-       - Studio philosophy
-       - Strong editorial typography
-       - Portrait/studio image pairing
-    
-    4. Services overview
-       - At least 6 service cards
-       - Each card uses a fitting real/local photo
-       - Clear CTA per service
-    
-    5. Signature experience section
-       - Explain inquiry, planning, session, editing, gallery delivery
-    
-    6. Featured gallery / masonry section
-       - Real/local image grid
-       - Filter interaction using vanilla JS
-       - Categories: Portraits, Weddings, Brand, Product, Family, Events
-    
-    7. Featured story / case study section
-       - One detailed shoot story
-       - Large photos
-       - Pull quote
-       - Outcome/experience details
-    
-    8. Before/after or editing style section
-       - Use a before/after slider or editing process visual
-       - Must be photography-specific
-    
-    9. Packages / session options
-       - Three polished cards
-       - Portrait, Brand, Wedding/Event or similar
-    
-    10. Product/brand photography feature
-       - Real/local product or business imagery
-       - Useful business-focused copy
-    
-    11. Wedding/engagement feature
-       - Real/local couple/event imagery
-       - Emotional but professional copy
-    
-    12. Testimonials/proof
-       - At least 4 believable testimonials
-       - Small stats/review row
-    
-    13. Blog preview
-       - At least 4 helpful planning guides
-    
-    14. FAQ section
-       - At least 7 useful booking/session questions
-       - Accessible accordion behavior
-    
-    15. Final booking CTA
-       - Strong conversion copy
-       - Contact CTA
-       - Secondary CTA to view work page template
+Every template must include a valid WordPress `Template Name` header where applicable.
+
+### template-homepage.php
+
+Build a complete, finished photography homepage with fifteen polished sections.
+
+#### Homepage Section 01: Fullscreen Photographic Hero
+
+Use a large local hero image, cinematic headline, supporting copy, two CTAs, a compact trust or service-summary row, and a restrained editorial overlay.
+
+#### Homepage Section 02: Featured Work Strip
+
+Create a horizontal image-forward portfolio preview using local images and links to the Work page.
+
+#### Homepage Section 03: Brand Statement
+
+Present the studio philosophy through strong editorial typography and a portrait or studio image pairing.
+
+#### Homepage Section 04: Services Overview
+
+Present at least six photography service cards using appropriate local images and clear links to the corresponding service pages.
+
+#### Homepage Section 05: Signature Experience
+
+Explain the complete client experience from inquiry and planning through the session, editing, and gallery delivery.
+
+#### Homepage Section 06: Featured Gallery
+
+Create a local masonry or editorial image grid with a vanilla-JavaScript filter.
+
+Use these categories:
+
+```text
+Portraits
+Weddings
+Brand
+Product
+Family
+Events
+```
+
+The filter must support mouse, touch, and keyboard interaction.
+
+#### Homepage Section 07: Featured Story
+
+Present one detailed photography story or case study using large images, an editorial narrative, a pull quote only when supplied, and clear experience or outcome details.
+
+#### Homepage Section 08: Editing Style
+
+Use a photography-specific before-and-after control or editing-process visual.
+
+The control must be accessible and usable without requiring precise pointer movement.
+
+#### Homepage Section 09: Packages and Session Options
+
+Create three polished package cards representing Portrait, Brand, and Wedding or Event options.
+
+Do not invent prices when pricing was not supplied.
+
+#### Homepage Section 10: Product and Brand Photography
+
+Use local product or business imagery with practical business-focused content.
+
+#### Homepage Section 11: Wedding and Engagement Photography
+
+Use local couple or event imagery with emotionally engaging but professional content.
+
+#### Homepage Section 12: Testimonials and Proof
+
+Use real testimonial content only when it was supplied.
+
+Do not invent client names, quotations, ratings, companies, or endorsements.
+
+When testimonials are unavailable, present a non-testimonial proof section using the documented process, portfolio breadth, service guarantees that were actually supplied, or neutral experience highlights.
+
+#### Homepage Section 13: Blog Preview
+
+Show at least four helpful photography planning guides with real generated destinations.
+
+#### Homepage Section 14: FAQ
+
+Include at least seven useful booking and session questions in an accessible accordion.
+
+Closed answers must not remain exposed to assistive technology or keyboard focus.
+
+#### Homepage Section 15: Final Booking CTA
+
+Use strong conversion-focused copy, a primary Contact Us CTA, and a secondary link to the Work page.
+
 ### template-services.php
+
+Create a complete Services page with a strong hero, six primary service cards, photography process overview, service comparison guidance, featured work, FAQ, and final Contact Us CTA.
+
+Every service card must link to a real service-detail destination.
+
 ### template-single-service.php
+
+Create a reusable service-detail template with a service hero, detailed overview, ideal-client guidance, deliverables, process, image gallery, package or inquiry guidance, related services, FAQ, and the Single Service form.
+
+The form must automatically identify the service being viewed.
+
 ### template-about-us.php
+
+Create a complete About page with the studio story, photography philosophy, approach, values, working experience, studio or behind-the-scenes imagery, and a final Contact Us CTA.
+
+Do not invent founder biographies, awards, locations, or history that were not supplied.
+
 ### template-work.php
+
+Create an image-forward Work page with portfolio categories, accessible filtering, project or gallery cards, featured stories, and direct links to relevant services.
+
 ### template-blog.php
+
+Create a Blog archive page with a featured article, category navigation, article cards, excerpts, pagination, and search access.
+
+Use real generated posts and destinations.
+
 ### template-contact.php
+
+Create a complete Contact page with clear inquiry guidance, expected response information that does not make unsupported promises, the Contact form, and any real supplied contact details.
+
 ### template-policy.php
 
+Create a readable policy-page layout that renders WordPress-managed policy content.
 
-    
-
+Do not generate legal promises, guarantees, privacy claims, cookie claims, or terms that were not supplied or reviewed.
 
 
 

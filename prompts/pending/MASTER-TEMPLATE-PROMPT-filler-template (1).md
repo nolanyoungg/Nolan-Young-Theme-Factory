@@ -3,6 +3,7 @@
 ### Business Name
 
 Use the business name supplied with the project when one is available.
+For this theme, use `Northstar Websites`.
 
 When no business name is supplied, create an original, professional name appropriate for a modern service-based business.
 
@@ -11,6 +12,7 @@ The generated name must be distinctive, readable, suitable for WordPress, and fr
 ### Business Logo
 
 Use the supplied business logo when one is available.
+For this theme, build the identity around a clean `Northstar Websites` wordmark with a simple star or compass-inspired supporting mark.
 
 When no logo is supplied, create an original text-based wordmark and a simple supporting mark that can be implemented as a local, accessible SVG.
 
@@ -21,12 +23,14 @@ The logo must not copy or imitate an existing company, agency, product, or trade
 ### Business Slogan
 
 Use the supplied slogan when one is available.
+For this theme, use a concise slogan that fits a website development company, such as "Websites that help businesses grow."
 
 When no slogan is supplied, create one concise and original slogan that communicates the business value clearly without making unverifiable claims.
 
 ### Business Field
 
 The theme must support a professional service-based business.
+For this theme, the business is a website development company focused on modern WordPress design, build, and support services.
 
 The generated content should present the company’s services, process, experience, work, resources, contact options, and calls to action in a coherent and adaptable way.
 

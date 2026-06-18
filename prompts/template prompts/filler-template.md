@@ -1,16 +1,30 @@
-# 01. Business Identity 
+## 01. Business Identity
 
-## Business Name
-  -
-
-## Business Logo
-  -
-
-## Business Solgan
-  -
-
-## Business Field
-  -
+    ### Business Name
+    
+        Use the business name supplied with the project when one is available. When no business name is supplied, create an original, professional photography studio name that is appropriate for portrait, wedding, family, event, product, and brand photography.
+        
+        The generated name must be distinctive, easy to read, suitable for use in a WordPress theme, and free from copied third-party branding.
+    
+    ### Business Logo
+    
+    Use the supplied business logo when one is available.
+    
+    When no logo is supplied, create an original text-based wordmark and a simple supporting mark that can be implemented as a local, accessible SVG. The logo must remain clear at header, footer, mobile, favicon, and small-screen sizes.
+    
+    The logo must not copy or imitate an existing brand, photographer, studio, agency, or trademarked visual identity.
+    
+    ### Business Slogan
+    
+    Use the supplied slogan when one is available.
+    
+    When no slogan is supplied, create one concise and original photography-focused slogan. The slogan should communicate a premium, personal, image-driven experience without making unverifiable claims.
+    
+    ### Business Field
+    
+    The business is a professional photography studio offering portrait photography, wedding and engagement photography, family photography, event photography, product photography, and brand photography.
+    
+    The theme should support both consumer-facing photography services and business-focused photography services without making the site feel divided or inconsistent.
 
 
 # 02  Style / CSS Requirements ===================================================================================================================================================================

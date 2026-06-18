@@ -423,39 +423,111 @@ The complete footer must use strong spacing, clear visual hierarchy, readable ty
   
   The final design must feel complete and intentional rather than like a basic collection of footer links.
 
-## 09. Forms ==================================================================================================================================================================================
+## 09. Forms
 
-  ### Required Forms
+### Required Forms
 
-  -Contact - feilds: name,email, phone, comment box
-  -Single-Service - Feilds: name,email, phone, comment box
+    | Form | Required Fields | Additional Behavior |
+    |---|---|---|
+    | Contact | Name, email, phone, message | General inquiry form |
+    | Single Service | Name, email, phone, message | Include the related service identifier automatically |
+    
+    Name, email, and message must be required.
+    
+    Phone may be optional unless the project requirements specify otherwise.
+    
+    Use clear labels, inline validation, accessible error messages, success feedback, and server-side validation.
 
-  ### Require Form Functionaily
+### Required Form Functionality
+    
+    Create a top-level WordPress administration menu named `Forms`.
+    
+    The Forms area must allow authorized administrators to view submissions by form type, inspect individual submissions, filter submissions, select one or more entries, export selected entries, and delete entries securely.
+    
+    Store submissions in a structured, non-public format. A private custom post type or dedicated database table is acceptable when implemented correctly.
+    
+    Separate the storage and administration logic into organized theme modules so it can be migrated to a companion plugin later if needed.
+    
+    Every public form submission must use a nonce, sanitization, validation, spam protection, and clear success or failure handling.
+    
+    Use a honeypot field and reasonable rate limiting. Do not expose the anti-spam field to keyboard or assistive-technology users.
+    
+    Send submission notifications to the configured WordPress administrator or site-owner email.
+    
+    Email failures must not cause a valid submission to be lost.
+    
+    Provide CSV export through an authorized administrative action.
+    
+    CSV output must escape values correctly and must support exporting all submissions, one form type, multiple selected entries, or a filtered result set.
+    
+    Administrators must also be able to email an export or summary to the configured site-owner email.
+    
+    Only users with the appropriate capability may view, export, email, change, or delete submissions.
+    
+    Do not expose submission content through public WordPress queries, feeds, archives, REST endpoints, or search results.
 
-  forms must become viewable in wp-admin bar called ""forms"", when logged into the back end, when you click that admin bar you should be able to see the differnt forms and there responses.
-  must also be able to export these forms via csv and in an email to the wp-admin / site owners email. must be able to select all forms, a single forms, more than one form etc. 
 
-## 10 Newsletter =================================================================================================================================================================================
+## 10. Newsletter
 
-  ### Required NewsLetter
+### Required Newsletter
 
-  Marketying email list
+    Create a marketing email signup system for collecting newsletter subscribers.
+    
+    The public signup form must require an email address and may optionally request a first name.
+    
+    Do not require unnecessary personal information.
 
-  ### Required Newsletter Functionaily 
-  Simialr to the forms, we must be able to become a admin in our wp-admin panel in the back end called "Newsletter" in there should be the list of user thats signed up for the newsletter. it m
-  must also keep track of who has signed up, the status is they are still signed up and have not un subcribed. 
+### Required Newsletter Functionality
 
-  should also be able to export this list via csv email to wp-admin / site owner
+    Create a top-level WordPress administration menu named `Newsletter`.
+    
+    The Newsletter area must display the subscriber email, optional name, signup date, current status, and unsubscribe date when applicable.
+    
+    Supported subscriber states must include `Active` and `Unsubscribed`.
+    
+    Normalize email addresses before storage and prevent duplicate active subscriber records.
+    
+    A returning unsubscribed address may be reactivated only through a new explicit signup.
+    
+    Every signup request must use a nonce, sanitization, validation, spam protection, and clear success or failure feedback.
+    
+    Provide a secure unsubscribe mechanism using a unique token that does not expose subscriber identifiers directly.
+    
+    The unsubscribe action must update the subscriber status rather than deleting the historical record automatically.
+    
+    Authorized administrators must be able to filter subscribers by status, select one or more records, export a CSV file, and email an export or summary to the configured site-owner email.
+    
+    CSV output must escape values correctly.
+    
+    Do not expose the subscriber list through public pages, feeds, search, archives, REST endpoints, or unauthenticated requests.
+    
+    This functionality manages the subscriber list only. Do not implement a bulk marketing email sender unless a separate delivery system is explicitly required.
+
 
 
 # 11. template-parts to fill in/build out ========================================================================================================================================================
 
+```text
 template-parts/
-  ## content-page.php
-      ### 
-      smsmkfme
-      fefe
-      ffefe
+├── content-page.php
+├── content-single.php
+├── content-none.php
+├── content-policy.php
+├── content-search.php
+├── content-hero.php
+├── content-brand-statement.php
+├── content-featured-work.php
+├── content-all-services.php
+├── content-single-service-highlight.php
+├── content-process.php
+├── content-style-pillars.php
+├── content-testimonials.php
+├── content-blog-preview.php
+├── content-cta-banner.php
+├── content-footer-widgets.php
+├── content-gallery.php
+└── content-faq.php
+```
   
   ## content-single.php
   
@@ -509,168 +581,168 @@ Every template must include a valid WordPress `Template Name` header where appli
 
 ### template-homepage.php
 
-Build a complete, finished photography homepage with fifteen polished sections.
+    Build a complete, finished photography homepage with fifteen polished sections.
 
 #### Homepage Section 01: Fullscreen Photographic Hero
 
-Use a large local hero image, cinematic headline, supporting copy, two CTAs, a compact trust or service-summary row, and a restrained editorial overlay.
+    Use a large local hero image, cinematic headline, supporting copy, two CTAs, a compact trust or service-summary row, and a restrained editorial overlay.
 
 #### Homepage Section 02: Featured Work Strip
 
-Create a horizontal image-forward portfolio preview using local images and links to the Work page.
+    Create a horizontal image-forward portfolio preview using local images and links to the Work page.
 
 #### Homepage Section 03: Brand Statement
 
-Present the studio philosophy through strong editorial typography and a portrait or studio image pairing.
+    Present the studio philosophy through strong editorial typography and a portrait or studio image pairing.
 
 #### Homepage Section 04: Services Overview
 
-Present at least six photography service cards using appropriate local images and clear links to the corresponding service pages.
+    Present at least six photography service cards using appropriate local images and clear links to the corresponding service pages.
 
 #### Homepage Section 05: Signature Experience
 
-Explain the complete client experience from inquiry and planning through the session, editing, and gallery delivery.
+    Explain the complete client experience from inquiry and planning through the session, editing, and gallery delivery.
 
 #### Homepage Section 06: Featured Gallery
 
-Create a local masonry or editorial image grid with a vanilla-JavaScript filter.
+    Create a local masonry or editorial image grid with a vanilla-JavaScript filter.
 
-Use these categories:
+    Use these categories:
 
-```text
-Portraits
-Weddings
-Brand
-Product
-Family
-Events
-```
+    ```text
+    Portraits
+    Weddings
+    Brand
+    Product
+    Family
+    Events
+    ```
 
-The filter must support mouse, touch, and keyboard interaction.
+    The filter must support mouse, touch, and keyboard interaction.
 
 #### Homepage Section 07: Featured Story
 
-Present one detailed photography story or case study using large images, an editorial narrative, a pull quote only when supplied, and clear experience or outcome details.
+    Present one detailed photography story or case study using large images, an editorial narrative, a pull quote only when supplied, and clear experience or outcome details.
 
 #### Homepage Section 08: Editing Style
 
-Use a photography-specific before-and-after control or editing-process visual.
+    Use a photography-specific before-and-after control or editing-process visual.
 
-The control must be accessible and usable without requiring precise pointer movement.
+    The control must be accessible and usable without requiring precise pointer movement.
 
 #### Homepage Section 09: Packages and Session Options
 
-Create three polished package cards representing Portrait, Brand, and Wedding or Event options.
+    Create three polished package cards representing Portrait, Brand, and Wedding or Event options.
 
-Do not invent prices when pricing was not supplied.
+    Do not invent prices when pricing was not supplied.
 
 #### Homepage Section 10: Product and Brand Photography
 
-Use local product or business imagery with practical business-focused content.
+    Use local product or business imagery with practical business-focused content.
 
 #### Homepage Section 11: Wedding and Engagement Photography
 
-Use local couple or event imagery with emotionally engaging but professional content.
+    Use local couple or event imagery with emotionally engaging but professional content.
 
 #### Homepage Section 12: Testimonials and Proof
 
-Use real testimonial content only when it was supplied.
+    Use real testimonial content only when it was supplied.
 
-Do not invent client names, quotations, ratings, companies, or endorsements.
+    Do not invent client names, quotations, ratings, companies, or endorsements.
 
-When testimonials are unavailable, present a non-testimonial proof section using the documented process, portfolio breadth, service guarantees that were actually supplied, or neutral experience highlights.
+    When testimonials are unavailable, present a non-testimonial proof section using the documented process, portfolio breadth, service guarantees that were actually supplied, or neutral experience highlights.
 
 #### Homepage Section 13: Blog Preview
 
-Show at least four helpful photography planning guides with real generated destinations.
+    Show at least four helpful photography planning guides with real generated destinations.
 
 #### Homepage Section 14: FAQ
 
-Include at least seven useful booking and session questions in an accessible accordion.
+    Include at least seven useful booking and session questions in an accessible accordion.
 
-Closed answers must not remain exposed to assistive technology or keyboard focus.
+    Closed answers must not remain exposed to assistive technology or keyboard focus.
 
 #### Homepage Section 15: Final Booking CTA
 
-Use strong conversion-focused copy, a primary Contact Us CTA, and a secondary link to the Work page.
+    Use strong conversion-focused copy, a primary Contact Us CTA, and a secondary link to the Work page.
 
 ### template-services.php
 
-Create a complete Services page with a strong hero, six primary service cards, photography process overview, service comparison guidance, featured work, FAQ, and final Contact Us CTA.
+    Create a complete Services page with a strong hero, six primary service cards, photography process overview, service comparison guidance, featured work, FAQ, and final Contact Us CTA.
 
-Every service card must link to a real service-detail destination.
+    Every service card must link to a real service-detail destination.
 
 ### template-single-service.php
 
-Create a reusable service-detail template with a service hero, detailed overview, ideal-client guidance, deliverables, process, image gallery, package or inquiry guidance, related services, FAQ, and the Single Service form.
+    Create a reusable service-detail template with a service hero, detailed overview, ideal-client guidance, deliverables, process, image gallery, package or inquiry guidance, related services, FAQ, and the Single Service form.
 
-The form must automatically identify the service being viewed.
+    The form must automatically identify the service being viewed.
 
 ### template-about-us.php
 
-Create a complete About page with the studio story, photography philosophy, approach, values, working experience, studio or behind-the-scenes imagery, and a final Contact Us CTA.
+    Create a complete About page with the studio story, photography philosophy, approach, values, working experience, studio or behind-the-scenes imagery, and a final Contact Us CTA.
 
-Do not invent founder biographies, awards, locations, or history that were not supplied.
+    Do not invent founder biographies, awards, locations, or history that were not supplied.
 
 ### template-work.php
 
-Create an image-forward Work page with portfolio categories, accessible filtering, project or gallery cards, featured stories, and direct links to relevant services.
+    Create an image-forward Work page with portfolio categories, accessible filtering, project or gallery cards, featured stories, and direct links to relevant services.
 
 ### template-blog.php
 
-Create a Blog archive page with a featured article, category navigation, article cards, excerpts, pagination, and search access.
+    Create a Blog archive page with a featured article, category navigation, article cards, excerpts, pagination, and search access.
 
-Use real generated posts and destinations.
+    Use real generated posts and destinations.
 
 ### template-contact.php
 
-Create a complete Contact page with clear inquiry guidance, expected response information that does not make unsupported promises, the Contact form, and any real supplied contact details.
+    Create a complete Contact page with clear inquiry guidance, expected response information that does not make unsupported promises, the Contact form, and any real supplied contact details.
 
 ### template-policy.php
 
-Create a readable policy-page layout that renders WordPress-managed policy content.
+    Create a readable policy-page layout that renders WordPress-managed policy content.
 
-Do not generate legal promises, guarantees, privacy claims, cookie claims, or terms that were not supplied or reviewed.
+    Do not generate legal promises, guarantees, privacy claims, cookie claims, or terms that were not supplied or reviewed.
 
 
 
 ## 13. Images
 
-Use real photography rather than filler graphics or empty placeholders.
+    Use real photography rather than filler graphics or empty placeholders.
 
-Use only public-domain, CC0, or properly licensed assets that permit the intended use.
+    Use only public-domain, CC0, or properly licensed assets that permit the intended use.
 
-Do not describe an image as copyright-free unless its license actually supports that claim.
+    Do not describe an image as copyright-free unless its license actually supports that claim.
 
-Download permitted images into the theme and store them in an appropriate local folder such as:
+    Download permitted images into the theme and store them in an appropriate local folder such as:
 
-```text
-assets/images/
-assets/images/hero/
-assets/images/services/
-assets/images/portfolio/
-assets/images/blog/
-assets/images/icons/
-assets/images/svg/
-```
+    ```text
+    assets/images/
+    assets/images/hero/
+    assets/images/services/
+    assets/images/portfolio/
+    assets/images/blog/
+    assets/images/icons/
+    assets/images/svg/
+    ```
 
-Do not hotlink runtime images from third-party websites.
+    Do not hotlink runtime images from third-party websites.
 
-Record the source URL, creator when required, license, and download date for every third-party image in `README.md`.
+    Record the source URL, creator when required, license, and download date for every third-party image in `README.md`.
 
-Optimize raster images for web delivery and provide responsive image sizes where appropriate.
+    Optimize raster images for web delivery and provide responsive image sizes where appropriate.
 
-Use WebP or modern optimized formats when practical while preserving compatible fallbacks where needed.
+    Use WebP or modern optimized formats when practical while preserving compatible fallbacks where needed.
 
-Use descriptive filenames rather than generic names such as `image1.jpg`.
+    Use descriptive filenames rather than generic names such as `image1.jpg`.
 
-Every meaningful image must have appropriate alternative text.
+    Every meaningful image must have appropriate alternative text.
+  
+    Decorative images must use empty alternative text.
 
-Decorative images must use empty alternative text.
+    Use SVG where it improves icons, marks, or interface graphics. Store SVG files locally and sanitize them before use.
 
-Use SVG where it improves icons, marks, or interface graphics. Store SVG files locally and sanitize them before use.
-
-Do not copy third-party logos, branding, screenshots, portfolio work, or protected photography without appropriate permission.
+    Do not copy third-party logos, branding, screenshots, portfolio work, or protected photography without appropriate permission.
 
 
 

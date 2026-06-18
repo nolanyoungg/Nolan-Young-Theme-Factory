@@ -275,10 +275,30 @@ Do not use:
     - All interactive controls must include strong :focus-visible states.
     - The dropdown system must not create keyboard traps.
 
- ## Required data attributes:
-    - button[data-menu-item="services"] controls div[data-menu-dropdown="services"]
-    - button[data-menu-item="about"] controls div[data-menu-dropdown="about"]
-    - button[data-menu-item="blog"] controls div[data-menu-dropdown="blog"]
+### Required Data Attributes
+
+    Use the following relationships exactly:
+    
+    ```html
+    <button data-menu-item="services" aria-controls="services-menu">
+    <div id="services-menu" data-menu-dropdown="services">
+    
+    <button data-menu-item="about" aria-controls="about-menu">
+    <div id="about-menu" data-menu-dropdown="about">
+    
+    <button data-menu-item="blog" aria-controls="blog-menu">
+    <div id="blog-menu" data-menu-dropdown="blog">
+    ```
+    
+    Inside the Services and About panels, use real button elements for the rail controls:
+    
+    ```html
+    <button data-rail-item="<key>">
+    <section data-rail-content="<key>">
+    ```
+    
+    The key on each rail button must match the key on its corresponding content section.
+
 
 ## Inside the Services and About panels:
     - left rail buttons: button[data-rail-item="<key>"]

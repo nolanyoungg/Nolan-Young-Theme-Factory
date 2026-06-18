@@ -523,24 +523,6 @@ The footer must include a large CTA band, brand statement, Services column, Comp
 
 The complete footer must use strong spacing, clear visual hierarchy, readable typography, and a fully responsive layout.
 
-### CTA Band
-
-Place a large CTA band at the top of the footer.
-
-The band must include a strong business-focused headline, concise supporting copy, a primary Contact Us CTA, and an optional secondary link to the Work page.
-
-The CTA band must feel visually distinct from the main footer without appearing disconnected from the site.
-
-Use generous spacing, clear contrast, and responsive alignment.
-
-### Brand Statement
-
-Include the business logo or wordmark and a concise brand statement.
-
-The brand statement should explain the company’s purpose and approach without inventing awards, years of experience, client counts, locations, or other facts that were not supplied.
-
-The footer logo must link to `/`.
-
 ### Services Column
 
 Create a Services column containing links to the generated service pages.
@@ -564,18 +546,6 @@ Create a Blog column that provides access to the Blog archive and relevant recen
 The Blog heading must be clearly distinguished from the links beneath it.
 
 Do not use generic filler links.
-
-### Contact Block
-
-Create a dedicated Contact block using only contact information supplied in the project requirements or configured in WordPress.
-
-Email addresses must use `mailto:` links.
-
-Phone numbers must use `tel:` links.
-
-The contact-page link must point to `/contact/`.
-
-When an address, phone number, or email address has not been supplied, omit that detail rather than inventing it.
 
 ### Footer Navigation and Link Behavior
 

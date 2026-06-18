@@ -42,7 +42,7 @@ Do not use:
 - Fake client names that imply real endorsements
 
 
-# 02. Functionality ==============================================================================================================================================================================
+# 03. Functionality ==============================================================================================================================================================================
 
 ## Webpack Build Requirements
 
@@ -111,7 +111,7 @@ Do not use:
     language_attributes()
 
 
-# 07. Color System ===============================================================================================================================================================================
+# 04. Color System ===============================================================================================================================================================================
 
 ## main colors
     Main Background Color
@@ -159,10 +159,10 @@ Do not use:
 
 
 
-# 03. Visual Design Direction ====================================================================================================================================================================
+# 05. Visual Design Direction ====================================================================================================================================================================
 
 
-# 08. Typography Direction =======================================================================================================================================================================
+# 06. Typography Direction =======================================================================================================================================================================
 
 ## Heading Style
     [FILL IN HEADING STYLE HERE] - Clean SaaS-style headings
@@ -173,7 +173,7 @@ Do not use:
 
     Use safe local/system font stacks. Do not depend on external Fonts if we will need to update or have any maintence. Font should be stress free.
 
-# 04. Header ==================================================================================================================================================================================
+# 07. Header ==================================================================================================================================================================================
 
 ## Header Layout
   
@@ -331,7 +331,7 @@ Do not use:
 
 
 
-## 05. Footer  ==================================================================================================================================================================================
+## 08. Footer  ==================================================================================================================================================================================
 
 Create a polished, full-width footer that feels intentional, premium, and visually consistent with the rest of the website.
 
@@ -435,7 +435,7 @@ The complete footer must use strong spacing, clear visual hierarchy, readable ty
   forms must become viewable in wp-admin bar called ""forms"", when logged into the back end, when you click that admin bar you should be able to see the differnt forms and there responses.
   must also be able to export these forms via csv and in an email to the wp-admin / site owners email. must be able to select all forms, a single forms, more than one form etc. 
 
-## 9.5 Newsletter =================================================================================================================================================================================
+## 10 Newsletter =================================================================================================================================================================================
 
   ### Required NewsLetter
 
@@ -448,7 +448,7 @@ The complete footer must use strong spacing, clear visual hierarchy, readable ty
   should also be able to export this list via csv email to wp-admin / site owner
 
 
-# 10. template-parts to fill in/build out ========================================================================================================================================================
+# 11. template-parts to fill in/build out ========================================================================================================================================================
 
 template-parts/
   ## content-page.php
@@ -489,7 +489,7 @@ template-parts/
 
 
 
-# 11. page-templates to fill in/build out ========================================================================================================================================================
+# 12. page-templates to fill in/build out ========================================================================================================================================================
 
 page-templates/ please make in this order! 
 
@@ -580,14 +580,14 @@ page-templates/ please make in this order!
 
 
 
-# 12. Images =====================================================================================================================================================================================
+# 13. Images =====================================================================================================================================================================================
 
     use svg in where needed and also put them in the proper file location : assets/ and find the proper place or folder.
     
     use onyl real photos, use copywrite free, free to use, no issues or anything like that! 
 
 
-# 13. README REQUIREMENTS ========================================================================================================================================================================
+# 14. README REQUIREMENTS ========================================================================================================================================================================
     
     Create README.md with:
     - Theme overview
@@ -598,36 +598,69 @@ page-templates/ please make in this order!
     - Static preview notes
     - Accessibility notes
 
-# 14. Definition of done... ======================================================================================================================================================================
+# 15. Definition of done... ======================================================================================================================================================================
 
-## VALIDATION CHECKLIST
+### Validation Checklist
+
+    Before finishing, verify every requirement in this table.
     
-    Before finishing, verify:
+    | Area | Completion Requirement |
+    |---|---|
+    | Theme foundation | The theme contains the required WordPress files and activates without fatal errors |
+    | Theme header | `style.css` contains a valid WordPress theme header and a correct text domain |
+    | Build system | `npm run dev` and `npm run build` complete successfully |
+    | Compiled CSS | `assets/css/theme.css` exists, is non-trivial, and is enqueued by WordPress |
+    | Compiled JavaScript | `assets/js/theme.js` exists, is non-trivial, and is enqueued by WordPress |
+    | Images | `assets/images/` exists, contains required local assets, and has documented licenses |
+    | Header layout | Desktop header uses logo, centered primary navigation, and Contact Us CTA |
+    | Header panels | Services, About, and Blog panels open and close correctly |
+    | Header rail interaction | Services and About rail hover and keyboard focus update only the internal right-side content |
+    | Blog panel | Blog uses a blog-card grid and does not use the rail interaction |
+    | Header accessibility | ARIA state, focus-visible styling, Escape closing, outside-click closing, backdrop, and scroll locking work correctly |
+    | Mobile header | Logo is left, hamburger is right, drawer opens and closes, and the background remains solid |
+    | Mobile accordions | Services, About, and Blog accordions are keyboard accessible and hide closed links from focus |
+    | Navigation | Every desktop, mobile, footer, service, blog, and CTA link points to a real destination |
+    | Footer | Booking CTA, brand statement, Services, Company, Blog, Contact, and legal areas are complete |
+    | Forms | Contact and Single Service forms validate, store, notify, display in wp-admin, and export correctly |
+    | Newsletter | Signup, duplicate prevention, status tracking, secure unsubscribe, administration, and export work correctly |
+    | Homepage | All fifteen homepage sections are complete and responsive |
+    | Page templates | Every required page template exists and renders without errors |
+    | Template parts | Every required template part exists and is used appropriately |
+    | Static preview | `docs/index.html` exists, loads local assets, and represents the completed visual system |
+    | Responsive behavior | No page creates unintended horizontal overflow |
+    | Accessibility | Keyboard navigation, focus states, reduced motion, semantic markup, contrast, and hidden-content behavior are verified |
+    | PHP quality | Every PHP file passes PHP lint |
+    | JavaScript quality | Browser testing shows no JavaScript console errors |
+    | Security | Nonces, capability checks, sanitization, validation, and context-appropriate escaping are present |
+    | Secrets | No API keys, credentials, tokens, private keys, or local absolute paths are committed |
+    | External dependencies | No external runtime CDN assets are required |
+    | Originality | No copied third-party branding, text, protected images, or direct site recreation is included |
+    | Scope safety | The generated theme does not modify files outside its allowed theme folder |
+
+### Basic WordPress Theme Checks
+
+    Confirm that the theme includes the basic WordPress files it requires.
     
-    - assets/css/theme.css exists and is non-trivial.
-    - assets/js/theme.js exists and is non-trivial.
-    - Header layout is logo, menu, Get a Quote CTA button.
-    - Desktop dropdown panels open and close.
-    - Dropdown panels are solid and readable.
-    - Dropdown panels have correct z-index.
-    - Mobile menu opens and closes.
-    - Mobile menu background is solid and readable.
-    - All nav links work.
-    - No PHP syntax errors.
-    - No JavaScript console errors.
-    - No copied third-party branding, text, images, or direct site recreation.
+    Confirm that every PHP file passes PHP lint.
     
+    Confirm that `style.css` contains a valid WordPress theme header.
     
-    The theme  should do basic WordPress theme checks, such as:
+    Confirm that `functions.php` loads without warnings or fatal errors.
     
-    make sure the theme has the basic WordPress files it needs,
-    make sure PHP files pass PHP lint,
-    make sure style.css has a valid WordPress theme header,
-    make sure functions.php loads correctly,
-    make sure asset paths are sane,
-    make sure there are no obvious missing includes,
-    make sure there are no hardcoded absolute local machine paths,
-    make sure no API keys or secrets were committed,
-    make sure the theme folder is self-contained,
-    make sure the theme does not reference CDN assets,
-    make sure the generated theme did not modify files outside its allowed folder.
+    Confirm that all asset paths are valid and case-correct.
+    
+    Confirm that required includes and template parts exist.
+    
+    Confirm that no hardcoded absolute local-machine paths remain.
+    
+    Confirm that no API keys, credentials, secrets, or environment-specific tokens were committed.
+    
+    Confirm that the theme folder is self-contained.
+    
+    Confirm that the theme does not require external CDN assets at runtime.
+    
+    Confirm that the generated theme did not modify files outside its allowed folder.
+    
+    Confirm that every required feature is implemented rather than represented only by static markup.
+    
+    Confirm that the finished theme is suitable for installation, review, testing, and future maintenance.

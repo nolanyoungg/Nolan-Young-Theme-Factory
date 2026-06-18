@@ -448,118 +448,124 @@ The complete footer must use strong spacing, clear visual hierarchy, readable ty
   should also be able to export this list via csv email to wp-admin / site owner
 
 
-## 10. template-parts to fill in/build out ========================================================================================================================================================
+# 10. template-parts to fill in/build out ========================================================================================================================================================
 
 template-parts/
-### content-page.php
+  ## content-page.php
+      ### 
+      smsmkfme
+      fefe
+      ffefe
+  
+  ## content-single.php
+  
+  ## content-none.php
+  
+  ## content-policy.php
+  
+  ## content-search.php  
+  
+  ## content-hero.php
+  
+  ## content-brand-statement.php
+  
+  ## content-featured-work.php
+  
+  ## content-all-services.php
+  
+  ## content-single-service-highlight.php
+  
+  ## content-process.php
+  
+  ## content-style-pillars.php
+  
+  ## content-testimonials.php
+  
+  ## content-blog-preview.php
+  
+  ## content-cta-banner.php
+  
+  ## content-footer-widgets.php
 
-### content-single.php
-
-### content-none.php
-
-### content-policy.php
-
-### content-search.php  
-
-### content-hero.php
-
-### content-brand-statement.php
-
-### content-featured-work.php
-
-### content-all-services.php
-
-### content-single-service-highlight.php
-
-### content-process.php
-
-### content-style-pillars.php
-
-### content-testimonials.php
-
-### content-blog-preview.php
-
-### content-cta-banner.php
-
-### content-footer-widgets.php
 
 
-
-## 11. page-templates to fill in/build out ========================================================================================================================================================
+# 11. page-templates to fill in/build out ========================================================================================================================================================
 
 page-templates/ please make in this order! 
-### template-homepage.php
-#### Homepage:
-Build a complete, finished photography homepage with at least 14 polished sections:
 
-1. Fullscreen photographic hero
-   - Large real/local hero image
-   - Cinematic headline
-   - Supporting copy
-   - Two CTAs
-   - Small trust/stat row
-   - Editorial overlay treatment
 
-2. Featured work strip
-   - Horizontal image-forward preview
-   - Real/local photos
-   - Links to Work page
-
-3. Brand statement section
-   - Studio philosophy
-   - Strong editorial typography
-   - Portrait/studio image pairing
-
-4. Services overview
-   - At least 6 service cards
-   - Each card uses a fitting real/local photo
-   - Clear CTA per service
-
-5. Signature experience section
-   - Explain inquiry, planning, session, editing, gallery delivery
-
-6. Featured gallery / masonry section
-   - Real/local image grid
-   - Filter interaction using vanilla JS
-   - Categories: Portraits, Weddings, Brand, Product, Family, Events
-
-7. Featured story / case study section
-   - One detailed shoot story
-   - Large photos
-   - Pull quote
-   - Outcome/experience details
-
-8. Before/after or editing style section
-   - Use a before/after slider or editing process visual
-   - Must be photography-specific
-
-9. Packages / session options
-   - Three polished cards
-   - Portrait, Brand, Wedding/Event or similar
-
-10. Product/brand photography feature
-   - Real/local product or business imagery
-   - Useful business-focused copy
-
-11. Wedding/engagement feature
-   - Real/local couple/event imagery
-   - Emotional but professional copy
-
-12. Testimonials/proof
-   - At least 4 believable testimonials
-   - Small stats/review row
-
-13. Blog preview
-   - At least 4 helpful planning guides
-
-14. FAQ section
-   - At least 7 useful booking/session questions
-   - Accessible accordion behavior
-
-15. Final booking CTA
-   - Strong conversion copy
-   - Contact CTA
-   - Secondary CTA to view work page template
+## template-homepage.php
+    Homepage:
+    Build a complete, finished photography homepage with at least 14 polished sections:
+    
+    1. Fullscreen photographic hero
+       - Large real/local hero image
+       - Cinematic headline
+       - Supporting copy
+       - Two CTAs
+       - Small trust/stat row
+       - Editorial overlay treatment
+    
+    2. Featured work strip
+       - Horizontal image-forward preview
+       - Real/local photos
+       - Links to Work page
+    
+    3. Brand statement section
+       - Studio philosophy
+       - Strong editorial typography
+       - Portrait/studio image pairing
+    
+    4. Services overview
+       - At least 6 service cards
+       - Each card uses a fitting real/local photo
+       - Clear CTA per service
+    
+    5. Signature experience section
+       - Explain inquiry, planning, session, editing, gallery delivery
+    
+    6. Featured gallery / masonry section
+       - Real/local image grid
+       - Filter interaction using vanilla JS
+       - Categories: Portraits, Weddings, Brand, Product, Family, Events
+    
+    7. Featured story / case study section
+       - One detailed shoot story
+       - Large photos
+       - Pull quote
+       - Outcome/experience details
+    
+    8. Before/after or editing style section
+       - Use a before/after slider or editing process visual
+       - Must be photography-specific
+    
+    9. Packages / session options
+       - Three polished cards
+       - Portrait, Brand, Wedding/Event or similar
+    
+    10. Product/brand photography feature
+       - Real/local product or business imagery
+       - Useful business-focused copy
+    
+    11. Wedding/engagement feature
+       - Real/local couple/event imagery
+       - Emotional but professional copy
+    
+    12. Testimonials/proof
+       - At least 4 believable testimonials
+       - Small stats/review row
+    
+    13. Blog preview
+       - At least 4 helpful planning guides
+    
+    14. FAQ section
+       - At least 7 useful booking/session questions
+       - Accessible accordion behavior
+    
+    15. Final booking CTA
+       - Strong conversion copy
+       - Contact CTA
+       - Secondary CTA to view work page template
 ### template-services.php
 ### template-single-service.php
 ### template-about-us.php
@@ -574,54 +580,54 @@ Build a complete, finished photography homepage with at least 14 polished sectio
 
 
 
-## 12. Images =====================================================================================================================================================================================
+# 12. Images =====================================================================================================================================================================================
 
-use svg in where needed and also put them in the proper file location : assets/ and find the proper place or folder.
-
-use onyl real photos, use copywrite free, free to use, no issues or anything like that! 
-
-
-## 13. README REQUIREMENTS ========================================================================================================================================================================
-
-Create README.md with:
-- Theme overview
-- Folder structure
-- Features
-- Page templates
-- Header behavior
-- Static preview notes
-- Accessibility notes
-
-## 14. Definition of done... ======================================================================================================================================================================
-
-VALIDATION CHECKLIST
-
-Before finishing, verify:
-
-- assets/css/theme.css exists and is non-trivial.
-- assets/js/theme.js exists and is non-trivial.
-- Header layout is logo, menu, Get a Quote CTA button.
-- Desktop dropdown panels open and close.
-- Dropdown panels are solid and readable.
-- Dropdown panels have correct z-index.
-- Mobile menu opens and closes.
-- Mobile menu background is solid and readable.
-- All nav links work.
-- No PHP syntax errors.
-- No JavaScript console errors.
-- No copied third-party branding, text, images, or direct site recreation.
+    use svg in where needed and also put them in the proper file location : assets/ and find the proper place or folder.
+    
+    use onyl real photos, use copywrite free, free to use, no issues or anything like that! 
 
 
-The theme  should do basic WordPress theme checks, such as:
+# 13. README REQUIREMENTS ========================================================================================================================================================================
+    
+    Create README.md with:
+    - Theme overview
+    - Folder structure
+    - Features
+    - Page templates
+    - Header behavior
+    - Static preview notes
+    - Accessibility notes
 
-make sure the theme has the basic WordPress files it needs,
-make sure PHP files pass PHP lint,
-make sure style.css has a valid WordPress theme header,
-make sure functions.php loads correctly,
-make sure asset paths are sane,
-make sure there are no obvious missing includes,
-make sure there are no hardcoded absolute local machine paths,
-make sure no API keys or secrets were committed,
-make sure the theme folder is self-contained,
-make sure the theme does not reference CDN assets,
-make sure the generated theme did not modify files outside its allowed folder.
+# 14. Definition of done... ======================================================================================================================================================================
+
+## VALIDATION CHECKLIST
+    
+    Before finishing, verify:
+    
+    - assets/css/theme.css exists and is non-trivial.
+    - assets/js/theme.js exists and is non-trivial.
+    - Header layout is logo, menu, Get a Quote CTA button.
+    - Desktop dropdown panels open and close.
+    - Dropdown panels are solid and readable.
+    - Dropdown panels have correct z-index.
+    - Mobile menu opens and closes.
+    - Mobile menu background is solid and readable.
+    - All nav links work.
+    - No PHP syntax errors.
+    - No JavaScript console errors.
+    - No copied third-party branding, text, images, or direct site recreation.
+    
+    
+    The theme  should do basic WordPress theme checks, such as:
+    
+    make sure the theme has the basic WordPress files it needs,
+    make sure PHP files pass PHP lint,
+    make sure style.css has a valid WordPress theme header,
+    make sure functions.php loads correctly,
+    make sure asset paths are sane,
+    make sure there are no obvious missing includes,
+    make sure there are no hardcoded absolute local machine paths,
+    make sure no API keys or secrets were committed,
+    make sure the theme folder is self-contained,
+    make sure the theme does not reference CDN assets,
+    make sure the generated theme did not modify files outside its allowed folder.

@@ -580,11 +580,44 @@ page-templates/ please make in this order!
 
 
 
-# 13. Images =====================================================================================================================================================================================
+## 13. Images
 
-    use svg in where needed and also put them in the proper file location : assets/ and find the proper place or folder.
-    
-    use onyl real photos, use copywrite free, free to use, no issues or anything like that! 
+Use real photography rather than filler graphics or empty placeholders.
+
+Use only public-domain, CC0, or properly licensed assets that permit the intended use.
+
+Do not describe an image as copyright-free unless its license actually supports that claim.
+
+Download permitted images into the theme and store them in an appropriate local folder such as:
+
+```text
+assets/images/
+assets/images/hero/
+assets/images/services/
+assets/images/portfolio/
+assets/images/blog/
+assets/images/icons/
+assets/images/svg/
+```
+
+Do not hotlink runtime images from third-party websites.
+
+Record the source URL, creator when required, license, and download date for every third-party image in `README.md`.
+
+Optimize raster images for web delivery and provide responsive image sizes where appropriate.
+
+Use WebP or modern optimized formats when practical while preserving compatible fallbacks where needed.
+
+Use descriptive filenames rather than generic names such as `image1.jpg`.
+
+Every meaningful image must have appropriate alternative text.
+
+Decorative images must use empty alternative text.
+
+Use SVG where it improves icons, marks, or interface graphics. Store SVG files locally and sanitize them before use.
+
+Do not copy third-party logos, branding, screenshots, portfolio work, or protected photography without appropriate permission.
+
 
 
 ## 14. README REQUIREMENTS
@@ -640,7 +673,7 @@ page-templates/ please make in this order!
         Document any intentional limitations without disguising incomplete functionality as finished work.
 
 
-## 15. Definition of done... ======================================================================================================================================================================
+## 15. Definition of done
 
 ### Validation Checklist
 

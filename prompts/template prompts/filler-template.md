@@ -876,96 +876,135 @@ Every template must include a valid WordPress `Template Name` header where appli
 
 ## 13. Images
 
-    Use real photography rather than filler graphics or empty placeholders.
+Use real, relevant visual media rather than filler graphics or empty placeholders.
 
-    Use only public-domain, CC0, or properly licensed assets that permit the intended use.
+Use only public-domain, CC0, or properly licensed assets that permit the intended use.
 
-    Do not describe an image as copyright-free unless its license actually supports that claim.
+Do not describe an asset as copyright-free unless its license actually supports that claim.
 
-    Download permitted images into the theme and store them in an appropriate local folder such as:
+Store local visual assets only within the required asset structure:
 
-    ```text
-    assets/images/
-    assets/images/hero/
-    assets/images/services/
-    assets/images/portfolio/
-    assets/images/blog/
-    assets/images/icons/
-    assets/images/svg/
-    ```
+```text
+assets/
+    icons/
+        icon1.svg
+        README.md
+    images/
+        hero/
+        portfolio/
+        texture/
+```
 
-    Do not hotlink runtime images from third-party websites.
+Use `assets/images/hero/` for hero and major banner visuals.
 
-    Record the source URL, creator when required, license, and download date for every third-party image in `README.md`.
+Use `assets/images/portfolio/` for work, case-study, service, article, and supporting content visuals.
 
-    Optimize raster images for web delivery and provide responsive image sizes where appropriate.
+Use `assets/images/texture/` for restrained background textures and decorative raster assets.
 
-    Use WebP or modern optimized formats when practical while preserving compatible fallbacks where needed.
+Use `assets/icons/` for local SVG interface icons and marks.
 
-    Use descriptive filenames rather than generic names such as `image1.jpg`.
+Do not create alternate image directories that conflict with this structure.
 
-    Every meaningful image must have appropriate alternative text.
-  
-    Decorative images must use empty alternative text.
+Do not hotlink runtime assets from third-party websites.
 
-    Use SVG where it improves icons, marks, or interface graphics. Store SVG files locally and sanitize them before use.
+Record the source URL, creator when required, license, and download date for every third-party asset in `README.md`.
 
-    Do not copy third-party logos, branding, screenshots, portfolio work, or protected photography without appropriate permission.
+Optimize raster assets for web delivery and provide responsive sizes where appropriate.
 
+Use WebP or another modern optimized format when practical while preserving compatible fallbacks where needed.
 
+Use descriptive filenames rather than generic names such as `image1.jpg`.
+
+Every meaningful visual asset must have appropriate alternative text.
+
+Decorative assets must use empty alternative text.
+
+Store SVG files locally and sanitize them before use.
+
+Document icon conventions and permitted icon sources in `assets/icons/README.md`.
+
+Do not copy third-party logos, branding, screenshots, protected media, or proprietary visual material without appropriate permission.
 
 ## 14. README REQUIREMENTS
 
-  Create a complete `README.md`.
-    
-  ### Theme Overview
-    
-        Describe the theme’s purpose, photography focus, primary features, and intended WordPress use.
-    
-  ### Folder Structure
-    
-        Document the source folders, compiled asset folders, template parts, page templates, administrative modules, image folders, and static preview.
-    
-  ### Installation
-    
-        Explain how to install and activate the theme, assign the homepage, configure menus, set the logo, and prepare required pages.
-    
-  ### Build Requirements
-    
-        Document the supported Node.js version, dependency installation, `npm run dev`, `npm run build`, source entry points, and compiled output paths.
-    
-  ### Features
-    
-        Document the header panels, mobile drawer, portfolio filtering, forms, newsletter management, responsive layouts, accessibility behavior, and footer structure.
-    
-  ### Page Templates
-    
-        Describe every page template and how it should be assigned.
-    
-  ### Header Behavior
-    
-        Document the primary navigation click behavior, internal rail hover and focus behavior, sticky state, body-scroll locking, backdrop, ARIA state management, and mobile accordion behavior.
-    
-  ### Static Preview Notes
-    
-        Explain how to open and review `docs/index.html`, which interactions are represented, and any WordPress-only behavior that cannot operate in the static preview.
-    
-  ### Accessibility Notes
-    
-        Document keyboard operation, focus management, reduced motion, contrast, semantic landmarks, form validation, accordions, gallery filtering, and hidden-content behavior.
-    
-  ### Images and Licensing
-    
-        List every third-party image source and license.
-    
-  ### Forms and Newsletter
-    
-        Explain where submissions and subscribers appear in WordPress, which capabilities are required, how exports work, how notifications work, and how unsubscribe status is managed.
-    
-  ### Known Limitations
-    
-        Document any intentional limitations without disguising incomplete functionality as finished work.
+Create a complete root `README.md`.
 
+### Theme Overview
+
+Describe the theme’s purpose, business focus, primary features, and intended WordPress use.
+
+### Required Structure
+
+Document the exact required theme structure and explain the responsibility of the root files, `inc/`, `assets/`, `src/`, `template-parts/`, `page-templates/`, `blocks/`, `build/`, `docs/`, and `accessibility/`.
+
+### Installation
+
+Explain how to install and activate the theme, assign the homepage, configure menus, set the logo, prepare required pages, and complete the initial setup.
+
+### Build Requirements
+
+Document the supported Node.js version, dependency installation, `npm run dev`, `npm run build`, source entry points, and exact compiled outputs:
+
+```text
+assets/css/bundle.css
+assets/js/bundle.js
+```
+
+State clearly that the compiled files must use the required bundle names and must not be renamed.
+
+### Features
+
+Document the header panels, mobile drawer, work filtering, forms, newsletter management, responsive layouts, accessibility behavior, footer structure, and policy routing.
+
+### Page Templates
+
+Describe every page template and explain that the homepage is implemented through the root `front-page.php` file.
+
+### Header Behavior
+
+Document primary-navigation click behavior, internal rail hover and focus behavior, sticky-state behavior, body-scroll locking, backdrop behavior, ARIA state management, and mobile accordion behavior.
+
+### Accessibility Notes
+
+Summarize keyboard operation, focus management, reduced motion, contrast, semantic landmarks, form validation, accordions, content filtering, and hidden-content behavior.
+
+Link to:
+
+```text
+accessibility/README.md
+```
+
+### Images and Licensing
+
+List every third-party asset source and license.
+
+Explain the purposes of `assets/images/hero/`, `assets/images/portfolio/`, `assets/images/texture/`, and `assets/icons/`.
+
+### Forms and Newsletter
+
+Explain where submissions and subscribers appear in WordPress, which capabilities are required, how exports work, how notifications work, and how unsubscribe status is managed.
+
+### Supporting Documentation
+
+Reference and maintain:
+
+```text
+docs/getting-started.md
+docs/customization.md
+assets/icons/README.md
+blocks/README.md
+accessibility/README.md
+```
+
+### Changelog and License
+
+Maintain `CHANGELOG.md` with meaningful release entries.
+
+Include the applicable project license in `LICENSE.txt`.
+
+### Known Limitations
+
+Document intentional limitations without disguising incomplete functionality as finished work.
 
 ## 15. Definition of done
 

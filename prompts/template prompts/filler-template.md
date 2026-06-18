@@ -1,59 +1,101 @@
 ## 01. Business Identity
 
-  ### Business Name
-    
-        Use the business name supplied with the project when one is available. When no business name is supplied, create an original, professional photography studio name that is appropriate for portrait, wedding, family, event, product, and brand photography.
-        
-        The generated name must be distinctive, easy to read, suitable for use in a WordPress theme, and free from copied third-party branding.
-    
-  ### Business Logo
-    
-    Use the supplied business logo when one is available.
-    
-    When no logo is supplied, create an original text-based wordmark and a simple supporting mark that can be implemented as a local, accessible SVG. The logo must remain clear at header, footer, mobile, favicon, and small-screen sizes.
-    
-    The logo must not copy or imitate an existing brand, photographer, studio, agency, or trademarked visual identity.
-    
-  ### Business Slogan
-    
-    Use the supplied slogan when one is available.
-    
-    When no slogan is supplied, create one concise and original photography-focused slogan. The slogan should communicate a premium, personal, image-driven experience without making unverifiable claims.
-    
-  ### Business Field
-    
-    The business is a professional photography studio offering portrait photography, wedding and engagement photography, family photography, event photography, product photography, and brand photography.
-    
-    The theme should support both consumer-facing photography services and business-focused photography services without making the site feel divided or inconsistent.
+### Business Name
 
+Use the business name supplied with the project when one is available.
 
-# 02  Style / CSS Requirements ===================================================================================================================================================================
+When no business name is supplied, create an original, professional name appropriate for a modern service-based business.
 
+The generated name must be distinctive, readable, suitable for WordPress, and free from copied third-party branding.
 
-Organize the theme like a serious, modern WordPress product theme, not a quick demo. The structure should feel similar in discipline to a polished premium theme or modern SaaS build: predictable folders, reusable template parts, consistent CSS architecture, and no one-off styling scattered everywhere.
+### Business Logo
 
-## Button classes:
+Use the supplied business logo when one is available.
 
-- .btn
-- .btn-primary
-- .btn-secondary
-- .btn-header-cta
-- .btn-smball
-- .btn-full
-- .btn-text
+When no logo is supplied, create an original text-based wordmark and a simple supporting mark that can be implemented as a local, accessible SVG.
 
+The logo must remain clear in the header, footer, mobile navigation, favicon, and compact interface placements.
 
+The logo must not copy or imitate an existing company, agency, product, or trademarked visual identity.
 
-## CONTENT REQUIREMENTS
+### Business Slogan
 
-Write complete original content.
+Use the supplied slogan when one is available.
 
-Do not use:
-- Lorem ipsum
-- Placeholder paragraphs
-- Copied third-party text
-- Fake legal claims
-- Fake client names that imply real endorsements
+When no slogan is supplied, create one concise and original slogan that communicates the business value clearly without making unverifiable claims.
+
+### Business Field
+
+The theme must support a professional service-based business.
+
+The generated content should present the company’s services, process, experience, work, resources, contact options, and calls to action in a coherent and adaptable way.
+
+The theme must work for both consumer-facing and business-to-business services without making the site feel divided or inconsistent.
+
+## 02. Style / CSS Requirements
+
+Organize the theme like a serious, modern WordPress product rather than a quick demonstration. The codebase must use predictable folders, reusable template parts, consistent SCSS architecture, shared design tokens, and component-level styling.
+
+Do not scatter one-off CSS rules across PHP templates. Do not place large style blocks directly inside template files. Do not use inline styles unless a value must be generated dynamically and cannot be represented through a class or CSS custom property.
+
+### CSS Architecture
+
+Use `src/scss/main.scss` as the single SCSS entry point.
+
+The SCSS source must use the exact directory and file structure defined in the Required Theme Structure. Do not rename, relocate, or replace the required SCSS files.
+
+The architecture must separate global settings, reusable tools, foundational styles, components, layout systems, and page-specific styles.
+
+`src/scss/main.scss` must load the required partials in a deliberate dependency order so variables, mixins, and functions are available before dependent styles are compiled.
+
+Use CSS custom properties for global colors, spacing, typography, border radii, shadows, content widths, header heights, and transition values.
+
+Use mobile-first responsive styles. Avoid unnecessary breakpoint duplication. Prevent horizontal overflow at all supported viewport sizes.
+
+Use component-scoped class names and avoid fragile selectors based on deep nesting.
+
+Do not place large CSS blocks inside PHP templates.
+
+Do not create alternate compiled stylesheets. The only required compiled stylesheet is:
+
+```text
+assets/css/bundle.css
+```
+
+### Button Classes
+
+| Class | Purpose |
+|---|---|
+| `.btn` | Shared base class for all button and button-like link styles |
+| `.btn-primary` | Primary action with the strongest visual emphasis |
+| `.btn-secondary` | Secondary action with a quieter visual treatment |
+| `.btn-header-cta` | Header-specific Contact Us CTA |
+| `.btn-small` | Compact button variation |
+| `.btn-full` | Full-width button variation |
+| `.btn-text` | Text-forward action with minimal chrome |
+
+Every button variation must support default, hover, focus-visible, active, and disabled states.
+
+Buttons must maintain adequate contrast, readable labels, consistent padding, and a minimum usable touch target.
+
+### Content Requirements
+
+Write complete, original, business-specific content throughout the theme.
+
+Do not use Lorem ipsum, placeholder paragraphs, copied third-party text, fake legal claims, fabricated client names, fabricated review ratings, or statements that imply real endorsements when none were supplied.
+
+Do not leave visible filler such as `x1`, `x2`, `Example Service`, `Sample Project`, `Coming Soon`, or similar temporary labels in the finished theme.
+
+When business-specific facts are not supplied, write neutral content that does not invent addresses, awards, client counts, years in business, certifications, or other unverifiable details.
+
+### Accessibility and Motion
+
+All interactive states must include visible keyboard focus styling.
+
+Animations must be restrained, purposeful, and respectful of `prefers-reduced-motion`.
+
+Color must not be the only method used to communicate state, validation, selection, success, or failure.
+
 
 
 # 03. Functionality ==============================================================================================================================================================================

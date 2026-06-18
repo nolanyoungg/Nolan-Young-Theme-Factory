@@ -587,16 +587,58 @@ page-templates/ please make in this order!
     use onyl real photos, use copywrite free, free to use, no issues or anything like that! 
 
 
-# 14. README REQUIREMENTS ========================================================================================================================================================================
-    
-    Create README.md with:
-    - Theme overview
-    - Folder structure
-    - Features
-    - Page templates
-    - Header behavior
-    - Static preview notes
-    - Accessibility notes
+## 14. README REQUIREMENTS
+
+Create a complete `README.md`.
+
+### Theme Overview
+
+Describe the theme’s purpose, photography focus, primary features, and intended WordPress use.
+
+### Folder Structure
+
+Document the source folders, compiled asset folders, template parts, page templates, administrative modules, image folders, and static preview.
+
+### Installation
+
+Explain how to install and activate the theme, assign the homepage, configure menus, set the logo, and prepare required pages.
+
+### Build Requirements
+
+Document the supported Node.js version, dependency installation, `npm run dev`, `npm run build`, source entry points, and compiled output paths.
+
+### Features
+
+Document the header panels, mobile drawer, portfolio filtering, forms, newsletter management, responsive layouts, accessibility behavior, and footer structure.
+
+### Page Templates
+
+Describe every page template and how it should be assigned.
+
+### Header Behavior
+
+Document the primary navigation click behavior, internal rail hover and focus behavior, sticky state, body-scroll locking, backdrop, ARIA state management, and mobile accordion behavior.
+
+### Static Preview Notes
+
+Explain how to open and review `docs/index.html`, which interactions are represented, and any WordPress-only behavior that cannot operate in the static preview.
+
+### Accessibility Notes
+
+Document keyboard operation, focus management, reduced motion, contrast, semantic landmarks, form validation, accordions, gallery filtering, and hidden-content behavior.
+
+### Images and Licensing
+
+List every third-party image source and license.
+
+### Forms and Newsletter
+
+Explain where submissions and subscribers appear in WordPress, which capabilities are required, how exports work, how notifications work, and how unsubscribe status is managed.
+
+### Known Limitations
+
+Document any intentional limitations without disguising incomplete functionality as finished work.
+
 
 # 15. Definition of done... ======================================================================================================================================================================
 

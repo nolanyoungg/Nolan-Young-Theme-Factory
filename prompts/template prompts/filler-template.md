@@ -1013,12 +1013,30 @@ Document intentional limitations without disguising incomplete functionality as 
 Before finishing, verify every requirement in this table.
 | Area | Completion Requirement |
 |---|---|
-| Theme foundation | The theme contains the required WordPress files and activates without fatal errors |
-| Theme header | `style.css` contains a valid WordPress theme header and a correct text domain |
-| Build system | `npm run dev` and `npm run build` complete successfully |
-| Compiled CSS | `assets/css/theme.css` exists, is non-trivial, and is enqueued by WordPress |
-| Compiled JavaScript | `assets/js/theme.js` exists, is non-trivial, and is enqueued by WordPress |
-| Images | `assets/images/` exists, contains required local assets, and has documented licenses |
+| Theme foundation | The theme activates without warnings or fatal errors |
+| Theme header | `style.css` contains a valid WordPress theme header and correct text domain |
+| Bootstrap | `functions.php` loads the required modular files from `inc/` |
+| Build configuration | `build/webpack.config.js` exists and uses the correct source and output paths |
+| Package files | `package.json` and `package-lock.json` exist and are valid |
+| Development build | `npm run dev` compiles successfully and supports watch mode |
+| Production build | `npm run build` completes successfully and produces minified production assets |
+| Compiled CSS | `assets/css/bundle.css` exists, is non-trivial, and is enqueued by WordPress |
+| Compiled JavaScript | `assets/js/bundle.js` exists, is non-trivial, and is enqueued by WordPress |
+| Forbidden bundle names | The theme does not depend on alternate production bundle names |
+| Source separation | WordPress does not enqueue files directly from `src/` |
+| Enqueue module | `inc/enqueue.php` loads the exact compiled bundle files |
+| SCSS structure | Every required SCSS partial exists at the specified path and is included through `src/scss/main.scss` |
+| JavaScript source | `src/js/main.js` contains the maintained source behavior |
+| Root templates | Every required root template, including `front-page.php`, `403.php`, and `searchform.php`, exists |
+| Homepage ownership | The homepage is implemented in `front-page.php` and not in an additional homepage page template |
+| Inc modules | Every required file in `inc/` exists and contains its assigned responsibility |
+| Template parts | Every required file in `template-parts/` exists and is used appropriately |
+| Page templates | Every required file in `page-templates/` exists and includes a valid template header |
+| Icons | `assets/icons/icon1.svg` and `assets/icons/README.md` exist |
+| Images | `assets/images/hero/`, `assets/images/portfolio/`, and `assets/images/texture/` exist |
+| Blocks documentation | `blocks/README.md` exists |
+| Documentation | `docs/getting-started.md` and `docs/customization.md` exist and are accurate |
+| Accessibility documentation | `accessibility/README.md` exists and matches the implemented interactions |
 | Header layout | Desktop header uses logo, centered primary navigation, and Contact Us CTA |
 | Header panels | Services, About, and Blog panels open and close correctly |
 | Header rail interaction | Services and About rail hover and keyboard focus update only the internal right-side content |
@@ -1027,47 +1045,41 @@ Before finishing, verify every requirement in this table.
 | Mobile header | Logo is left, hamburger is right, drawer opens and closes, and the background remains solid |
 | Mobile accordions | Services, About, and Blog accordions are keyboard accessible and hide closed links from focus |
 | Navigation | Every desktop, mobile, footer, service, blog, and CTA link points to a real destination |
-| Footer | Booking CTA, brand statement, Services, Company, Blog, Contact, and legal areas are complete |
+| Footer | CTA band, brand statement, Services, Company, Blog, Contact, and legal areas are complete |
 | Forms | Contact and Single Service forms validate, store, notify, display in wp-admin, and export correctly |
 | Newsletter | Signup, duplicate prevention, status tracking, secure unsubscribe, administration, and export work correctly |
 | Homepage | All fifteen homepage sections are complete and responsive |
-| Page templates | Every required page template exists and renders without errors |
-| Template parts | Every required template part exists and is used appropriately |
-| Static preview | `docs/index.html` exists, loads local assets, and represents the completed visual system |
 | Responsive behavior | No page creates unintended horizontal overflow |
 | Accessibility | Keyboard navigation, focus states, reduced motion, semantic markup, contrast, and hidden-content behavior are verified |
 | PHP quality | Every PHP file passes PHP lint |
 | JavaScript quality | Browser testing shows no JavaScript console errors |
 | Security | Nonces, capability checks, sanitization, validation, and context-appropriate escaping are present |
 | Secrets | No API keys, credentials, tokens, private keys, or local absolute paths are committed |
-| External dependencies | No external runtime CDN assets are required |
-| Originality | No copied third-party branding, text, protected images, or direct site recreation is included |
+| Runtime dependencies | No external runtime CDN assets are required |
+| Originality | No copied third-party branding, text, protected assets, or direct site recreation is included |
 | Scope safety | The generated theme does not modify files outside its allowed theme folder |
+| Documentation | `README.md`, `CHANGELOG.md`, `LICENSE.txt`, and all required supporting documentation are complete |
 
 ### Basic WordPress Theme Checks
 
-    Confirm that the theme includes the basic WordPress files it requires.
-    
-    Confirm that every PHP file passes PHP lint.
-    
-    Confirm that `style.css` contains a valid WordPress theme header.
-    
-    Confirm that `functions.php` loads without warnings or fatal errors.
-    
-    Confirm that all asset paths are valid and case-correct.
-    
-    Confirm that required includes and template parts exist.
-    
-    Confirm that no hardcoded absolute local-machine paths remain.
-    
-    Confirm that no API keys, credentials, secrets, or environment-specific tokens were committed.
-    
-    Confirm that the theme folder is self-contained.
-    
-    Confirm that the theme does not require external CDN assets at runtime.
-    
-    Confirm that the generated theme did not modify files outside its allowed folder.
-    
-    Confirm that every required feature is implemented rather than represented only by static markup.
-    
-    Confirm that the finished theme is suitable for installation, review, testing, and future maintenance.
+Confirm that every required file and directory exists at the exact path defined in the Required Theme Structure.
+
+Confirm that `assets/css/bundle.css` and `assets/js/bundle.js` are the required compiled production bundle names.
+
+Confirm that every PHP file passes PHP lint.
+
+Confirm that `style.css` contains a valid WordPress theme header.
+
+Confirm that `functions.php` loads without warnings or fatal errors.
+
+Confirm that all asset paths are valid and case-correct.
+
+Confirm that every required include and template part exists.
+
+Confirm that no hardcoded absolute local-machine paths remain.
+
+Confirm that no API keys, credentials, secrets, or environment-specific tokens were committed.
+
+Confirm that the theme folder is self-contained.
+
+Confirm that the theme does not require external CDN assets at runtime.

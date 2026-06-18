@@ -1,24 +1,24 @@
-## 01. Business Identity 
+# 01. Business Identity 
 
-Business Name
+## Business Name
   -
 
-Business Logo
+## Business Logo
   -
 
-Business Solgan
+## Business Solgan
   -
 
-Business Field
+## Business Field
   -
 
 
-## 02  Style / CSS Requirements ===================================================================================================================================================================
+# 02  Style / CSS Requirements ===================================================================================================================================================================
 
 
 Organize the theme like a serious, modern WordPress product theme, not a quick demo. The structure should feel similar in discipline to a polished premium theme or modern SaaS build: predictable folders, reusable template parts, consistent CSS architecture, and no one-off styling scattered everywhere.
 
-Button classes:
+## Button classes:
 
 - .btn
 - .btn-primary
@@ -30,7 +30,7 @@ Button classes:
 
 
 
-CONTENT REQUIREMENTS
+## CONTENT REQUIREMENTS
 
 Write complete original content.
 
@@ -42,9 +42,9 @@ Do not use:
 - Fake client names that imply real endorsements
 
 
-## 02. Functionality ==============================================================================================================================================================================
+# 02. Functionality ==============================================================================================================================================================================
 
-### Webpack Build Requirements
+## Webpack Build Requirements
 
     Create the following Webpack configuration file:
     
@@ -94,7 +94,7 @@ Do not use:
     typography, and layout support. Build commands belong in package.json, not theme.json.
 
 
-  ###  WORDPRESS SECURITY REQUIREMENTS
+  ##  WORDPRESS SECURITY REQUIREMENTS
 
     Use proper WordPress functions and escaping, including where appropriate:
     
@@ -111,132 +111,132 @@ Do not use:
     language_attributes()
 
 
-## 07. Color System ===============================================================================================================================================================================
+# 07. Color System ===============================================================================================================================================================================
 
-  Main Background Color
-  #ffffff
-  Secondary Background Color
-  #f4f7fb
-  Dark Background Color
-  #101827
-  Primary Brand Color
-  #2563eb
-  Secondary Brand Color
-  #14b8a6
-  Accent Color
-  #f97316
-  Primary Text Color
-  #111827
-  Muted Text Color
-  #64748b
-  Border and Divider Color
-  #e2e8f0
-  Primary Button Colors
+## main colors
+    Main Background Color
+    #ffffff
+    Secondary Background Color
+    #f4f7fb
+    Dark Background Color
+    #101827
+    Primary Brand Color
+    #2563eb
+    Secondary Brand Color
+    #14b8a6
+    Accent Color
+    #f97316
+    Primary Text Color
+    #111827
+    Muted Text Color
+    #64748b
+    Border and Divider Color
+    #e2e8f0
+    Primary Button Colors
+    
+    The primary button background should be #2563eb, and its text should be #ffffff.
+    
+    On hover, the background should become #1d4ed8, while the text remains #ffffff.
+    
+    Secondary Button Colors
+    
+    The secondary button background should be #ffffff, its text should be #111827, and its border should be #cbd5e1.
+    
+    On hover, the background should become #f4f7fb, while the text remains #111827.
+    
+    Additional Color Rules
+    
+    Use dark navy sections sparingly for technical proof, system diagrams, metrics, case-study results, and final CTA areas.
+    
+    Use teal accents for successful workflows, connected systems, completed automation steps, positive results, and integration states.
+    
+    Use orange only for small highlights, alerts, priority indicators, or high-priority CTA accents.
+    
+    Do not allow accent colors to reduce readability or violate contrast requirements.
+    
+    Maintain consistent colors across buttons, cards, forms, links, icons, navigation, focus indicators, validation states, CTA sections, dashboard visuals, and system diagrams.
   
-  The primary button background should be #2563eb, and its text should be #ffffff.
-  
-  On hover, the background should become #1d4ed8, while the text remains #ffffff.
-  
-  Secondary Button Colors
-  
-  The secondary button background should be #ffffff, its text should be #111827, and its border should be #cbd5e1.
-  
-  On hover, the background should become #f4f7fb, while the text remains #111827.
-  
-  Additional Color Rules
-  
-  Use dark navy sections sparingly for technical proof, system diagrams, metrics, case-study results, and final CTA areas.
-  
-  Use teal accents for successful workflows, connected systems, completed automation steps, positive results, and integration states.
-  
-  Use orange only for small highlights, alerts, priority indicators, or high-priority CTA accents.
-  
-  Do not allow accent colors to reduce readability or violate contrast requirements.
-  
-  Maintain consistent colors across buttons, cards, forms, links, icons, navigation, focus indicators, validation states, CTA sections, dashboard visuals, and system diagrams.
-  
-
-
-
-## 03. Visual Design Direction ====================================================================================================================================================================
 
 
-## 08. Typography Direction =======================================================================================================================================================================
 
-### Heading Style
+# 03. Visual Design Direction ====================================================================================================================================================================
 
-[FILL IN HEADING STYLE HERE] - Clean SaaS-style headings
+
+# 08. Typography Direction =======================================================================================================================================================================
+
+## Heading Style
+    [FILL IN HEADING STYLE HERE] - Clean SaaS-style headings
 
 ### Body Text Style
 
-[FILL IN BODY TEXT STYLE HERE] - Highly readable modern sans-serif
+    [FILL IN BODY TEXT STYLE HERE] - Highly readable modern sans-serif
 
-Use safe local/system font stacks. Do not depend on external Fonts if we will need to update or have any maintence. Font should be stress free.
+    Use safe local/system font stacks. Do not depend on external Fonts if we will need to update or have any maintence. Font should be stress free.
 
-## 04. Header ==================================================================================================================================================================================
+# 04. Header ==================================================================================================================================================================================
 
-### Header Layout
-
-  Logo left, nav center, CTA right
+## Header Layout
   
-  - Structure (left -> center -> right):
-    1) Logo block (left)
-       - Clicking logo goes to / (home).
-    2) Primary nav (center)
-       - Desktop nav items must be exactly:
-         - Services
-         - About
-         - Work
-         - Blog
-       - Services is a button trigger that opens the `nolan-menu` panel for services.
-       - About is a button trigger that opens the `nolan-menu` panel for about us content.
-       - Blog is a button trigger that opens the `nolan-menu` panel for blog.
-       - Work is a direct link to /work/.
-       - Keep the primary nav readable, balanced, and visually calm.
-    3) CTA area (right)
-       - Primary CTA button text: Contact Us.
-       - Primary CTA URL: /contact/.
-       - CTA must be visible on desktop.
-       - CTA should use .btn .btn-header-cta and feel like the strongest header action without overpowering the nav.
-       - CTA should be available in the mobile drawer as a full-width button.
+    Logo left, nav center, CTA right
+    
+    - Structure (left -> center -> right):
+      1) Logo block (left)
+         - Clicking logo goes to / (home).
+      2) Primary nav (center)
+         - Desktop nav items must be exactly:
+           - Services
+           - About
+           - Work
+           - Blog
+         - Services is a button trigger that opens the `nolan-menu` panel for services.
+         - About is a button trigger that opens the `nolan-menu` panel for about us content.
+         - Blog is a button trigger that opens the `nolan-menu` panel for blog.
+         - Work is a direct link to /work/.
+         - Keep the primary nav readable, balanced, and visually calm.
+      3) CTA area (right)
+         - Primary CTA button text: Contact Us.
+         - Primary CTA URL: /contact/.
+         - CTA must be visible on desktop.
+         - CTA should use .btn .btn-header-cta and feel like the strongest header action without overpowering the nav.
+         - CTA should be available in the mobile drawer as a full-width button.
 
 
-### Navigation Panel Content Requirements
-
-  1) Services `nolan-menu` panel
-  - Left rail items (exact labels):
-    - x1
-    - x2
-    - x3
-    - x4
-    - x5
-    - x6
+## Navigation Panel Content Requirements
   
-  - Right side per rail item MUST include:
-    - Local photo
-    - Premium title
-    - Short editorial description
-    - 3 to 5 bullet details
-  
-  2) About `nolan-menu` panel
-  - Left rail items:
-    - x1
-    - x2
-    - x3
-  
-  - Right side per rail item MUST include:
-    - Local photo
-    - Headline
-    - Values list or short feature list
-    - CTA linking to about page
-  
-  3) Blog `nolan-menu` panel
-  - Use a grid of at least 4 blog cards.
-  - Each card must include a local photo, tag, title, excerpt, and link to its corresponding blog post.
-  - Cards should feel editorial and useful, not generic filler.
+    1) Services `nolan-menu` panel
+    - Left rail items (exact labels):
+      - x1
+      - x2
+      - x3
+      - x4
+      - x5
+      - x6
+    
+    - Right side per rail item MUST include:
+      - Local photo
+      - Premium title
+      - Short editorial description
+      - 3 to 5 bullet details
+    
+    2) About `nolan-menu` panel
+    - Left rail items:
+      - x1
+      - x2
+      - x3
+    
+    - Right side per rail item MUST include:
+      - Local photo
+      - Headline
+      - Values list or short feature list
+      - CTA linking to about page
+    
+    3) Blog `nolan-menu` panel
+    - Use a grid of at least 4 blog cards.
+    - Each card must include a local photo, tag, title, excerpt, and link to its corresponding blog post.
+    - Cards should feel editorial and useful, not generic filler.
 
 
-### Dropdown/navigation panel requirements & behavior:
+## Dropdown/navigation panel requirements & behavior:
     - The sticky header must transition into a "scrolled" variant after the user scrolls down.
     - Each dropdown panel must remain correctly positioned beneath the header in both the default and scrolled states.
     - Right-side panel content updates on left rail hover and keyboard focus
@@ -275,19 +275,19 @@ Use safe local/system font stacks. Do not depend on external Fonts if we will ne
     - All interactive controls must include strong :focus-visible states.
     - The dropdown system must not create keyboard traps.
 
- ### Required data attributes:
+ ## Required data attributes:
     - button[data-menu-item="services"] controls div[data-menu-dropdown="services"]
     - button[data-menu-item="about"] controls div[data-menu-dropdown="about"]
     - button[data-menu-item="blog"] controls div[data-menu-dropdown="blog"]
 
-### Inside the Services and About panels:
+## Inside the Services and About panels:
     - left rail buttons: button[data-rail-item="<key>"]
     - right sections: section[data-rail-content="<key>"]
     - Only one corresponding right-side section may be visible at a time.
 
 
 
-### Mobile Header
+## Mobile Header
 
   #### Mobile nav requirements:
     - Dedicated mobile drawer (not a stacked desktop panel).
@@ -316,18 +316,18 @@ Use safe local/system font stacks. Do not depend on external Fonts if we will ne
 
 ### Mobile Accordions
 
-  Use mobile navigation accordions for:
-  Services
-  About Us
-  Blog
-  
-  Use direct mobile links for:
-  Work
-  
-  
-  The mobile About and Blog navigation items must link to the real generated About page and Blog archive destinations.
-  
-  Closed mobile accordions must not contain hidden focusable links that remain reachable by keyboard.
+    Use mobile navigation accordions for:
+    Services
+    About Us
+    Blog
+    
+    Use direct mobile links for:
+    Work
+    
+    
+    The mobile About and Blog navigation items must link to the real generated About page and Blog archive destinations.
+    
+    Closed mobile accordions must not contain hidden focusable links that remain reachable by keyboard.
 
 
 

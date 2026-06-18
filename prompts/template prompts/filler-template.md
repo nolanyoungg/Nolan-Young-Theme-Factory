@@ -673,205 +673,222 @@ This functionality manages the subscriber list only. Do not implement a bulk mar
 
 
 
-# 11. template-parts to fill in/build out ========================================================================================================================================================
+## 11. template-parts to fill in/build out
+
+Create and fully implement these exact template parts:
 
 ```text
 template-parts/
-├── content-page.php
-├── content-single.php
-├── content-none.php
-├── content-policy.php
-├── content-search.php
-├── content-hero.php
-├── content-brand-statement.php
-├── content-featured-work.php
-├── content-all-services.php
-├── content-single-service-highlight.php
-├── content-process.php
-├── content-style-pillars.php
-├── content-testimonials.php
-├── content-blog-preview.php
-├── content-cta-banner.php
-├── content-footer-widgets.php
-├── content-gallery.php
-└── content-faq.php
+    content-page.php
+    content-single.php
+    content-none.php
+    content-policy.php
+    content-search.php
+    content-hero.php
+    content-brand-statement.php
+    content-featured-work.php
+    content-all-services.php
+    content-single-service-highlight.php
+    content-process.php
+    content-style-pillars.php
+    content-testimonials.php
+    content-blog-preview.php
+    content-cta-banner.php
+    content-footer-widgets.php
 ```
-  
-  ## content-single.php
-  
-  ## content-none.php
-  
-  ## content-policy.php
-  
-  ## content-search.php  
-  
-  ## content-hero.php
-  
-  ## content-brand-statement.php
-  
-  ## content-featured-work.php
-  
-  ## content-all-services.php
-  
-  ## content-single-service-highlight.php
-  
-  ## content-process.php
-  
-  ## content-style-pillars.php
-  
-  ## content-testimonials.php
-  
-  ## content-blog-preview.php
-  
-  ## content-cta-banner.php
-  
-  ## content-footer-widgets.php
 
+| Template Part | Responsibility |
+|---|---|
+| `content-page.php` | Standard page content |
+| `content-single.php` | Standard single-post content |
+| `content-none.php` | Empty-result and not-found messaging |
+| `content-policy.php` | Policy-page presentation without inventing policy text |
+| `content-search.php` | Search-result item layout |
+| `content-hero.php` | Reusable high-impact hero |
+| `content-brand-statement.php` | Company purpose and positioning |
+| `content-featured-work.php` | Featured work, project, or case-study preview |
+| `content-all-services.php` | Primary service overview |
+| `content-single-service-highlight.php` | Featured service presentation |
+| `content-process.php` | Step-by-step company process |
+| `content-style-pillars.php` | Brand, service, or experience pillars |
+| `content-testimonials.php` | Supplied testimonials or an approved non-testimonial proof fallback |
+| `content-blog-preview.php` | Recent or featured articles |
+| `content-cta-banner.php` | Reusable contact or conversion CTA |
+| `content-footer-widgets.php` | Footer column content |
 
+Every template part must be reusable, escaped correctly, responsive, and free from duplicated page-level markup.
+
+Do not add alternate template parts that duplicate these responsibilities unless the additional file is technically necessary and clearly documented.
 
 ## 12. page-templates to fill in/build out
 
-Create the page templates in this order:
+The homepage must be built in the root `front-page.php` file.
+
+Do not create a homepage template under `page-templates/`.
+
+Create the page templates in this exact order:
 
 ```text
 page-templates/
-├── template-homepage.php
-├── template-services.php
-├── template-single-service.php
-├── template-about-us.php
-├── template-work.php
-├── template-blog.php
-├── template-contact.php
-└── template-policy.php
+    template-about-us.php
+    template-services.php
+    template-single-service.php
+    template-work.php
+    template-blog.php
+    template-contact.php
+    template-policy.php
 ```
 
-Every template must include a valid WordPress `Template Name` header where applicable.
+Every file in `page-templates/` must include a valid WordPress `Template Name` header.
 
-### template-homepage.php
+### front-page.php
 
-    Build a complete, finished photography homepage with fifteen polished sections.
+Build a complete, finished business homepage with fifteen polished sections.
 
-#### Homepage Section 01: Fullscreen Photographic Hero
+#### Homepage Section 01: High-Impact Hero
 
-    Use a large local hero image, cinematic headline, supporting copy, two CTAs, a compact trust or service-summary row, and a restrained editorial overlay.
+Use a strong local visual asset, clear headline, supporting copy, two CTAs, a compact trust or service-summary row, and a restrained visual treatment.
 
 #### Homepage Section 02: Featured Work Strip
 
-    Create a horizontal image-forward portfolio preview using local images and links to the Work page.
+Create a horizontal preview of featured work, projects, solutions, or results using local visual assets and links to the Work page.
 
 #### Homepage Section 03: Brand Statement
 
-    Present the studio philosophy through strong editorial typography and a portrait or studio image pairing.
+Present the company purpose, positioning, and value through strong editorial typography and a supporting visual pairing.
 
 #### Homepage Section 04: Services Overview
 
-    Present at least six photography service cards using appropriate local images and clear links to the corresponding service pages.
+Present at least six service cards using appropriate local visual assets and clear links to the corresponding service pages.
 
-#### Homepage Section 05: Signature Experience
+#### Homepage Section 05: Signature Process
 
-    Explain the complete client experience from inquiry and planning through the session, editing, and gallery delivery.
+Explain the complete customer journey from inquiry and discovery through planning, delivery, support, and follow-up.
 
-#### Homepage Section 06: Featured Gallery
+#### Homepage Section 06: Featured Work Filter
 
-    Create a local masonry or editorial image grid with a vanilla-JavaScript filter.
+Create an accessible featured-work layout using the styles from:
 
-    Use these categories:
+```text
+src/scss/components/_portfolio-filter.scss
+```
 
-    ```text
-    Portraits
-    Weddings
-    Brand
-    Product
-    Family
-    Events
-    ```
+Use a vanilla-JavaScript filter controlled from:
 
-    The filter must support mouse, touch, and keyboard interaction.
+```text
+src/js/main.js
+```
 
-#### Homepage Section 07: Featured Story
+Use these categories:
 
-    Present one detailed photography story or case study using large images, an editorial narrative, a pull quote only when supplied, and clear experience or outcome details.
+```text
+Strategy
+Design
+Development
+Integration
+Support
+Results
+```
 
-#### Homepage Section 08: Editing Style
+The filter must support mouse, touch, and keyboard interaction.
 
-    Use a photography-specific before-and-after control or editing-process visual.
+#### Homepage Section 07: Featured Case Study
 
-    The control must be accessible and usable without requiring precise pointer movement.
+Present one detailed project or client case study using strong visual media, an editorial narrative, a quotation only when supplied, and clear challenge, solution, and outcome details.
 
-#### Homepage Section 09: Packages and Session Options
+#### Homepage Section 08: Before-and-After or Comparison Feature
 
-    Create three polished package cards representing Portrait, Brand, and Wedding or Event options.
+Use the styles from:
 
-    Do not invent prices when pricing was not supplied.
+```text
+src/scss/components/_before-after.scss
+```
 
-#### Homepage Section 10: Product and Brand Photography
+Implement an accessible comparison, transformation, process, or results presentation.
 
-    Use local product or business imagery with practical business-focused content.
+The interaction must remain usable without requiring precise pointer movement.
 
-#### Homepage Section 11: Wedding and Engagement Photography
+#### Homepage Section 09: Packages and Engagement Options
 
-    Use local couple or event imagery with emotionally engaging but professional content.
+Create three polished option cards representing clear service levels, project types, or engagement models.
+
+Do not invent prices when pricing was not supplied.
+
+#### Homepage Section 10: Business Solutions Feature
+
+Present a focused solution area using local visual media and practical business-focused content.
+
+#### Homepage Section 11: Customer Experience Feature
+
+Explain what customers can expect before, during, and after working with the company.
+
+Use professional, useful, and non-generic content.
 
 #### Homepage Section 12: Testimonials and Proof
 
-    Use real testimonial content only when it was supplied.
+Use real testimonial content only when it was supplied.
 
-    Do not invent client names, quotations, ratings, companies, or endorsements.
+Do not invent client names, quotations, ratings, companies, or endorsements.
 
-    When testimonials are unavailable, present a non-testimonial proof section using the documented process, portfolio breadth, service guarantees that were actually supplied, or neutral experience highlights.
+When testimonials are unavailable, use an approved non-testimonial proof section based on supplied work, documented process, real metrics, or neutral experience highlights.
 
 #### Homepage Section 13: Blog Preview
 
-    Show at least four helpful photography planning guides with real generated destinations.
+Show at least four useful articles, guides, or resources with real generated destinations.
 
 #### Homepage Section 14: FAQ
 
-    Include at least seven useful booking and session questions in an accessible accordion.
+Include at least seven useful questions about services, process, timelines, communication, project requirements, support, and getting started.
 
-    Closed answers must not remain exposed to assistive technology or keyboard focus.
+Use an accessible accordion styled through:
 
-#### Homepage Section 15: Final Booking CTA
+```text
+src/scss/components/_accordion.scss
+```
 
-    Use strong conversion-focused copy, a primary Contact Us CTA, and a secondary link to the Work page.
+Closed answers must not remain exposed to assistive technology or keyboard focus.
 
-### template-services.php
+#### Homepage Section 15: Final CTA
 
-    Create a complete Services page with a strong hero, six primary service cards, photography process overview, service comparison guidance, featured work, FAQ, and final Contact Us CTA.
-
-    Every service card must link to a real service-detail destination.
-
-### template-single-service.php
-
-    Create a reusable service-detail template with a service hero, detailed overview, ideal-client guidance, deliverables, process, image gallery, package or inquiry guidance, related services, FAQ, and the Single Service form.
-
-    The form must automatically identify the service being viewed.
+Use strong conversion-focused copy, a primary Contact Us CTA, and a secondary link to the Work page.
 
 ### template-about-us.php
 
-    Create a complete About page with the studio story, photography philosophy, approach, values, working experience, studio or behind-the-scenes imagery, and a final Contact Us CTA.
+Create a complete About page with the company story, purpose, approach, values, team or company information, experience, supporting visual media, and a final Contact Us CTA.
 
-    Do not invent founder biographies, awards, locations, or history that were not supplied.
+Do not invent founder biographies, awards, locations, certifications, or history that were not supplied.
+
+### template-services.php
+
+Create a complete Services page with a strong hero, six primary service cards, process overview, service-comparison guidance, featured work, FAQ, and final Contact Us CTA.
+
+Every service card must link to a real service-detail destination.
+
+### template-single-service.php
+
+Create a reusable service-detail template with a service hero, detailed overview, ideal-customer guidance, deliverables, process, supporting visual content, package or inquiry guidance, related services, FAQ, and the Single Service form.
+
+The form must automatically identify the service being viewed.
 
 ### template-work.php
 
-    Create an image-forward Work page with portfolio categories, accessible filtering, project or gallery cards, featured stories, and direct links to relevant services.
+Create a content-forward Work page with project categories, accessible filtering, project or case-study cards, featured results, and direct links to relevant services.
 
 ### template-blog.php
 
-    Create a Blog archive page with a featured article, category navigation, article cards, excerpts, pagination, and search access.
+Create a Blog archive page with a featured article, category navigation, article cards, excerpts, pagination, and search access.
 
-    Use real generated posts and destinations.
+Use real generated posts and destinations.
 
 ### template-contact.php
 
-    Create a complete Contact page with clear inquiry guidance, expected response information that does not make unsupported promises, the Contact form, and any real supplied contact details.
+Create a complete Contact page with clear inquiry guidance, response information that does not make unsupported promises, the Contact form, and any real supplied contact details.
 
 ### template-policy.php
 
-    Create a readable policy-page layout that renders WordPress-managed policy content.
+Create a readable policy-page layout that renders WordPress-managed policy content.
 
-    Do not generate legal promises, guarantees, privacy claims, cookie claims, or terms that were not supplied or reviewed.
-
+Do not generate legal promises, guarantees, privacy claims, cookie claims, or terms that were not supplied or reviewed.
 
 
 ## 13. Images

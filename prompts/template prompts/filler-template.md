@@ -237,79 +237,78 @@ Use safe local/system font stacks. Do not depend on external Fonts if we will ne
 
 
 ### Dropdown/navigation panel requirements & behavior:
+    - The sticky header must transition into a "scrolled" variant after the user scrolls down.
+    - Each dropdown panel must remain correctly positioned beneath the header in both the default and scrolled states.
+    - Right-side panel content updates on left rail hover and keyboard focus
+    - On top: slightly taller padding, more airy.
+    - Scrolled: slightly tighter padding, solid warm background, crisp border.
+    - Must not cause layout shift.
+    - Open/close on click - drop down based on main nav items
+    - Only one panel open at a time; toggling another closes the current.
+    - Clicking the same trigger closes it.
+    - Clicking outside closes it.
+    - Escape closes it.
+    - When open: show full-page backdrop and lock body scroll.
+    - Panels must be SOLID and readable.
+    - The dropdown panels must never be transparent. Every panel must use a solid, readable background with a stable z-index above all standard page content.
+    - The sticky header must transition into a scrolled variant after the user scrolls down the page. In its default state, the header should use slightly taller padding to create a more open and      airy appearance. In its scrolled state, the header should use slightly tighter padding, a solid warm background, and a crisp border.
+    - The transition between the default and scrolled header states must not cause layout shift. Each dropdown panel must remain correctly positioned beneath the header in both states.
+    - The Services, About, and Blog buttons in the primary navigation control the opening and closing of their corresponding nolan-menu dropdown panels.
+    - Clicking the Services, About, or Blog navigation button must open its corresponding dropdown panel.
+    - Clicking the currently active navigation button must close its open dropdown panel.
+    - Clicking a different navigation button while another dropdown panel is open must close the currently active panel and open the newly selected panel.
+    - Only one dropdown panel may be open at a time.
+    - Clicking outside the open dropdown panel must close it.
+    - Pressing Escape must close the open dropdown panel.
+    - When a dropdown panel is open, a full-page backdrop must appear and body scrolling must be locked. Body scrolling must be restored when the panel closes.
+    - Each dropdown panel must use a dynamic height based on the amount of content inside the selected panel.
+    - The Services and About dropdown panels must use a two-column layout consisting of a left rail containing category buttons and a right-side content area containing the corresponding content       sections.
+    - After the Services or About dropdown panel is open, hovering over a left-rail item must update the corresponding content displayed in the right-side content area.
+    - Keyboard-focusing a left-rail item through Tab navigation must also update the corresponding right-side content.
+    - Hovering over or keyboard-focusing a left-rail item controls only the content displayed inside the already-open dropdown panel. It must not open or close the main dropdown panel.
+    - Only one corresponding right-side content section may be visible at a time.
+    - The left-rail hover and keyboard-focus interaction is a required signature feature of the Services and About dropdown panels.
+    - The Blog dropdown panel must open and close through its primary navigation button, but its internal content must use the required blog-card grid. The Blog panel must not use a left rail or       rail-controlled right-side content.
+    - The aria-expanded value of each primary navigation trigger must update accurately when its panel opens or closes.
+    - Use aria-controls to connect each primary navigation trigger to its corresponding dropdown panel.
+    - Closed dropdown panels must be hidden from assistive technology.
+    - All interactive controls must include strong :focus-visible states.
+    - The dropdown system must not create keyboard traps.
 
-  - The sticky header must transition into a "scrolled" variant after the user scrolls down.
-  - Each dropdown panel must remain correctly positioned beneath the header in both the default and scrolled states.
-  - Right-side panel content updates on left rail hover and keyboard focus
-  - On top: slightly taller padding, more airy.
-  - Scrolled: slightly tighter padding, solid warm background, crisp border.
-  - Must not cause layout shift.
-  - Open/close on click - drop down based on main nav items
-  - Only one panel open at a time; toggling another closes the current.
-  - Clicking the same trigger closes it.
-  - Clicking outside closes it.
-  - Escape closes it.
-  - When open: show full-page backdrop and lock body scroll.
-  - Panels must be SOLID and readable.
-  - The dropdown panels must never be transparent. Every panel must use a solid, readable background with a stable z-index above all standard page content.
-  - The sticky header must transition into a scrolled variant after the user scrolls down the page. In its default state, the header should use slightly taller padding to create a more open and      airy appearance. In its scrolled state, the header should use slightly tighter padding, a solid warm background, and a crisp border.
-  - The transition between the default and scrolled header states must not cause layout shift. Each dropdown panel must remain correctly positioned beneath the header in both states.
-  - The Services, About, and Blog buttons in the primary navigation control the opening and closing of their corresponding nolan-menu dropdown panels.
-  - Clicking the Services, About, or Blog navigation button must open its corresponding dropdown panel.
-  - Clicking the currently active navigation button must close its open dropdown panel.
-  - Clicking a different navigation button while another dropdown panel is open must close the currently active panel and open the newly selected panel.
-  - Only one dropdown panel may be open at a time.
-  - Clicking outside the open dropdown panel must close it.
-  - Pressing Escape must close the open dropdown panel.
-  - When a dropdown panel is open, a full-page backdrop must appear and body scrolling must be locked. Body scrolling must be restored when the panel closes.
-  - Each dropdown panel must use a dynamic height based on the amount of content inside the selected panel.
-  - The Services and About dropdown panels must use a two-column layout consisting of a left rail containing category buttons and a right-side content area containing the corresponding content       sections.
-  - After the Services or About dropdown panel is open, hovering over a left-rail item must update the corresponding content displayed in the right-side content area.
-  - Keyboard-focusing a left-rail item through Tab navigation must also update the corresponding right-side content.
-  - Hovering over or keyboard-focusing a left-rail item controls only the content displayed inside the already-open dropdown panel. It must not open or close the main dropdown panel.
-  - Only one corresponding right-side content section may be visible at a time.
-  - The left-rail hover and keyboard-focus interaction is a required signature feature of the Services and About dropdown panels.
-  - The Blog dropdown panel must open and close through its primary navigation button, but its internal content must use the required blog-card grid. The Blog panel must not use a left rail or       rail-controlled right-side content.
-  - The aria-expanded value of each primary navigation trigger must update accurately when its panel opens or closes.
-  - Use aria-controls to connect each primary navigation trigger to its corresponding dropdown panel.
-  - Closed dropdown panels must be hidden from assistive technology.
-  - All interactive controls must include strong :focus-visible states.
-  - The dropdown system must not create keyboard traps.
+ ### Required data attributes:
+    - button[data-menu-item="services"] controls div[data-menu-dropdown="services"]
+    - button[data-menu-item="about"] controls div[data-menu-dropdown="about"]
+    - button[data-menu-item="blog"] controls div[data-menu-dropdown="blog"]
 
- Required data attributes:
-- button[data-menu-item="services"] controls div[data-menu-dropdown="services"]
-- button[data-menu-item="about"] controls div[data-menu-dropdown="about"]
-- button[data-menu-item="blog"] controls div[data-menu-dropdown="blog"]
-
-Inside the Services and About panels:
-- left rail buttons: button[data-rail-item="<key>"]
-- right sections: section[data-rail-content="<key>"]
-- Only one corresponding right-side section may be visible at a time.
+### Inside the Services and About panels:
+    - left rail buttons: button[data-rail-item="<key>"]
+    - right sections: section[data-rail-content="<key>"]
+    - Only one corresponding right-side section may be visible at a time.
 
 
 
 ### Mobile Header
 
-  Mobile nav requirements:
-  - Dedicated mobile drawer (not a stacked desktop panel).
-  - open button, close button, backdrop click close, Escape close, aria-expanded updates.
-  - accordion sections for Services / About / Blog; Work + Contact are direct links.
-  - solid readable background; no keyboard traps.
-  - should be just as impressive as the desktop version
-  - Hamburger open button - on right side of mobile header, logo is on the left!
-  - Accessible drawer
-  - Dedicated close button
-  - Backdrop
-  - Backdrop-click closing
-  - Outside-click closing
-  - Escape-key closing
-  - Accurate aria-expanded
-  - Body scroll locking
-  - Solid readable drawer background
-  - Full-width Contact Us CTA linking to /contact/
-  - No horizontal overflow
-  - No keyboard traps
-  - Create a dedicated mobile drawer rather than stacking the desktop navigation markup into the page.
+  #### Mobile nav requirements:
+    - Dedicated mobile drawer (not a stacked desktop panel).
+    - open button, close button, backdrop click close, Escape close, aria-expanded updates.
+    - accordion sections for Services / About / Blog; Work + Contact are direct links.
+    - solid readable background; no keyboard traps.
+    - should be just as impressive as the desktop version
+    - Hamburger open button - on right side of mobile header, logo is on the left!
+    - Accessible drawer
+    - Dedicated close button
+    - Backdrop
+    - Backdrop-click closing
+    - Outside-click closing
+    - Escape-key closing
+    - Accurate aria-expanded
+    - Body scroll locking
+    - Solid readable drawer background
+    - Full-width Contact Us CTA linking to /contact/
+    - No horizontal overflow
+    - No keyboard traps
+    - Create a dedicated mobile drawer rather than stacking the desktop navigation markup into the page.
   
 
   

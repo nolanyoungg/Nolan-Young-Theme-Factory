@@ -124,6 +124,7 @@ function date_i18n($format) { return date($format); }
 function current_time($type = 'mysql') { return date('Y-m-d H:i:s'); }
 function wp_trim_words($text, $num_words = 55) { return implode(' ', array_slice(preg_split('/\\s+/', trim((string) $text)), 0, $num_words)); }
 function get_theme_file_uri($path = '') { return ltrim(str_replace('\\\\', '/', (string) $path), '/'); }
+function get_theme_file_path($path = '') { return $GLOBALS['preview_theme_dir'] . DIRECTORY_SEPARATOR . ltrim(str_replace('/', DIRECTORY_SEPARATOR, (string) $path), DIRECTORY_SEPARATOR); }
 function get_template_directory() { return $GLOBALS['preview_theme_dir']; }
 function get_stylesheet_directory() { return $GLOBALS['preview_theme_dir']; }
 function get_template_directory_uri() { return ''; }
@@ -169,6 +170,19 @@ function get_the_title($post = null) {
   if (isset($GLOBALS['post']) && is_object($GLOBALS['post'])) return $GLOBALS['post']->post_title ?? ($GLOBALS['preview_fixture']['title'] ?? '');
   return $GLOBALS['preview_fixture']['title'] ?? '';
 }
+function get_the_ID() { return isset($GLOBALS['post']) && is_object($GLOBALS['post']) && isset($GLOBALS['post']->ID) ? $GLOBALS['post']->ID : 1; }
+function the_ID() { echo get_the_ID(); }
+function post_class($classes = '') {
+  $items = array();
+  if (is_string($classes) && $classes !== '') $items[] = $classes;
+  if (is_array($classes)) $items = array_merge($items, $classes);
+  if (isset($GLOBALS['post']) && is_object($GLOBALS['post']) && isset($GLOBALS['post']->post_type)) $items[] = $GLOBALS['post']->post_type;
+  if (empty($items)) $items[] = 'post';
+  echo 'class="' . esc_attr(implode(' ', array_values(array_unique(array_filter($items))))) . '"';
+}
+function get_the_excerpt() { return $GLOBALS['preview_fixture']['excerpt'] ?? wp_trim_words(get_the_content(), 24); }
+function the_excerpt() { echo esc_html(get_the_excerpt()); }
+function wp_link_pages() {}
 function the_title($before = '', $after = '') { echo $before . esc_html(get_the_title()) . $after; }
 function get_the_content() { return isset($GLOBALS['post']->post_content) ? $GLOBALS['post']->post_content : ''; }
 function the_content() { echo get_the_content(); }
@@ -225,6 +239,8 @@ fs.mkdirSync(path.join(previewDir, 'assets', 'icons'), { recursive: true });
 
 copyExact('assets/css/bundle.css', 'assets/css/bundle.css');
 copyExact('assets/js/bundle.js', 'assets/js/bundle.js');
+copyExact('assets/css/bundle.css', 'assets/css/preview.css');
+copyExact('assets/js/bundle.js', 'assets/js/preview.js');
 copyTree('assets/images', 'assets/images');
 copyTree('assets/icons', 'assets/icons');
 

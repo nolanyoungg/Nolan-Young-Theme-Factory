@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
-const { root, scriptPath } = require('../../lib/repo-root');
+const { root, scriptPath } = require('../../shared/repo-root');
+const { runCommand } = require('../../shared/command-runner');
 
 const [themeSlug, promptFile, model = 'qwen2.5-coder:14b'] = process.argv.slice(2);
 const scripts = {
@@ -18,10 +18,7 @@ function fail(message) {
 }
 
 function run(command, args, options = {}) {
-  const result = spawnSync(command, args, { cwd: root, encoding: 'utf8', shell: process.platform === 'win32', ...options });
-  if (result.stdout && options.echo !== false) process.stdout.write(result.stdout);
-  if (result.stderr && options.echo !== false) process.stderr.write(result.stderr);
-  return result;
+  return runCommand(command, args, { cwd: root, ...options });
 }
 
 function walk(dir, out = []) {

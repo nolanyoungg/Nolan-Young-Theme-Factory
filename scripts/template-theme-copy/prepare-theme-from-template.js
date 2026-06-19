@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root } = require('../lib/repo-root');
+const { root } = require('../shared/repo-root');
+const { parseArgs, arg } = require('../shared/args');
 
-const [promptFile, templateName = process.env.THEME_TEMPLATE || 'NOLAN-YOUNG-theme-000'] = process.argv.slice(2);
+const args = parseArgs(process.argv.slice(2));
+const [positionalPrompt, positionalTemplate] = args._;
+const promptFile = arg(args, 'prompt', positionalPrompt || process.env.THEME_PROMPT_FILE || '');
+const templateName = arg(args, 'template', positionalTemplate || process.env.THEME_TEMPLATE || 'NOLAN-YOUNG-theme-000');
+const requestedThemeSlug = arg(args, 'theme-slug', process.env.THEME_SLUG || '');
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
@@ -53,7 +58,7 @@ function updateJson(file, updater) {
   fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);
 }
 
-if (!promptFile) fail('Usage: node scripts/templates/prepare-theme-from-template.js <prompt-file> [template-name]');
+if (!promptFile) fail('Usage: node scripts/template-theme-copy/prepare-theme-from-template.js --prompt <prompt-file> [--template <template-name>] [--theme-slug <theme-slug>]');
 if (promptFile.includes('..') || templateName.includes('..')) fail('Unsafe path segment detected.');
 
 const promptPath = path.isAbsolute(promptFile) ? promptFile : path.join(root, promptFile);
@@ -62,7 +67,7 @@ if (!fs.existsSync(promptPath)) fail(`Prompt file not found: ${promptFile}`);
 const templateDir = path.join(root, 'wordpress-themplate-themes', templateName);
 if (!fs.existsSync(templateDir)) fail(`Template not found: wordpress-themplate-themes/${templateName}`);
 
-const themeSlug = process.env.THEME_SLUG || `${nextNumber()}_nolan_young_theme_${slugify(promptPath)}`;
+const themeSlug = requestedThemeSlug || `${nextNumber()}_nolan_young_theme_${slugify(promptPath)}`;
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
 
 const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);

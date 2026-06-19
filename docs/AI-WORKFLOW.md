@@ -8,7 +8,7 @@ This repo uses one shared stage-based workflow for three modes:
 
 The workflow is template-first. A template is copied into `wp-content/themes/NNN_nolan_young_theme_[description]/` before any AI generation starts.
 
-Script layout is documented in `scripts/README.md`. Normal operation should go through `bash scripts/theme-factory.sh ...` or the compatibility entrypoint `node scripts/run-theme-workflow.js ...`.
+Script layout is documented in `scripts/README.md`. Normal operation should go through `npm run ...` commands backed by `scripts/run-theme-workflow.js`.
 
 ## Shared Stages
 
@@ -38,8 +38,8 @@ Scripts prepare the theme, Ollama generates inside the prepared folder, scripts 
 
 Example:
 
-```bash
-node scripts/run-theme-workflow.js --mode ollama-only --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b
+```sh
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b
 ```
 
 ### `codex-only`
@@ -48,8 +48,8 @@ Scripts prepare the theme and generate Codex brief artifacts. The workflow recor
 
 Example:
 
-```bash
-node scripts/run-theme-workflow.js --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.4 --codex-reasoning medium
+```sh
+npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.4 --codex-reasoning medium
 ```
 
 The prompt path is only an example. Use the prompt file you want to generate from.
@@ -60,22 +60,22 @@ Scripts prepare the theme, Ollama drafts it, scripts validate, then Codex receiv
 
 Example:
 
-```bash
-node scripts/run-theme-workflow.js --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.4 --codex-reasoning medium
+```sh
+npm run theme:run -- --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.4 --codex-reasoning medium
 ```
 
 ## Dry Run
 
-```bash
-node scripts/run-theme-workflow.js --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --dry-run
+```sh
+npm run theme:run -- --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --dry-run
 ```
 
 Dry run prints the resolved stage plan and output paths without mutating the repo.
 
 ## Resume
 
-```bash
-bash scripts/theme-factory.sh resume 001_nolan_young_theme_example
+```sh
+npm run theme:resume -- --theme-slug 001_nolan_young_theme_example
 ```
 
 Use resume after a Codex pending state has been written to the run report.
@@ -101,7 +101,7 @@ Key files:
 
 After generation and validation:
 
-* theme assets are built by the workflow with `node scripts/build/build-theme-assets.js {theme_slug}`
+* theme assets are built by the workflow with `node scripts/build/build-theme-assets.js --theme-slug {theme_slug}`
 * the build wrapper installs theme-local dependencies if needed and runs `npm run build` inside the generated theme folder
 * static preview is written to `docs/Preview-Themes-Github/{theme_slug}/`
 * the gallery is rebuilt in `docs/index.html`

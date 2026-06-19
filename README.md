@@ -53,16 +53,15 @@ That was the strongest run so far. The prompt structure used for that pass is th
 
 **Common commands**
 
-```bash
-bash scripts/theme-factory.sh list-templates
-bash scripts/theme-factory.sh prepare prompts/pending/example.md NOLAN-YOUNG-theme-000
-bash scripts/theme-factory.sh brief 001_nolan_young_theme_example prompts/pending/example.md codex-only
-bash scripts/theme-factory.sh run codex-only prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.5 low
-bash scripts/theme-factory.sh check 001_nolan_young_theme_example
-bash scripts/theme-factory.sh preview 001_nolan_young_theme_example
-bash scripts/theme-factory.sh package 001_nolan_young_theme_example
-bash scripts/theme-factory.sh preview-index
-bash scripts/theme-factory.sh resume 001_nolan_young_theme_example
+```sh
+npm run theme:env
+npm run theme:prepare -- --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000
+npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.5 --codex-reasoning low
+npm run theme:validate -- --theme-slug 001_nolan_young_theme_example --template NOLAN-YOUNG-theme-000
+npm run theme:preview -- --theme-slug 001_nolan_young_theme_example
+npm run theme:zip -- --theme-slug 001_nolan_young_theme_example
+npm run theme:preview:index
+npm run theme:resume -- --theme-slug 001_nolan_young_theme_example
 ```
 
 The prompt paths above are examples. Use the actual prompt file that matches the theme brief you want to generate.
@@ -123,24 +122,24 @@ The things that look unreferenced at a glance are generated artifacts, run repor
 
 Use this when you want Ollama to do the generation pass and finish the theme in one run.
 
-```bash
-bash scripts/theme-factory.sh run ollama-only prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b
+```sh
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b
 ```
 
 ### `codex-only`
 
 Use this when you want Codex to handle the generation pass for the theme.
 
-```bash
-bash scripts/theme-factory.sh run codex-only prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.5 low
+```sh
+npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.5 --codex-reasoning low
 ```
 
 ### `hybrid`
 
 Use this when you want Ollama to draft the theme and Codex to finish it.
 
-```bash
-bash scripts/theme-factory.sh run hybrid prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.5 medium
+```sh
+npm run theme:run -- --mode hybrid --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.5 --codex-reasoning medium
 ```
 
 After a run finishes, use the same workflow tools for preview, packaging, and validation as needed.

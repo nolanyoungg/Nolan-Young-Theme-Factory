@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root } = require('../lib/repo-root');
+const { root } = require('../shared/repo-root');
+const { parseArgs, arg } = require('../shared/args');
 
-const [themeSlug, requestedTemplate] = process.argv.slice(2);
+const args = parseArgs(process.argv.slice(2));
+const [positionalThemeSlug, positionalTemplate] = args._;
+const themeSlug = arg(args, 'theme-slug', positionalThemeSlug || '');
+const requestedTemplate = arg(args, 'template', positionalTemplate || '');
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
@@ -20,7 +24,7 @@ function walkFiles(dir, base = dir, out = []) {
   return out;
 }
 
-if (!themeSlug) fail('Usage: node scripts/validation/validate-theme-from-template.js <theme-slug> [template-name]');
+if (!themeSlug) fail('Usage: node scripts/validation/validate-theme-from-template.js --theme-slug <theme-slug> [--template <template-name>]');
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
 if ((requestedTemplate || '').includes('..')) fail('Unsafe template name.');
 

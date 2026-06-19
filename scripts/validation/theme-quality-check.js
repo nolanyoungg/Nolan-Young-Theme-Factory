@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
-const { root } = require('../lib/repo-root');
+const { root } = require('../shared/repo-root');
+const { parseArgs, arg } = require('../shared/args');
+const { runCommand } = require('../shared/command-runner');
 
-const [themeSlug] = process.argv.slice(2);
+const args = parseArgs(process.argv.slice(2));
+const [positionalThemeSlug] = args._;
+const themeSlug = arg(args, 'theme-slug', positionalThemeSlug || '');
 const failures = [];
 
 function failCheck(message) {
@@ -24,7 +27,7 @@ function walk(dir, out = []) {
 }
 
 if (!themeSlug || !/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) {
-  console.error('Usage: node scripts/validation/theme-quality-check.js <theme-slug>');
+  console.error('Usage: node scripts/validation/theme-quality-check.js --theme-slug <theme-slug>');
   process.exit(1);
 }
 
@@ -59,10 +62,10 @@ if (fs.existsSync(themeDir)) {
     failCheck('Compiled JS bundle is older than src/js/main.js; run npm run build');
   }
 
-  const phpProbe = spawnSync('php', ['-v'], { encoding: 'utf8', stdio: 'ignore' });
+  const phpProbe = runCommand('php', ['-v'], { echo: false });
   if (phpProbe.status === 0) {
     for (const file of walk(themeDir).filter((item) => item.endsWith('.php'))) {
-      const lint = spawnSync('php', ['-l', file], { encoding: 'utf8' });
+      const lint = runCommand('php', ['-l', file], { echo: false });
       if (lint.error) {
         console.error(`WARNING: php lint could not run from Node (${lint.error.message}); skipped PHP syntax lint.`);
         break;

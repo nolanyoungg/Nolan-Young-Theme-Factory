@@ -59,7 +59,7 @@ Separate quality checks cover practical WordPress concerns: PHP syntax, required
 
 ## Workflow Contract
 
-The shared workflow public entrypoint lives in `scripts/run-theme-workflow.js`, with the implementation under `scripts/workflow/`, and is driven by `config/workflow-modes.json` and `config/theme-factory.defaults.json`.
+The shared workflow public entrypoint lives in `scripts/run-theme-workflow.js` and is driven by `config/workflow-modes.json` and `config/theme-factory.defaults.json`.
 
 The supported first-class modes are:
 
@@ -67,6 +67,6 @@ The supported first-class modes are:
 * `codex-only`
 * `hybrid`
 
-`bash scripts/theme-factory.sh run ...` and `node scripts/run-theme-workflow.js ...` are the primary entry points. Existing commands remain available for compatibility.
+`npm run theme:run -- ...` and `node scripts/run-theme-workflow.js ...` are the primary entry points.
 
 Run reports belong in `reports/runs/{theme_slug}/`. Do not store secrets there.

@@ -1,0 +1,23 @@
+{
+  "name": "nolan-young-theme-factory",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node-only automation for generating, validating, previewing, and packaging Nolan Young WordPress themes.",
+  "scripts": {
+    "theme:run": "node scripts/run-theme-workflow.js",
+    "theme:resume": "node scripts/run-theme-workflow.js --resume",
+    "theme:prepare": "node scripts/template-theme-copy/prepare-theme-from-template.js",
+    "theme:validate": "node scripts/validation/validate-generated-theme-all.js",
+    "theme:build": "node scripts/build/build-theme-assets.js",
+    "theme:preview": "node scripts/theme-preview/generate-static-preview.js",
+    "theme:preview:index": "node scripts/theme-preview/rebuild-preview-gallery.js --validate",
+    "theme:zip": "node scripts/theme-zipping/zip-theme.js",
+    "theme:env": "node scripts/environment/check-environment.js",
+    "theme:model-check": "node scripts/environment/check-model-access.js",
+    "test:scripts": "node scripts/workflow/smoke-test-scripts.js"
+  },
+  "dependencies": {
+    "archiver": "8.0.0",
+    "yauzl": "3.4.0"
+  }
+}

@@ -21,7 +21,7 @@
     "ollama_generation_pass": "skip",
     "codex_generation_pass": "codex",
     "validate_before_finish": "script",
-    "codex_finish_pass": "codex",
+    "codex_finish_pass": "skip",
     "build_theme_assets": "script",
     "generate_preview": "script",
     "rebuild_preview_gallery": "script",

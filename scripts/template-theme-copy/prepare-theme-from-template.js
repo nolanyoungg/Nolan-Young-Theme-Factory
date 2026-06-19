@@ -3,6 +3,12 @@ const fs = require('fs');
 const path = require('path');
 const { root } = require('../shared/repo-root');
 const { parseArgs, arg } = require('../shared/args');
+const {
+  assertTemplateName,
+  assertThemeSlug,
+  nextThemeNumber,
+  slugifyPromptPath
+} = require('../shared/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalPrompt, positionalTemplate] = args._;
@@ -15,42 +21,6 @@ function fail(message) {
   process.exit(1);
 }
 
-function slugify(input) {
-  const base = path.basename(input).replace(/\.[^.]+$/, '');
-  return base
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '')
-    .replace(/_+/g, '_')
-    .replace(/^[0-9]+_/, '')
-    .replace(/^nolan_young_theme_/, '') || 'generated_theme';
-}
-
-function collectExisting(dir, files = false) {
-  const full = path.join(root, dir);
-  if (!fs.existsSync(full)) return [];
-  return fs.readdirSync(full, { withFileTypes: true })
-    .filter((entry) => files ? entry.isFile() : entry.isDirectory())
-    .map((entry) => entry.name);
-}
-
-function nextNumber() {
-  for (const dir of ['wp-content/themes', 'docs/Preview-Themes-Github', 'dist/zipped-themes', 'reports/runs']) {
-    fs.mkdirSync(path.join(root, dir), { recursive: true });
-  }
-  const names = [
-    ...collectExisting('wp-content/themes'),
-    ...collectExisting('docs/Preview-Themes-Github'),
-    ...collectExisting('reports/runs'),
-    ...collectExisting('dist/zipped-themes', true).map((name) => name.replace(/\.zip$/, ''))
-  ];
-  const max = names.reduce((highest, name) => {
-    const match = name.match(/^([0-9]{3})_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/);
-    return match ? Math.max(highest, Number(match[1])) : highest;
-  }, -1);
-  return String(max + 1).padStart(3, '0');
-}
-
 function updateJson(file, updater) {
   if (!fs.existsSync(file)) return;
   const data = JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -60,6 +30,7 @@ function updateJson(file, updater) {
 
 if (!promptFile) fail('Usage: node scripts/template-theme-copy/prepare-theme-from-template.js --prompt <prompt-file> [--template <template-name>] [--theme-slug <theme-slug>]');
 if (promptFile.includes('..') || templateName.includes('..')) fail('Unsafe path segment detected.');
+assertTemplateName(templateName);
 
 const promptPath = path.isAbsolute(promptFile) ? promptFile : path.join(root, promptFile);
 if (!fs.existsSync(promptPath)) fail(`Prompt file not found: ${promptFile}`);
@@ -67,8 +38,8 @@ if (!fs.existsSync(promptPath)) fail(`Prompt file not found: ${promptFile}`);
 const templateDir = path.join(root, 'wordpress-themplate-themes', templateName);
 if (!fs.existsSync(templateDir)) fail(`Template not found: wordpress-themplate-themes/${templateName}`);
 
-const themeSlug = requestedThemeSlug || `${nextNumber()}_nolan_young_theme_${slugify(promptPath)}`;
-if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
+const themeSlug = requestedThemeSlug || `${nextThemeNumber()}_nolan_young_theme_${slugifyPromptPath(promptPath)}`;
+assertThemeSlug(themeSlug);
 
 const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
 if (fs.existsSync(themeDir)) fail(`Theme already exists: wp-content/themes/${themeSlug}`);

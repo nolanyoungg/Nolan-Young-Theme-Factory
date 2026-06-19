@@ -2,6 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { root } = require('../shared/repo-root');
+const { WALK_IGNORED_DIRECTORIES } = require('../shared/constants');
+const { assertTemplateName } = require('../shared/theme-utils');
 
 const [templateName, outputJson] = process.argv.slice(2);
 
@@ -14,16 +16,14 @@ if (!templateName || !outputJson) {
   fail('Usage: node scripts/template-theme-copy/create-template-manifest.js <template-name> <output-json>');
 }
 
-if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(templateName) || templateName.includes('..') || /[\\/]/.test(templateName)) {
-  fail(`Unsafe template name: ${templateName}`);
-}
+assertTemplateName(templateName);
 
 const templateRoot = path.join(root, 'wordpress-themplate-themes', templateName);
 if (!fs.existsSync(templateRoot)) fail(`Template not found: wordpress-themplate-themes/${templateName}`);
 
 const requiredFiles = [];
 const requiredDirectories = [];
-const ignored = ['node_modules', '.git', '.generation', 'reports'];
+const ignored = WALK_IGNORED_DIRECTORIES;
 
 function walk(dir, rel = '') {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {

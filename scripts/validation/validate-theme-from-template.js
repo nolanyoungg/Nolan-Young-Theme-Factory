@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { root } = require('../shared/repo-root');
 const { parseArgs, arg } = require('../shared/args');
+const { assertThemeSlug } = require('../shared/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalThemeSlug, positionalTemplate] = args._;
@@ -25,7 +26,7 @@ function walkFiles(dir, base = dir, out = []) {
 }
 
 if (!themeSlug) fail('Usage: node scripts/validation/validate-theme-from-template.js --theme-slug <theme-slug> [--template <template-name>]');
-if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
+assertThemeSlug(themeSlug);
 if ((requestedTemplate || '').includes('..')) fail('Unsafe template name.');
 
 const themesRoot = path.resolve(root, 'wp-content', 'themes');

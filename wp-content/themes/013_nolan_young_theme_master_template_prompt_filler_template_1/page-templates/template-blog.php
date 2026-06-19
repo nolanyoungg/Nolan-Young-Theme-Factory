@@ -2,51 +2,91 @@
 /*
 Template Name: Blog
 */
-
 get_header();
-
 ?>
+
 <main id="primary" class="site-main">
-  <section class="blog-section-hero">
-    <div class="container">
-      <h1>Blog</h1>
-      <p>Stay informed with our latest articles and insights.</p>
-      <a href="#" class="btn btn-primary">Read More</a>
-    </div>
-  </section>
+    <section class="blog-hero">
+        <div class="container">
+            <h1>Our Blog</h1>
+            <p>Websites that help businesses grow.</p>
+        </div>
+    </section>
 
-  <section class="blog-section-featured">
-    <div class="container">
-      <div class="blog-post-grid">
-        <article class="blog-post-preview">
-          <h2><a href="/blog/designing-for-conversion/">Designing for conversion</a></h2>
-          <p>Learn how structure, trust signals, and simple calls to action can improve lead flow.</p>
-          <a href="/blog/designing-for-conversion/" class="btn btn-secondary">Read More</a>
-        </article>
-        <article class="blog-post-preview">
-          <h2><a href="/blog/wordpress-maintenance-basics/">WordPress maintenance basics</a></h2>
-          <p>A practical look at updates, backups, and the operational habits that keep a site healthy.</p>
-          <a href="/blog/wordpress-maintenance-basics/" class="btn btn-secondary">Read More</a>
-        </article>
-        <article class="blog-post-preview">
-          <h2><a href="/blog/content-that-builds-trust/">Content that builds trust</a></h2>
-          <p>See how service pages, proof points, and clarity support better engagement.</p>
-          <a href="/blog/content-that-builds-trust/" class="btn btn-secondary">Read More</a>
-        </article>
-      </div>
-    </div>
-  </section>
+    <section class="blog-featured">
+        <div class="container">
+            <h2>Featured Articles</h2>
+            <?php
+                $args = array(
+                    'posts_per_page' => 3,
+                    'post__in' => get_option('sticky_posts')
+                );
+                $the_query = new WP_Query($args);
+                while ($the_query->have_posts()) : $the_query->the_post();
+            ?>
+                <article class="post-preview">
+                    <a href="<?php the_permalink(); ?>">
+                        <?php if (has_post_thumbnail()): ?>
+                            <div class="post-thumbnail">
+                                <?php the_post_thumbnail('large'); ?>
+                            </div>
+                        <?php endif; ?>
+                        <h3><?php the_title(); ?></h3>
+                        <?php the_excerpt(); ?>
+                    </a>
+                </article>
+            <?php endwhile; wp_reset_query(); ?>
+        </div>
+    </section>
 
-  <section class="blog-section-pagination">
-    <div class="container">
-      <nav class="pagination-nav" aria-label="Blog navigation">
-        <a href="/blog/" class="pagination-link is-current">1</a>
-        <a href="/blog/page/2/" class="pagination-link">2</a>
-        <a href="/blog/page/3/" class="pagination-link">3</a>
-      </nav>
-    </div>
-  </section>
+    <section class="blog-categories">
+        <div class="container">
+            <h2>Categories</h2>
+            <div class="category-navigation">
+                <?php
+                    $categories = get_categories(array('orderby' => 'name', 'order' => 'ASC'));
+                    foreach($categories as $category) {
+                        echo '<a href="' . esc_url(get_category_link($category->term_id)) . '">' . esc_html($category->name) . '</a>';
+                    }
+                ?>
+            </div>
+        </div>
+    </section>
+
+    <section class="blog-articles">
+        <div class="container">
+            <h2>All Articles</h2>
+            <?php if ( have_posts() ) : while ( have_posts() ) : the_post(); ?>
+                <article class="post-preview">
+                    <a href="<?php the_permalink(); ?>">
+                        <?php if (has_post_thumbnail()): ?>
+                            <div class="post-thumbnail">
+                                <?php the_post_thumbnail('medium'); ?>
+                            </div>
+                        <?php endif; ?>
+                        <h3><?php the_title(); ?></h3>
+                        <?php the_excerpt(); ?>
+                    </a>
+                </article>
+            <?php endwhile; endif; ?>
+        </div>
+    </section>
+
+    <section class="blog-pagination">
+        <div class="container">
+            <?php the_posts_pagination(); ?>
+        </div>
+    </section>
+
+    <section class="blog-contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <p>Get in touch with our team to learn more about what we can do for your business.</p>
+            <a href="/contact/" class="btn btn-primary">Contact Us</a>
+        </div>
+    </section>
 </main>
 
 <?php
 get_footer();
+?>

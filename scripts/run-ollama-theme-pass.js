@@ -50,20 +50,12 @@ ${brief}
 Batch focus:
 ${focus}
 
-Return JSON only. Markdown fences are acceptable if they contain only JSON.
+Return only file blocks in this exact format:
 
-Schema:
-{
-  "files": [
-    {
-      "path": "relative/path.php",
-      "content_lines": [
-        "line 1",
-        "line 2"
-      ]
-    }
-  ]
-}
+---FILE: relative/path.php---
+line 1
+line 2
+---END FILE---
 
 Required files for this batch:
 ${files}
@@ -82,6 +74,7 @@ Rules:
 - Do not write TODO comments, placeholder comments, "Add ... here" comments, empty cards, empty sections, or instructions for a future editor.
 - Every section you create must include finished copy and visible content appropriate to the selected creative prompt.
 - header.php and footer.php must not include a standalone ?> line after an inline PHP comment.
+- header.php must use lowercase <!doctype html> and a valid full document wrapper.
 - Preserve WordPress PHP syntax.
 
 Fragment rules:
@@ -98,6 +91,7 @@ Fragment rules:
   5. Reopen PHP at the end and call get_footer();.
 - Never write raw HTML while a PHP block is still open.
 - Never write stray words, labels, or partial JSON fragments into PHP files.
+- Do not wrap the file blocks in markdown fences or JSON.
 `;
 }
 
@@ -106,7 +100,7 @@ function runBatch(brief, generationDir, batchName, files, focus) {
   const rawOutput = path.join(generationDir, `ollama-${batchName}-raw.md`);
   fs.writeFileSync(runPrompt, batchPrompt(brief, batchName, files, focus), 'utf8');
   console.log(`Running Ollama batch: ${batchName}`);
-  const result = run('ollama', ['run', model, '--format', 'json', '--nowordwrap'], {
+  const result = run('ollama', ['run', model, '--nowordwrap'], {
     input: fs.readFileSync(runPrompt, 'utf8'),
     echo: false,
     env: { ...process.env, OLLAMA_NOHISTORY: '1' }

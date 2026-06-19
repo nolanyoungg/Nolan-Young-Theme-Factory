@@ -1,98 +1,302 @@
 # NOLAN-YOUNG Theme for Northstar Websites
 
-This WordPress theme is designed for a modern website development company named Northstar Websites. The theme features a clean and professional design, focusing on usability and accessibility. It includes advanced navigation, a responsive layout, a custom form system, and comprehensive documentation.
+## Theme Overview
 
-## Required Structure
-- `assets/`: Contains compiled CSS, JavaScript, images, and icons.
-- `inc/`: Holds PHP modules for theme functionality.
-- `src/`: Source files for SCSS and JavaScript.
-- `template-parts/`: Reusable template components.
-- `page-templates/`: Custom page templates.
-- `blocks/`: Documentation for custom Gutenberg blocks.
-- `build/`: Webpack configuration and build scripts.
-- `docs/`: Additional documentation, including getting started guides.
-- `accessibility/`: Accessibility guidelines and support.
+This WordPress theme is designed specifically for Northstar Websites, a modern website development company focused on delivering high-quality WordPress solutions. The theme features a clean, professional design with a strong emphasis on usability and accessibility.
+
+### Primary Features
+- Responsive header with services navigation dropdowns.
+- Mobile-friendly menu drawer.
+- Polished homepage with multiple sections showcasing services, process, work, testimonials, and contact options.
+- About Us, Services, Work, Blog, Contact, and Policy pages.
+- Integrated forms for contact inquiries and service requests.
+- Newsletter signup functionality.
+- Strong typography, color system, and accessibility focus.
+
+### Required Structure
+
+```
+013_nolan_young_theme_master_template_prompt_filler_template_1/
+ assets/
+    icons/
+       README.md
+    images/
+       hero/
+       portfolio/
+       texture/
+    css/
+       bundle.css
+    js/
+        bundle.js
+ build/
+    webpack.config.js
+ inc/
+    enqueue.php
+    other-modules.php
+ src/
+    scss/
+       _variables.scss
+       _mixins.scss
+       _base.scss
+       _components.scss
+       _layout.scss
+       main.scss
+    js/
+        main.js
+ template-parts/
+    content-page.php
+    content-single.php
+    content-none.php
+    content-policy.php
+    content-search.php
+    content-hero.php
+    content-brand-statement.php
+    content-featured-work.php
+    content-all-services.php
+    content-single-service-highlight.php
+    content-process.php
+    content-style-pillars.php
+    content-testimonials.php
+    content-blog-preview.php
+    content-cta-banner.php
+    content-footer-widgets.php
+ page-templates/
+    template-about-us.php
+    template-services.php
+    template-single-service.php
+    template-work.php
+    template-blog.php
+    template-contact.php
+    template-policy.php
+ blocks/
+    README.md
+ docs/
+    getting-started.md
+    customization.md
+ accessibility/
+    README.md
+ front-page.php
+ header.php
+ footer.php
+ style.css
+ functions.php
+```
 
 ## Installation
-1. Install Node.js as specified in the Build Requirements section.
-2. Clone or download this theme to your WordPress installation's themes directory.
-3. Activate the theme from the WordPress admin panel.
-4. Assign a static front page under Settings > Reading.
-5. Configure navigation menus under Appearance > Menus.
-6. Set the site logo under Appearance > Customize > Site Identity.
-7. Prepare required pages (About, Services, Work, Blog, Contact) with appropriate content and assign templates as needed.
+
+1. **Download and Upload:**
+   - Download the theme files.
+   - Upload to your `wp-content/themes/` directory.
+
+2. **Activate Theme:**
+   - Go to WordPress dashboard > Appearance > Themes.
+   - Click "Activate" on Northstar Websites Theme.
+
+3. **Assign Homepage:**
+   - Go to Settings > Reading.
+   - Set "Front page displays" to a static page and select the desired homepage template.
+
+4. **Configure Menus:**
+   - Go to Appearance > Menus.
+   - Create menus for Primary Navigation and Footer Navigation.
+   - Assign them in their respective menu locations.
+
+5. **Set Logo:**
+   - Go to Customizer > Site Identity.
+   - Upload and set the logo as per design guidelines.
+
+6. **Prepare Required Pages:**
+   - Create pages for About Us, Services, Work, Blog, Contact, and Policy using the provided templates.
+
+7. **Complete Initial Setup:**
+   - Use the WordPress admin panel to add content, configure settings, and customize the theme according to your needs.
 
 ## Build Requirements
-- Supported Node.js version: [Node.js version]
-- Install dependencies: `npm install`
-- Development build: `npm run dev`
-- Production build: `npm run build`
-- Compiled outputs:
-  - `assets/css/bundle.css`
-  - `assets/js/bundle.js`
+
+### Supported Node.js Version
+- Node.js 14.x or later is recommended for compatibility with Webpack and other dependencies.
+
+### Dependency Installation
+```bash
+npm install
+```
+
+### npm Commands
+- **Development Mode:**
+  ```bash
+  npm run dev
+  ```
+  - Compiles SCSS and JS, generates source maps.
+  - Runs in watch mode for active development.
+
+- **Production Build:**
+  ```bash
+  npm run build
+  ```
+  - Compiles SCSS and JS in production mode, minifies output.
+
+### Source Entry Points
+- SCSS entry point:
+  ```
+  src/scss/main.scss
+  ```
+
+- JavaScript entry point:
+  ```
+  src/js/main.js
+  ```
+
+### Exact Compiled Outputs
+- CSS bundle:
+  ```
+  assets/css/bundle.css
+  ```
+
+- JS bundle:
+  ```
+  assets/js/bundle.js
+  ```
 
 ## Features
-- Header with responsive navigation and dropdown panels for Services, About, and Blog.
-- Mobile drawer menu with accordions for Services, About, and Blog.
-- Work filtering using categories.
-- Forms for Contact and Single Service inquiries.
-- Newsletter signup system.
-- Responsive layouts across desktop, tablet, and mobile devices.
-- Accessibility support including keyboard navigation and screen reader compatibility.
-- Footer with CTA band, brand statement, services, company information, blog links, contact details, and legal information.
+
+### Header Panels
+- **Services, About, Blog:** Dropdown panels with detailed content.
+- **Sticky State:** Header transitions on scroll.
+- **Body Scroll Locking:** Prevents page scrolling when a dropdown is open.
+
+### Mobile Drawer
+- **Hamburger Menu:** Opens on the right side of the header.
+- **Accordions for Services, About, Blog:** Nested navigation within the drawer.
+
+### Work Filtering
+- **Filterable Portfolio Grid:** Allows users to filter featured work by categories (Strategy, Design, Development, Integration, Support, Results).
+
+### Forms
+- **Contact Form:** Captures general inquiry details.
+- **Single Service Form:** Automatically identifies the related service being viewed.
+- **Form Storage and Management:** Admin panel for viewing, exporting, and deleting submissions.
+
+### Newsletter Management
+- **Signup Form:** Collects email addresses (and optional names).
+- **Subscriber Status Tracking:** Active and Unsubscribed states.
+- **Admin Panel for Subscribers:** Filtering, exporting, emailing summaries to site owners.
+
+### Responsive Layouts
+- **Desktop Layout:** Multi-column design with balanced sections.
+- **Tablet Layout:** Fewer columns while maintaining hierarchy.
+- **Mobile Layout:** Clean single-column layout ensuring readability and accessibility.
+
+### Accessibility Behavior
+- **Keyboard Navigation:** Supports tab navigation, focus states, and accessible dropdown interactions.
+- **Reduced Motion Support:** Animations are respectful of user preferences.
+- **Contrast and Semantic Landmarks:** Ensures high contrast between text and background for all users.
+- **Form Validation:** Clear error messages and inline validation for form fields.
+
+### Footer Structure
+- **CTA Band:** Prominent call-to-action with a clear message.
+- **Brand Statement:** Company purpose and positioning.
+- **Services Column:** Links to service pages.
+- **Company Column:** Important company information (About, Work, Blog, Contact).
+- **Blog Column:** Recent or featured posts from the blog.
+- **Contact Block:** Direct contact details and CTA.
+- **Bottom Legal Row:** Copyright notice and relevant legal links.
+
+### Policy Routing
+- **Policy Pages:** Renders content managed through WordPress without making unsupported promises or claims.
 
 ## Page Templates
-- `front-page.php`: Implements the homepage with 15 polished sections.
-- `template-about-us.php`: Complete About page.
-- `template-services.php`: Complete Services page.
-- `template-single-service.php`: Reusable service-detail template.
-- `template-work.php`: Work archive page.
-- `template-blog.php`: Blog archive page.
-- `template-contact.php`: Contact page with inquiry form and response information.
-- `template-policy.php`: Policy page layout.
+
+- **front-page.php:** Implements the complete business homepage with fifteen polished sections.
+- **template-about-us.php:** About page with company story, purpose, team information.
+- **template-services.php:** Services page showcasing primary services and a FAQ section.
+- **template-single-service.php:** Detailed service pages including a contact form.
+- **template-work.php:** Work portfolio with project categories and filtering.
+- **template-blog.php:** Blog archive page with featured articles and search functionality.
+- **template-contact.php:** Contact page with inquiry form and response information.
+- **template-policy.php:** Policy page rendering WordPress-managed content.
 
 ## Header Behavior
-- Primary navigation click behavior opens corresponding dropdown panels.
-- Internal rail hover and focus behavior updates right-side content without opening/closing the panel.
-- Sticky header changes appearance on scroll.
-- Body-scroll locking when a dropdown or mobile menu is open.
-- Backdrop shows when a panel is open, clicking outside closes it, pressing Escape also closes it.
-- ARIA state management for accessibility.
-- Mobile accordion behavior with proper keyboard and screen reader support.
+
+### Primary Navigation Click Behavior
+- **Services, About, Blog:** Open corresponding dropdown panels.
+- **Work, Blog:** Direct links to respective pages.
+
+### Internal Rail Hover and Focus Behavior
+- **Services and About Panels:** Updates right-side content on left-rail hover or keyboard focus without opening/closing the main panel.
+
+### Sticky State Behavior
+- **Default Header:** Slightly taller padding for an airy appearance.
+- **Scrolled Header:** Tighter padding, solid warm background, crisp border.
+
+### Body Scroll Locking
+- **Dropdowns Open:** Prevents page scrolling when a dropdown is open to maintain focus and usability.
+
+### Backdrop Behavior
+- **Full-page Backdrop:** Appears when a dropdown or mobile drawer is open.
+- **Locks Body Scroll:** Ensures users can navigate the dropdown content without accidentally scrolling the main page.
+
+### ARIA State Management
+- **aria-expanded:** Accurately reflects whether a panel is open or closed.
+- **aria-controls:** Connects each primary navigation trigger to its corresponding dropdown panel.
+
+### Mobile Accordion Behavior
+- **Services, About, Blog Accordions:** Expandable sections within the mobile drawer.
+- **Work and Contact Links:** Direct links without accordions for simplicity.
 
 ## Accessibility Notes
-- Keyboard operation: Supports Tab navigation and :focus-visible states.
-- Reduced motion: Adheres to prefers-reduced-motion settings.
-- Contrast: Ensures sufficient contrast ratios for readability.
-- Semantic landmarks: Uses appropriate HTML5 tags and ARIA roles.
-- Form validation: Includes client-side and server-side validation with clear feedback.
-- Accordions: Closed answers are hidden from assistive technology.
-- Content filtering: Supports keyboard navigation within filterable components.
-- Hidden-content behavior: Ensures all interactive elements are accessible.
+
+- **Keyboard Operation:** Supports tab navigation, focus states, and accessible dropdown interactions.
+- **Focus Management:** Clear :focus-visible states for all interactive elements.
+- **Reduced Motion Support:** Animations are respectful of user preferences.
+- **Contrast and Semantic Landmarks:** Ensures high contrast between text and background for all users.
+- **Form Validation:** Clear error messages and inline validation for form fields.
+- **Accordions:** Closed answers remain hidden from assistive technology or keyboard focus.
+- **Content Filtering:** Work filtering is accessible via mouse, touch, and keyboard interaction.
+
+Refer to [accessibility/README.md](accessibility/README.md) for detailed implementation notes.
 
 ## Images and Licensing
-- `assets/images/hero/`: Contains hero banners and major visuals.
-- `assets/images/portfolio/`: Work, case-study, service, article, and supporting content images.
-- `assets/images/texture/`: Background textures and decorative raster assets.
-- `assets/icons/`: Local SVG interface icons and marks.
+
+- **assets/images/hero/**: High-impact visuals for the homepage hero section.
+- **assets/images/portfolio/**: Project, work, case-study, service, article, and supporting content visuals.
+- **assets/images/texture/**: Restraint background textures and decorative raster assets.
+- **assets/icons/**: Local SVG interface icons and marks.
+
+### Third-party Assets
+- **Source URL:** [Recorded in `README.md`](assets/icons/README.md)
+- **Creator:** Where required, creator information is listed.
+- **License:** Clearly stated to ensure compliance with usage rights.
+- **Download Date:** Records when assets were added to the theme.
 
 ## Forms and Newsletter
-- Form submissions appear in the WordPress admin under a 'Forms' menu.
-- Newsletter subscribers are managed through a 'Newsletter' menu, showing email, optional name, signup date, status, and unsubscribe date.
-- Submissions can be exported as CSV files from the admin panel.
-- Exported data is properly escaped for correct formatting.
-- Unsubscribe mechanism uses unique tokens to manage subscription statuses securely.
+
+### Form Submissions
+- **Storage:** Managed in a structured format within WordPress.
+- **Admin Panel:** View submissions, filter by form type, export selected entries, delete securely.
+- **Email Notifications:** Sends notifications to configured site owners upon successful submission.
+
+### Newsletter Management
+- **Signup Form:** Collects email addresses (and optional names).
+- **Subscriber Status Tracking:** Active and Unsubscribed states.
+- **Secure Unsubscribe Mechanism:** Uses unique tokens without exposing subscriber identifiers directly.
+- **Admin Panel for Subscribers:** Filtering, exporting, emailing summaries to site owners.
 
 ## Supporting Documentation
-- `docs/getting-started.md`: Guidance for setting up and using the theme.
-- `docs/customization.md`: Instructions for customizing the theme's appearance and behavior.
-- `assets/icons/README.md`: Conventions and permitted icon sources for icons.
-- `blocks/README.md`: Documentation for custom Gutenberg blocks.
-- `accessibility/README.md`: Accessibility guidelines and support.
+
+- [docs/getting-started.md](docs/getting-started.md): Instructions for setting up the theme.
+- [docs/customization.md](docs/customization.md): Guidance on customizing the theme beyond default settings.
+- [assets/icons/README.md](assets/icons/README.md): Conventions and permitted icon sources.
+- [blocks/README.md](blocks/README.md): Documentation for any Gutenberg blocks used in the theme.
+- [accessibility/README.md](accessibility/README.md): Accessibility implementation details.
 
 ## Changelog and License
-- `CHANGELOG.md` contains meaningful release entries with details about changes in each version.
-- `LICENSE.txt` includes the applicable project license.
+
+- **CHANGELOG.md:** Maintains meaningful release entries with updates, fixes, and new features.
+- **LICENSE.txt:** Includes the applicable project license (MIT).
 
 ## Known Limitations
-- None at this time.
+
+- **Form Spam Protection:** Uses honeypot fields and rate limiting to prevent spam submissions. Further enhancements can be added as needed.
+- **Newsletter Bulk Sending:** Does not include a bulk email sender; this requires a separate delivery system.
+
+---

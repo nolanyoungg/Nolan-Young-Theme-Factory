@@ -1,28 +1,27 @@
 <?php
-// Register custom post types for services and work
+// Custom Post Types for Newsletter Subscribers
 
-function nolan_young_register_custom_post_types() {
-    // Services CPT
-    register_post_type( 'service', array(
+function nolan_yong_create_custom_post_types() {
+    register_post_type('newsletter_subscriber', array(
         'labels' => array(
-            'name' => __( 'Services', '013_nolan_young_theme_master_template_prompt_filler_template_1' ),
-            'singular_name' => __( 'Service', '013_nolan_young_theme_master_template_prompt_filler_template_1' ),
+            'name' => __('Newsletter Subscribers', 'nolan-yong'),
+            'singular_name' => __('Subscriber', 'nolan-yong')
         ),
-        'public' => true,
-        'has_archive' => true,
-        'supports' => array( 'title', 'editor', 'thumbnail' ),
-    ));
-
-    // Work CPT
-    register_post_type( 'work', array(
-        'labels' => array(
-            'name' => __( 'Work', '013_nolan_young_theme_master_template_prompt_filler_template_1' ),
-            'singular_name' => __( 'Work', '013_nolan_young_theme_master_template_prompt_filler_template_1' ),
-        ),
-        'public' => true,
-        'has_archive' => true,
-        'supports' => array( 'title', 'editor', 'thumbnail' ),
+        'public' => false,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'supports' => array('title'),
+        'has_archive' => false,
+        'rewrite' => array('slug' => 'subscribers'),
+        'capabilities' => array(
+            'edit_post' => 'manage_options',
+            'read_post' => 'manage_options',
+            'delete_post' => 'manage_options',
+            'edit_posts' => 'manage_options',
+            'delete_posts' => 'manage_options',
+            'publish_posts' => 'manage_options'
+        )
     ));
 }
-
-add_action( 'init', 'nolan_young_register_custom_post_types' );
+add_action('init', 'nolan_yong_create_custom_post_types');
+?>

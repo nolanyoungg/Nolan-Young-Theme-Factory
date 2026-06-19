@@ -65,6 +65,13 @@ function sanitizeScaffoldOnlyCopy(content) {
     .replace(/^[ \t]*\/\/[ \t]*Add .+ here[ \t]*\r?\n/gm, '');
 }
 
+function stripOuterCodeFences(content) {
+  const normalized = content.replace(/\r\n/g, '\n');
+  const trimmed = normalized.trim();
+  const fenceMatch = trimmed.match(/^```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```$/);
+  return fenceMatch ? `${fenceMatch[1].replace(/\n$/, '')}\n` : content;
+}
+
 function normalizePhpTemplateContent(relativePath, content) {
   if (!relativePath.endsWith('.php') || !content.startsWith('<?php')) return content;
 
@@ -143,7 +150,7 @@ function writeFile(relativePath, content) {
     return;
   }
 
-  content = sanitizeScaffoldOnlyCopy(normalizePhpTemplateContent(cleanedPath, sanitizeRemoteReferences(content)));
+  content = sanitizeScaffoldOnlyCopy(normalizePhpTemplateContent(cleanedPath, sanitizeRemoteReferences(stripOuterCodeFences(content))));
 
   if (!phpSyntaxIsValid(cleanedPath, content)) return;
 

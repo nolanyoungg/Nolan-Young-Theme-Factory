@@ -1,30 +1,25 @@
-<?php
-get_header();
+<?php get_header(); ?>
 
 ?>
 <main id="primary" class="site-main">
-  <?php if (have_posts()) : ?>
     <header class="page-header">
-      <?php the_archive_title('<h1 class="page-title">', '</h1>'); ?>
+        <?php
+        the_archive_title( '<h1 class="page-title">', '</h1>' );
+        the_archive_description( '<div class="archive-description">', '</div>' );
+        ?>
     </header>
 
-    <?php while (have_posts()) : the_post(); ?>
-      <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-        <header class="entry-header">
-          <?php the_title('<h2 class="entry-title"><a href="' . esc_url(get_permalink()) . '" rel="bookmark">', '</a></h2>'); ?>
-        </header>
+    <?php if ( have_posts() ) : ?>
+        <div class="archive-content">
+            <?php while ( have_posts() ) : the_post(); ?>
+                <?php get_template_part( 'template-parts/content', get_post_format() ); ?>
+            <?php endwhile; ?>
 
-        <div class="entry-summary">
-          <?php the_excerpt(); ?>
+            <?php the_posts_navigation(); ?>
         </div>
-      </article>
-    <?php endwhile; ?>
-
-    <?php if ( function_exists( 'the_posts_navigation' ) ) { the_posts_navigation(); } else { echo '<nav class="pagination-nav" aria-label="Archive navigation"><span class="pagination-link is-current">1</span></nav>'; } ?>
-  <?php else : ?>
-    <?php get_template_part('template-parts/content', 'none'); ?>
-  <?php endif; ?>
+    <?php else : ?>
+        <?php get_template_part( 'template-parts/content', 'none' ); ?>
+    <?php endif; ?>
 </main>
 
-<?php
-get_footer();
+<?php get_footer(); ?>

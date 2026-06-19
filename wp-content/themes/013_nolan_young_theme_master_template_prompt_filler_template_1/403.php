@@ -1,18 +1,16 @@
 <?php
+header('HTTP/1.1 403 Forbidden');
 get_header();
-
 ?>
+
 <main id="primary" class="site-main">
-  <section class="error-403 not-found">
     <header class="page-header">
-      <h1 class="page-title">Access Denied</h1>
+        <h1><?php esc_html_e( 'Forbidden', 'textdomain' ); ?></h1>
     </header>
 
     <div class="page-content">
-      <p>Sorry, you don't have permission to access this page.</p>
+        <p><?php esc_html_e( 'You do not have permission to access this page.', 'textdomain' ); ?></p>
     </div>
-  </section>
 </main>
 
-<?php
-get_footer();
+<?php get_footer(); ?>

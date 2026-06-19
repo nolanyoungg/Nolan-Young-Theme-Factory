@@ -72,7 +72,7 @@ wp-content/themes/${themeSlug}/
 Target file:
 ${relativePath}
 
-You must return JSON only and write exactly this one file path.
+You must return only one file block and write exactly this one file path.
 
 Creative brief:
 ${brief}
@@ -80,18 +80,11 @@ ${brief}
 Current file contents:
 ${currentContents.replace(/\r/g, '')}
 
-Schema:
-{
-  "files": [
-    {
-      "path": "${relativePath}",
-      "content_lines": [
-        "line 1",
-        "line 2"
-      ]
-    }
-  ]
-}
+Format:
+---FILE: ${relativePath}---
+line 1
+line 2
+---END FILE---
 
 Rules:
 - Rewrite the complete file, not a patch.
@@ -102,6 +95,8 @@ Rules:
 - Preserve the file's technical purpose.
 - Preserve valid WordPress PHP syntax for PHP files.
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.
+- Do not wrap the file block in markdown fences or JSON.
+- header.php must use lowercase <!doctype html> and a valid full document wrapper.
 ${extraRules}
 `;
 }
@@ -137,7 +132,7 @@ for (let pass = 1; pass <= 2; pass += 1) {
     const rawOutput = path.join(repairDir, `repair-${safeName}-raw.md`);
     fs.writeFileSync(promptPath, repairPrompt(brief, relativePath, fs.readFileSync(path.join(themeDir, relativePath), 'utf8')), 'utf8');
     console.log(`Running Ollama repair for: ${relativePath}`);
-    const result = run('ollama', ['run', model, '--format', 'json', '--nowordwrap'], {
+    const result = run('ollama', ['run', model, '--nowordwrap'], {
       input: fs.readFileSync(promptPath, 'utf8'),
       echo: false,
       env: { ...process.env, OLLAMA_NOHISTORY: '1' }

@@ -1,10 +1,23 @@
-<div class="footer-widgets">
-  <div class="footer-widgets__column">
-    <h3>Northstar Websites</h3>
-    <p>WordPress design and development for growing businesses.</p>
-  </div>
-  <div class="footer-widgets__column">
-    <h3>Contact</h3>
-    <p>info@northstarwebsites.com</p>
-  </div>
+<?php
+/**
+ * Template part for displaying the footer widget areas.
+ *
+ * @link #
+ *
+ * @package NOLAN-YOUNG-theme-000
+ */
+?>
+
+<div class="footer-widget-container">
+    <div class="container">
+        <div class="widget-area widget-area-1">
+            <?php dynamic_sidebar('footer-1'); ?>
+        </div>
+        <div class="widget-area widget-area-2">
+            <?php dynamic_sidebar('footer-2'); ?>
+        </div>
+        <div class="widget-area widget-area-3">
+            <?php dynamic_sidebar('footer-3'); ?>
+        </div>
+    </div>
 </div>

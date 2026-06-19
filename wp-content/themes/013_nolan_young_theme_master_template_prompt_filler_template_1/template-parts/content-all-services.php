@@ -1,29 +1,31 @@
-<div class="all-services">
-  <div class="section-heading">
-    <p class="eyebrow">Services</p>
-    <h2>Web design and development that move the needle</h2>
-    <p>Northstar Websites builds focused WordPress experiences that are easy to manage and easy to trust.</p>
-  </div>
-  <div class="services-grid">
-    <article class="service-card">
-      <h3>Web Design</h3>
-      <p>Clear, editorial design systems built to communicate value fast.</p>
-      <a href="/services/web-design/" class="btn btn-secondary">Learn More</a>
-    </article>
-    <article class="service-card">
-      <h3>Web Development</h3>
-      <p>Custom WordPress builds with maintainable templates and local assets.</p>
-      <a href="/services/web-development/" class="btn btn-secondary">Learn More</a>
-    </article>
-    <article class="service-card">
-      <h3>Content Strategy</h3>
-      <p>Messaging and structure that help visitors understand what to do next.</p>
-      <a href="/services/content-creation/" class="btn btn-secondary">Learn More</a>
-    </article>
-    <article class="service-card">
-      <h3>Support & Care</h3>
-      <p>Ongoing maintenance, updates, and content support to keep momentum going.</p>
-      <a href="/services/maintenance-support/" class="btn btn-secondary">Learn More</a>
-    </article>
-  </div>
+<?php
+/**
+ * Template part for displaying the all services section on the homepage.
+ *
+ * @link #
+ *
+ * @package NOLAN-YOUNG-theme-000
+ */
+?>
+
+<div class="all-services-section">
+    <div class="container">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <!-- Placeholder for service cards -->
+            <div class="service-card">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/portfolio/service-icon-1.png'); ?>" alt="Service Icon 1" loading="lazy">
+                <h3>Web Design</h3>
+                <p>We create visually stunning and user-friendly websites that align with your brand identity.</p>
+                <a href="/services/web-design/" class="btn btn-text">Learn More</a>
+            </div>
+            <div class="service-card">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/portfolio/service-icon-2.png'); ?>" alt="Service Icon 2" loading="lazy">
+                <h3>Development</h3>
+                <p>Custom-built WordPress solutions that meet your specific business needs.</p>
+                <a href="/services/development/" class="btn btn-text">Learn More</a>
+            </div>
+            <!-- Add more service cards as needed -->
+        </div>
+    </div>
 </div>

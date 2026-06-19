@@ -48,20 +48,12 @@ $(cat "$brief_path")
 Batch focus:
 $focus
 
-Return JSON only. Markdown fences are acceptable if they contain only JSON.
+Return only file blocks in this exact format:
 
-Schema:
-{
-  "files": [
-    {
-      "path": "relative/path.php",
-      "content_lines": [
-        "line 1",
-        "line 2"
-      ]
-    }
-  ]
-}
+---FILE: relative/path.php---
+line 1
+line 2
+---END FILE---
 
 Required files for this batch:
 $files
@@ -80,6 +72,7 @@ Rules:
 - Do not write TODO comments, placeholder comments, "Add ... here" comments, empty cards, empty sections, or instructions for a future editor.
 - Every section you create must include finished copy and visible content appropriate to the selected creative prompt.
 - header.php and footer.php must not include a standalone ?> line after an inline PHP comment.
+- header.php must use lowercase <!doctype html> and a valid full document wrapper.
 - Preserve WordPress PHP syntax.
 - For PHP template files with HTML, use this valid structure:
   1. Start with <?php and any template comments.
@@ -89,10 +82,11 @@ Rules:
   5. Reopen PHP at the end and call get_footer();.
 - Never write raw HTML while a PHP block is still open.
 - Never write stray words, labels, or partial JSON fragments into PHP files.
+- Do not wrap the file blocks in markdown fences or JSON.
 EOF
 
   printf 'Running Ollama batch: %s\n' "$batch_name"
-  OLLAMA_NOHISTORY=1 ollama run "$model" --format json --nowordwrap < "$run_prompt" > "$raw_output"
+  OLLAMA_NOHISTORY=1 ollama run "$model" --nowordwrap < "$run_prompt" > "$raw_output"
   node scripts/apply-theme-file-blocks.js "$raw_output" "wp-content/themes/$theme_slug"
 }
 

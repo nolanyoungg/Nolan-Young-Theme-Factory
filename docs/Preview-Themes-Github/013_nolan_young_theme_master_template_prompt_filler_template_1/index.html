@@ -1,128 +1,140 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="assets/css/bundle.css"></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/bundle.css"></head>
+
 <body class="home page-template-front-page">
-<header id="site-header" class="sticky-header">
-  <div class="container">
-    <div class="logo-block">
-      <a href="homepage_preview.html">
-        <img src="assets/icons/icon1.svg" alt="Northstar Websites logo">
-        <span>Northstar Websites</span>
-      </a>
-    </div>
-    <nav class="site-nav" aria-label="Primary navigation">
-      <a href="homepage_preview.html">Home</a>
-      <a href="services_preview.html">Services</a>
-      <a href="work_preview.html">Work</a>
-      <a href="blog_preview.html">Blog</a>
-      <a href="contact_preview.html" class="btn btn-primary btn-header-cta">Contact</a>
-    </nav>
-  </div>
-</header>
-<main id="site-main">
-  <!-- Section 01: High-Impact Hero -->
-  <section class="hero-section">
+
+<div id="page" class="site">
+
+    <header id="masthead" class="site-header">
+        <div class="container">
+            <div class="site-branding">
+                <a href="homepage_preview.html" rel="home">
+                    <span class="custom-logo-link"><img src="assets/icons/icon1.svg" alt="Northstar Websites logo"></span>                    <h1 class="site-title">Northstar Websites</h1>
+                </a>
+            </div><!-- .site-branding -->
+
+            <nav id="site-navigation" class="main-navigation">
+                <button class="menu-toggle" aria-controls="primary-menu" aria-expanded="false">Primary Menu</button>
+                <ul id="primary-menu" class="menu"><li><a href="services_preview.html">Services</a></li><li><a href="about-us_preview.html">About</a></li><li><a href="work_preview.html">Work</a></li><li><a href="blog_preview.html">Blog</a></li></ul>            </nav><!-- #site-navigation -->
+
+            <div class="header-cta">
+                <a href="/contact/" class="btn btn-header-cta">Contact Us</a>
+            </div>
+        </div><!-- .container -->
+    </header><!-- #masthead -->
+
+    
+<div class="hero-section">
     <div class="hero-content">
-      <h1>Welcome to Northstar Websites</h1>
-      <p>We help businesses grow through innovative WordPress solutions.</p>
-      <a href="/services/" class="btn btn-primary">View Our Services</a>
-      <a href="/contact/" class="btn btn-secondary">Contact Us Now</a>
+        <h1>Web Solutions that Drive Growth</h1>
+        <p>We build websites that not only look great but also perform at their best, ensuring your business stands out online.</p>
+        <div class="hero-cta-buttons">
+            <a href="#services" class="btn btn-primary">Our Services</a>
+            <a href="/contact/" class="btn btn-secondary">Contact Us</a>
+        </div>
+        <div class="trust-row">
+            <span>Trusted by businesses of all sizes</span>
+        </div>
     </div>
-  </section>
-
-  <!-- Section 02: Featured Work Strip -->
-  <section class="featured-work-strip">
-    <div class="work-item"><a href="/work/project-1/"><img src="assets/images/placeholder.svg" alt="Project 1"></a></div>
-    <div class="work-item"><a href="/work/project-2/"><img src="assets/images/placeholder.svg" alt="Project 2"></a></div>
-    <div class="work-item"><a href="/work/project-3/"><img src="assets/images/placeholder.svg" alt="Project 3"></a></div>
-  </section>
-
-  <!-- Section 03: Brand Statement -->
-  <section class="brand-statement">
-    <h2>Our Commitment</h2>
-    <p>We deliver exceptional WordPress solutions that exceed your expectations.</p>
-  </section>
-
-  <!-- Section 04: Services Overview -->
-  <section class="services-overview">
-    <div class="all-services">
-  <div class="section-heading">
-    <p class="eyebrow">Services</p>
-    <h2>Web design and development that move the needle</h2>
-    <p>Northstar Websites builds focused WordPress experiences that are easy to manage and easy to trust.</p>
-  </div>
-  <div class="services-grid">
-    <article class="service-card">
-      <h3>Web Design</h3>
-      <p>Clear, editorial design systems built to communicate value fast.</p>
-      <a href="/services/web-design/" class="btn btn-secondary">Learn More</a>
-    </article>
-    <article class="service-card">
-      <h3>Web Development</h3>
-      <p>Custom WordPress builds with maintainable templates and local assets.</p>
-      <a href="/services/web-development/" class="btn btn-secondary">Learn More</a>
-    </article>
-    <article class="service-card">
-      <h3>Content Strategy</h3>
-      <p>Messaging and structure that help visitors understand what to do next.</p>
-      <a href="/services/content-creation/" class="btn btn-secondary">Learn More</a>
-    </article>
-    <article class="service-card">
-      <h3>Support & Care</h3>
-      <p>Ongoing maintenance, updates, and content support to keep momentum going.</p>
-      <a href="/services/maintenance-support/" class="btn btn-secondary">Learn More</a>
-    </article>
-  </div>
+    <div class="hero-image">
+        <!-- Placeholder for hero image -->
+        <img src="/assets/images/hero/hero-image.jpg" alt="Hero Image" loading="lazy">
+    </div>
 </div>
-  </section>
+    <div id="content" class="site-content">
 
-  <!-- Section 05: Signature Process -->
-  <section class="signature-process">
-    <h2>Our Process</h2>
-    <p>We guide you every step of the way from discovery to delivery.</p>
-  </section>
-
-  <!-- Section 06: Featured Work Filter -->
-  <section class="featured-work-filter">
-    <div class="featured-work">
-  <div class="section-heading">
-    <p class="eyebrow">Featured Work</p>
-    <h2>Selected projects</h2>
-    <p>Examples of the kind of focused, conversion-minded work Northstar Websites ships.</p>
-  </div>
-  <div class="featured-work__slider">
-    <a href="/work/northstar-brand-refresh/" class="featured-work__item">
-      <span class="featured-work__image"></span>
-      <strong>Northstar Brand Refresh</strong>
-      <span>Strategy, Design, Development</span>
-    </a>
-    <a href="/work/custom-wordpress-build/" class="featured-work__item">
-      <span class="featured-work__image"></span>
-      <strong>Custom WordPress Build</strong>
-      <span>Development, Performance, Content</span>
-    </a>
-  </div>
-</div>
-  </section>
-
-  <!-- Section 07: Featured Case Study -->
-  <section class="featured-case-study">
-    <h2>Case Study</h2>
-    <p>A detailed look at how we solved a complex problem for our client.</p>
-  </section>
-
-  <!-- Section 08: Before-and-After or Comparison Feature -->
-  <section class="before-after">
-    <h2>Before & After</h2>
-    <img src="assets/images/placeholder.svg" alt="Before and After Image">
-  </section>
-
-  <!-- Section 09: Packages and Engagement Options -->
-  <section class="packages">
-    <div class="packages-grid">
+    <main id="primary" class="site-main">
+        
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Web Solutions that Drive Growth</h1>
+        <p>We build websites that not only look great but also perform at their best, ensuring your business stands out online.</p>
+        <div class="hero-cta-buttons">
+            <a href="#services" class="btn btn-primary">Our Services</a>
+            <a href="/contact/" class="btn btn-secondary">Contact Us</a>
+        </div>
+        <div class="trust-row">
+            <span>Trusted by businesses of all sizes</span>
+        </div>
+    </div>
+    <div class="hero-image">
+        <!-- Placeholder for hero image -->
+        <img src="/assets/images/hero/hero-image.jpg" alt="Hero Image" loading="lazy">
+    </div>
+</div>        
+<div class="featured-work-section">
+    <div class="container">
+        <h2>Featured Work</h2>
+        <div class="work-items">
+            <!-- Placeholder for featured work items -->
+            <div class="work-item">
+                <img src="/assets/images/portfolio/work-item-1.jpg" alt="Work Item 1" loading="lazy">
+                <h3>Project Title 1</h3>
+                <p>A brief description of the project.</p>
+                <a href="/work/project-title-1/" class="btn btn-text">View Project</a>
+            </div>
+            <div class="work-item">
+                <img src="/assets/images/portfolio/work-item-2.jpg" alt="Work Item 2" loading="lazy">
+                <h3>Project Title 2</h3>
+                <p>A brief description of the project.</p>
+                <a href="/work/project-title-2/" class="btn btn-text">View Project</a>
+            </div>
+            <!-- Add more work items as needed -->
+        </div>
+    </div>
+</div>        
+<div class="brand-statement-section">
+    <div class="container">
+        <h2>About Northstar Websites</h2>
+        <p>Northstar Websites is a dedicated team of WordPress experts committed to delivering modern, high-performance websites that elevate your business online presence. Our focus is on understanding your unique needs and creating solutions that drive growth and success.</p>
+    </div>
+</div>        
+<div class="all-services-section">
+    <div class="container">
+        <h2>Our Services</h2>
+        <div class="service-cards">
+            <!-- Placeholder for service cards -->
+            <div class="service-card">
+                <img src="/assets/images/portfolio/service-icon-1.png" alt="Service Icon 1" loading="lazy">
+                <h3>Web Design</h3>
+                <p>We create visually stunning and user-friendly websites that align with your brand identity.</p>
+                <a href="/services/web-design/" class="btn btn-text">Learn More</a>
+            </div>
+            <div class="service-card">
+                <img src="/assets/images/portfolio/service-icon-2.png" alt="Service Icon 2" loading="lazy">
+                <h3>Development</h3>
+                <p>Custom-built WordPress solutions that meet your specific business needs.</p>
+                <a href="/services/development/" class="btn btn-text">Learn More</a>
+            </div>
+            <!-- Add more service cards as needed -->
+        </div>
+    </div>
+</div>        
+<div class="process-section">
+    <div class="container">
+        <h2>Our Process</h2>
+        <ol class="process-steps">
+            <!-- Placeholder for process steps -->
+            <li>
+                <span>Discovery</span>
+                <p>We start by understanding your goals and the needs of your business.</p>
+            </li>
+            <li>
+                <span>Planning</span>
+                <p>We develop a detailed plan outlining the scope, timeline, and deliverables.</p>
+            </li>
+            <li>
+                <span>Execution</span>
+                <p>Our team brings your vision to life with high-quality design and development.</p>
+            </li>
+            <!-- Add more process steps as needed -->
+        </ol>
+    </div>
+</div>                                <div class="packages-grid">
   <article class="package-card">
     <p class="eyebrow">Starter</p>
     <h3>Launch-ready site</h3>
@@ -139,65 +151,53 @@
     <p>For larger projects with deeper content and conversion requirements.</p>
   </article>
 </div>
-  </section>
-
-  <!-- Section 10: Business Solutions Feature -->
-  <section class="business-solutions">
-    <h2>Business Solutions</h2>
-    <p>We offer tailored solutions to fit your business needs.</p>
-  </section>
-
-  <!-- Section 11: Customer Experience Feature -->
-  <section class="customer-experience">
-    <h2>Customer Satisfaction</h2>
-    <p>We prioritize a seamless and enjoyable customer experience.</p>
-  </section>
-
-  <!-- Section 12: Testimonials and Proof -->
-  <section class="testimonials">
-    <div class="testimonials">
-  <div class="section-heading">
-    <p class="eyebrow">Proof</p>
-    <h2>Trusted by teams that need clarity and speed</h2>
-  </div>
-  <div class="testimonials-grid">
-    <blockquote class="testimonial-item">
-      <p>Northstar gave us a site that finally matched the quality of our work.</p>
-      <cite>Studio Owner</cite>
-    </blockquote>
-    <blockquote class="testimonial-item">
-      <p>The process was organized, the communication was clear, and the final build was easy to maintain.</p>
-      <cite>Operations Lead</cite>
-    </blockquote>
-  </div>
-</div>
-  </section>
-
-  <!-- Section 13: Blog Preview -->
-  <section class="blog-preview">
-    <div class="blog-preview">
-  <div class="section-heading">
-    <p class="eyebrow">From the blog</p>
-    <h2>Practical guidance for better WordPress projects</h2>
-  </div>
-  <div class="blog-grid">
-    <article class="blog-card">
-      <p class="tag">Strategy</p>
-      <h3><a href="/blog/designing-for-conversion/">Designing for conversion</a></h3>
-      <p>How structure and proof can support stronger lead generation.</p>
-    </article>
-    <article class="blog-card">
-      <p class="tag">Maintenance</p>
-      <h3><a href="/blog/wordpress-maintenance-basics/">WordPress maintenance basics</a></h3>
-      <p>The core habits that keep a site healthy, secure, and fast.</p>
-    </article>
-  </div>
-</div>
-  </section>
-
-  <!-- Section 14: FAQ -->
-  <section class="faq">
-    <div class="faq-list">
+                        
+<div class="testimonials-section">
+    <div class="container">
+        <h2>What Our Clients Say</h2>
+        <div class="testimonial-items">
+            <!-- Placeholder for testimonial items -->
+            <div class="testimonial-item">
+                <img src="/assets/images/portfolio/client-avatar-1.jpg" alt="Client Avatar 1" loading="lazy">
+                <blockquote>
+                    "Northstar Websites exceeded our expectations with their exceptional service and attention to detail."
+                    <span>- John Doe, Client</span>
+                </blockquote>
+            </div>
+            <div class="testimonial-item">
+                <img src="/assets/images/portfolio/client-avatar-2.jpg" alt="Client Avatar 2" loading="lazy">
+                <blockquote>
+                    "Their expertise in WordPress development is top-notch, and we're thrilled with the results."
+                    <span>- Jane Smith, Client</span>
+                </blockquote>
+            </div>
+            <!-- Add more testimonial items as needed -->
+        </div>
+    </div>
+</div>        
+<div class="blog-preview-section">
+    <div class="container">
+        <h2>From Our Blog</h2>
+        <div class="blog-card-grid">
+            <!-- Placeholder for blog card items -->
+            <div class="blog-card">
+                <a href="/blog/blog-post-1/">
+                    <img src="/assets/images/portfolio/blog-post-1.jpg" alt="Blog Post 1" loading="lazy">
+                    <h3>Blog Post Title 1</h3>
+                    <p>A brief excerpt from the blog post.</p>
+                </a>
+            </div>
+            <div class="blog-card">
+                <a href="/blog/blog-post-2/">
+                    <img src="/assets/images/portfolio/blog-post-2.jpg" alt="Blog Post 2" loading="lazy">
+                    <h3>Blog Post Title 2</h3>
+                    <p>A brief excerpt from the blog post.</p>
+                </a>
+            </div>
+            <!-- Add more blog card items as needed -->
+        </div>
+    </div>
+</div>        <div class="faq-list">
   <details>
     <summary>How long does a project take?</summary>
     <p>Timelines vary by scope, but most builds move through discovery, design, build, and refinement in a structured sequence.</p>
@@ -211,72 +211,51 @@
     <p>Yes. We can help with editing, restructuring, and ongoing support after launch.</p>
   </details>
 </div>
-  </section>
-
-  <!-- Section 15: Final CTA -->
-  <section class="final-cta">
-    <h2>Ready to Grow?</h2>
-    <a href="/contact/" class="btn btn-primary">Contact Us</a>
-    <a href="/work/" class="btn btn-secondary">View Our Work</a>
-  </section>
-</main>
-
-<footer id="site-footer">
-  <div class="container">
-    <section class="cta-band">
-      <h2>Websites that help businesses grow.</h2>
-      <p>Let's work together to create a website that drives your success.</p>
-      <a href="/contact/" class="btn btn-primary btn-header-cta">Contact Us</a>
-    </section>
-
-    <div class="brand-statement">
-      <h3>Northstar Websites</h3>
-      <p>A leading WordPress design and development company.</p>
+        
+<div class="cta-banner-section">
+    <div class="container">
+        <h2>Ready to Grow Your Online Presence?</h2>
+        <p>Contact us today to discuss your website needs and let's work together to achieve your goals.</p>
+        <a href="/contact/" class="btn btn-primary">Contact Us Now</a>
     </div>
+</div>    </main><!-- #primary -->
 
-    <section class="services-column">
-      <h4>Our Services</h4>
-      <ul>
-        <li><a href="/services/web-design/">Web Design</a></li>
-        <li><a href="/services/web-development/">Web Development</a></li>
-        <li><a href="/services/content-creation/">Content Creation</a></li>
-        <li><a href="/services/maintenance-support/">Maintenance & Support</a></li>
-      </ul>
-    </section>
 
-    <section class="company-column">
-      <h4>Company</h4>
-      <ul>
-        <li><a href="/about-us/">About Us</a></li>
-        <li><a href="/work/">Work</a></li>
-        <li><a href="/blog/">Blog</a></li>
-        <li><a href="/contact/">Contact</a></li>
-      </ul>
-    </section>
+    </div><!-- #content -->
 
-    <section class="blog-column">
-      <h4>From Our Blog</h4>
-      <ul>
-        <li><a href="/blog/post-1/">Blog Post 1</a></li>
-        <li><a href="/blog/post-2/">Blog Post 2</a></li>
-        <li><a href="/blog/post-3/">Blog Post 3</a></li>
-      </ul>
-    </section>
-
-    <div class="contact-block">
-      <h4>Contact Us</h4>
-      <p>Email: info@northstarwebsites.com</p>
-      <p>Phone: (123) 456-7890</p>
+    <footer id="colophon" class="site-footer">
+        <div class="container">
+            
+<div class="cta-banner-section">
+    <div class="container">
+        <h2>Ready to Grow Your Online Presence?</h2>
+        <p>Contact us today to discuss your website needs and let's work together to achieve your goals.</p>
+        <a href="/contact/" class="btn btn-primary">Contact Us Now</a>
     </div>
+</div>
+            <div class="footer-content">
+                
+<div class="brand-statement-section">
+    <div class="container">
+        <h2>About Northstar Websites</h2>
+        <p>Northstar Websites is a dedicated team of WordPress experts committed to delivering modern, high-performance websites that elevate your business online presence. Our focus is on understanding your unique needs and creating solutions that drive growth and success.</p>
+    </div>
+</div>                
+<div class="footer-widget-container">
+    <div class="container">
+        <div class="widget-area widget-area-1">
+            <div class="preview-widget preview-widget-footer-1"><h3>Widget Area footer-1</h3><p>Preview widget content rendered by the static preview harness.</p></div>        </div>
+        <div class="widget-area widget-area-2">
+            <div class="preview-widget preview-widget-footer-2"><h3>Widget Area footer-2</h3><p>Preview widget content rendered by the static preview harness.</p></div>        </div>
+        <div class="widget-area widget-area-3">
+            <div class="preview-widget preview-widget-footer-3"><h3>Widget Area footer-3</h3><p>Preview widget content rendered by the static preview harness.</p></div>        </div>
+    </div>
+</div>                            </div>
+        </div><!-- .container -->
+    </footer><!-- #colophon -->
 
-    <section class="legal-row">
-      <p>&copy; 2026 Northstar Websites. All rights reserved.</p>
-      <ul>
-        <li><a href="/privacy-policy/">Privacy Policy</a></li>
-        <li><a href="/terms-of-service/">Terms of Service</a></li>
-      </ul>
-    </section>
-  </div>
-</footer>
-<script src="assets/js/bundle.js"></script></body>
+</div><!-- #page -->
+
+<script src="assets/js/bundle.js"></script>
+</body>
 </html>

@@ -51,7 +51,7 @@ wp-content/themes/$theme_slug/
 Target file:
 $relative_path
 
-You must return JSON only and write exactly this one file path.
+You must return only one file block and write exactly this one file path.
 
 Creative brief:
 $(cat "$brief_path")
@@ -59,18 +59,11 @@ $(cat "$brief_path")
 Current file contents:
 $(sed 's/\r$//' "wp-content/themes/$theme_slug/$relative_path")
 
-Schema:
-{
-  "files": [
-    {
-      "path": "$relative_path",
-      "content_lines": [
-        "line 1",
-        "line 2"
-      ]
-    }
-  ]
-}
+Format:
+---FILE: $relative_path---
+line 1
+line 2
+---END FILE---
 
 Rules:
 - Rewrite the complete file, not a patch.
@@ -81,10 +74,12 @@ Rules:
 - Preserve the file's technical purpose.
 - Preserve valid WordPress PHP syntax for PHP files.
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.
+- Do not wrap the file block in markdown fences or JSON.
+- header.php must use lowercase <!doctype html> and a valid full document wrapper.
 EOF
 
   printf 'Running Ollama repair for: %s\n' "$relative_path"
-  OLLAMA_NOHISTORY=1 ollama run "$model" --format json --nowordwrap < "$run_prompt" > "$raw_output"
+  OLLAMA_NOHISTORY=1 ollama run "$model" --nowordwrap < "$run_prompt" > "$raw_output"
   if ! node scripts/apply-theme-file-blocks.js "$raw_output" "wp-content/themes/$theme_slug"; then
     printf 'WARNING: Ollama repair did not produce an applicable file for %s; validation will decide whether another pass is needed.\n' "$relative_path" >&2
   fi

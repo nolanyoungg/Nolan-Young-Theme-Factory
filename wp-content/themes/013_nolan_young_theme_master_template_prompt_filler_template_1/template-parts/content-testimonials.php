@@ -1,16 +1,33 @@
-<div class="testimonials">
-  <div class="section-heading">
-    <p class="eyebrow">Proof</p>
-    <h2>Trusted by teams that need clarity and speed</h2>
-  </div>
-  <div class="testimonials-grid">
-    <blockquote class="testimonial-item">
-      <p>Northstar gave us a site that finally matched the quality of our work.</p>
-      <cite>Studio Owner</cite>
-    </blockquote>
-    <blockquote class="testimonial-item">
-      <p>The process was organized, the communication was clear, and the final build was easy to maintain.</p>
-      <cite>Operations Lead</cite>
-    </blockquote>
-  </div>
+<?php
+/**
+ * Template part for displaying the testimonials section on the homepage.
+ *
+ * @link #
+ *
+ * @package NOLAN-YOUNG-theme-000
+ */
+?>
+
+<div class="testimonials-section">
+    <div class="container">
+        <h2>What Our Clients Say</h2>
+        <div class="testimonial-items">
+            <!-- Placeholder for testimonial items -->
+            <div class="testimonial-item">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/portfolio/client-avatar-1.jpg'); ?>" alt="Client Avatar 1" loading="lazy">
+                <blockquote>
+                    "Northstar Websites exceeded our expectations with their exceptional service and attention to detail."
+                    <span>- John Doe, Client</span>
+                </blockquote>
+            </div>
+            <div class="testimonial-item">
+                <img src="<?php echo esc_url(get_template_directory_uri() . '/assets/images/portfolio/client-avatar-2.jpg'); ?>" alt="Client Avatar 2" loading="lazy">
+                <blockquote>
+                    "Their expertise in WordPress development is top-notch, and we're thrilled with the results."
+                    <span>- Jane Smith, Client</span>
+                </blockquote>
+            </div>
+            <!-- Add more testimonial items as needed -->
+        </div>
+    </div>
 </div>

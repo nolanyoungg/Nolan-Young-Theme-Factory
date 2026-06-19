@@ -148,7 +148,8 @@ function home_url($path = '') {
 }
 function admin_url($path = '') { return ltrim((string) $path, '/'); }
 function site_url($path = '') { return home_url($path); }
-function bloginfo($show = '') { if ('charset' === $show) echo 'UTF-8'; }
+function bloginfo($show = '') { if ('charset' === $show) echo 'UTF-8'; else if ('name' === $show) echo 'Northstar Websites'; }
+function the_custom_logo() { echo '<span class="custom-logo-link"><img src="assets/icons/icon1.svg" alt="Northstar Websites logo"></span>'; }
 function language_attributes() { echo 'lang="en"'; }
 function body_class() { $classes = $GLOBALS['preview_fixture']['body_class'] ?? 'preview'; echo 'class="' . esc_attr($classes) . '"'; }
 function wp_body_open() {}
@@ -162,6 +163,52 @@ function add_theme_support() {}
 function load_theme_textdomain() {}
 function add_editor_style() {}
 function add_menu_page() {}
+class WP_Query {
+  public $posts = array();
+  public $current_post = -1;
+  public $post = null;
+
+  public function __construct($args = array()) {
+    $sample_posts = array(
+      (object) array('post_title' => 'Building a Better WordPress Stack', 'post_content' => '<p>Practical guidance for teams that need maintainable themes and faster delivery.</p>'),
+      (object) array('post_title' => 'How to Plan a Homepage That Converts', 'post_content' => '<p>A clear structure and focused copy can make a homepage do more work.</p>'),
+      (object) array('post_title' => 'Why Local Assets Matter', 'post_content' => '<p>Keeping assets bundled with the theme makes previews and deployments predictable.</p>'),
+    );
+    $this->posts = isset($GLOBALS['preview_fixture']['loop']) && is_array($GLOBALS['preview_fixture']['loop']) && count($GLOBALS['preview_fixture']['loop']) > 0
+      ? array_values($GLOBALS['preview_fixture']['loop'])
+      : $sample_posts;
+  }
+
+  public function have_posts() {
+    return ($this->current_post + 1) < count($this->posts);
+  }
+
+  public function the_post() {
+    $this->current_post += 1;
+    $this->post = $this->posts[$this->current_post];
+    $GLOBALS['post'] = $this->post;
+  }
+}
+function wp_reset_query() { $GLOBALS['post'] = null; }
+function wp_reset_postdata() { $GLOBALS['post'] = null; }
+function has_post_thumbnail() { return false; }
+function the_post_thumbnail($size = 'thumbnail') { echo '<img src="assets/images/placeholder.svg" alt="Preview thumbnail">'; }
+function get_categories() {
+  return array(
+    (object) array('term_id' => 1, 'name' => 'Insights'),
+    (object) array('term_id' => 2, 'name' => 'Strategy'),
+    (object) array('term_id' => 3, 'name' => 'Development'),
+  );
+}
+function get_category_link($term_id = 0) { return home_url('/category/' . absint($term_id) . '/'); }
+function the_posts_pagination() { echo '<nav class="pagination"><a href="#">1</a><a href="#">2</a><a href="#">Next</a></nav>'; }
+function wp_nav_menu($args = array()) {
+  echo '<ul id="primary-menu" class="menu"><li><a href="services_preview.html">Services</a></li><li><a href="about-us_preview.html">About</a></li><li><a href="work_preview.html">Work</a></li><li><a href="blog_preview.html">Blog</a></li></ul>';
+}
+function dynamic_sidebar($index = 1) {
+  echo '<div class="preview-widget preview-widget-' . esc_attr($index) . '"><h3>Widget Area ' . esc_html($index) . '</h3><p>Preview widget content rendered by the static preview harness.</p></div>';
+  return true;
+}
 function get_post_type_archive_link($post_type = '') { return home_url('/' . trim((string) $post_type, '/') . '/'); }
 function have_posts() { return isset($GLOBALS['preview_loop']) && $GLOBALS['preview_loop_index'] < count($GLOBALS['preview_loop']); }
 function the_post() { global $post; $post = (object) $GLOBALS['preview_loop'][$GLOBALS['preview_loop_index']++]; }

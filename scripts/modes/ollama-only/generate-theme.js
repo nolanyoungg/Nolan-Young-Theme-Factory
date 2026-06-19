@@ -6,7 +6,7 @@ const { parseArgs, arg } = require('../../shared/args');
 const { runCommand } = require('../../shared/command-runner');
 const { assertThemeSlug, safeRelativePath } = require('../../shared/theme-utils');
 const { checkOllamaAccess } = require('../../shared/model-access');
-const { BATCHES, OUTPUT_FORMAT, SHARED_GENERATION_RULES } = require('./batch-definitions');
+const { BATCHES, OUTPUT_FORMAT, SHARED_GENERATION_RULES, focusedOllamaBrief } = require('./batch-definitions');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalSlug, positionalPrompt, positionalModel] = args._;
@@ -41,6 +41,7 @@ function applyOutput(rawOutput, themeTarget) {
 }
 
 function batchPrompt(brief, batch) {
+  const focusedBrief = focusedOllamaBrief(brief, batch.name);
   return `You are editing a prepared WordPress theme folder.
 
 Target folder:
@@ -49,7 +50,7 @@ wp-content/themes/${themeSlug}/
 You must generate only files inside that folder. Paths in your response must be relative to that folder.
 
 Creative brief:
-${brief}
+${focusedBrief}
 
 Batch focus:
 ${batch.focus}

@@ -1,0 +1,54 @@
+{
+  "mode": "ollama-only",
+  "status": "prepared",
+  "theme_slug": "010_nolan_young_theme_premium_test010",
+  "template_name": "NOLAN-YOUNG-theme-000",
+  "prompt_file": "prompts/pending/MASTER-TEMPLATE-PROMPT-filler-template (1).md",
+  "requested": {
+    "ollama_model": "qwen2.5-coder:14b",
+    "codex_model": "gpt-5.4",
+    "codex_reasoning": "medium"
+  },
+  "resolved": {
+    "ollama_model": "qwen2.5-coder:14b",
+    "codex_model": "",
+    "codex_reasoning": ""
+  },
+  "configuration_sources": {
+    "ollama_model": "command-line",
+    "codex_model": "repository-default",
+    "codex_reasoning": "repository-default"
+  },
+  "replacement": {
+    "requested": true,
+    "artifacts": [
+      "wp-content/themes/010_nolan_young_theme_premium_test010",
+      "docs/Preview-Themes-Github/010_nolan_young_theme_premium_test010",
+      "dist/zipped-themes/010_nolan_young_theme_premium_test010.zip",
+      "reports/runs/010_nolan_young_theme_premium_test010"
+    ]
+  },
+  "timeouts": {
+    "model_check_timeout_ms": 120000,
+    "ollama_timeout_ms": 1200000,
+    "codex_timeout_ms": 600000,
+    "command_timeout_ms": 120000
+  },
+  "invocations": {
+    "provider_capability_checks": 1,
+    "ollama_generation": 0,
+    "codex_generation": 0,
+    "codex_finish": 0,
+    "command_retries": 0,
+    "targeted_repairs": 0,
+    "failed_invocations": 0
+  },
+  "model_checks": {
+    "ollama": {
+      "passed": true,
+      "executable": "C:\\Users\\NolanYoung\\AppData\\Local\\Programs\\Ollama\\ollama.EXE",
+      "version": "ollama version is 0.30.8",
+      "live_capability_check": true
+    }
+  }
+}

@@ -7,6 +7,7 @@ const { runCommand } = require('../shared/command-runner');
 const {
   ALLOWED_REMOTE_REFERENCE_PATTERN,
   CONTENT_SECTION_PATTERN,
+  MODEL_FILE_BLOCK_MARKER_PATTERN,
   PLACEHOLDER_PATTERN,
   REMOTE_RUNTIME_PATTERN,
   REPO_LOCAL_PATH_PATTERN,
@@ -126,6 +127,8 @@ if (fs.existsSync(themeDir)) {
     if (REMOTE_RUNTIME_PATTERN.test(text) && !ALLOWED_REMOTE_REFERENCE_PATTERN.test(text)) failCheck('Remote runtime dependency or CDN reference found');
     if (REPO_LOCAL_PATH_PATTERN.test(text)) failCheck('Theme contains repo-local, preview, dist, or machine-specific paths');
     if (/\.(php|css|js)$|README\.md$/i.test(relative) && PLACEHOLDER_PATTERN.test(text)) failCheck('Theme contains unfinished placeholder/runtime copy');
+    if (/\.(php|css|scss|js)$/i.test(relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) failCheck(`Theme contains leaked model file-block marker: ${relative}`);
+    if (/\.(php|css|scss|js)$/i.test(relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) failCheck(`Theme contains leaked markdown code fence marker: ${relative}`);
   }
 }
 

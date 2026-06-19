@@ -1,0 +1,10 @@
+Ollama targeted repair found 4 file(s).
+- page-templates/template-about-us.php: Remove unfinished placeholder/runtime copy.
+- page-templates/template-services.php: Remove unfinished placeholder/runtime copy.
+- page-templates/template-single-service.php: Remove unfinished placeholder/runtime copy.
+- src/js/main.js: Remove unfinished placeholder/runtime copy.
+Running one Ollama targeted repair stage.
+Applied 4 file block(s).
+Ollama targeted repair complete for 010_nolan_young_theme_premium_test010
+[Ollama] Starting stage=ollama-targeted-repair model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-targeted-repair model=qwen2.5-coder:14b

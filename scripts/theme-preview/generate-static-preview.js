@@ -104,6 +104,7 @@ function esc_attr_e($text) { echo esc_attr($text); }
 function selected($actual, $expected) { if ((string) $actual === (string) $expected) echo ' selected="selected"'; }
 function checked($actual, $expected) { if ((string) $actual === (string) $expected) echo ' checked="checked"'; }
 function sanitize_key($value) { return strtolower(preg_replace('/[^a-z0-9_\\-]/', '', (string) $value)); }
+function sanitize_title_with_dashes($value) { return trim(preg_replace('/[^a-z0-9]+/', '-', strtolower((string) $value)), '-'); }
 function sanitize_text_field($value) { return trim(strip_tags((string) $value)); }
 function sanitize_email($value) { return trim((string) $value); }
 function sanitize_textarea_field($value) { return trim(strip_tags((string) $value)); }
@@ -124,6 +125,9 @@ function delete_post_meta() {}
 function update_post_meta() {}
 function wp_insert_post($data) { return 1; }
 function wp_delete_post() {}
+function get_post_meta($post_id = 0, $key = '', $single = false) { return $single ? '' : array(); }
+function get_posts($args = array()) { return array(); }
+function wp_get_attachment_image($attachment_id = 0, $size = 'thumbnail', $icon = false, $attr = array()) { return '<img src="assets/images/placeholder.svg" alt="Preview image">'; }
 function get_the_date($format = '', $post = null) { return date('Y-m-d'); }
 function date_i18n($format) { return date($format); }
 function current_time($type = 'mysql') { return date('Y-m-d H:i:s'); }
@@ -160,6 +164,18 @@ function body_class() { $classes = $GLOBALS['preview_fixture']['body_class'] ?? 
 function wp_body_open() {}
 function wp_head() { echo '<link rel="stylesheet" href="assets/css/bundle.css">'; }
 function wp_footer() { echo '<script src="assets/js/bundle.js"></script>'; }
+function wp_enqueue_script() {}
+function wp_enqueue_style() {}
+function wp_register_script() {}
+function wp_register_style() {}
+function wp_add_inline_script() {}
+function wp_add_inline_style() {}
+function wp_localize_script() {}
+function wp_get_theme() {
+  return new class {
+    public function get($field = '') { return '1.0.0'; }
+  };
+}
 function add_action() {}
 function add_filter() {}
 function register_post_type() {}
@@ -205,8 +221,23 @@ function get_categories() {
     (object) array('term_id' => 3, 'name' => 'Development'),
   );
 }
+function get_pages($args = array()) {
+  return array(
+    (object) array('ID' => 11, 'post_title' => 'Website Strategy'),
+    (object) array('ID' => 12, 'post_title' => 'Custom Theme Development'),
+    (object) array('ID' => 13, 'post_title' => 'Care and Optimization'),
+  );
+}
+function wp_get_recent_posts($args = array()) {
+  return array(
+    array('ID' => 21, 'post_title' => 'Planning a Higher-Converting Homepage'),
+    array('ID' => 22, 'post_title' => 'Why Local Theme Assets Matter'),
+    array('ID' => 23, 'post_title' => 'Keeping WordPress Builds Maintainable'),
+  );
+}
 function get_category_link($term_id = 0) { return home_url('/category/' . absint($term_id) . '/'); }
 function the_posts_pagination() { echo '<nav class="pagination"><a href="#">1</a><a href="#">2</a><a href="#">Next</a></nav>'; }
+function the_posts_navigation() { echo '<nav class="posts-navigation"><a href="#">Older posts</a><a href="#">Newer posts</a></nav>'; }
 function wp_nav_menu($args = array()) {
   echo '<ul id="primary-menu" class="menu"><li><a href="services_preview.html">Services</a></li><li><a href="about-us_preview.html">About</a></li><li><a href="work_preview.html">Work</a></li><li><a href="blog_preview.html">Blog</a></li></ul>';
 }
@@ -245,6 +276,7 @@ function post_password_required() { return false; }
 function have_comments() { return false; }
 function wp_list_comments() {}
 function comment_form() { echo '<form class="comment-form"><p class="comment-form-comment"><label>Comment<textarea rows="4"></textarea></label></p><p><button type="submit">Post Comment</button></p></form>'; }
+function do_shortcode($shortcode = '') { return '<form class="contact-form-preview"><label>Name<input type="text"></label><label>Email<input type="email"></label><label>Message<textarea rows="4"></textarea></label><button type="submit">Send</button></form>'; }
 function get_search_form() { include $GLOBALS['preview_theme_dir'] . DIRECTORY_SEPARATOR . 'searchform.php'; }
 function get_header() { include $GLOBALS['preview_theme_dir'] . DIRECTORY_SEPARATOR . 'header.php'; }
 function get_footer() { include $GLOBALS['preview_theme_dir'] . DIRECTORY_SEPARATOR . 'footer.php'; }

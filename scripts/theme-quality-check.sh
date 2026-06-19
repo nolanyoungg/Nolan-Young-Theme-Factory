@@ -46,6 +46,24 @@ if [ -d "$theme_dir" ]; then
     grep -q '^Text Domain:' "$theme_dir/style.css" || fail "style.css missing Text Domain header"
   fi
 
+  if [ -d "$theme_dir/template-parts" ]; then
+    if grep -R -I -n -E --include='*.php' '(get_header\s*\(|get_footer\s*\(|<!doctype|<html|<body|</body>|</html>)' "$theme_dir/template-parts" >/dev/null 2>&1; then
+      fail "Template parts must be fragments only and cannot include document wrappers"
+    fi
+  fi
+
+  if [ -f "$theme_dir/header.php" ]; then
+    grep -q '<!doctype html>' "$theme_dir/header.php" || fail "header.php missing <!doctype html>"
+    grep -q 'wp_head()' "$theme_dir/header.php" || fail "header.php missing wp_head()"
+    grep -q '<body' "$theme_dir/header.php" || fail "header.php missing opening body tag"
+  fi
+
+  if [ -f "$theme_dir/footer.php" ]; then
+    grep -q 'wp_footer()' "$theme_dir/footer.php" || fail "footer.php missing wp_footer()"
+    grep -q '</body>' "$theme_dir/footer.php" || fail "footer.php missing closing body tag"
+    grep -q '</html>' "$theme_dir/footer.php" || fail "footer.php missing closing html tag"
+  fi
+
   css_bundle="$theme_dir/assets/css/bundle.css"
   js_bundle="$theme_dir/assets/js/bundle.js"
   scss_entry="$theme_dir/src/scss/main.scss"

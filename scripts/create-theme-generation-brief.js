@@ -49,6 +49,17 @@ Inside \`${relTheme}/\`, fully code and fill the theme. Replace Lorem ipsum, add
 
 Use local assets only. Do not use CDN dependencies. Do not add secrets or credentials. Keep WordPress PHP valid and paths portable.
 
+## Preview Contract
+
+The static preview step is read-only. It must render the completed theme as-is and must never require manual edits to the generated theme source.
+
+That means the theme itself must already satisfy these requirements:
+
+- template-parts files are fragments only and never include get_header(), get_footer(), or document wrappers
+- header.php and footer.php are complete document wrappers
+- any referenced local image or icon path exists inside the theme, or is replaced with a local placeholder asset
+- homepage and section templates contain finished copy, not placeholder shells
+
 ## Creative Prompt
 
 ${prompt}

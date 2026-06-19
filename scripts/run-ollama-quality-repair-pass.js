@@ -6,6 +6,7 @@ const { spawnSync } = require('child_process');
 const root = path.resolve(__dirname, '..');
 const [themeSlug, promptFile, model = 'qwen2.5-coder:14b'] = process.argv.slice(2);
 const unfinishedPattern = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder/i;
+const fragmentWrapperPattern = /(get_header\s*\(|get_footer\s*\(|<!doctype|<html\b|<body\b|<\/body>|<\/html>)/i;
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
@@ -32,7 +33,19 @@ function walk(dir, out = []) {
 function unfinishedFiles(themeDir) {
   return walk(themeDir)
     .filter((file) => /\.(php|css|js)$/i.test(file) || path.basename(file) === 'README.md')
-    .filter((file) => unfinishedPattern.test(fs.readFileSync(file, 'utf8')))
+    .filter((file) => {
+      const text = fs.readFileSync(file, 'utf8');
+      const relative = path.relative(themeDir, file).replace(/\\/g, '/');
+      if (unfinishedPattern.test(text)) return true;
+      if (relative.startsWith('template-parts/') && fragmentWrapperPattern.test(text)) return true;
+      if (relative === 'header.php') {
+        return !/<!doctype html>/i.test(text) || !/wp_head\s*\(/i.test(text) || !/<body/i.test(text);
+      }
+      if (relative === 'footer.php') {
+        return !/wp_footer\s*\(/i.test(text) || !/<\/body>/i.test(text) || !/<\/html>/i.test(text);
+      }
+      return false;
+    })
     .map((file) => path.relative(themeDir, file).replace(/\\/g, '/'))
     .sort();
 }
@@ -44,6 +57,13 @@ function createBrief() {
 }
 
 function repairPrompt(brief, relativePath, currentContents) {
+  const extraRules = relativePath.startsWith('template-parts/')
+    ? '- This file is a fragment only. Remove any get_header(), get_footer(), wp_head(), wp_footer(), <!doctype>, <html>, <head>, or <body> wrappers.'
+    : relativePath === 'header.php'
+      ? '- This file must be a complete document header with <!doctype html>, <html>, <head>, wp_head(), and the opening <body> tag.'
+      : relativePath === 'footer.php'
+        ? '- This file must close the document with wp_footer(), </body>, and </html>.'
+        : '- Keep the file focused on its own technical purpose and remove placeholder copy.';
   return `You are repairing one file inside a generated WordPress theme.
 
 Target folder:
@@ -82,6 +102,7 @@ Rules:
 - Preserve the file's technical purpose.
 - Preserve valid WordPress PHP syntax for PHP files.
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.
+${extraRules}
 `;
 }
 

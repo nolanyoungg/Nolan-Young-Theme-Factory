@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
 cd "$repo_root"
 
 fail() {
@@ -13,7 +13,7 @@ theme_slug="${1:-}"
 prompt_file="${2:-}"
 model="${3:-qwen2.5-coder:14b}"
 
-[ -n "$theme_slug" ] && [ -n "$prompt_file" ] || fail "Usage: bash scripts/run-ollama-theme-pass.sh <theme-slug> <prompt-file> [model]"
+[ -n "$theme_slug" ] && [ -n "$prompt_file" ] || fail "Usage: bash scripts/modes/ollama-only/run-ollama-theme-pass.sh <theme-slug> <prompt-file> [model]"
 [[ "$theme_slug" =~ ^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]] || fail "Invalid theme slug: $theme_slug"
 [ -d "wp-content/themes/$theme_slug" ] || fail "Theme folder missing: wp-content/themes/$theme_slug"
 [ -f "$prompt_file" ] || fail "Prompt file missing: $prompt_file"
@@ -23,7 +23,7 @@ if ! ollama list | awk 'NR > 1 { print $1 }' | grep -Fx "$model" >/dev/null; the
   fail "Ollama model is not installed: $model"
 fi
 
-brief_path="$(node scripts/create-theme-generation-brief.js "$theme_slug" "$prompt_file" ollama-only)"
+brief_path="$(node scripts/briefs/create-theme-generation-brief.js "$theme_slug" "$prompt_file" ollama-only)"
 generation_dir="reports/runs/$theme_slug/ollama-generation"
 mkdir -p "$generation_dir"
 
@@ -88,7 +88,7 @@ EOF
 
   printf 'Running Ollama batch: %s\n' "$batch_name"
   OLLAMA_NOHISTORY=1 ollama run "$model" --nowordwrap < "$run_prompt" > "$raw_output"
-  node scripts/apply-theme-file-blocks.js "$raw_output" "wp-content/themes/$theme_slug"
+  node scripts/ai-output/apply-theme-file-blocks.js "$raw_output" "wp-content/themes/$theme_slug"
 }
 
 printf 'Running Ollama model: %s\n' "$model"

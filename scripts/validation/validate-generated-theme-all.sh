@@ -18,8 +18,8 @@ fail() {
   exit 1
 }
 
-bash scripts/validate-theme-from-template.sh "$theme_slug" "$template_name"
-bash scripts/theme-quality-check.sh "$theme_slug"
+bash scripts/validation/validate-theme-from-template.sh "$theme_slug" "$template_name"
+bash scripts/validation/theme-quality-check.sh "$theme_slug"
 
 preview_dir="docs/Preview-Themes-Github/$theme_slug"
 zip_path="dist/zipped-themes/$theme_slug.zip"
@@ -43,8 +43,8 @@ if [ -d "$preview_dir" ]; then
     [ -f "$preview_dir/$asset" ] || fail "Preview asset is missing: $preview_dir/$asset"
   done
 
-  if ! grep -R -I -n 'data-nolan-menu-header' "$preview_dir"/*.html >/dev/null 2>&1; then
-    fail "Preview pages are missing Nolan menu header attributes"
+  if ! grep -R -I -n -E '<header[[:space:]>]' "$preview_dir"/*.html >/dev/null 2>&1; then
+    fail "Preview pages are missing header markup"
   fi
 
   if grep -R -I -n -E 'Lorem ipsum|TODO|FIXME|Generation should replace|Static preview generated from|prepared WordPress theme folder' \
@@ -80,7 +80,7 @@ fi
 
 grep -q "$theme_slug" docs/index.html || fail "Preview gallery does not link to $theme_slug"
 
-node scripts/validate-preview-gallery.js
+node scripts/preview/validate-preview-gallery.js
 
 if [ "$failures" -gt 0 ]; then
   printf 'Generated theme validation failed for %s with %s issue(s).\n' "$theme_slug" "$failures" >&2

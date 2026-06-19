@@ -16,7 +16,7 @@ function fail(message) {
 }
 
 if (!sourceFile || !themeDirArg) {
-  fail('Usage: node scripts/apply-theme-file-blocks.js <source-output-file> <theme-dir>');
+  fail('Usage: node scripts/ai-output/apply-theme-file-blocks.js <source-output-file> <theme-dir>');
 }
 
 const themeDir = path.resolve(themeDirArg);

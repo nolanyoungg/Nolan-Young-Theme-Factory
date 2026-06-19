@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const docsDir = path.join(root, 'docs');
 const themesRoot = path.join(root, 'wp-content', 'themes');
 const zipRoot = path.join(root, 'dist', 'zipped-themes');

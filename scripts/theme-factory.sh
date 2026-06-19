@@ -32,54 +32,54 @@ case "$cmd" in
     find wordpress-themplate-themes -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort
     ;;
   prepare)
-    bash scripts/prepare-theme-from-template.sh "$@"
+    bash scripts/templates/prepare-theme-from-template.sh "$@"
     ;;
   brief)
-    node scripts/create-theme-generation-brief.js "$@"
+    node scripts/briefs/create-theme-generation-brief.js "$@"
     ;;
   validate)
-    bash scripts/validate-theme-from-template.sh "$@"
+    bash scripts/validation/validate-theme-from-template.sh "$@"
     ;;
   quality)
-    bash scripts/theme-quality-check.sh "$@"
+    bash scripts/validation/theme-quality-check.sh "$@"
     ;;
   check)
     slug="${1:-}"
     template="${2:-}"
     [ -n "$slug" ] || { usage; exit 1; }
     if [ -n "$template" ]; then
-      bash scripts/validate-theme-from-template.sh "$slug" "$template"
+      bash scripts/validation/validate-theme-from-template.sh "$slug" "$template"
     else
-      bash scripts/validate-theme-from-template.sh "$slug"
+      bash scripts/validation/validate-theme-from-template.sh "$slug"
     fi
-    bash scripts/theme-quality-check.sh "$slug"
+    bash scripts/validation/theme-quality-check.sh "$slug"
     ;;
   ollama-pass)
-    bash scripts/run-ollama-theme-pass.sh "$@"
+    bash scripts/modes/ollama-only/run-ollama-theme-pass.sh "$@"
     ;;
   ollama-only)
     prompt_file="${1:-}"
     template_name="${2:-NOLAN-YOUNG-theme-000}"
     model="${3:-qwen2.5-coder:14b}"
     [ -n "$prompt_file" ] || { usage; exit 1; }
-    prepare_output="$(bash scripts/prepare-theme-from-template.sh "$prompt_file" "$template_name")"
+    prepare_output="$(bash scripts/templates/prepare-theme-from-template.sh "$prompt_file" "$template_name")"
     printf '%s\n' "$prepare_output"
     slug="$(printf '%s\n' "$prepare_output" | sed -n 's|^Prepared theme folder: wp-content/themes/||p' | head -n 1)"
     [ -n "$slug" ] || {
       printf 'Could not determine prepared theme slug.\n' >&2
       exit 1
     }
-    bash scripts/run-ollama-theme-pass.sh "$slug" "$prompt_file" "$model"
-    bash scripts/validate-theme-from-template.sh "$slug" "$template_name"
-    if ! bash scripts/theme-quality-check.sh "$slug"; then
+    bash scripts/modes/ollama-only/run-ollama-theme-pass.sh "$slug" "$prompt_file" "$model"
+    bash scripts/validation/validate-theme-from-template.sh "$slug" "$template_name"
+    if ! bash scripts/validation/theme-quality-check.sh "$slug"; then
       printf 'Running Ollama quality repair pass for %s\n' "$slug"
-      bash scripts/run-ollama-quality-repair-pass.sh "$slug" "$prompt_file" "$model"
-      bash scripts/theme-quality-check.sh "$slug"
+      bash scripts/modes/ollama-only/run-ollama-quality-repair-pass.sh "$slug" "$prompt_file" "$model"
+      bash scripts/validation/theme-quality-check.sh "$slug"
     fi
-    node scripts/generate-static-preview.js "$slug"
-    bash scripts/package-theme.sh "$slug"
-    node scripts/rebuild-preview-gallery.js
-    node scripts/validate-preview-gallery.js
+    node scripts/preview/generate-static-preview.js "$slug"
+    bash scripts/packaging/package-theme.sh "$slug"
+    node scripts/preview/rebuild-preview-gallery.js
+    node scripts/preview/validate-preview-gallery.js
     ;;
   run)
     mode="${1:-}"
@@ -104,16 +104,16 @@ case "$cmd" in
     node scripts/run-theme-workflow.js --resume "${1:-}"
     ;;
   preview)
-    node scripts/generate-static-preview.js "$@"
-    node scripts/rebuild-preview-gallery.js
-    node scripts/validate-preview-gallery.js
+    node scripts/preview/generate-static-preview.js "$@"
+    node scripts/preview/rebuild-preview-gallery.js
+    node scripts/preview/validate-preview-gallery.js
     ;;
   preview-index)
-    node scripts/rebuild-preview-gallery.js
-    node scripts/validate-preview-gallery.js
+    node scripts/preview/rebuild-preview-gallery.js
+    node scripts/preview/validate-preview-gallery.js
     ;;
   package)
-    bash scripts/package-theme.sh "$@"
+    bash scripts/packaging/package-theme.sh "$@"
     ;;
   help|-h|--help)
     usage

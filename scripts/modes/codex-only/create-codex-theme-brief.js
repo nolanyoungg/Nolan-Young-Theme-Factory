@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [mode, themeSlug, templateName, promptFile, generationBriefPath, manifestPath, validationPath, codexModel, reasoning, outputPath] = process.argv.slice(2);
 
 function fail(message) {
@@ -11,7 +11,7 @@ function fail(message) {
 }
 
 if (!mode || !themeSlug || !templateName || !promptFile || !generationBriefPath || !manifestPath || !validationPath || !codexModel || !reasoning || !outputPath) {
-  fail('Usage: node scripts/create-codex-theme-brief.js <mode> <theme-slug> <template-name> <prompt-file> <generation-brief-path> <manifest-path> <validation-path> <codex-model> <reasoning> <output-md>');
+  fail('Usage: node scripts/modes/codex-only/create-codex-theme-brief.js <mode> <theme-slug> <template-name> <prompt-file> <generation-brief-path> <manifest-path> <validation-path> <codex-model> <reasoning> <output-md>');
 }
 
 function resolveRepoPath(file) {

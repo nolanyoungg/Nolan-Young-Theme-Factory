@@ -8,6 +8,8 @@ This repo uses one shared stage-based workflow for three modes:
 
 The workflow is template-first. A template is copied into `wp-content/themes/NNN_nolan_young_theme_[description]/` before any AI generation starts.
 
+Script layout is documented in `scripts/README.md`. Normal operation should go through `bash scripts/theme-factory.sh ...` or the compatibility entrypoint `node scripts/run-theme-workflow.js ...`.
+
 ## Shared Stages
 
 The runner resolves stages from `config/workflow-modes.json` and defaults from `config/theme-factory.defaults.json`.
@@ -99,7 +101,7 @@ Key files:
 
 After generation and validation:
 
-* theme assets are built by the workflow with `node scripts/build-theme-assets.js {theme_slug}`
+* theme assets are built by the workflow with `node scripts/build/build-theme-assets.js {theme_slug}`
 * the build wrapper installs theme-local dependencies if needed and runs `npm run build` inside the generated theme folder
 * static preview is written to `docs/Preview-Themes-Github/{theme_slug}/`
 * the gallery is rebuilt in `docs/index.html`

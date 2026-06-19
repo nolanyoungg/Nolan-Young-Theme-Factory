@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 fail() {
   printf 'ERROR: %s\n' "$*" >&2
@@ -42,7 +42,7 @@ next_number() {
 prompt_file="${1:-${THEME_PROMPT_FILE:-}}"
 template_name="${2:-${THEME_TEMPLATE:-NOLAN-YOUNG-theme-000}}"
 
-[ -n "$prompt_file" ] || fail "Usage: bash scripts/prepare-theme-from-template.sh <prompt-file> [template-name]"
+[ -n "$prompt_file" ] || fail "Usage: bash scripts/templates/prepare-theme-from-template.sh <prompt-file> [template-name]"
 
 case "$prompt_file" in
   /*) prompt_path="$prompt_file" ;;

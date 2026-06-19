@@ -2,8 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug] = process.argv.slice(2);
 const failures = [];
 
@@ -24,7 +24,7 @@ function walk(dir, out = []) {
 }
 
 if (!themeSlug || !/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) {
-  console.error('Usage: node scripts/theme-quality-check.js <theme-slug>');
+  console.error('Usage: node scripts/validation/theme-quality-check.js <theme-slug>');
   process.exit(1);
 }
 

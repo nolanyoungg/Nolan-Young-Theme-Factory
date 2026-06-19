@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
 const [slug, promptFileArg, mode = 'codex-only'] = process.argv.slice(2);
 if (!slug || !promptFileArg) {
-  console.error('Usage: node scripts/create-theme-generation-brief.js <theme-slug> <prompt-file> [mode]');
+  console.error('Usage: node scripts/briefs/create-theme-generation-brief.js <theme-slug> <prompt-file> [mode]');
   process.exit(1);
 }
 
-const root = path.resolve(__dirname, '..');
 const themeDir = path.join(root, 'wp-content', 'themes', slug);
 const promptFile = path.resolve(root, promptFileArg);
 

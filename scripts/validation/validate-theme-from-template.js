@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug, requestedTemplate] = process.argv.slice(2);
 
 function fail(message) {
@@ -20,7 +20,7 @@ function walkFiles(dir, base = dir, out = []) {
   return out;
 }
 
-if (!themeSlug) fail('Usage: node scripts/validate-theme-from-template.js <theme-slug> [template-name]');
+if (!themeSlug) fail('Usage: node scripts/validation/validate-theme-from-template.js <theme-slug> [template-name]');
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
 if ((requestedTemplate || '').includes('..')) fail('Unsafe template name.');
 

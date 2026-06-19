@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug, templateName, outputJson, phase = 'final'] = process.argv.slice(2);
 
 function fail(message) {
@@ -11,7 +11,7 @@ function fail(message) {
 }
 
 if (!themeSlug || !templateName || !outputJson) {
-  fail('Usage: node scripts/write-theme-validation-report.js <theme-slug> <template-name> <output-json> [phase]');
+  fail('Usage: node scripts/validation/write-theme-validation-report.js <theme-slug> <template-name> <output-json> [phase]');
 }
 
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);

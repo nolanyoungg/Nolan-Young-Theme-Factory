@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [templateName, outputJson] = process.argv.slice(2);
 
 function fail(message) {
@@ -11,7 +11,7 @@ function fail(message) {
 }
 
 if (!templateName || !outputJson) {
-  fail('Usage: node scripts/create-template-manifest.js <template-name> <output-json>');
+  fail('Usage: node scripts/templates/create-template-manifest.js <template-name> <output-json>');
 }
 
 if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(templateName) || templateName.includes('..') || /[\\/]/.test(templateName)) {

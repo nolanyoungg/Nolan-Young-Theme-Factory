@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$repo_root"
 
 fail() {
@@ -13,7 +13,7 @@ temp_manifest="$(mktemp)"
 temp_manifest="${temp_manifest%.tmp}.json"
 
 node -e "JSON.parse(require('fs').readFileSync('config/workflow-modes.json','utf8')); JSON.parse(require('fs').readFileSync('config/theme-factory.defaults.json','utf8'));"
-node scripts/create-template-manifest.js NOLAN-YOUNG-theme-000 "$temp_manifest" >/dev/null
+node scripts/templates/create-template-manifest.js NOLAN-YOUNG-theme-000 "$temp_manifest" >/dev/null
 [ -s "$temp_manifest" ] || fail "Template manifest was not created."
 rm -f "$temp_manifest"
 

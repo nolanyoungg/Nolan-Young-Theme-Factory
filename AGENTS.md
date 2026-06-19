@@ -59,7 +59,7 @@ Separate quality checks cover practical WordPress concerns: PHP syntax, required
 
 ## Workflow Contract
 
-The shared workflow lives in `scripts/run-theme-workflow.js` and is driven by `config/workflow-modes.json` and `config/theme-factory.defaults.json`.
+The shared workflow public entrypoint lives in `scripts/run-theme-workflow.js`, with the implementation under `scripts/workflow/`, and is driven by `config/workflow-modes.json` and `config/theme-factory.defaults.json`.
 
 The supported first-class modes are:
 

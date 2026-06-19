@@ -2,9 +2,13 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { root, scriptPath } = require('../../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug, promptFile, model = 'qwen2.5-coder:14b'] = process.argv.slice(2);
+const scripts = {
+  applyThemeFileBlocks: scriptPath('ai-output', 'apply-theme-file-blocks.js'),
+  createThemeGenerationBrief: scriptPath('briefs', 'create-theme-generation-brief.js')
+};
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
@@ -26,13 +30,13 @@ function ensureModel() {
 }
 
 function createBrief() {
-  const result = run('node', ['scripts/create-theme-generation-brief.js', themeSlug, promptFile, 'ollama-only'], { echo: false });
+  const result = run('node', [scripts.createThemeGenerationBrief, themeSlug, promptFile, 'ollama-only'], { echo: false });
   if (result.status !== 0) fail('Generation brief creation failed.');
   return result.stdout.trim();
 }
 
 function applyOutput(rawOutput, themeTarget) {
-  const result = run('node', ['scripts/apply-theme-file-blocks.js', rawOutput, themeTarget]);
+  const result = run('node', [scripts.applyThemeFileBlocks, rawOutput, themeTarget]);
   if (result.status !== 0) fail(`Could not apply Ollama output: ${rawOutput}`);
 }
 
@@ -111,7 +115,7 @@ function runBatch(brief, generationDir, batchName, files, focus) {
   applyOutput(rawOutput, `wp-content/themes/${themeSlug}`);
 }
 
-if (!themeSlug || !promptFile) fail('Usage: node scripts/run-ollama-theme-pass.js <theme-slug> <prompt-file> [model]');
+if (!themeSlug || !promptFile) fail('Usage: node scripts/modes/ollama-only/run-ollama-theme-pass.js <theme-slug> <prompt-file> [model]');
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
 if (promptFile.includes('..')) fail('Unsafe prompt path.');
 if (!fs.existsSync(path.join(root, 'wp-content', 'themes', themeSlug))) fail(`Theme folder missing: wp-content/themes/${themeSlug}`);

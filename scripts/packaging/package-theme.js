@@ -3,8 +3,8 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug] = process.argv.slice(2);
 
 function fail(message) {
@@ -24,7 +24,7 @@ function removeExcluded(dir) {
 }
 
 if (!themeSlug || !/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) {
-  fail('Usage: node scripts/package-theme.js <theme-slug>');
+  fail('Usage: node scripts/packaging/package-theme.js <theme-slug>');
 }
 
 const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 theme_slug="${1:-}"
 
 fail() {
@@ -9,7 +9,7 @@ fail() {
   exit 1
 }
 
-[ -n "$theme_slug" ] || fail "Usage: bash scripts/build-theme-assets.sh <theme-slug>"
+[ -n "$theme_slug" ] || fail "Usage: bash scripts/build/build-theme-assets.sh <theme-slug>"
 [[ "$theme_slug" =~ ^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]] || fail "Invalid theme slug: $theme_slug"
 
 theme_dir="$repo_root/wp-content/themes/$theme_slug"

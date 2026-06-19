@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const docsDir = path.join(root, 'docs');
 const themesRoot = path.join(root, 'wp-content', 'themes');
 const previewRoot = path.join(docsDir, 'Preview-Themes-Github');
@@ -43,7 +43,7 @@ function shouldRequirePreview(slug) {
 }
 
 if (!fs.existsSync(indexPath)) {
-  fail('docs/index.html is missing. Run: node scripts/rebuild-preview-gallery.js');
+  fail('docs/index.html is missing. Run: node scripts/preview/rebuild-preview-gallery.js');
 }
 
 const indexHtml = fs.readFileSync(indexPath, 'utf8');

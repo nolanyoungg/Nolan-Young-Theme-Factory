@@ -48,7 +48,7 @@ That was the strongest run so far. The prompt structure used for that pass is th
 - ZIP outputs: `dist/zipped-themes/`
 - Preview output: `docs/Preview-Themes-Github/`
 - Run reports: `reports/runs/`
-- Workflow scripts: `scripts/`
+- Workflow scripts: `scripts/` (see `scripts/README.md` for the organized script map)
 - Workflow configuration: `config/workflow-modes.json` and `config/theme-factory.defaults.json`
 
 **Common commands**
@@ -74,7 +74,7 @@ The prompt paths above are examples. Use the actual prompt file that matches the
 - `wp-content/themes/` holds generated themes.
 - `dist/zipped-themes/` holds packaged theme ZIPs.
 - `docs/Preview-Themes-Github/` holds GitHub Pages preview copies for each generated theme.
-- `scripts/` holds the workflow automation.
+- `scripts/` holds the workflow automation, organized by mode and deterministic workflow responsibility.
 - `config/` holds workflow mode and default settings.
 - `reports/runs/` holds per-run logs, briefs, validation reports, and summaries.
 - `accessibility/`, `blocks/`, `docs/`, `src/`, `inc/`, and `template-parts/` live inside each generated theme and define the actual WordPress deliverable.
@@ -103,15 +103,9 @@ The prompt paths above are examples. Use the actual prompt file that matches the
 
 **Unreferenced source files**
 
-I found one repo doc that is currently not referenced by any other tracked file:
+I did not find any clearly dead source files that are both unreferenced and safely removable from the current repo state.
 
-- [`docs/AI-WORKFLOW.md`](/C:/Users/NolanYoung/codex-ggi-nolan-local/repos/Nolan-Young-Theme-Factory/docs/AI-WORKFLOW.md)
-
-I did not find any other clearly dead source files that are both unreferenced and safely removable from the current repo state.
-
-The things that look unreferenced at a glance beyond that are generated artifacts or dependency trees, not source files I would delete without a separate cleanup pass.
-
-If you want, I can do a second pass focused only on pruning generated or compatibility files that are no longer needed.
+The things that look unreferenced at a glance are generated artifacts, run reports, preview output, ZIP output, or dependency trees, not source files I would delete without a separate cleanup pass.
 
 **HOW TO OPERATE AS COMMAND USER**
 

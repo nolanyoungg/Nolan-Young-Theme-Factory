@@ -2,8 +2,8 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug] = process.argv.slice(2);
 
 function fail(message) {
@@ -20,7 +20,7 @@ function run(command, args, cwd) {
 }
 
 if (!themeSlug || !/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) {
-  fail('Usage: node scripts/build-theme-assets.js <theme-slug>');
+  fail('Usage: node scripts/build/build-theme-assets.js <theme-slug>');
 }
 
 const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
@@ -33,5 +33,11 @@ if (!fs.existsSync(path.join(themeDir, 'node_modules'))) {
 }
 const buildStatus = run('npm', ['run', 'build'], themeDir);
 if (buildStatus !== 0) process.exit(buildStatus);
+
+const now = new Date();
+for (const bundle of ['assets/css/bundle.css', 'assets/js/bundle.js']) {
+  const bundlePath = path.join(themeDir, bundle);
+  if (fs.existsSync(bundlePath)) fs.utimesSync(bundlePath, now, now);
+}
 
 console.log(`Built assets for ${themeSlug}`);

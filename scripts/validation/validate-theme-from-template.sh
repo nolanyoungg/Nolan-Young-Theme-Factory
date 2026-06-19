@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 fail() {
   printf 'ERROR: %s\n' "$*" >&2
@@ -20,7 +20,7 @@ canonical_path() {
 theme_slug="${1:-}"
 template_name="${2:-${THEME_TEMPLATE:-}}"
 
-[ -n "$theme_slug" ] || fail "Usage: bash scripts/validate-theme-from-template.sh <theme-slug> [template-name]"
+[ -n "$theme_slug" ] || fail "Usage: bash scripts/validation/validate-theme-from-template.sh <theme-slug> [template-name]"
 [[ "$theme_slug" =~ ^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$ ]] || fail "Invalid theme slug: $theme_slug"
 
 theme_dir="$repo_root/wp-content/themes/$theme_slug"

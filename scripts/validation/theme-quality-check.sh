@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 theme_slug="${1:-}"
 failures=0
 
@@ -20,7 +20,7 @@ canonical_path() {
 }
 
 [ -n "$theme_slug" ] || {
-  printf 'Usage: bash scripts/theme-quality-check.sh <theme-slug>\n' >&2
+  printf 'Usage: bash scripts/validation/theme-quality-check.sh <theme-slug>\n' >&2
   exit 1
 }
 

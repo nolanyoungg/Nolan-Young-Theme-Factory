@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const { root } = require('../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [promptFile, templateName = process.env.THEME_TEMPLATE || 'NOLAN-YOUNG-theme-000'] = process.argv.slice(2);
 
 function fail(message) {
@@ -53,7 +53,7 @@ function updateJson(file, updater) {
   fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);
 }
 
-if (!promptFile) fail('Usage: node scripts/prepare-theme-from-template.js <prompt-file> [template-name]');
+if (!promptFile) fail('Usage: node scripts/templates/prepare-theme-from-template.js <prompt-file> [template-name]');
 if (promptFile.includes('..') || templateName.includes('..')) fail('Unsafe path segment detected.');
 
 const promptPath = path.isAbsolute(promptFile) ? promptFile : path.join(root, promptFile);

@@ -2,9 +2,13 @@
 const fs = require('fs');
 const path = require('path');
 const { spawnSync } = require('child_process');
+const { root, scriptPath } = require('../../lib/repo-root');
 
-const root = path.resolve(__dirname, '..');
 const [themeSlug, promptFile, model = 'qwen2.5-coder:14b'] = process.argv.slice(2);
+const scripts = {
+  applyThemeFileBlocks: scriptPath('ai-output', 'apply-theme-file-blocks.js'),
+  createThemeGenerationBrief: scriptPath('briefs', 'create-theme-generation-brief.js')
+};
 const unfinishedPattern = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder/i;
 const fragmentWrapperPattern = /(get_header\s*\(|get_footer\s*\(|<!doctype|<html\b|<body\b|<\/body>|<\/html>)/i;
 
@@ -51,7 +55,7 @@ function unfinishedFiles(themeDir) {
 }
 
 function createBrief() {
-  const result = run('node', ['scripts/create-theme-generation-brief.js', themeSlug, promptFile, 'ollama-only'], { echo: false });
+  const result = run('node', [scripts.createThemeGenerationBrief, themeSlug, promptFile, 'ollama-only'], { echo: false });
   if (result.status !== 0) fail('Generation brief creation failed.');
   return fs.readFileSync(path.join(root, result.stdout.trim()), 'utf8');
 }
@@ -102,7 +106,7 @@ ${extraRules}
 `;
 }
 
-if (!themeSlug || !promptFile) fail('Usage: node scripts/run-ollama-quality-repair-pass.js <theme-slug> <prompt-file> [model]');
+if (!themeSlug || !promptFile) fail('Usage: node scripts/modes/ollama-only/run-ollama-quality-repair-pass.js <theme-slug> <prompt-file> [model]');
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
 if (promptFile.includes('..')) fail('Unsafe prompt path.');
 
@@ -139,7 +143,7 @@ for (let pass = 1; pass <= 2; pass += 1) {
       env: { ...process.env, OLLAMA_NOHISTORY: '1' }
     });
     fs.writeFileSync(rawOutput, `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
-    if (result.status === 0) run('node', ['scripts/apply-theme-file-blocks.js', rawOutput, `wp-content/themes/${themeSlug}`]);
+    if (result.status === 0) run('node', [scripts.applyThemeFileBlocks, rawOutput, `wp-content/themes/${themeSlug}`]);
   }
 }
 

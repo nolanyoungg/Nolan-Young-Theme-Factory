@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){const t=document.querySelectorAll("[data-filter]"),e=document.querySelectorAll(".portfolio-item");t.forEach(t=>{t.addEventListener("click",function(){const t=this.getAttribute("data-filter");e.forEach(e=>{"all"===t||e.classList.contains(t)?e.style.display="block":e.style.display="none"})})})});

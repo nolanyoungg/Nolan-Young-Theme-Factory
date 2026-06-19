@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root } = require('../lib/repo-root');
+const { root } = require('../shared/repo-root');
 
 const [slug, promptFileArg, mode = 'codex-only'] = process.argv.slice(2);
 if (!slug || !promptFileArg) {

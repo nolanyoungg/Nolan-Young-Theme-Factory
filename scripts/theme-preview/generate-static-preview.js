@@ -1,17 +1,20 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
-const { root } = require('../lib/repo-root');
+const { root } = require('../shared/repo-root');
+const { parseArgs, arg } = require('../shared/args');
+const { runCommand } = require('../shared/command-runner');
 
-const [slug] = process.argv.slice(2);
+const args = parseArgs(process.argv.slice(2));
+const [positionalSlug] = args._;
+const slug = arg(args, 'theme-slug', positionalSlug || '');
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
   process.exit(1);
 }
 
-if (!slug) fail('Usage: node scripts/preview/generate-static-preview.js <theme-slug>');
+if (!slug) fail('Usage: node scripts/theme-preview/generate-static-preview.js --theme-slug <theme-slug>');
 if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(slug)) fail(`Invalid theme slug: ${slug}`);
 
 const themeDir = path.join(root, 'wp-content', 'themes', slug);
@@ -270,7 +273,7 @@ echo ob_get_clean();
 function renderWithPhp(sourceRelative, fixture) {
   const harnessPath = path.join(root, '.tmp-preview-harness.php');
   fs.writeFileSync(harnessPath, phpHarness(themeDir, sourceRelative, JSON.stringify(fixture)));
-  const result = spawnSync('php', [harnessPath, themeDir, sourceRelative, JSON.stringify(fixture)], { cwd: root, encoding: 'utf8' });
+  const result = runCommand('php', [harnessPath, themeDir, sourceRelative, JSON.stringify(fixture)], { cwd: root, echo: false });
   fs.rmSync(harnessPath, { force: true });
   if (result.status !== 0) {
     fail(`PHP preview render failed for ${sourceRelative}:\n${result.stderr || result.stdout || 'unknown error'}`);

@@ -2,7 +2,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const { runCommand } = require('../shared/command-runner');
 
 const [sourceFile, themeDirArg] = process.argv.slice(2);
 const warnings = [];
@@ -31,7 +31,7 @@ let count = 0;
 
 function phpIsAvailable() {
   if (phpIsAvailable.cached !== undefined) return phpIsAvailable.cached;
-  phpIsAvailable.cached = spawnSync('php', ['-v'], { encoding: 'utf8' }).status === 0;
+  phpIsAvailable.cached = runCommand('php', ['-v'], { echo: false }).status === 0;
   return phpIsAvailable.cached;
 }
 
@@ -41,7 +41,7 @@ function phpSyntaxIsValid(relativePath, content) {
   fs.mkdirSync(tempDir, { recursive: true });
   const tempFile = path.join(tempDir, `.php-lint-${Date.now()}-${Math.random().toString(16).slice(2)}.php`);
   fs.writeFileSync(tempFile, content, 'utf8');
-  const result = spawnSync('php', ['-l', tempFile], { encoding: 'utf8' });
+  const result = runCommand('php', ['-l', tempFile], { echo: false });
   fs.rmSync(tempFile, { force: true });
   if (result.status !== 0) {
     warnings.push(`Skipped invalid PHP from model for ${relativePath}; kept existing template file.`);

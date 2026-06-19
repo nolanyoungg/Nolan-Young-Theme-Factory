@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root } = require('../lib/repo-root');
+const { root } = require('../shared/repo-root');
+const { runCommand } = require('../shared/command-runner');
+const { scriptPath } = require('../shared/repo-root');
 
 const docsDir = path.join(root, 'docs');
 const themesRoot = path.join(root, 'wp-content', 'themes');
@@ -123,3 +125,8 @@ const html = `<!doctype html>
 
 fs.writeFileSync(indexPath, html, 'utf8');
 console.log(`Rebuilt docs/index.html with ${slugs.length} preview(s).`);
+
+if (process.argv.includes('--validate')) {
+  const result = runCommand('node', [scriptPath('theme-preview', 'validate-preview-gallery.js')]);
+  process.exit(result.status);
+}

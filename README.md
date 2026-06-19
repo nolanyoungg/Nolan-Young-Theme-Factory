@@ -112,3 +112,41 @@ I did not find any other clearly dead source files that are both unreferenced an
 The things that look unreferenced at a glance beyond that are generated artifacts or dependency trees, not source files I would delete without a separate cleanup pass.
 
 If you want, I can do a second pass focused only on pruning generated or compatibility files that are no longer needed.
+
+**HOW TO OPERATE AS COMMAND USER**
+
+1. Set up the repo locally.
+   - Clone the repository to your machine.
+   - Change into the repository directory.
+   - Confirm the working tree is clean and the tools you need are available.
+
+2. Run the workflow from a prompt in `prompts/pending/`.
+   - Pick the prompt file you want to use.
+   - Use the matching workflow mode for the kind of run you want.
+   - The theme slug and generated outputs are created by the workflow, not by hand.
+
+### `ollama-only`
+
+Use this when you want Ollama to do the generation pass and finish the theme in one run.
+
+```bash
+bash scripts/theme-factory.sh run ollama-only prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b
+```
+
+### `codex-only`
+
+Use this when you want Codex to handle the generation pass for the theme.
+
+```bash
+bash scripts/theme-factory.sh run codex-only prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.5 low
+```
+
+### `hybrid`
+
+Use this when you want Ollama to draft the theme and Codex to finish it.
+
+```bash
+bash scripts/theme-factory.sh run hybrid prompts/pending/example.md NOLAN-YOUNG-theme-000 qwen2.5-coder:14b gpt-5.5 medium
+```
+
+After a run finishes, use the same workflow tools for preview, packaging, and validation as needed.

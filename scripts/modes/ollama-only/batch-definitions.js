@@ -27,6 +27,8 @@ const SHARED_GENERATION_RULES = [
   'Do not write broken partial anchors, truncated links, stray closing tags, or partial JSON fragments into PHP files.',
   'For PHP template files with HTML, start with <?php, call get_header(); while inside PHP, close PHP before HTML, reopen PHP only for WordPress function calls, and call get_footer(); at the end.',
   'Never write raw HTML while a PHP block is still open.',
+  'If you write src/scss/main.scss, make it self-contained. Do not use @use or @import unless every referenced SCSS partial already exists in the copied template tree.',
+  'If you write assets/css/bundle.css or src/scss/main.scss, include a complete responsive visual system with enough styling to represent a finished theme.',
   'Do not wrap the file blocks in markdown fences or JSON.'
 ];
 
@@ -75,7 +77,7 @@ const BATCHES = [
   {
     name: 'assets',
     files: ['assets/css/bundle.css', 'assets/js/bundle.js', 'src/js/main.js', 'src/scss/main.scss', 'assets/icons/icon1.svg'],
-    focus: 'Create the visual system, responsive layout, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors requested by the creative prompt. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections. If the prompt needs imagery but no matching source asset exists yet, generate local SVG placeholders or reusable CSS shapes instead of inventing broken file paths.'
+    focus: 'Create the visual system, responsive layout, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors requested by the creative prompt. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections. Write src/scss/main.scss as a self-contained stylesheet or preserve only imports that exist in the copied template tree; do not invent settings/, tools/, layouts/, or sections/ partial paths. If the prompt needs imagery but no matching source asset exists yet, generate local SVG placeholders or reusable CSS shapes instead of inventing broken file paths.'
   },
   {
     name: 'forms-helpers',
@@ -84,8 +86,54 @@ const BATCHES = [
   }
 ];
 
+const PROMPT_SECTIONS_BY_STAGE = {
+  shell: ['01', '04', '05', '06', '07', '08', '12'],
+  'template-parts': ['01', '04', '05', '06', '08', '11', '12'],
+  pages: ['01', '05', '07', '08', '09', '10', '12'],
+  assets: ['02', '04', '05', '06', '07', '08', '13'],
+  'forms-helpers': ['01', '03', '09', '10'],
+  repair: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']
+};
+
+function creativePromptFromBrief(brief) {
+  const marker = '\n## Creative Prompt\n';
+  const markerIndex = brief.indexOf(marker);
+  return markerIndex === -1 ? brief : brief.slice(markerIndex + marker.length);
+}
+
+function splitPromptSections(prompt) {
+  const matches = [...prompt.matchAll(/^##\s+([0-9]{2})\.\s+.+$/gm)];
+  if (matches.length === 0) return [{ number: '00', text: prompt.trim() }];
+
+  return matches.map((match, index) => {
+    const next = matches[index + 1];
+    return {
+      number: match[1],
+      text: prompt.slice(match.index, next ? next.index : prompt.length).trim()
+    };
+  });
+}
+
+function compactSection(text, maxChars = 6500) {
+  if (text.length <= maxChars) return text;
+  const cutoff = text.lastIndexOf('\n\n', maxChars);
+  const end = cutoff > 1000 ? cutoff : maxChars;
+  return `${text.slice(0, end).trim()}\n\n[Section trimmed for focused local-model context. Deterministic validation still enforces the complete source prompt.]`;
+}
+
+function focusedOllamaBrief(brief, stageName) {
+  const prompt = creativePromptFromBrief(brief);
+  const wanted = new Set(PROMPT_SECTIONS_BY_STAGE[stageName] || PROMPT_SECTIONS_BY_STAGE.repair);
+  const selected = splitPromptSections(prompt)
+    .filter((section) => wanted.has(section.number) || section.number === '00')
+    .map((section) => compactSection(section.text));
+
+  return selected.length > 0 ? selected.join('\n\n') : compactSection(prompt, 18000);
+}
+
 module.exports = {
   BATCHES,
+  focusedOllamaBrief,
   OUTPUT_FORMAT,
   SHARED_GENERATION_RULES
 };

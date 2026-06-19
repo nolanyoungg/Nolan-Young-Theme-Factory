@@ -23,6 +23,7 @@ const ALLOWED_REMOTE_REFERENCE_PATTERN = /schemas\.wp\.org|www\.w3\.org|gmpg\.or
 const REPO_LOCAL_PATH_PATTERN = /C:\\Users\\|\/Users\/|codex-ggi-nolan-local|docs\/Preview-Themes-Github|dist\/zipped-themes/i;
 const TEMPLATE_PART_WRAPPER_PATTERN = /(get_header\s*\(|get_footer\s*\(|wp_head\s*\(|wp_footer\s*\(|<!doctype|<html\b|<body\b|<\/body>|<\/html>)/i;
 const CONTENT_SECTION_PATTERN = /get_template_part\(.*template-parts\/(content-hero|content-cta-banner|content-brand-statement|content-featured-work|content-all-services|content-single-service-highlight|content-process|content-style-pillars|content-testimonials|content-blog-preview|content-faqs)/i;
+const MODEL_FILE_BLOCK_MARKER_PATTERN = /^---(?:FILE:\s*[^\r\n]+|END FILE)---\s*$/im;
 
 const COMMAND_FAILURE_CODES = {
   COMMAND_NOT_FOUND: 'COMMAND_NOT_FOUND',
@@ -52,6 +53,7 @@ module.exports = {
   COMMAND_FAILURE_CODES,
   CONTENT_SECTION_PATTERN,
   GENERATED_THEME_PATHS,
+  MODEL_FILE_BLOCK_MARKER_PATTERN,
   PLACEHOLDER_PATTERN,
   REMOTE_RUNTIME_PATTERN,
   REPO_LOCAL_PATH_PATTERN,

@@ -6,11 +6,14 @@ const { parseArgs, arg } = require('../../shared/args');
 const { runCommand } = require('../../shared/command-runner');
 const {
   CONTENT_SECTION_PATTERN,
+  MODEL_FILE_BLOCK_MARKER_PATTERN,
   PLACEHOLDER_PATTERN,
+  REQUIRED_BUNDLES,
   TEMPLATE_PART_WRAPPER_PATTERN
 } = require('../../shared/constants');
 const { assertThemeSlug, safeRelativePath, walkFiles } = require('../../shared/theme-utils');
 const { checkOllamaAccess } = require('../../shared/model-access');
+const { focusedOllamaBrief } = require('./batch-definitions');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalSlug, positionalPrompt, positionalModel] = args._;
@@ -39,66 +42,100 @@ function createBrief() {
   return fs.readFileSync(path.join(root, result.stdout.trim()), 'utf8');
 }
 
-function problemFiles(themeDir) {
-  return walkFiles(themeDir)
-    .filter((file) => /\.(php|css|js)$/i.test(file) || path.basename(file) === 'README.md')
-    .filter((file) => {
-      const text = fs.readFileSync(file, 'utf8');
-      const relative = path.relative(themeDir, file).replace(/\\/g, '/');
-      if (PLACEHOLDER_PATTERN.test(text)) return true;
-      if (relative.startsWith('template-parts/') && TEMPLATE_PART_WRAPPER_PATTERN.test(text)) return true;
-      if (relative === 'header.php') {
-        return !/<!doctype html>/i.test(text) || !/wp_head\s*\(/i.test(text) || !/<body/i.test(text) || CONTENT_SECTION_PATTERN.test(text);
-      }
-      if (relative === 'footer.php') {
-        return !/wp_footer\s*\(/i.test(text) || !/<\/body>/i.test(text) || !/<\/html>/i.test(text) || CONTENT_SECTION_PATTERN.test(text);
-      }
-      return false;
-    })
-    .map((file) => path.relative(themeDir, file).replace(/\\/g, '/'))
-    .sort();
+const CSS_MIN_BYTES = 2000;
+
+function addFinding(findings, relativePath, message) {
+  if (!findings.has(relativePath)) findings.set(relativePath, []);
+  findings.get(relativePath).push(message);
 }
 
-function repairPrompt(brief, relativePath, currentContents) {
-  const extraRules = relativePath.startsWith('template-parts/')
-    ? '- This file is a fragment only. Remove any get_header(), get_footer(), wp_head(), wp_footer(), <!doctype>, <html>, <head>, or <body> wrappers.'
-    : relativePath === 'header.php'
-      ? '- This file must be a complete document header with <!doctype html>, <html>, <head>, wp_head(), and the opening <body> tag. It must not include content sections.'
-      : relativePath === 'footer.php'
-        ? '- This file must close the document with wp_footer(), </body>, and </html>. It must not include content sections.'
-        : '- Keep the file focused on its own technical purpose and remove placeholder copy.';
-  return `You are repairing one file inside a generated WordPress theme.
+function problemFindings(themeDir) {
+  const findings = new Map();
+
+  for (const file of walkFiles(themeDir)) {
+    const relative = path.relative(themeDir, file).replace(/\\/g, '/');
+    if (relative === 'style.css' || relative === 'package-lock.json') continue;
+    if (!(/\.(php|css|js)$/i.test(relative) || path.basename(relative) === 'README.md')) continue;
+
+    const text = fs.readFileSync(file, 'utf8');
+    if (PLACEHOLDER_PATTERN.test(text)) addFinding(findings, relative, 'Remove unfinished placeholder/runtime copy.');
+    if (MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) addFinding(findings, relative, 'Remove leaked model file-block markers and any content from other file blocks.');
+    if (/\.(php|css|scss|js)$/i.test(relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) addFinding(findings, relative, 'Remove leaked markdown code fence markers.');
+    if (relative.startsWith('template-parts/') && TEMPLATE_PART_WRAPPER_PATTERN.test(text)) {
+      addFinding(findings, relative, 'Template part must be a fragment only and must not contain document wrappers.');
+    }
+    if (relative === 'header.php') {
+      if (!/<!doctype html>/i.test(text)) addFinding(findings, relative, 'Header must include <!doctype html>.');
+      if (!/wp_head\s*\(/i.test(text)) addFinding(findings, relative, 'Header must call wp_head().');
+      if (!/<body/i.test(text)) addFinding(findings, relative, 'Header must open the body tag.');
+      if (CONTENT_SECTION_PATTERN.test(text)) addFinding(findings, relative, 'Header must not include site content template parts.');
+    }
+    if (relative === 'footer.php') {
+      if (!/wp_footer\s*\(/i.test(text)) addFinding(findings, relative, 'Footer must call wp_footer().');
+      if (!/<\/body>/i.test(text)) addFinding(findings, relative, 'Footer must close the body tag.');
+      if (!/<\/html>/i.test(text)) addFinding(findings, relative, 'Footer must close the html tag.');
+      if (CONTENT_SECTION_PATTERN.test(text)) addFinding(findings, relative, 'Footer must not include site content template parts.');
+    }
+  }
+
+  const cssBundle = path.join(themeDir, REQUIRED_BUNDLES[0]);
+  if (fs.existsSync(cssBundle) && fs.statSync(cssBundle).size < CSS_MIN_BYTES) {
+    addFinding(findings, REQUIRED_BUNDLES[0], `Compiled CSS bundle is below ${CSS_MIN_BYTES} bytes.`);
+    addFinding(findings, 'src/scss/main.scss', `SCSS source must compile to a finished stylesheet above ${CSS_MIN_BYTES} bytes.`);
+  }
+
+  return [...findings.entries()]
+    .map(([relativePath, messages]) => ({ relativePath, messages }))
+    .sort((a, b) => a.relativePath.localeCompare(b.relativePath));
+}
+
+function repairPrompt(brief, findings, themeDir) {
+  const focusedBrief = focusedOllamaBrief(brief, 'repair');
+  const targetList = findings.map((finding) => `- ${finding.relativePath}: ${finding.messages.join(' ')}`).join('\n');
+  const currentFiles = findings.map((finding) => {
+    const filePath = path.join(themeDir, finding.relativePath);
+    const currentContents = fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+    return `---CURRENT FILE: ${finding.relativePath}---\n${currentContents.replace(/\r/g, '')}\n---END CURRENT FILE---`;
+  }).join('\n\n');
+
+  return `You are running one targeted repair stage for a generated WordPress theme.
 
 Target folder:
 wp-content/themes/${themeSlug}/
 
-Target file:
-${relativePath}
-
-You must return only one file block and write exactly this one file path.
+Return complete replacement file blocks only for the target files listed below.
+Do not write any other file paths.
 
 Creative brief:
-${brief}
+${focusedBrief}
+
+Deterministic findings:
+${targetList}
 
 Current file contents:
-${currentContents.replace(/\r/g, '')}
+${currentFiles}
 
 Format:
----FILE: ${relativePath}---
+---FILE: relative/path.php---
 line 1
 line 2
 ---END FILE---
 
 Rules:
-- Rewrite the complete file, not a patch.
-- Keep the path exactly "${relativePath}".
+- Rewrite complete file contents, not patches.
+- Return one file block for each target path that needs content changes.
+- Keep every output path exactly one of the target paths listed above.
 - Keep output inside wp-content/themes/${themeSlug}/.
 - Remove all Lorem ipsum, TODO, FIXME, "Add ... here", and future-editor instructions.
 - Use finished copy aligned with the selected creative prompt.
 - Preserve valid WordPress PHP syntax for PHP files.
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.
 - Do not wrap the file block in markdown fences or JSON.
-${extraRules}
+- Template-parts are fragments only. They must not call get_header(), get_footer(), wp_head(), or wp_footer(), and must not include <!doctype>, <html>, <head>, <body>, </body>, or </html>.
+- header.php must be a complete document header with <!doctype html>, <html>, <head>, wp_head(), and the opening <body> tag. It must not include content section template-parts such as content-hero or content-cta-banner.
+- footer.php must close the document with wp_footer(), </body>, and </html>. It must not include content section template-parts such as content-brand-statement or content-cta-banner.
+- If assets/css/bundle.css or src/scss/main.scss is listed, write a complete responsive visual system for the generated theme. src/scss/main.scss must be self-contained and must not use @use or @import.
+- If assets/css/bundle.css is listed, write a stylesheet above ${CSS_MIN_BYTES} bytes.
 `;
 }
 
@@ -117,8 +154,8 @@ try {
   fail(error.message);
 }
 
-const files = problemFiles(themeDir);
-if (files.length === 0) {
+const findings = problemFindings(themeDir);
+if (findings.length === 0) {
   console.log(`No Ollama repair needed for ${themeSlug}`);
   process.exit(0);
 }
@@ -126,33 +163,35 @@ if (files.length === 0) {
 const brief = createBrief();
 const repairDir = path.join(root, 'reports', 'runs', themeSlug, 'ollama-repair');
 fs.mkdirSync(repairDir, { recursive: true });
-console.log(`Ollama targeted repair found ${files.length} file(s).`);
-
-for (const relativePath of files) {
-  const safeName = relativePath.replace(/[\/\\.]/g, '_');
-  const promptPath = path.join(repairDir, `repair-${safeName}-prompt.md`);
-  const rawOutput = path.join(repairDir, `repair-${safeName}-raw.md`);
-  fs.writeFileSync(promptPath, repairPrompt(brief, relativePath, fs.readFileSync(path.join(themeDir, relativePath), 'utf8')), 'utf8');
-  console.log(`Running Ollama repair for: ${relativePath}`);
-  const result = run('ollama', ['run', model, '--nowordwrap'], {
-    debugDir: path.join(root, 'reports', 'runs', themeSlug, 'debug'),
-    echo: false,
-    echoSummary: true,
-    env: { OLLAMA_NOHISTORY: '1' },
-    input: fs.readFileSync(promptPath, 'utf8'),
-    mode: 'ollama-only',
-    model,
-    provider: 'Ollama',
-    stage: `ollama-repair-${safeName}`,
-    themeSlug,
-    timeoutMs
-  });
-  fs.writeFileSync(rawOutput, `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
-  if (result.status !== 0) fail(`Ollama repair failed for ${relativePath}`);
-  const apply = run('node', [scripts.applyThemeFileBlocks, rawOutput, `wp-content/themes/${themeSlug}`], { timeoutMs: 120000 });
-  if (apply.status !== 0) fail(`Ollama repair did not produce an applicable file for ${relativePath}`);
+console.log(`Ollama targeted repair found ${findings.length} file(s).`);
+for (const finding of findings) {
+  console.log(`- ${finding.relativePath}: ${finding.messages.join(' ')}`);
 }
 
-const remaining = problemFiles(themeDir);
-if (remaining.length > 0) fail(`Ollama repair could not clear deterministic findings from: ${remaining.join(', ')}`);
+const promptPath = path.join(repairDir, 'targeted-repair-prompt.md');
+const rawOutput = path.join(repairDir, 'targeted-repair-raw.md');
+fs.writeFileSync(promptPath, repairPrompt(brief, findings, themeDir), 'utf8');
+console.log('Running one Ollama targeted repair stage.');
+const result = run('ollama', ['run', model, '--nowordwrap'], {
+  debugDir: path.join(root, 'reports', 'runs', themeSlug, 'debug'),
+  echo: false,
+  echoSummary: true,
+  env: { OLLAMA_NOHISTORY: '1' },
+  input: fs.readFileSync(promptPath, 'utf8'),
+  mode: 'ollama-only',
+  model,
+  provider: 'Ollama',
+  stage: 'ollama-targeted-repair',
+  themeSlug,
+  timeoutMs
+});
+fs.writeFileSync(rawOutput, `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
+if (result.status !== 0) fail('Ollama targeted repair failed.');
+const apply = run('node', [scripts.applyThemeFileBlocks, rawOutput, `wp-content/themes/${themeSlug}`], { timeoutMs: 120000 });
+if (apply.status !== 0) fail('Ollama targeted repair did not produce applicable file blocks.');
+
+const remaining = problemFindings(themeDir);
+if (remaining.length > 0) {
+  fail(`Ollama repair could not clear deterministic findings from: ${remaining.map((finding) => `${finding.relativePath} (${finding.messages.join('; ')})`).join(', ')}`);
+}
 console.log(`Ollama targeted repair complete for ${themeSlug}`);

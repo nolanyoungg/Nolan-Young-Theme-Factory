@@ -1,0 +1,24 @@
+Running Ollama model: qwen2.5-coder:14b
+Running Ollama batch: shell
+Applied 3 file block(s).
+Running Ollama batch: template-parts
+Applied 11 file block(s).
+Running Ollama batch: pages
+Applied 13 file block(s).
+Running Ollama batch: assets
+Applied 5 file block(s).
+Running Ollama batch: forms-helpers
+Applied 8 file block(s).
+Ollama generation complete for 010_nolan_young_theme_premium_test010
+[Ollama] Starting stage=ollama-shell model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-shell model=qwen2.5-coder:14b
+WARNING: Truncated leaked model file blocks from README.md.
+[Ollama] Starting stage=ollama-template-parts model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-template-parts model=qwen2.5-coder:14b
+[Ollama] Starting stage=ollama-pages model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-pages model=qwen2.5-coder:14b
+[Ollama] Starting stage=ollama-assets model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-assets model=qwen2.5-coder:14b
+WARNING: Replaced src/scss/main.scss with generated bundle CSS because model output referenced missing SCSS partials: reset, variables.
+[Ollama] Starting stage=ollama-forms-helpers model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-forms-helpers model=qwen2.5-coder:14b

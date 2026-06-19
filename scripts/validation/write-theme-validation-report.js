@@ -5,6 +5,7 @@ const { root } = require('../shared/repo-root');
 const {
   ALLOWED_REMOTE_REFERENCE_PATTERN,
   CONTENT_SECTION_PATTERN,
+  MODEL_FILE_BLOCK_MARKER_PATTERN,
   PLACEHOLDER_PATTERN,
   REMOTE_RUNTIME_PATTERN,
   REQUIRED_BUNDLES,
@@ -93,6 +94,8 @@ function wordpressQuality() {
     if (file.relative === 'package-lock.json' || file.relative.endsWith('.svg')) continue;
     const text = fs.readFileSync(file.full, 'utf8');
     if (PLACEHOLDER_PATTERN.test(text)) throw new Error(`Unfinished placeholder copy in ${file.relative}`);
+    if (/\.(php|css|scss|js)$/i.test(file.relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) throw new Error(`Leaked model file-block marker in ${file.relative}`);
+    if (/\.(php|css|scss|js)$/i.test(file.relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) throw new Error(`Leaked markdown code fence marker in ${file.relative}`);
     if (SECRET_PATTERN.test(text)) throw new Error(`Potential secret or credential in ${file.relative}`);
     if (REMOTE_RUNTIME_PATTERN.test(text) && !ALLOWED_REMOTE_REFERENCE_PATTERN.test(text)) throw new Error(`Remote runtime dependency in ${file.relative}`);
   }

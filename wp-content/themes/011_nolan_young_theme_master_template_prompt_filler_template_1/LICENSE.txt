@@ -1,4 +1,0 @@
-GPL-2.0-or-later
-
-This theme is distributed under the terms of the GNU General Public License, version 2 or later.
-You may redistribute and modify it under those terms.

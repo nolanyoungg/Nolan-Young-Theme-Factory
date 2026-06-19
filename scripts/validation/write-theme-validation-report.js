@@ -2,6 +2,17 @@
 const fs = require('fs');
 const path = require('path');
 const { root } = require('../shared/repo-root');
+const {
+  ALLOWED_REMOTE_REFERENCE_PATTERN,
+  CONTENT_SECTION_PATTERN,
+  PLACEHOLDER_PATTERN,
+  REMOTE_RUNTIME_PATTERN,
+  REQUIRED_BUNDLES,
+  REQUIRED_ROOT_FILES,
+  SECRET_PATTERN,
+  TEMPLATE_PART_WRAPPER_PATTERN
+} = require('../shared/constants');
+const { assertThemeSlug } = require('../shared/theme-utils');
 
 const [themeSlug, templateName, outputJson, phase = 'final'] = process.argv.slice(2);
 
@@ -14,7 +25,7 @@ if (!themeSlug || !templateName || !outputJson) {
   fail('Usage: node scripts/validation/write-theme-validation-report.js <theme-slug> <template-name> <output-json> [phase]');
 }
 
-if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail(`Invalid theme slug: ${themeSlug}`);
+assertThemeSlug(themeSlug);
 if (themeSlug.includes('..') || templateName.includes('..') || outputJson.includes('..')) fail('Unsafe path segment detected.');
 
 function check(name, fn, pending = false) {
@@ -52,25 +63,38 @@ function templateBaseStructure() {
 }
 
 function wordpressQuality() {
-  for (const file of ['style.css', 'functions.php', 'index.php', 'header.php', 'footer.php']) requireFile(path.join(themeDir, file), file);
+  for (const file of REQUIRED_ROOT_FILES) requireFile(path.join(themeDir, file), file);
   const style = fs.readFileSync(path.join(themeDir, 'style.css'), 'utf8');
   if (!/^Theme Name:/m.test(style)) throw new Error('style.css missing Theme Name header');
   if (!/^Text Domain:/m.test(style)) throw new Error('style.css missing Text Domain header');
-  const cssBundle = path.join(themeDir, 'assets', 'css', 'bundle.css');
-  const jsBundle = path.join(themeDir, 'assets', 'js', 'bundle.js');
+  const cssBundle = path.join(themeDir, REQUIRED_BUNDLES[0]);
+  const jsBundle = path.join(themeDir, REQUIRED_BUNDLES[1]);
   requireFile(cssBundle, 'assets/css/bundle.css');
   requireFile(jsBundle, 'assets/js/bundle.js');
   if (fs.statSync(cssBundle).size < 2000) throw new Error('Compiled CSS bundle is too small');
+
+  const header = fs.readFileSync(path.join(themeDir, 'header.php'), 'utf8');
+  if (!/<!doctype html>/i.test(header)) throw new Error('header.php missing <!doctype html>');
+  if (!/wp_head\s*\(/i.test(header)) throw new Error('header.php missing wp_head()');
+  if (!/<body/i.test(header)) throw new Error('header.php missing opening body tag');
+  if (CONTENT_SECTION_PATTERN.test(header)) throw new Error('header.php must not include site content sections');
+
+  const footer = fs.readFileSync(path.join(themeDir, 'footer.php'), 'utf8');
+  if (!/wp_footer\s*\(/i.test(footer)) throw new Error('footer.php missing wp_footer()');
+  if (!/<\/body>/i.test(footer)) throw new Error('footer.php missing closing body tag');
+  if (!/<\/html>/i.test(footer)) throw new Error('footer.php missing closing html tag');
+  if (CONTENT_SECTION_PATTERN.test(footer)) throw new Error('footer.php must not include site content sections');
+
+  const templatePart = walkFiles(path.join(themeDir, 'template-parts')).find((file) => file.relative.endsWith('.php') && TEMPLATE_PART_WRAPPER_PATTERN.test(fs.readFileSync(file.full, 'utf8')));
+  if (templatePart) throw new Error(`Template part must be a fragment only: ${templatePart.relative}`);
+
   const textFiles = walkFiles(themeDir).filter((file) => /\.(php|css|js)$|README\.md$/i.test(file.relative));
-  const placeholderPattern = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder/i;
-  const secretPattern = /OPENAI_API_KEY|sk-[A-Za-z0-9_-]{20,}|BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|AWS_SECRET_ACCESS_KEY|password\s*[:=]\s*\S+|token\s*[:=]\s*\S+/i;
-  const remotePattern = /<(script|link|img|source|video|audio)[^>]+(src|href)=["'][^"']*https?:\/\/|@import\s+url\(["']?https?:\/\/|url\(["']?https?:\/\/|\/\/cdn\.|cdnjs|jsdelivr|unpkg|fonts\.google|gstatic/i;
   for (const file of textFiles) {
     if (file.relative === 'package-lock.json' || file.relative.endsWith('.svg')) continue;
     const text = fs.readFileSync(file.full, 'utf8');
-    if (placeholderPattern.test(text)) throw new Error(`Unfinished placeholder copy in ${file.relative}`);
-    if (secretPattern.test(text)) throw new Error(`Potential secret or credential in ${file.relative}`);
-    if (remotePattern.test(text) && !/schemas\.wp\.org|www\.w3\.org|gmpg\.org\/xfn\/11/.test(text)) throw new Error(`Remote runtime dependency in ${file.relative}`);
+    if (PLACEHOLDER_PATTERN.test(text)) throw new Error(`Unfinished placeholder copy in ${file.relative}`);
+    if (SECRET_PATTERN.test(text)) throw new Error(`Potential secret or credential in ${file.relative}`);
+    if (REMOTE_RUNTIME_PATTERN.test(text) && !ALLOWED_REMOTE_REFERENCE_PATTERN.test(text)) throw new Error(`Remote runtime dependency in ${file.relative}`);
   }
   return 'Required WordPress files, headers, bundles, placeholder scan, secret scan, and remote dependency scan passed.';
 }

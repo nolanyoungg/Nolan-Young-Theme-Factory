@@ -3,6 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { runCommand } = require('../shared/command-runner');
+const { THEME_SLUG_PATTERN } = require('../shared/constants');
 
 const [sourceFile, themeDirArg] = process.argv.slice(2);
 const warnings = [];
@@ -21,6 +22,7 @@ if (!sourceFile || !themeDirArg) {
 
 const themeDir = path.resolve(themeDirArg);
 const themeSlug = path.basename(themeDir);
+if (!THEME_SLUG_PATTERN.test(themeSlug)) fail(`Invalid theme folder slug: ${themeSlug}`);
 const input = fs.readFileSync(sourceFile, 'utf8')
   .replace(/\u001B\[[0-9;?]*[ -/]*[@-~]/g, '')
   .replace(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]\s*/g, '')

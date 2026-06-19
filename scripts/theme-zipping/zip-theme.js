@@ -2,8 +2,11 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const archiver = require('archiver');
 const { root } = require('../shared/repo-root');
 const { parseArgs, arg } = require('../shared/args');
+const { ZIP_EXCLUDED_DIRECTORIES, ZIP_EXCLUDED_FILE_PATTERN } = require('../shared/constants');
+const { assertThemeSlug } = require('../shared/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalThemeSlug] = args._;
@@ -15,17 +18,18 @@ function fail(message) {
 }
 
 function removeExcluded(dir) {
-  for (const name of ['node_modules', '.git', '.generation', 'reports']) {
+  for (const name of ZIP_EXCLUDED_DIRECTORIES) {
     fs.rmSync(path.join(dir, name), { recursive: true, force: true });
   }
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) removeExcluded(full);
-    else if (/\.log$|\.map$/i.test(entry.name)) fs.rmSync(full, { force: true });
+    else if (ZIP_EXCLUDED_FILE_PATTERN.test(entry.name)) fs.rmSync(full, { force: true });
   }
 }
 
-if (!themeSlug || !/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(themeSlug)) fail('Usage: node scripts/theme-zipping/zip-theme.js --theme-slug <theme-slug>');
+if (!themeSlug) fail('Usage: node scripts/theme-zipping/zip-theme.js --theme-slug <theme-slug>');
+assertThemeSlug(themeSlug);
 
 const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
 if (!fs.existsSync(themeDir)) fail(`Theme directory missing: wp-content/themes/${themeSlug}`);
@@ -41,9 +45,8 @@ fs.cpSync(themeDir, tempTheme, { recursive: true });
 removeExcluded(tempTheme);
 
 async function createZip() {
-  const { ZipArchive } = await import('archiver');
   const output = fs.createWriteStream(zipPath);
-  const archive = new ZipArchive({ zlib: { level: 9 } });
+  const archive = new archiver.ZipArchive({ zlib: { level: 9 } });
 
   await new Promise((resolve, reject) => {
     output.on('close', resolve);

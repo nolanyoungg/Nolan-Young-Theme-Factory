@@ -55,6 +55,7 @@ That was the strongest run so far. The prompt structure used for that pass is th
 
 ```sh
 npm run theme:env
+npm run theme:model-check -- --provider codex --codex-model gpt-5.5 --codex-reasoning high
 npm run theme:prepare -- --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000
 npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.5 --codex-reasoning low
 npm run theme:validate -- --theme-slug 001_nolan_young_theme_example --template NOLAN-YOUNG-theme-000
@@ -134,6 +135,8 @@ Use this when you want Codex to handle the generation pass for the theme.
 npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.5 --codex-reasoning low
 ```
 
+Codex model identifiers and reasoning levels are passed exactly to `codex exec`; the workflow does not substitute another model or reasoning value after a failure.
+
 ### `hybrid`
 
 Use this when you want Ollama to draft the theme and Codex to finish it.
@@ -143,3 +146,5 @@ npm run theme:run -- --mode hybrid --prompt prompts/pending/example.md --templat
 ```
 
 After a run finishes, use the same workflow tools for preview, packaging, and validation as needed.
+
+Use `--theme-slug` to request an exact output slug. Existing artifacts for that exact slug require the explicit `--replace-existing-theme` option; the workflow will not silently increment or substitute a different theme number.

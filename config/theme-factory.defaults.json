@@ -16,12 +16,17 @@
     "run_reports": "reports/runs"
   },
   "validation": {
-    "max_repair_attempts": 2,
+    "max_repair_attempts": 1,
     "require_template_manifest": true,
     "require_preview": true,
-    "require_zip": true
+    "require_zip": true,
+    "model_check_timeout_ms": 120000,
+    "ollama_timeout_ms": 180000,
+    "codex_timeout_ms": 180000,
+    "command_timeout_ms": 120000
   },
   "retry": {
-    "repair_attempts": 2
+    "repair_attempts": 1,
+    "command_retries": 0
   }
 }

@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { root } = require('../shared/repo-root');
 const { parseArgs, arg } = require('../shared/args');
 const { runCommand } = require('../shared/command-runner');
+const { assertThemeSlug } = require('../shared/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalSlug] = args._;
@@ -15,7 +17,7 @@ function fail(message) {
 }
 
 if (!slug) fail('Usage: node scripts/theme-preview/generate-static-preview.js --theme-slug <theme-slug>');
-if (!/^[0-9]{3}_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(slug)) fail(`Invalid theme slug: ${slug}`);
+assertThemeSlug(slug);
 
 const themeDir = path.join(root, 'wp-content', 'themes', slug);
 const previewDir = path.join(root, 'docs', 'Preview-Themes-Github', slug);
@@ -271,7 +273,7 @@ echo ob_get_clean();
 }
 
 function renderWithPhp(sourceRelative, fixture) {
-  const harnessPath = path.join(root, '.tmp-preview-harness.php');
+  const harnessPath = path.join(os.tmpdir(), `theme-preview-harness-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.php`);
   fs.writeFileSync(harnessPath, phpHarness(themeDir, sourceRelative, JSON.stringify(fixture)));
   const result = runCommand('php', [harnessPath, themeDir, sourceRelative, JSON.stringify(fixture)], { cwd: root, echo: false });
   fs.rmSync(harnessPath, { force: true });

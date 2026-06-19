@@ -45,6 +45,7 @@ npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md 
 ### `codex-only`
 
 Scripts prepare the theme and generate Codex brief artifacts. The workflow records the Codex step honestly and resumes when Codex is available.
+The normal Codex-only workflow uses one Codex build invocation, preserving the Theme 012 prompt contract, followed by deterministic finalization.
 
 Example:
 
@@ -57,6 +58,7 @@ The prompt path is only an example. Use the prompt file you want to generate fro
 ### `hybrid`
 
 Scripts prepare the theme, Ollama drafts it, scripts validate, then Codex receives a focused finishing brief. The workflow can resume after Codex finishes.
+Hybrid validates both providers before generation begins and does not downgrade to a single-provider run if either check fails.
 
 Example:
 
@@ -71,6 +73,17 @@ npm run theme:run -- --mode hybrid --prompt prompts/pending/000-testing.md --tem
 ```
 
 Dry run prints the resolved stage plan and output paths without mutating the repo.
+It does not copy templates, write run state, create previews or ZIPs, install dependencies, or invoke live AI providers.
+
+## Model Checks
+
+```sh
+npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
+npm run theme:model-check -- --provider codex --codex-model gpt-5.5 --codex-reasoning high
+npm run theme:model-check -- --provider hybrid --ollama-model qwen2.5-coder:14b --codex-model gpt-5.5 --codex-reasoning high
+```
+
+Model names and reasoning levels must be exact. The workflow records requested and resolved values in `run.config.json`, `workflow.state.json`, and `workflow.summary.md`; it does not fall back to another model after a failure.
 
 ## Resume
 

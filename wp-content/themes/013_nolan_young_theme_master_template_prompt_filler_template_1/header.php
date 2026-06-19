@@ -49,6 +49,4 @@
         </div><!-- .container -->
     </header><!-- #masthead -->
 
-    <?php get_template_part( 'template-parts/content-hero' ); ?>
-
     <div id="content" class="site-content">

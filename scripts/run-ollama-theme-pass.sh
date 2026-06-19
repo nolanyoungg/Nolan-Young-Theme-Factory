@@ -73,6 +73,7 @@ Rules:
 - Every section you create must include finished copy and visible content appropriate to the selected creative prompt.
 - header.php and footer.php must not include a standalone ?> line after an inline PHP comment.
 - header.php must use lowercase <!doctype html> and a valid full document wrapper.
+- header.php and footer.php must not include site content sections such as content-hero, cta banners, brand statements, featured work, services, testimonials, blog previews, FAQs, or similar page sections.
 - Preserve WordPress PHP syntax.
 - For PHP template files with HTML, use this valid structure:
   1. Start with <?php and any template comments.

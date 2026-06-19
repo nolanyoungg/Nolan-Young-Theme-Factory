@@ -64,6 +64,14 @@ if [ -d "$theme_dir" ]; then
     grep -q '</html>' "$theme_dir/footer.php" || fail "footer.php missing closing html tag"
   fi
 
+  content_section_pattern='get_template_part\(.*template-parts/(content-hero|content-cta-banner|content-brand-statement|content-featured-work|content-all-services|content-single-service-highlight|content-process|content-style-pillars|content-testimonials|content-blog-preview|content-faqs)'
+  if [ -f "$theme_dir/header.php" ] && grep -Eq "$content_section_pattern" "$theme_dir/header.php"; then
+    fail "header.php must not include site content sections"
+  fi
+  if [ -f "$theme_dir/footer.php" ] && grep -Eq "$content_section_pattern" "$theme_dir/footer.php"; then
+    fail "footer.php must not include site content sections"
+  fi
+
   css_bundle="$theme_dir/assets/css/bundle.css"
   js_bundle="$theme_dir/assets/js/bundle.js"
   scss_entry="$theme_dir/src/scss/main.scss"

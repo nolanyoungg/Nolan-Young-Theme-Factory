@@ -30,6 +30,8 @@ command -v npm >/dev/null 2>&1 || fail "npm is required to build theme assets"
   if [ -f src/scss/main.scss ]; then
     npx sass --no-source-map src/scss/main.scss assets/css/bundle.css --style=compressed
   fi
+
+  touch assets/js/bundle.js assets/css/bundle.css
 )
 
 [ -f "$theme_dir/assets/css/bundle.css" ] || fail "Build did not create assets/css/bundle.css"

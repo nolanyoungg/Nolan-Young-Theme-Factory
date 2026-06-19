@@ -97,6 +97,7 @@ Rules:
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.
 - Do not wrap the file block in markdown fences or JSON.
 - header.php must use lowercase <!doctype html> and a valid full document wrapper.
+- header.php and footer.php must not include site content sections such as content-hero, cta banners, brand statements, featured work, services, testimonials, blog previews, FAQs, or similar page sections.
 ${extraRules}
 `;
 }

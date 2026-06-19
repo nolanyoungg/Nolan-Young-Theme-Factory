@@ -12,10 +12,7 @@
 
     <footer id="colophon" class="site-footer">
         <div class="container">
-            <?php get_template_part( 'template-parts/content-cta-banner' ); ?>
-
             <div class="footer-content">
-                <?php get_template_part( 'template-parts/content-brand-statement' ); ?>
                 <?php get_template_part( 'template-parts/content-footer-widgets' ); ?>
                 <?php get_template_part( 'template-parts/content-legal' ); ?>
             </div>

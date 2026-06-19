@@ -18,9 +18,9 @@ get_header();
 
   <!-- Section 02: Featured Work Strip -->
   <section class="featured-work-strip">
-    <div class="work-item"><a href="/work/project-1/"><img src="assets/images/hero/project-1.jpg" alt="Project 1"></a></div>
-    <div class="work-item"><a href="/work/project-2/"><img src="assets/images/hero/project-2.jpg" alt="Project 2"></a></div>
-    <div class="work-item"><a href="/work/project-3/"><img src="assets/images/hero/project-3.jpg" alt="Project 3"></a></div>
+    <div class="work-item"><a href="/work/project-1/"><img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Project 1"></a></div>
+    <div class="work-item"><a href="/work/project-2/"><img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Project 2"></a></div>
+    <div class="work-item"><a href="/work/project-3/"><img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Project 3"></a></div>
   </section>
 
   <!-- Section 03: Brand Statement -->
@@ -54,7 +54,7 @@ get_header();
   <!-- Section 08: Before-and-After or Comparison Feature -->
   <section class="before-after">
     <h2>Before & After</h2>
-    <img src="assets/images/hero/before-after.jpg" alt="Before and After Image">
+    <img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Before and After Image">
   </section>
 
   <!-- Section 09: Packages and Engagement Options -->

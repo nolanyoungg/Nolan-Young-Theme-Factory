@@ -1,24 +1,20 @@
 <?php
 // Footer template for NOLAN-YOUNG Theme
 if (!defined('ABSPATH')) exit; // Exit if accessed directly
-
 ?>
 <footer id="site-footer">
   <div class="container">
-    <!-- CTA Band -->
     <section class="cta-band">
       <h2>Websites that help businesses grow.</h2>
       <p>Let's work together to create a website that drives your success.</p>
       <a href="/contact/" class="btn btn-primary btn-header-cta">Contact Us</a>
     </section>
 
-    <!-- Brand Statement -->
     <div class="brand-statement">
       <h3>Northstar Websites</h3>
       <p>A leading WordPress design and development company.</p>
     </div>
 
-    <!-- Services Column -->
     <section class="services-column">
       <h4>Our Services</h4>
       <ul>
@@ -29,7 +25,6 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
       </ul>
     </section>
 
-    <!-- Company Column -->
     <section class="company-column">
       <h4>Company</h4>
       <ul>
@@ -40,7 +35,6 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
       </ul>
     </section>
 
-    <!-- Blog Column -->
     <section class="blog-column">
       <h4>From Our Blog</h4>
       <ul>
@@ -50,14 +44,12 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
       </ul>
     </section>
 
-    <!-- Contact Block -->
     <div class="contact-block">
       <h4>Contact Us</h4>
       <p>Email: info@northstarwebsites.com</p>
       <p>Phone: (123) 456-7890</p>
     </div>
 
-    <!-- Bottom Legal Row -->
     <section class="legal-row">
       <p>&copy; <?php echo date('Y'); ?> Northstar Websites. All rights reserved.</p>
       <ul>
@@ -67,3 +59,6 @@ if (!defined('ABSPATH')) exit; // Exit if accessed directly
     </section>
   </div>
 </footer>
+<?php wp_footer(); ?>
+</body>
+</html>

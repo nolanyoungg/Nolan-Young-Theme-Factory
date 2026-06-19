@@ -32,19 +32,19 @@ get_header();
       <div class="portfolio-grid">
         <article class="portfolio-item design">
           <a href="/work/northstar-brand-refresh/" class="portfolio-link">
-            <img src="/assets/images/portfolio/northstar-brand-refresh.jpg" alt="Northstar brand refresh project">
+            <img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Northstar brand refresh project">
             <h3>Northstar Brand Refresh</h3>
           </a>
         </article>
         <article class="portfolio-item strategy">
           <a href="/work/service-positioning/" class="portfolio-link">
-            <img src="/assets/images/portfolio/service-positioning.jpg" alt="Service positioning project">
+            <img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Service positioning project">
             <h3>Service Positioning</h3>
           </a>
         </article>
         <article class="portfolio-item development">
           <a href="/work/custom-wordpress-build/" class="portfolio-link">
-            <img src="/assets/images/portfolio/custom-wordpress-build.jpg" alt="Custom WordPress build project">
+            <img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Custom WordPress build project">
             <h3>Custom WordPress Build</h3>
           </a>
         </article>

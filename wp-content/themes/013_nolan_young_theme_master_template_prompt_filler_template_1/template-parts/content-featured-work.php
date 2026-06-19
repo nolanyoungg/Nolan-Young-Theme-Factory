@@ -1,20 +1,19 @@
-<?php
-// Template Part: Featured Work
-// Description: Horizontal preview of featured work, projects, solutions, or results.
-
-get_header(); ?>
-?>
-<section class="featured-work container">
-    <h2>Featured Projects</h2>
-    <div class="featured-work__slider">
-        <a href="/work/project1/" class="featured-work__item">
-            <img src="/assets/images/portfolio/project1.jpg" alt="Project 1">
-            <p>Client Name - Project Title</p>
-        </a>
-        <a href="/work/project2/" class="featured-work__item">
-            <img src="/assets/images/portfolio/project2.jpg" alt="Project 2">
-            <p>Client Name - Project Title</p>
-        </a>
-    </div>
-</section>
-<?php get_footer(); ?>
+<div class="featured-work">
+  <div class="section-heading">
+    <p class="eyebrow">Featured Work</p>
+    <h2>Selected projects</h2>
+    <p>Examples of the kind of focused, conversion-minded work Northstar Websites ships.</p>
+  </div>
+  <div class="featured-work__slider">
+    <a href="/work/northstar-brand-refresh/" class="featured-work__item">
+      <span class="featured-work__image"></span>
+      <strong>Northstar Brand Refresh</strong>
+      <span>Strategy, Design, Development</span>
+    </a>
+    <a href="/work/custom-wordpress-build/" class="featured-work__item">
+      <span class="featured-work__image"></span>
+      <strong>Custom WordPress Build</strong>
+      <span>Development, Performance, Content</span>
+    </a>
+  </div>
+</div>

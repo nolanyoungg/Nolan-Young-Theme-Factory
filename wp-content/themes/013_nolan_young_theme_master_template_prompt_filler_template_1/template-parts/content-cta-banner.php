@@ -1,12 +1,8 @@
-<?php
-// Template Part: CTA Banner
-// Description: Reusable contact or conversion CTA.
-
-get_header(); ?>
-?>
-<section class="cta-banner container">
-    <h2>Ready to Transform Your Business?</h2>
-    <p>Contact us today and let's get started.</p>
-    <a href="/contact/" class="btn btn-primary">Get in Touch</a>
-</section>
-<?php get_footer(); ?>
+<div class="cta-banner">
+  <div class="section-heading">
+    <p class="eyebrow">Start here</p>
+    <h2>Ready to transform your website?</h2>
+    <p>Northstar Websites can help you launch a site that feels sharp, credible, and easy to run.</p>
+  </div>
+  <a href="/contact/" class="btn btn-primary">Get in Touch</a>
+</div>

@@ -1,17 +1,16 @@
-<?php
-// Template Part: Testimonials
-// Description: Supplied testimonials or an approved non-testimonial proof fallback.
-
-get_header(); ?>
-?>
-<section class="testimonials container">
-    <h2>What Our Clients Say</h2>
-    <div class="testimonials-grid">
-        <blockquote class="testimonial-item">
-            <p>"We are thrilled with the work Northstar Websites did for us. Their team is professional and communicative."</p>
-            <cite>Client Name, Company Name</cite>
-        </blockquote>
-        <!-- Repeat for other testimonials -->
-    </div>
-</section>
-<?php get_footer(); ?>
+<div class="testimonials">
+  <div class="section-heading">
+    <p class="eyebrow">Proof</p>
+    <h2>Trusted by teams that need clarity and speed</h2>
+  </div>
+  <div class="testimonials-grid">
+    <blockquote class="testimonial-item">
+      <p>Northstar gave us a site that finally matched the quality of our work.</p>
+      <cite>Studio Owner</cite>
+    </blockquote>
+    <blockquote class="testimonial-item">
+      <p>The process was organized, the communication was clear, and the final build was easy to maintain.</p>
+      <cite>Operations Lead</cite>
+    </blockquote>
+  </div>
+</div>

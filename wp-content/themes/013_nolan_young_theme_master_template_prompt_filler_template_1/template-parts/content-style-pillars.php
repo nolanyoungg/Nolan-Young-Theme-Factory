@@ -1,18 +1,20 @@
-<?php
-// Template Part: Style Pillars
-// Description: Brand, service, or experience pillars.
-
-get_header(); ?>
-?>
-<section class="style-pillars container">
-    <h2>Our Pillars</h2>
-    <div class="pillars-grid">
-        <article class="pillar-card">
-            <img src="/assets/images/texture/pillar1.png" alt="Pillar 1 Icon">
-            <h3>Pillar Title</h3>
-            <p>Description of the pillar's importance and impact.</p>
-        </article>
-        <!-- Repeat for other pillars -->
-    </div>
-</section>
-<?php get_footer(); ?>
+<div class="style-pillars">
+  <div class="section-heading">
+    <p class="eyebrow">Style pillars</p>
+    <h2>Clear, confident, editorial</h2>
+  </div>
+  <div class="style-pillars-grid">
+    <article class="pillar-card">
+      <h3>Clear</h3>
+      <p>Short, direct language that gets to the point.</p>
+    </article>
+    <article class="pillar-card">
+      <h3>Confident</h3>
+      <p>A grounded voice that signals capability without noise.</p>
+    </article>
+    <article class="pillar-card">
+      <h3>Composed</h3>
+      <p>Layouts and motion that feel intentional and calm.</p>
+    </article>
+  </div>
+</div>

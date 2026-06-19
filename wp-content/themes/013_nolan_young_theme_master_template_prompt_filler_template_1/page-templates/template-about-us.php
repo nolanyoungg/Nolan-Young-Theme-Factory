@@ -26,12 +26,12 @@ get_header();
     <div class="container">
       <h2>Our Team</h2>
       <div class="team-member">
-        <img src="/assets/images/hero/team-member-1.jpg" alt="Team Member 1">
+        <img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Team Member 1">
         <h3>John Doe</h3>
         <p>CEO and Co-Founder</p>
       </div>
       <div class="team-member">
-        <img src="/assets/images/hero/team-member-2.jpg" alt="Team Member 2">
+        <img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/placeholder.svg' ) ); ?>" alt="Team Member 2">
         <h3>Jane Smith</h3>
         <p>CTO and Co-Founder</p>
       </div>

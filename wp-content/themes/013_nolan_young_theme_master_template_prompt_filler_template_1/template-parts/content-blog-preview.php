@@ -1,19 +1,18 @@
-<?php
-// Template Part: Blog Preview
-// Description: Recent or featured articles with real generated destinations.
-
-get_header(); ?>
-?>
-<section class="blog-preview container">
-    <h2>Latest from Our Blog</h2>
-    <div class="blog-grid">
-        <article class="blog-card">
-            <img src="/assets/images/portfolio/blog1.jpg" alt="Blog Post 1">
-            <p class="tag">Tag Name</p>
-            <h3><a href="/blog/post1/">Post Title</a></h3>
-            <p>Excerpt of the blog post.</p>
-        </article>
-        <!-- Repeat for other posts -->
-    </div>
-</section>
-<?php get_footer(); ?>
+<div class="blog-preview">
+  <div class="section-heading">
+    <p class="eyebrow">From the blog</p>
+    <h2>Practical guidance for better WordPress projects</h2>
+  </div>
+  <div class="blog-grid">
+    <article class="blog-card">
+      <p class="tag">Strategy</p>
+      <h3><a href="/blog/designing-for-conversion/">Designing for conversion</a></h3>
+      <p>How structure and proof can support stronger lead generation.</p>
+    </article>
+    <article class="blog-card">
+      <p class="tag">Maintenance</p>
+      <h3><a href="/blog/wordpress-maintenance-basics/">WordPress maintenance basics</a></h3>
+      <p>The core habits that keep a site healthy, secure, and fast.</p>
+    </article>
+  </div>
+</div>

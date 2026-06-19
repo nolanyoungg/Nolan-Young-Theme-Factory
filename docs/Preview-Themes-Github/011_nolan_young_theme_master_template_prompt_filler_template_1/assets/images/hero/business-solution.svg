@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="WordPress service workflow diagram">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="48" fill="#f8fafc"/>
+  <rect x="72" y="72" width="1056" height="656" rx="40" fill="url(#g)"/>
+  <circle cx="930" cy="224" r="98" fill="#fff" opacity=".14"/>
+  <circle cx="260" cy="590" r="140" fill="#fff" opacity=".12"/>
+  <rect x="184" y="300" width="220" height="76" rx="22" fill="#fff" opacity=".92"/>
+  <rect x="462" y="300" width="220" height="76" rx="22" fill="#fff" opacity=".82"/>
+  <rect x="740" y="300" width="220" height="76" rx="22" fill="#fff" opacity=".72"/>
+  <path d="M404 338h44M682 338h44" stroke="#fff" stroke-width="20" stroke-linecap="round"/>
+  <text x="182" y="250" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700">Business Solution</text>
+  <text x="182" y="476" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="26" opacity=".95">Structure, content, forms, support, and launch all in one flow.</text>
+</svg>

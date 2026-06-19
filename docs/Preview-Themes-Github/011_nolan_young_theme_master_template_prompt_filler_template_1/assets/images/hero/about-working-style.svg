@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Northstar working style illustration">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#101827"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="48" fill="#f8fafc"/>
+  <rect x="72" y="72" width="1056" height="656" rx="40" fill="url(#g)"/>
+  <circle cx="250" cy="220" r="86" fill="#fff" opacity=".15"/>
+  <circle cx="964" cy="592" r="134" fill="#fff" opacity=".11"/>
+  <path d="M210 470h210M210 520h300M210 570h240" stroke="#fff" stroke-width="24" stroke-linecap="round"/>
+  <text x="182" y="300" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700">Working Style</text>
+  <text x="182" y="360" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="26" opacity=".95">Focused collaboration without inflated claims.</text>
+</svg>

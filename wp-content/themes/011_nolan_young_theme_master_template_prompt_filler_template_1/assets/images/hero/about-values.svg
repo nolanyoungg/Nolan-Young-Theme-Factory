@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Northstar values illustration">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f766e"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" rx="48" fill="#f8fafc"/>
+  <rect x="72" y="72" width="1056" height="656" rx="40" fill="url(#g)"/>
+  <path d="M240 470c90-170 210-170 300 0 90-170 210-170 300 0" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round"/>
+  <text x="182" y="284" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="58" font-weight="700">Values</text>
+  <text x="182" y="352" fill="#fff" font-family="Arial, Helvetica, sans-serif" font-size="26" opacity=".95">Clarity. Maintainability. Steady communication.</text>
+  <rect x="182" y="548" width="360" height="24" rx="12" fill="#fff" opacity=".9"/>
+  <rect x="182" y="596" width="320" height="24" rx="12" fill="#fff" opacity=".75"/>
+</svg>

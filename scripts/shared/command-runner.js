@@ -57,7 +57,28 @@ function quoteWindowsArg(value) {
   return `"${text.replace(/"/g, '""')}"`;
 }
 
+function nodeShimScript(resolved) {
+  if (process.platform !== 'win32' || !/\.cmd$/i.test(resolved)) return '';
+  try {
+    const text = fs.readFileSync(resolved, 'utf8');
+    const match = text.match(/%dp0%[\\/]+([^"]+?\.js)/i);
+    if (!match) return '';
+    const scriptPath = path.resolve(path.dirname(resolved), match[1].replace(/[\\/]/g, path.sep));
+    return fs.existsSync(scriptPath) ? scriptPath : '';
+  } catch (error) {
+    return '';
+  }
+}
+
 function commandForSpawn(resolved, args, command) {
+  const shimScript = nodeShimScript(resolved);
+  if (shimScript) {
+    return {
+      executable: resolveCommand('node'),
+      args: [shimScript, ...args]
+    };
+  }
+
   if (process.platform === 'win32' && /\.(cmd|bat)$/i.test(resolved)) {
     const shimName = /[\\/]/.test(command) ? resolved : path.basename(resolved);
     const commandLine = [quoteWindowsArg(shimName), ...args.map(quoteWindowsArg)].join(' ');
@@ -73,6 +94,7 @@ function classifyCommandFailure(result, context = {}) {
   const output = `${result.stderr || ''}\n${result.stdout || ''}\n${result.error || ''}`;
   if (result.timedOut) return COMMAND_FAILURE_CODES.PROCESS_TIMEOUT;
   if (result.errorCode === 'ENOENT') return COMMAND_FAILURE_CODES.COMMAND_NOT_FOUND;
+  if (result.errorCode === 'ENOBUFS') return COMMAND_FAILURE_CODES.OUTPUT_INVALID;
   if (/not found|unknown model|model .* does not exist/i.test(output)) return COMMAND_FAILURE_CODES.MODEL_NOT_FOUND;
   if (/model .* not installed|pull .* first|not found, try pulling/i.test(output)) return COMMAND_FAILURE_CODES.MODEL_NOT_INSTALLED;
   if (/reasoning|model_reasoning_effort/i.test(output) && /unsupported|invalid|not supported/i.test(output)) return COMMAND_FAILURE_CODES.REASONING_LEVEL_UNSUPPORTED;
@@ -178,6 +200,7 @@ function runCommand(command, args = [], options = {}) {
     cwd: options.cwd || root,
     encoding: options.encoding || 'utf8',
     input: options.input,
+    maxBuffer: options.maxBuffer || 50 * 1024 * 1024,
     timeout: options.timeoutMs,
     stdio: options.stdio || 'pipe',
     env: { ...process.env, ...(options.env || {}) }

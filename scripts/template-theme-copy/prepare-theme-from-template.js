@@ -50,6 +50,29 @@ function completeCopiedTemplateScaffolds(themeDir, businessName) {
     fs.writeFileSync(headerPath, header);
   }
 
+  writeThemeFile(themeDir, '403.php', `<?php
+/**
+ * Restricted access template.
+ *
+ * @package Nolan_Young_Template
+ */
+
+get_header();
+?>
+<main id="primary" class="site-main">
+\t<section class="template-section error-403">
+\t\t<div class="template-container">
+\t\t\t<p class="eyebrow"><?php esc_html_e( 'Access restricted', 'nolan-young-template' ); ?></p>
+\t\t\t<h1><?php esc_html_e( 'This page is not available for public viewing.', 'nolan-young-template' ); ?></h1>
+\t\t\t<p><?php esc_html_e( 'Return to the homepage or use search to find public resources, services, and contact information.', 'nolan-young-template' ); ?></p>
+\t\t\t<a class="button" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Return home', 'nolan-young-template' ); ?></a>
+\t\t</div>
+\t</section>
+</main>
+<?php
+get_footer();
+`);
+
   writeThemeFile(themeDir, 'accessibility/README.md', `# Accessibility
 
 ${businessName} includes keyboard-visible focus states, semantic section structure, responsive navigation states, reduced-motion safeguards, and local assets that do not depend on third-party runtime services.

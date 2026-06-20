@@ -157,7 +157,19 @@ function home_url($path = '') {
 }
 function admin_url($path = '') { return ltrim((string) $path, '/'); }
 function site_url($path = '') { return home_url($path); }
-function bloginfo($show = '') { if ('charset' === $show) echo 'UTF-8'; else if ('name' === $show) echo 'Northstar Websites'; }
+function get_bloginfo($show = '', $filter = 'raw') {
+  $values = array(
+    'charset' => 'UTF-8',
+    'description' => 'Premium websites and digital systems for growing brands.',
+    'name' => 'Northstar Websites',
+    'template_url' => '',
+    'stylesheet_url' => 'assets/css/bundle.css',
+    'url' => 'homepage_preview.html',
+    'wpurl' => 'homepage_preview.html',
+  );
+  return $values[$show] ?? ($show === '' ? $values['name'] : '');
+}
+function bloginfo($show = '') { echo get_bloginfo($show); }
 function the_custom_logo() { echo '<span class="custom-logo-link"><img src="assets/icons/icon1.svg" alt="Northstar Websites logo"></span>'; }
 function language_attributes() { echo 'lang="en"'; }
 function body_class() { $classes = $GLOBALS['preview_fixture']['body_class'] ?? 'preview'; echo 'class="' . esc_attr($classes) . '"'; }

@@ -1,0 +1,11 @@
+.blog-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.blog-card__tag {
+  display: inline-flex;
+  margin-bottom: .8rem;
+  color: var(--color-brand);
+  font-weight: 700;
+}

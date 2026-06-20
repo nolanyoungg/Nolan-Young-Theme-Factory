@@ -90,15 +90,25 @@ function wordpressQuality() {
   if (templatePart) throw new Error(`Template part must be a fragment only: ${templatePart.relative}`);
 
   const textFiles = walkFiles(themeDir).filter((file) => /\.(php|css|js)$|README\.md$/i.test(file.relative));
+  const placeholderFiles = [];
+  const leakedFileBlockFiles = [];
+  const leakedCodeFenceFiles = [];
+  const secretFiles = [];
+  const remoteRuntimeFiles = [];
   for (const file of textFiles) {
     if (file.relative === 'package-lock.json' || file.relative.endsWith('.svg')) continue;
     const text = fs.readFileSync(file.full, 'utf8');
-    if (PLACEHOLDER_PATTERN.test(text)) throw new Error(`Unfinished placeholder copy in ${file.relative}`);
-    if (/\.(php|css|scss|js)$/i.test(file.relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) throw new Error(`Leaked model file-block marker in ${file.relative}`);
-    if (/\.(php|css|scss|js)$/i.test(file.relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) throw new Error(`Leaked markdown code fence marker in ${file.relative}`);
-    if (SECRET_PATTERN.test(text)) throw new Error(`Potential secret or credential in ${file.relative}`);
-    if (REMOTE_RUNTIME_PATTERN.test(text) && !ALLOWED_REMOTE_REFERENCE_PATTERN.test(text)) throw new Error(`Remote runtime dependency in ${file.relative}`);
+    if (PLACEHOLDER_PATTERN.test(text)) placeholderFiles.push(file.relative);
+    if (/\.(php|css|scss|js)$/i.test(file.relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) leakedFileBlockFiles.push(file.relative);
+    if (/\.(php|css|scss|js)$/i.test(file.relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) leakedCodeFenceFiles.push(file.relative);
+    if (SECRET_PATTERN.test(text)) secretFiles.push(file.relative);
+    if (REMOTE_RUNTIME_PATTERN.test(text) && !ALLOWED_REMOTE_REFERENCE_PATTERN.test(text)) remoteRuntimeFiles.push(file.relative);
   }
+  if (placeholderFiles.length) throw new Error(`Unfinished placeholder copy in ${placeholderFiles.join(', ')}`);
+  if (leakedFileBlockFiles.length) throw new Error(`Leaked model file-block marker in ${leakedFileBlockFiles.join(', ')}`);
+  if (leakedCodeFenceFiles.length) throw new Error(`Leaked markdown code fence marker in ${leakedCodeFenceFiles.join(', ')}`);
+  if (secretFiles.length) throw new Error(`Potential secret or credential in ${secretFiles.join(', ')}`);
+  if (remoteRuntimeFiles.length) throw new Error(`Remote runtime dependency in ${remoteRuntimeFiles.join(', ')}`);
   return 'Required WordPress files, headers, bundles, placeholder scan, secret scan, and remote dependency scan passed.';
 }
 

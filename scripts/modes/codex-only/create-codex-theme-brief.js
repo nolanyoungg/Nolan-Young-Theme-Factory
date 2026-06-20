@@ -2,6 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const { root } = require('../../shared/repo-root');
+const { PLACEHOLDER_PATTERN } = require('../../shared/constants');
 
 const [mode, themeSlug, templateName, promptFile, generationBriefPath, manifestPath, validationPath, codexModel, reasoning, outputPath] = process.argv.slice(2);
 
@@ -38,12 +39,32 @@ function readGenerationBrief(pointerFile) {
   };
 }
 
+function walkFiles(dir, base = dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (['node_modules', '.git', '.generation', 'reports'].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkFiles(full, base, out);
+    else out.push({ full, relative: path.relative(base, full).replace(/\\/g, '/') });
+  }
+  return out;
+}
+
+function collectRepairFindings(themeDirectory) {
+  const resolvedThemeDir = resolveRepoPath(themeDirectory);
+  return walkFiles(resolvedThemeDir)
+    .filter((file) => /\.(php|css|js)$|README\.md$/i.test(file.relative))
+    .filter((file) => PLACEHOLDER_PATTERN.test(fs.readFileSync(file.full, 'utf8')))
+    .map((file) => file.relative);
+}
+
 const themeDir = `wp-content/themes/${themeSlug}`;
 const outputName = path.basename(outputPath).toLowerCase();
 const passType = outputName.includes('build') ? 'build' : outputName.includes('repair') ? 'repair' : 'finish';
 const selectedPrompt = readText(promptFile);
 const generationBrief = readGenerationBrief(generationBriefPath);
 const validationReport = readText(validationPath);
+const repairFindings = passType === 'repair' ? collectRepairFindings(themeDir) : [];
 
 const passInstructions = {
   build: `## Codex-Only Build Pass
@@ -63,9 +84,13 @@ You must:
 - Keep PHP, CSS, JavaScript, content, responsive behavior, forms, and accessibility coherent.
 - Put authored styling in src/scss/main.scss and related source SCSS files, not only in assets/css/bundle.css.
 - Keep src/js/main.js useful and compatible with the asset build.
+- Preserve the copied template's webpack/Sass build tooling unless a deterministic build failure proves it must change.
+- Do not replace the generated theme's build system with a custom build script when the existing build can be made to work.
 - Do not package the ZIP.
 - Do not rebuild the gallery.
 - Do not move the generated theme.
+- Do not run \`npm run dev\`, \`npm run watch\`, \`webpack --watch\`, local servers, or any other long-running watch process.
+- If you verify commands, run only bounded commands that exit on their own, such as \`npm run build\` or PHP syntax checks.
 - Do not add secrets, external API credentials, CDN dependencies, remote images, or machine-specific paths.
 - Leave the theme ready for scripted validation, preview generation, gallery rebuild, and packaging.`,
   finish: `## Hybrid Finish Pass
@@ -84,6 +109,9 @@ You must:
 - Preserve every required file from the selected template.
 - If fixing styling, update src/scss/main.scss or source partials so npm run build reproduces the finished CSS.
 - Do not rely on hand-editing assets/css/bundle.css without updating source SCSS.
+- Preserve the copied template's webpack/Sass build tooling unless a deterministic build failure proves it must change.
+- Do not run \`npm run dev\`, \`npm run watch\`, \`webpack --watch\`, local servers, or any other long-running watch process.
+- If you verify commands, run only bounded commands that exit on their own, such as \`npm run build\` or PHP syntax checks.
 - Keep edits focused inside the generated theme folder.
 - Do not package the ZIP, rebuild the gallery, move the generated theme, or edit unrelated repo files.
 - Do not add secrets, external API credentials, CDN dependencies, remote images, or machine-specific paths.
@@ -97,11 +125,24 @@ You must:
 - Fix only the reported validation failures.
 - Avoid unrelated redesign.
 - Make the smallest complete changes that satisfy validation and prompt intent.
+- Replace all remaining copied Lorem ipsum, placeholder, TODO, FIXME, "Add ... here", and future-editor copy in the listed files.
+- If a listed file is a generic fallback template, write concise finished fallback copy consistent with the selected creative prompt.
 - Preserve every required file from the selected template.
 - Keep edits focused inside the generated theme folder.
+- Do not run \`npm run dev\`, \`npm run watch\`, \`webpack --watch\`, local servers, or any other long-running watch process.
+- If you verify commands, run only bounded commands that exit on their own, such as \`npm run build\` or PHP syntax checks.
 - Do not package the ZIP or rebuild the gallery.
 - Document the relevant checks to rerun.`
 }[passType];
+
+const repairFindingsSection = passType === 'repair' ? `## Targeted Repair Findings
+
+Validation identified unfinished placeholder/runtime copy in these files:
+
+${repairFindings.length ? repairFindings.map((file) => `- ${file}`).join('\n') : '- No placeholder files were detected by the repair scanner; use the validation report below.'}
+
+Repair only the validation-relevant content in these files unless a directly related include must be adjusted to keep the theme coherent.
+` : '';
 
 const brief = `# Codex Theme Brief
 
@@ -134,6 +175,7 @@ ${passInstructions}
 - Preserve the selected template structure.
 - Fix PHP, CSS, JS, content, accessibility, and integration issues relevant to the current validation report.
 - Ensure npm run build can regenerate the final CSS and JS from source files.
+- Do not run npm run dev or any watch/server command; those commands do not terminate in automation.
 - Do not leave source SCSS weaker than the compiled CSS.
 - Keep local assets and portable paths.
 - Remove secrets, CDN dependencies, and repo-local preview or dist paths from the theme.
@@ -152,6 +194,8 @@ ${generationBrief.content || '(Generation brief could not be read.)'}
 ## Current Validation Report
 
 ${validationReport || '(Validation report is not available yet.)'}
+
+${repairFindingsSection}
 
 ## Completion Expectation
 

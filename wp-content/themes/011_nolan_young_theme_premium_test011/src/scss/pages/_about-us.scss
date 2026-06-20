@@ -1,0 +1,11 @@
+.about-intro { max-width: 760px; }
+.about-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+.about-pillar {
+  padding: 1.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: #fff;
+}

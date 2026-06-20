@@ -4,6 +4,7 @@ const path = require('path');
 const { root, scriptPath } = require('./shared/repo-root');
 const { parseArgs, arg, flag } = require('./shared/args');
 const { runCommand } = require('./shared/command-runner');
+const { COMMAND_FAILURE_CODES } = require('./shared/constants');
 const { validateKnownCodexReasoningCombination, validateOllamaModel } = require('./shared/model-config');
 const { checkCodexAccess, checkOllamaAccess, codexExecArgs } = require('./shared/model-access');
 const {
@@ -167,22 +168,78 @@ function validateRequestedModels(stages, ollamaModel, codexModel, codexReasoning
   return null;
 }
 
-function finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath) {
-  if (!buildThemeAssets(themeSlug, reportDir)) failRun(reportDir, state, 'Theme asset build failed.');
+function finalValidationNeedsCodexRepair(validationFinalPath) {
+  if (!fs.existsSync(validationFinalPath)) return false;
+  const report = JSON.parse(fs.readFileSync(validationFinalPath, 'utf8'));
+  return report.checks.some((check) => (
+    check.name === 'wordpress_quality'
+    && check.status === 'failed'
+    && /placeholder|Lorem ipsum|template part|header|footer|CSS|JS|bundle|content/i.test(check.details || '')
+  ));
+}
+
+function finalizationNeedsCodexRepair(themeSlug, reportDir, state, validationFinalPath) {
+  if (finalValidationNeedsCodexRepair(validationFinalPath)) return true;
+  if (!/Preview generation failed/i.test(state.last_finalization_error || '')) return false;
+  const previewOutputPath = path.join(reportDir, 'preview.output.txt');
+  if (!fs.existsSync(previewOutputPath)) return false;
+  const previewOutput = fs.readFileSync(previewOutputPath, 'utf8');
+  const themePathPattern = new RegExp(`wp-content[\\\\/]themes[\\\\/]${themeSlug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i');
+  return themePathPattern.test(previewOutput) && /(Fatal error|Parse error|Uncaught Error|undefined function)/i.test(previewOutput);
+}
+
+function writeCodexRepairEvidence(themeSlug, reportDir, state, validationFinalPath) {
+  const evidencePath = path.join(reportDir, 'codex.repair-findings.md');
+  const sections = [
+    '# Codex Repair Findings',
+    '',
+    `Theme slug: ${themeSlug}`,
+    `Failure: ${state.last_finalization_error || 'Final validation failed.'}`,
+    ''
+  ];
+  if (fs.existsSync(validationFinalPath)) {
+    sections.push('## Final Validation Report', '', fs.readFileSync(validationFinalPath, 'utf8').trim(), '');
+  }
+  for (const [label, fileName] of [['Preview Output', 'preview.output.txt'], ['Build Output', 'build.output.txt']]) {
+    const filePath = path.join(reportDir, fileName);
+    if (!fs.existsSync(filePath)) continue;
+    const text = fs.readFileSync(filePath, 'utf8').trim();
+    sections.push(`## ${label}`, '', text.length > 20000 ? text.slice(-20000) : text, '');
+  }
+  fs.writeFileSync(evidencePath, `${sections.join('\n')}\n`, 'utf8');
+  return evidencePath;
+}
+
+function finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath, options = {}) {
+  function finalizationFailure(message) {
+    if (options.allowFailure) {
+      state.status = options.failureStatus || 'finalization-failed';
+      state.last_finalization_error = message;
+      writeState(reportDir, state);
+      console.error(`ERROR: ${message}`);
+      return false;
+    }
+    failRun(reportDir, state, message);
+    return false;
+  }
+
+  if (!buildThemeAssets(themeSlug, reportDir)) return finalizationFailure('Theme asset build failed.');
   const preview = run('node', [scripts.generateStaticPreview, themeSlug]);
   fs.writeFileSync(path.join(reportDir, 'preview.output.txt'), `${preview.stdout || ''}${preview.stderr || ''}`, 'utf8');
-  if (preview.status !== 0) failRun(reportDir, state, 'Preview generation failed.');
+  if (preview.status !== 0) return finalizationFailure('Preview generation failed.');
   const gallery = run('node', [scripts.rebuildPreviewGallery]);
   fs.appendFileSync(path.join(reportDir, 'preview.output.txt'), `${gallery.stdout || ''}${gallery.stderr || ''}`, 'utf8');
-  if (gallery.status !== 0) failRun(reportDir, state, 'Preview gallery rebuild failed.');
+  if (gallery.status !== 0) return finalizationFailure('Preview gallery rebuild failed.');
   const galleryValidation = run('node', [scripts.validatePreviewGallery]);
   fs.appendFileSync(path.join(reportDir, 'preview.output.txt'), `${galleryValidation.stdout || ''}${galleryValidation.stderr || ''}`, 'utf8');
-  if (galleryValidation.status !== 0) failRun(reportDir, state, 'Preview gallery validation failed.');
+  if (galleryValidation.status !== 0) return finalizationFailure('Preview gallery validation failed.');
   const pack = run('node', [scripts.packageTheme, themeSlug]);
   fs.writeFileSync(path.join(reportDir, 'package.output.txt'), `${pack.stdout || ''}${pack.stderr || ''}`, 'utf8');
-  if (pack.status !== 0) failRun(reportDir, state, 'Theme packaging failed.');
+  if (pack.status !== 0) return finalizationFailure('Theme packaging failed.');
   const finalReport = run('node', [scripts.writeThemeValidationReport, themeSlug, templateName, validationFinalPath, 'final']);
-  if (finalReport.status !== 0 || !validationReportPassed(validationFinalPath)) failRun(reportDir, state, `Final validation failed for ${state.mode} run.`);
+  if (finalReport.status !== 0 || !validationReportPassed(validationFinalPath)) {
+    return finalizationFailure(`Final validation failed for ${state.mode} run.`);
+  }
   fs.writeFileSync(path.join(reportDir, 'workflow.summary.md'), `# Workflow Summary
 
 Status: completed
@@ -204,8 +261,10 @@ Codex reasoning: ${state.resolved.codex_reasoning || 'not used'}
 
 No model fallback or provider substitution was performed.
 `, 'utf8');
+  delete state.last_finalization_error;
   state.status = 'completed';
   writeState(reportDir, state);
+  return true;
 }
 
 function runCodexBrief(mode, reportDir, state) {
@@ -218,6 +277,7 @@ function runCodexBrief(mode, reportDir, state) {
   const stage = briefName.includes('build') ? 'codex-build' : briefName.includes('repair') ? 'codex-repair' : 'codex-finish';
   const codexResult = run(process.platform === 'win32' ? 'codex.cmd' : 'codex', codexExecArgs(state.resolved.codex_model, state.resolved.codex_reasoning), {
     debugDir: path.join(reportDir, 'debug'),
+    echo: false,
     echoSummary: true,
     input: codexBriefText,
     mode,
@@ -232,10 +292,10 @@ function runCodexBrief(mode, reportDir, state) {
   fs.writeFileSync(path.join(reportDir, outputName), `${codexResult.stdout || ''}${codexResult.stderr || ''}`, 'utf8');
   if (stage === 'codex-build') state.invocations.codex_generation += 1;
   if (stage === 'codex-finish') state.invocations.codex_finish += 1;
+  if (stage === 'codex-repair') state.invocations.targeted_repairs += 1;
   if (codexResult.status !== 0) {
     state.invocations.failed_invocations += 1;
-    const codexOutput = `${codexResult.stdout || ''}\n${codexResult.stderr || ''}`;
-    if (/out of credits|quota|billing|usage limit/i.test(codexOutput)) {
+    if (codexResult.classification === COMMAND_FAILURE_CODES.QUOTA_EXCEEDED) {
       state.status = mode === 'hybrid' ? 'codex-finish-pending' : 'codex-build-pending';
       state.codex_pending_reason = 'Codex execution is blocked by workspace credits, quota, billing, or usage limits.';
       writeState(reportDir, state);
@@ -248,6 +308,29 @@ function runCodexBrief(mode, reportDir, state) {
   delete state.codex_pending_reason;
   writeState(reportDir, state);
   return true;
+}
+
+function runCodexRepair(mode, themeSlug, templateName, promptFile, reportDir, state, repairEvidencePath, manifestPath) {
+  const repairBrief = path.join(reportDir, 'codex.repair-brief.md');
+  const result = run('node', [
+    scripts.createCodexThemeBrief,
+    mode,
+    themeSlug,
+    templateName,
+    promptFile,
+    path.join(reportDir, 'generation-brief.path.txt'),
+    manifestPath,
+    repairEvidencePath,
+    state.resolved.codex_model,
+    state.resolved.codex_reasoning,
+    repairBrief
+  ], { timeoutMs: state.timeouts.command_timeout_ms });
+  if (result.status !== 0) failRun(reportDir, state, 'Codex repair brief creation failed.');
+  state.status = 'codex-repair-pending';
+  writeState(reportDir, state);
+  if (!runCodexBrief(mode, reportDir, state)) process.exit(2);
+  state.status = 'ready-for-finalization';
+  writeState(reportDir, state);
 }
 
 const args = parseArgs(process.argv.slice(2));
@@ -331,7 +414,7 @@ const expectedInvocations = {
   ollama_generation: stages.ollama_generation_pass === 'ollama' ? 5 : 0,
   codex_generation: stages.codex_generation_pass === 'codex' ? 1 : 0,
   codex_finish: stages.codex_finish_pass === 'codex' ? 1 : 0,
-  max_targeted_repairs: mode === 'ollama-only' ? 1 : 0
+  max_targeted_repairs: 1
 };
 
 if (dryRun) {
@@ -501,5 +584,15 @@ if (mode !== 'codex-only') {
 if (!runCodexBrief(mode, reportDir, state)) process.exit(2);
 state.status = 'ready-for-finalization';
 writeState(reportDir, state);
-finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath);
+if (!finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath, { allowFailure: true, failureStatus: 'codex-repair-needed' })) {
+  if (!finalizationNeedsCodexRepair(themeSlug, reportDir, state, validationFinalPath)) {
+    failRun(reportDir, state, state.last_finalization_error || `Final validation failed for ${state.mode} run.`);
+  }
+  if (state.invocations.targeted_repairs >= 1) {
+    failRun(reportDir, state, 'Final validation failed after the allowed targeted repair.');
+  }
+  const repairEvidencePath = writeCodexRepairEvidence(themeSlug, reportDir, state, validationFinalPath);
+  runCodexRepair(mode, themeSlug, templateName, promptFile, reportDir, state, repairEvidencePath, manifestPath);
+  finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath);
+}
 console.log(`Workflow completed for ${themeSlug}`);

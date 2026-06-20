@@ -1,0 +1,36 @@
+.form-row { display: grid; gap: 8px; }
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-field label {
+  display: block;
+  margin-bottom: .35rem;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  width: 100%;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  padding: .9rem 1rem;
+  background: #fff;
+}
+
+.form-field input:focus-visible,
+.form-field textarea:focus-visible,
+.form-field select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-brand) 60%, white);
+  outline-offset: 2px;
+}
+
+.form-notice {
+  padding: .9rem 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(20,184,166,.12);
+  color: #065f46;
+}

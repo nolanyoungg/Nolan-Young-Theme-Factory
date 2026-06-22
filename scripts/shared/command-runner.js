@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const { COMMAND_FAILURE_CODES } = require('./constants');
 const { root } = require('./repo-root');
 
@@ -220,11 +220,32 @@ function runCommandLine(commandLine, args = [], options = {}) {
   return runCommand(commandLine, args, options);
 }
 
+function spawnCommand(command, args = [], options = {}) {
+  const resolved = options.resolve === false ? command : resolveCommand(command);
+  const spawnSpec = commandForSpawn(resolved, args, command);
+  const startedAt = new Date().toISOString();
+  const child = spawn(spawnSpec.executable, spawnSpec.args, {
+    cwd: options.cwd || root,
+    env: { ...process.env, ...(options.env || {}) },
+    stdio: options.stdio || ['ignore', 'pipe', 'pipe'],
+    windowsHide: true
+  });
+  child.commandMetadata = {
+    command,
+    resolvedCommand: resolved,
+    args,
+    cwd: options.cwd || root,
+    startedAt
+  };
+  return child;
+}
+
 module.exports = {
   classifyCommandFailure,
   hasCommand,
   redact,
   resolveCommand,
+  spawnCommand,
   runCommand,
   runCommandLine,
   writeDebugReport

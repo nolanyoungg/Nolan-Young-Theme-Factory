@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 const { root, scriptPath } = require('./shared/repo-root');
 const { parseArgs, arg, flag } = require('./shared/args');
-const { runCommand } = require('./shared/command-runner');
-const { COMMAND_FAILURE_CODES } = require('./shared/constants');
+const { runCommand, spawnCommand } = require('./shared/command-runner');
+const { COMMAND_FAILURE_CODES, REQUIRED_BUNDLES } = require('./shared/constants');
 const { validateKnownCodexReasoningCombination, validateOllamaModel } = require('./shared/model-config');
 const { checkCodexAccess, checkOllamaAccess, codexExecArgs } = require('./shared/model-access');
 const {
@@ -49,6 +49,10 @@ function safePath(input, label) {
 
 function run(cmd, args, options = {}) {
   return runCommand(cmd, args, { cwd: root, ...options });
+}
+
+function sleep(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
 function help() {
@@ -111,6 +115,111 @@ function buildThemeAssets(themeSlug, reportDir) {
   const result = run('node', [scripts.buildThemeAssets, '--theme-slug', themeSlug, '--command-timeout-ms', String(defaults.validation.command_timeout_ms || 120000)]);
   fs.writeFileSync(path.join(reportDir, 'build.output.txt'), `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
   return result.status === 0;
+}
+
+function ensureThemeDevDependencies(themeSlug, reportDir, state) {
+  const themePath = path.join(root, defaults.paths.themes, themeSlug);
+  const packagePath = path.join(themePath, 'package.json');
+  if (!fs.existsSync(packagePath)) failRun(reportDir, state, `package.json missing; cannot start npm run dev for ${themeSlug}.`);
+
+  const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  packageJson.scripts = packageJson.scripts || {};
+  if (!packageJson.scripts.dev) {
+    packageJson.scripts.dev = packageJson.scripts.watch || 'webpack --watch --config build/webpack.config.js';
+    fs.writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8');
+    console.log(`[theme-dev] Added npm run dev to ${path.relative(root, packagePath).replace(/\\/g, '/')}`);
+  }
+
+  if (fs.existsSync(path.join(themePath, 'node_modules'))) return;
+  const install = run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], {
+    cwd: themePath,
+    timeoutMs: state.timeouts.command_timeout_ms
+  });
+  fs.writeFileSync(path.join(reportDir, 'dev-watch.install.output.txt'), `${install.stdout || ''}${install.stderr || ''}`, 'utf8');
+  if (install.status !== 0) failRun(reportDir, state, `Dependency install failed before npm run dev for ${themeSlug}.`);
+}
+
+function waitForDevBundles(themeSlug, reportDir, state, watcher, startedAtMs) {
+  const themePath = path.join(root, defaults.paths.themes, themeSlug);
+  const timeoutMs = Math.min(Math.max(state.timeouts.command_timeout_ms, 30000), 120000);
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    if (watcher.exitCode !== null) {
+      failRun(reportDir, state, `npm run dev exited before initial bundles were ready for ${themeSlug}.`);
+    }
+    const ready = REQUIRED_BUNDLES.every((bundle) => {
+      const bundlePath = path.join(themePath, bundle);
+      if (!fs.existsSync(bundlePath)) return false;
+      const stat = fs.statSync(bundlePath);
+      return stat.size > 0 && stat.mtimeMs >= startedAtMs - 1000;
+    });
+    if (ready) return;
+    sleep(500);
+  }
+  failRun(reportDir, state, `npm run dev did not create initial bundles within ${timeoutMs}ms for ${themeSlug}.`);
+}
+
+function stopThemeDevWatcher(watcher) {
+  if (!watcher || !watcher.process || watcher.process.exitCode !== null) return;
+  if (process.platform === 'win32') {
+    run('taskkill', ['/pid', String(watcher.process.pid), '/t', '/f'], { echo: false, timeoutMs: 10000 });
+    return;
+  }
+  watcher.process.kill('SIGTERM');
+  const deadline = Date.now() + 5000;
+  while (watcher.process.exitCode === null && Date.now() < deadline) sleep(100);
+  if (watcher.process.exitCode === null) watcher.process.kill('SIGKILL');
+}
+
+function startThemeDevWatcher(themeSlug, reportDir, state, stageName) {
+  ensureThemeDevDependencies(themeSlug, reportDir, state);
+  const themePath = path.join(root, defaults.paths.themes, themeSlug);
+  const startedAtMs = Date.now();
+  const stdoutPath = path.join(reportDir, `dev-watch.${stageName}.stdout.log`);
+  const stderrPath = path.join(reportDir, `dev-watch.${stageName}.stderr.log`);
+  const stdout = fs.createWriteStream(stdoutPath, { flags: 'a' });
+  const stderr = fs.createWriteStream(stderrPath, { flags: 'a' });
+  const watcher = spawnCommand('npm', ['run', 'dev'], {
+    cwd: themePath,
+    env: { CI: '1' }
+  });
+  watcher.stdout.pipe(stdout);
+  watcher.stderr.pipe(stderr);
+  watcher.on('exit', (code, signal) => {
+    stderr.write(`\n[npm run dev exited] code=${code === null ? '' : code} signal=${signal || ''}\n`);
+    stdout.end();
+    stderr.end();
+  });
+
+  state.dev_watcher = {
+    active: true,
+    stage: stageName,
+    command: 'npm run dev',
+    cwd: path.relative(root, themePath).replace(/\\/g, '/'),
+    pid: watcher.pid,
+    stdout_log: path.relative(root, stdoutPath).replace(/\\/g, '/'),
+    stderr_log: path.relative(root, stderrPath).replace(/\\/g, '/'),
+    started_at: new Date(startedAtMs).toISOString()
+  };
+  writeState(reportDir, state);
+  console.log(`[theme-dev] Started npm run dev for ${themeSlug} during ${stageName}`);
+  waitForDevBundles(themeSlug, reportDir, state, watcher, startedAtMs);
+  return { process: watcher, stdout, stderr };
+}
+
+function withThemeDevWatcher(themeSlug, reportDir, state, stageName, task) {
+  const watcher = startThemeDevWatcher(themeSlug, reportDir, state, stageName);
+  try {
+    return task();
+  } finally {
+    stopThemeDevWatcher(watcher);
+    if (state.dev_watcher) {
+      state.dev_watcher.active = false;
+      state.dev_watcher.stopped_at = new Date().toISOString();
+      writeState(reportDir, state);
+    }
+    console.log(`[theme-dev] Stopped npm run dev for ${themeSlug} after ${stageName}`);
+  }
 }
 
 function checkModelAccess(provider, timeoutMs, reportDir, state) {
@@ -275,19 +384,21 @@ function runCodexBrief(mode, reportDir, state) {
   if (!fs.existsSync(codexBrief)) failRun(reportDir, state, `Missing Codex brief: ${path.relative(root, codexBrief)}`);
   const codexBriefText = fs.readFileSync(codexBrief, 'utf8');
   const stage = briefName.includes('build') ? 'codex-build' : briefName.includes('repair') ? 'codex-repair' : 'codex-finish';
-  const codexResult = run(process.platform === 'win32' ? 'codex.cmd' : 'codex', codexExecArgs(state.resolved.codex_model, state.resolved.codex_reasoning), {
-    debugDir: path.join(reportDir, 'debug'),
-    echo: false,
-    echoSummary: true,
-    input: codexBriefText,
-    mode,
-    model: state.resolved.codex_model,
-    provider: 'Codex',
-    reasoning: state.resolved.codex_reasoning,
-    stage,
-    themeSlug: state.theme_slug,
-    timeoutMs: state.timeouts.codex_timeout_ms
-  });
+  const codexResult = withThemeDevWatcher(state.theme_slug, reportDir, state, stage, () => (
+    run(process.platform === 'win32' ? 'codex.cmd' : 'codex', codexExecArgs(state.resolved.codex_model, state.resolved.codex_reasoning), {
+      debugDir: path.join(reportDir, 'debug'),
+      echo: false,
+      echoSummary: true,
+      input: codexBriefText,
+      mode,
+      model: state.resolved.codex_model,
+      provider: 'Codex',
+      reasoning: state.resolved.codex_reasoning,
+      stage,
+      themeSlug: state.theme_slug,
+      timeoutMs: state.timeouts.codex_timeout_ms
+    })
+  ));
   const outputName = briefName.replace('-brief.md', '.output.txt');
   fs.writeFileSync(path.join(reportDir, outputName), `${codexResult.stdout || ''}${codexResult.stderr || ''}`, 'utf8');
   if (stage === 'codex-build') state.invocations.codex_generation += 1;
@@ -546,7 +657,9 @@ state.status = mode === 'ollama-only' ? 'ollama-complete' : 'prepared';
 writeState(reportDir, state);
 
 if (stages.ollama_generation_pass === 'ollama') {
-  const ollama = run('node', [scripts.runOllamaThemePass, '--theme-slug', themeSlug, '--prompt', promptFile, '--ollama-model', state.resolved.ollama_model, '--ollama-timeout-ms', String(timeouts.ollama_timeout_ms)], { timeoutMs: timeouts.ollama_timeout_ms * 6 });
+  const ollama = withThemeDevWatcher(themeSlug, reportDir, state, 'ollama-generation', () => (
+    run('node', [scripts.runOllamaThemePass, '--theme-slug', themeSlug, '--prompt', promptFile, '--ollama-model', state.resolved.ollama_model, '--ollama-timeout-ms', String(timeouts.ollama_timeout_ms)], { timeoutMs: timeouts.ollama_timeout_ms * 6 })
+  ));
   fs.writeFileSync(path.join(reportDir, 'ollama.pass.output.txt'), `${ollama.stdout}${ollama.stderr}`, 'utf8');
   state.invocations.ollama_generation += 5;
   if (ollama.status !== 0) {
@@ -564,7 +677,9 @@ const templateCheck = run('node', [scripts.validateThemeFromTemplate, themeSlug,
 if (templateCheck.status !== 0) failRun(reportDir, state, 'Template-aware validation failed.');
 let qualityCheck = run('node', [scripts.themeQualityCheck, themeSlug]);
 if (qualityCheck.status !== 0 && mode === 'ollama-only') {
-  const repair = run('node', [scripts.runOllamaQualityRepairPass, '--theme-slug', themeSlug, '--prompt', promptFile, '--ollama-model', state.resolved.ollama_model, '--ollama-timeout-ms', String(timeouts.ollama_timeout_ms)], { timeoutMs: timeouts.ollama_timeout_ms * 2 });
+  const repair = withThemeDevWatcher(themeSlug, reportDir, state, 'ollama-targeted-repair', () => (
+    run('node', [scripts.runOllamaQualityRepairPass, '--theme-slug', themeSlug, '--prompt', promptFile, '--ollama-model', state.resolved.ollama_model, '--ollama-timeout-ms', String(timeouts.ollama_timeout_ms)], { timeoutMs: timeouts.ollama_timeout_ms * 2 })
+  ));
   fs.writeFileSync(path.join(reportDir, 'ollama.quality-repair.output.txt'), `${repair.stdout}${repair.stderr}`, 'utf8');
   state.invocations.targeted_repairs += 1;
   if (repair.status !== 0) failRun(reportDir, state, 'Ollama quality repair failed.');

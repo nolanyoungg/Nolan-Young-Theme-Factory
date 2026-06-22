@@ -48,7 +48,7 @@ That was the strongest run so far. The prompt structure used for that pass is th
 - ZIP outputs: `dist/zipped-themes/`
 - Preview output: `docs/Preview-Themes-Github/`
 - Run reports: `reports/runs/`
-- Workflow scripts: `scripts/` (see `scripts/README.md` for the organized script map)
+- Workflow scripts: `scripts/` (see `scripts/README.md` for the organized script map and `docs/SCRIPT-ARCHITECTURE-AUDIT.md` for the Node-only migration audit)
 - Workflow configuration: `config/workflow-modes.json` and `config/theme-factory.defaults.json`
 
 **Common commands**

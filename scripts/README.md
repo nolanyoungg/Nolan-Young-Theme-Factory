@@ -103,6 +103,13 @@ npm run theme:env -- --mode <all|ollama-only|codex-only|hybrid|preview|build>
 
 Reports operating system, Node, npm, Git, PHP, Ollama, Codex, installed Ollama models, and configured paths. Dependencies are mode-aware: preview and ZIP commands do not require AI tools.
 
+Add `--model-check` to run the same shared static provider validation used by workflow startup and `theme:model-check`. This checks exact configured or supplied model identifiers without a live provider request unless `--live-model-check` is also supplied.
+
+```text
+npm run theme:env -- --mode codex-only --model-check --codex-model "gpt-5.5" --codex-reasoning "high"
+npm run theme:env -- --mode ollama-only --model-check --ollama-model "qwen2.5-coder:14b"
+```
+
 ### Model Check
 
 ```text

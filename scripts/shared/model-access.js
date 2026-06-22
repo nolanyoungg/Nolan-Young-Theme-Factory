@@ -273,6 +273,7 @@ module.exports = {
   checkCodexAccess,
   checkOllamaAccess,
   checkProviderAccess,
+  codexCommandName,
   codexExecArgs,
   liveProbeCache,
   parseOllamaModels

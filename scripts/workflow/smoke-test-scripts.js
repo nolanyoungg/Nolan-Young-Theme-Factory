@@ -124,6 +124,10 @@ assert.strictEqual(classifyCommandFailure({ status: 1, stdout: '', stderr: 'conn
 assert.strictEqual(classifyCommandFailure({ status: 1, stdout: '', stderr: '', timedOut: true, errorCode: '' }), COMMAND_FAILURE_CODES.PROCESS_TIMEOUT);
 assert.strictEqual(classifyCommandFailure({ status: 1, stdout: '', stderr: 'generic failure', errorCode: '' }), COMMAND_FAILURE_CODES.NONZERO_EXIT);
 
+const missingExecutable = runCommand('theme-factory-definitely-missing-command', ['--version'], { echo: false, timeoutMs: 1000 });
+assert.strictEqual(missingExecutable.status, 1);
+assert.strictEqual(missingExecutable.classification, COMMAND_FAILURE_CODES.COMMAND_NOT_FOUND);
+
 assert.strictEqual(safeRelativePath('prompts/pending/MASTER-TEMPLATE-PROMPT-filler-template (1).md', 'prompt'), 'prompts/pending/MASTER-TEMPLATE-PROMPT-filler-template (1).md');
 assert.strictEqual(safeRelativePath('prompts\\pending\\000-testing.md', 'prompt'), 'prompts/pending/000-testing.md');
 
@@ -156,7 +160,10 @@ for (const mode of ['ollama-only', 'codex-only', 'hybrid']) {
   assertNoArtifacts(drySlug);
 }
 
-mustRun('node', [scriptPath('environment', 'check-environment.js'), '--mode', 'preview']);
+const previewEnv = mustRun('node', [scriptPath('environment', 'check-environment.js'), '--mode', 'preview', '--model-check']);
+const previewEnvReport = JSON.parse(previewEnv.stdout);
+assert.strictEqual(previewEnvReport.provider_checks.ollama, null);
+assert.strictEqual(previewEnvReport.provider_checks.codex, null);
 
 for (const planned of artifactPlan(drySlug, {
   themes: 'wp-content/themes',

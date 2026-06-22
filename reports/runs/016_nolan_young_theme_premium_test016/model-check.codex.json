@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "provider": "codex",
+  "executable": "C:\\Users\\NolanYoung\\AppData\\Roaming\\npm\\codex.cmd",
+  "version": "codex-cli 0.141.0",
+  "requested_model": "gpt-5.4-mini",
+  "resolved_model": "gpt-5.4-mini",
+  "requested_reasoning": "low",
+  "resolved_reasoning": "low",
+  "known_capability_map_entry": false,
+  "cli_option_check": "passed",
+  "live_capability_check": true,
+  "live_check_status": 0,
+  "live_check_classification": "",
+  "live_check_args": [
+    "exec",
+    "-m",
+    "gpt-5.4-mini",
+    "-c",
+    "model_reasoning_effort=\"low\"",
+    "-"
+  ],
+  "debug_report": ""
+}

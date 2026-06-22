@@ -1,32 +1,8 @@
-<div class="footer-widget-container">
-    <div class="widget-column services">
-        <h3>Services</h3>
-        <ul>
-            <li><a href="#">Web Design</a></li>
-            <li><a href="#">Web Development</a></li>
-            <li><a href="#">Website Support</a></li>
-        </ul>
-    </div>
-    <div class="widget-column company">
-        <h3>Company</h3>
-        <ul>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Our Work</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </div>
-    <div class="widget-column blog">
-        <h3>From the Blog</h3>
-        <ul>
-            <li><a href="#">Recent Post 1</a></li>
-            <li><a href="#">Recent Post 2</a></li>
-            <li><a href="#">Recent Post 3</a></li>
-        </ul>
-    </div>
-    <div class="widget-column contact">
-        <h3>Contact Us</h3>
-        <p>Email: info@northstarwebsites.com</p>
-        <p>Phone: (123) 456-7890</p>
-    </div>
+<?php $services = nolan_young_template_services(); $articles = nolan_young_template_articles(); ?>
+<div class="footer-widgets">
+	<section class="footer-brand"><a class="site-branding" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php nolan_young_template_render_logo(); ?></a><p><?php esc_html_e( 'Northstar Websites designs, builds, and supports modern WordPress websites for service businesses that need clearer content and better conversion paths.', 'nolan-young-template' ); ?></p><?php nolan_young_template_render_newsletter_form(); ?></section>
+	<nav aria-label="<?php esc_attr_e( 'Footer services', 'nolan-young-template' ); ?>"><h2><?php esc_html_e( 'Services', 'nolan-young-template' ); ?></h2><?php foreach ( $services as $service ) : ?><a href="<?php echo esc_url( $service['url'] ); ?>"><?php echo esc_html( $service['title'] ); ?></a><?php endforeach; ?></nav>
+	<nav aria-label="<?php esc_attr_e( 'Footer company', 'nolan-young-template' ); ?>"><h2><?php esc_html_e( 'Company', 'nolan-young-template' ); ?></h2><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'About', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/work/' ) ); ?>"><?php esc_html_e( 'Work', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>"><?php esc_html_e( 'Blog', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact', 'nolan-young-template' ); ?></a></nav>
+	<nav aria-label="<?php esc_attr_e( 'Footer blog', 'nolan-young-template' ); ?>"><h2><?php esc_html_e( 'Blog', 'nolan-young-template' ); ?></h2><?php foreach ( array_slice( $articles, 0, 3 ) as $article ) : ?><a href="<?php echo esc_url( $article['url'] ); ?>"><?php echo esc_html( $article['title'] ); ?></a><?php endforeach; ?></nav>
+	<section class="footer-contact"><h2><?php esc_html_e( 'Contact', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Use the contact form to share goals, service needs, timeline considerations, and the best way to reply.', 'nolan-young-template' ); ?></p><a class="btn btn-secondary btn-small" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Send inquiry', 'nolan-young-template' ); ?></a></section>
 </div>

@@ -1,16 +1,4 @@
-<?php
-/**
- * Generic page content fragment.
- *
- * @package Nolan_Young_Template
- */
-?>
-<section class="template-section content-page">
-	<div class="template-container">
-		<p class="eyebrow"><?php esc_html_e( 'Page details', 'nolan-young-template' ); ?></p>
-		<?php the_title( '<h1>', '</h1>' ); ?>
-		<div class="entry-content">
-			<?php the_content(); ?>
-		</div>
-	</div>
-</section>
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'content-entry' ); ?>>
+	<header class="entry-header"><h1><?php the_title(); ?></h1></header>
+	<div class="entry-content"><?php the_content(); wp_link_pages(); ?></div>
+</article>

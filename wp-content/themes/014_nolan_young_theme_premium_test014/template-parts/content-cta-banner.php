@@ -1,46 +1,6 @@
-<?php
-/**
- * CTA Banner Template Part
- *
- */
-?>
-
-<div class="cta-banner-section">
-    <div class="container">
-        <h2>Ready to Grow Your Business?</h2>
-        <p>Contact us today and take the first step towards a stronger online presence.</p>
-        <a href="#contact" class="primary-button">Let's Get Started</a>
-    </div>
-</div>
-
-<style>
-.cta-banner-section {
-    background-color: #101827;
-    color: #ffffff;
-    padding: 80px 0;
-    text-align: center;
-}
-
-.cta-banner-section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-.cta-banner-section p {
-    font-size: 1.2rem;
-    margin-bottom: 30px;
-}
-
-.primary-button {
-    background-color: #2563eb;
-    color: #ffffff;
-    padding: 15px 30px;
-    text-decoration: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-.primary-button:hover {
-    background-color: #1d4ed8;
-}
-</style>
+<section class="footer-cta">
+	<div class="container footer-cta__inner">
+		<div><p class="eyebrow"><?php esc_html_e( 'Ready to organize the next version of your site?', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Start with a clear conversation about the business goal.', 'nolan-young-template' ); ?></h2></div>
+		<a class="btn btn-primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Us', 'nolan-young-template' ); ?></a>
+	</div>
+</section>

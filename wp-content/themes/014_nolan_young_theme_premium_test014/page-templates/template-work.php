@@ -1,51 +1,14 @@
 <?php
-/*
-Template Name: Work
-*/
-get_header(); ?>
-
+/**
+ * Template Name: Work
+ *
+ * @package Nolan_Young_Template
+ */
+get_header();
+$work = nolan_young_template_work_items();
 ?>
-<div id="primary" class="content-area">
-    <main id="main" class="site-main">
-
-        <!-- Section 01: High-Impact Hero -->
-        <section class="hero-section">
-            <div class="container">
-                <h1>Our Portfolio</h1>
-                <p>Take a look at our recent projects and see how we bring your ideas to life.</p>
-                <a href="#" class="cta-button">View All Work</a>
-            </div>
-        </section>
-
-        <!-- Section 02: Featured Work Grid -->
-        <section class="featured-work-grid-section">
-            <div class="container">
-                <?php
-                $args = array(
-                    'post_type' => 'work',
-                    'posts_per_page' => -1,
-                );
-                $query = new WP_Query($args);
-
-                if ($query->have_posts()) : ?>
-?>
-                    <div class="grid">
-                        <?php while ($query->have_posts()) : $query->the_post(); ?>
-                            <div class="card">
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php the_post_thumbnail('large'); ?>
-                                    <h3><?php the_title(); ?></h3>
-                                </a>
-                            </div>
-                        <?php endwhile; ?>
-                    </div>
-                <?php endif;
-                wp_reset_postdata();
-                ?>
-            </div>
-        </section>
-
-    </main><!-- #main -->
-</div><!-- #primary -->
-
+<main id="primary" class="site-main page-work">
+	<section class="section page-hero"><div class="container narrow"><p class="eyebrow"><?php esc_html_e( 'Work', 'nolan-young-template' ); ?></p><h1><?php esc_html_e( 'Representative website projects and problem types.', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'These examples show the kinds of strategy, design, development, integration, support, and results-focused work the theme is built to present.', 'nolan-young-template' ); ?></p></div></section>
+	<section class="section portfolio-filter"><div class="container"><div class="filter-controls"><?php foreach ( array( 'All', 'Strategy', 'Design', 'Development', 'Integration', 'Support', 'Results' ) as $category ) : ?><button type="button" data-filter="<?php echo esc_attr( 'All' === $category ? 'all' : $category ); ?>" aria-pressed="<?php echo 'All' === $category ? 'true' : 'false'; ?>" class="<?php echo 'All' === $category ? 'is-active' : ''; ?>"><?php echo esc_html( $category ); ?></button><?php endforeach; ?></div><div class="portfolio-grid" data-filter-grid><?php foreach ( $work as $item ) : ?><article class="portfolio-card" data-category="<?php echo esc_attr( $item['category'] ); ?>"><?php nolan_young_template_render_image( $item['image'], $item['title'] ); ?><p class="eyebrow"><?php echo esc_html( $item['category'] ); ?></p><h2><a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['title'] ); ?></a></h2><p><?php echo esc_html( $item['excerpt'] ); ?></p></article><?php endforeach; ?></div></div></section>
+</main>
 <?php get_footer(); ?>

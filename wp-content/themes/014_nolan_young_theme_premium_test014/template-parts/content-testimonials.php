@@ -1,57 +1,6 @@
-<?php
-/**
- * Testimonials Template Part
- *
- */
-?>
-
-<div class="testimonials-section">
-    <div class="container">
-        <h2>What Our Clients Say</h2>
-        <div class="testimonial-items">
-            <?php for ($i = 1; $i <= 3; $i++): ?>
-                <div class="testimonial-item">
-                    <blockquote>"Northstar Websites exceeded our expectations. Their team is professional, reliable, and highly skilled. We are thrilled with the results of our project."</blockquote>
-                    <p>- Client Name <?php echo esc_html($i); ?>, Company <?php echo esc_html('Company ' . $i); ?></p>
-                </div>
-            <?php endfor; ?>
-        </div>
-    </div>
-</div>
-
-<style>
-.testimonials-section {
-    background-color: #ffffff;
-    padding: 80px 0;
-    text-align: center;
-}
-
-.testimonials-section h2 {
-    font-size: 1.8rem;
-    margin-bottom: 30px;
-}
-
-.testimonial-items {
-    display: flex;
-    justify-content: space-around;
-    gap: 20px;
-}
-
-.testimonial-item {
-    background-color: #ffffff;
-    border-radius: 4px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: calc(33.33% - 20px);
-}
-
-.testimonial-item blockquote {
-    font-style: italic;
-    margin-bottom: 10px;
-}
-
-.testimonial-item p {
-    font-size: 1rem;
-    line-height: 1.6;
-}
-</style>
+<section class="section proof-section">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow"><?php esc_html_e( 'Proof without invented testimonials', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Credibility comes from process, structure, and visible quality.', 'nolan-young-template' ); ?></h2></div>
+		<div class="proof-grid"><div><strong><?php esc_html_e( 'Accessible', 'nolan-young-template' ); ?></strong><p><?php esc_html_e( 'Keyboard states, semantic sections, and reduced-motion handling are built into the theme.', 'nolan-young-template' ); ?></p></div><div><strong><?php esc_html_e( 'Maintainable', 'nolan-young-template' ); ?></strong><p><?php esc_html_e( 'Template parts, SCSS source files, and local assets keep the site easier to inspect.', 'nolan-young-template' ); ?></p></div><div><strong><?php esc_html_e( 'Portable', 'nolan-young-template' ); ?></strong><p><?php esc_html_e( 'No runtime CDN assets or machine-specific paths are required for the public theme.', 'nolan-young-template' ); ?></p></div></div>
+	</div>
+</section>

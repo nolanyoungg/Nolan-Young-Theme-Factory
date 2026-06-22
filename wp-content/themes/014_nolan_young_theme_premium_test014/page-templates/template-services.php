@@ -1,49 +1,16 @@
 <?php
-/*
-Template Name: Services
-*/
-get_header(); ?>
-
+/**
+ * Template Name: Services
+ *
+ * @package Nolan_Young_Template
+ */
+get_header();
 ?>
-<div id="primary" class="content-area">
-    <main id="main" class="site-main">
-
-        <!-- Section 01: High-Impact Hero -->
-        <section class="hero-section">
-            <div class="container">
-                <h1>Our Services</h1>
-                <p>We offer a range of services to help your business thrive online.</p>
-                <a href="#" class="cta-button">Get Started</a>
-            </div>
-        </section>
-
-        <!-- Section 02: Services Overview -->
-        <section class="services-overview-section">
-            <div class="container">
-                <h2>What We Offer</h2>
-                <p>From website design and development to ongoing support, we have you covered.</p>
-            </div>
-        </section>
-
-        <!-- Section 03: Service Cards -->
-        <section class="service-cards-section">
-            <div class="container">
-                <div class="card">
-                    <h3>Website Design</h3>
-                    <p>We create visually stunning and user-friendly websites that align with your brand identity.</p>
-                </div>
-                <div class="card">
-                    <h3>Web Development</h3>
-                    <p>Our expert developers build robust, scalable, and secure WordPress websites.</p>
-                </div>
-                <div class="card">
-                    <h3>Ongoing Support</h3>
-                    <p>We provide comprehensive support to ensure your website runs smoothly at all times.</p>
-                </div>
-            </div>
-        </section>
-
-    </main><!-- #main -->
-</div><!-- #primary -->
-
+<main id="primary" class="site-main page-services">
+	<section class="section page-hero"><div class="container narrow"><p class="eyebrow"><?php esc_html_e( 'Services', 'nolan-young-template' ); ?></p><h1><?php esc_html_e( 'WordPress strategy, design, development, integration, support, and optimization.', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'Use Northstar for a focused project, a complete build, or a practical improvement plan for an existing website.', 'nolan-young-template' ); ?></p></div></section>
+	<?php get_template_part( 'template-parts/content', 'all-services' ); ?>
+	<?php get_template_part( 'template-parts/content', 'process' ); ?>
+	<section class="section"><div class="container split"><div><p class="eyebrow"><?php esc_html_e( 'Service fit', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Not every project needs the same level of work.', 'nolan-young-template' ); ?></h2></div><div><p><?php esc_html_e( 'A new website may need strategy, design, and development together. An existing site may only need content structure, form cleanup, accessibility fixes, or support planning. The service pages are written to help teams identify the useful next step.', 'nolan-young-template' ); ?></p><a class="btn btn-primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Ask about services', 'nolan-young-template' ); ?></a></div></div></section>
+	<?php get_template_part( 'template-parts/content', 'featured-work' ); ?>
+</main>
 <?php get_footer(); ?>

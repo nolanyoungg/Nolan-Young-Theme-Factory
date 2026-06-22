@@ -1,9 +1,32 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+/**
+ * Asset enqueueing.
+ *
+ * @package Nolan_Young_Template
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function nolan_young_template_asset_version( $relative_path ) {
+	$path = get_theme_file_path( $relative_path );
+	return file_exists( $path ) ? (string) filemtime( $path ) : '1.0.0';
+}
+
 function nolan_young_template_enqueue_assets() {
-	$css_path = get_template_directory() . '/assets/css/bundle.css';
-	$js_path = get_template_directory() . '/assets/js/bundle.js';
-	wp_enqueue_style( 'nolan-young-template-style', get_template_directory_uri() . '/assets/css/bundle.css', array(), file_exists( $css_path ) ? filemtime( $css_path ) : '1.0.0' );
-	wp_enqueue_script( 'nolan-young-template-script', get_template_directory_uri() . '/assets/js/bundle.js', array(), file_exists( $js_path ) ? filemtime( $js_path ) : '1.0.0', true );
+	wp_enqueue_style(
+		'nolan-young-template-style',
+		get_theme_file_uri( 'assets/css/bundle.css' ),
+		array(),
+		nolan_young_template_asset_version( 'assets/css/bundle.css' )
+	);
+	wp_enqueue_script(
+		'nolan-young-template-script',
+		get_theme_file_uri( 'assets/js/bundle.js' ),
+		array(),
+		nolan_young_template_asset_version( 'assets/js/bundle.js' ),
+		true
+	);
 }
 add_action( 'wp_enqueue_scripts', 'nolan_young_template_enqueue_assets' );

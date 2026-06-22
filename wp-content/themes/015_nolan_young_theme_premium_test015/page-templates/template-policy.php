@@ -4,17 +4,10 @@
  *
  * @package Nolan_Young_Template
  */
-
 get_header();
 ?>
-<main id="primary" class="site-main">
-	<section class="template-section">
-		<div class="template-container">
-			<p class="eyebrow"><?php esc_html_e( 'Policy Information', 'nolan-young-template' ); ?></p>
-			<h1><?php esc_html_e( 'Policy', 'nolan-young-template' ); ?></h1>
-			<p><?php esc_html_e( 'This template presents WordPress-managed policy content without adding claims or language that have not been provided or reviewed.', 'nolan-young-template' ); ?></p>
-		</div>
-	</section>
+<main id="primary" class="site-main page-policy">
+	<section class="section page-hero"><div class="container narrow"><p class="eyebrow"><?php esc_html_e( 'Policy', 'nolan-young-template' ); ?></p><h1><?php the_title(); ?></h1><p><?php esc_html_e( 'This page displays policy content managed in WordPress. Review and publish legal text with qualified guidance before relying on it.', 'nolan-young-template' ); ?></p></div></section>
+	<?php get_template_part( 'template-parts/content', 'policy' ); ?>
 </main>
-<?php
-get_footer();
+<?php get_footer(); ?>

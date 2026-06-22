@@ -1,1 +1,77 @@
-.site-footer { border-top: 1px solid rgba(17,24,39,.12); }
+.site-footer { background: var(--color-dark); color: #fff; }
+.site-footer p, .site-footer a { color: #dbeafe; }
+.footer-cta { background: var(--color-bg-soft); color: var(--color-text); padding: 3rem 0; }
+.footer-cta__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.footer-cta h2 { max-width: 760px; }
+.site-footer__inner { width: min(100% - 2rem, var(--container)); margin-inline: auto; padding: 4rem 0 1.5rem; }
+.footer-widgets { display: grid; gap: 2rem; }
+.footer-widgets nav, .footer-contact { display: grid; align-content: start; gap: .6rem; }
+.footer-widgets h2 { font-size: 1rem; color: #fff; }
+.footer-widgets a { text-decoration: none; }
+.footer-widgets a:hover { color: #fff; text-decoration: underline; }
+.footer-brand { max-width: 360px; }
+.site-footer__legal { border-top: 1px solid rgba(226,232,240,.22); margin-top: 3rem; padding-top: 1.25rem; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+.site-footer__legal nav { display: flex; gap: 1rem; }
+@media (min-width: 760px) { .footer-widgets { grid-template-columns: 2fr 1fr 1fr 1.3fr 1.4fr; } }
+.site-footer {
+  background: var(--color-dark);
+  color: #fff;
+}
+
+.site-footer__inner {
+  width: min(100% - 2rem, var(--container));
+  margin-inline: auto;
+  padding-block: 3rem 1.25rem;
+}
+
+.footer-cta {
+  background: var(--color-primary);
+  color: #fff;
+  padding: clamp(2rem, 5vw, 4rem) 1rem;
+}
+
+.footer-widgets {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: start;
+}
+
+.footer-brand {
+  grid-column: span 2;
+  max-width: 420px;
+}
+
+.site-footer h2,
+.site-footer h3,
+.site-footer p {
+  color: #fff;
+}
+
+.site-footer p,
+.site-footer li {
+  color: rgba(255, 255, 255, .72);
+}
+
+.site-footer nav {
+  display: grid;
+  gap: .5rem;
+}
+
+.site-footer a {
+  color: rgba(255, 255, 255, .86);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.site-footer__legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, .16);
+}

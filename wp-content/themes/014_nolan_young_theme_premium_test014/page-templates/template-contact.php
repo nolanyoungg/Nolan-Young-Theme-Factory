@@ -1,30 +1,12 @@
 <?php
-/*
-Template Name: Contact Us
-*/
-get_header(); ?>
-
+/**
+ * Template Name: Contact
+ *
+ * @package Nolan_Young_Template
+ */
+get_header();
 ?>
-<div id="primary" class="content-area">
-    <main id="main" class="site-main">
-
-        <!-- Section 01: High-Impact Hero -->
-        <section class="hero-section">
-            <div class="container">
-                <h1>Contact Us</h1>
-                <p>We'd love to hear from you. Please fill out the form below or reach out via email and phone.</p>
-                <a href="#" class="cta-button">Send Message</a>
-            </div>
-        </section>
-
-        <!-- Section 02: Contact Form -->
-        <section class="contact-form-section">
-            <div class="container">
-                <?php echo do_shortcode('[contact-form-7 id="123" title="Contact form 1"]'); ?>
-            </div>
-        </section>
-
-    </main><!-- #main -->
-</div><!-- #primary -->
-
+<main id="primary" class="site-main page-contact">
+	<section class="section page-hero"><div class="container split"><div><p class="eyebrow"><?php esc_html_e( 'Contact', 'nolan-young-template' ); ?></p><h1><?php esc_html_e( 'Tell Northstar what the website needs to support.', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'Share the business goal, current site situation, service interest, and any timeline considerations. Northstar will use that context to understand the best next conversation.', 'nolan-young-template' ); ?></p></div><div class="contact-panel"><h2><?php esc_html_e( 'Inquiry form', 'nolan-young-template' ); ?></h2><?php nolan_young_template_render_contact_form(); ?></div></div></section>
+</main>
 <?php get_footer(); ?>

@@ -1,124 +1,146 @@
 import '../scss/main.scss';
 
-const html = document.documentElement;
-html.classList.add('has-template-js');
+document.documentElement.classList.add('has-template-js');
 
 const body = document.body;
-const header = document.querySelector('.site-header');
-const menuRoot = document.querySelector('[data-nolan-menu="root"]');
-const toggleButtons = Array.from(document.querySelectorAll('[data-menu-item]'));
-const dropdowns = Array.from(document.querySelectorAll('[data-menu-dropdown]'));
-const drawerToggle = document.querySelector('[data-mobile-drawer-toggle]');
+const header = document.querySelector('[data-site-header]');
+const backdrop = document.querySelector('[data-menu-backdrop]');
+const triggers = [...document.querySelectorAll('[data-menu-item]')];
+const dropdowns = [...document.querySelectorAll('[data-menu-dropdown]')];
 const drawer = document.querySelector('[data-mobile-drawer]');
-const drawerClose = document.querySelector('[data-mobile-drawer-close]');
-const drawerBackdrop = document.querySelector('[data-mobile-drawer-backdrop]');
-const filterButtons = Array.from(document.querySelectorAll('[data-portfolio-filter]'));
-const filterItems = Array.from(document.querySelectorAll('[data-portfolio-item]'));
-const accordions = Array.from(document.querySelectorAll('[data-accordion]'));
+const openDrawer = document.querySelector('[data-mobile-menu-open]');
+const closeDrawer = document.querySelector('[data-mobile-menu-close]');
 
-const lockScroll = (locked) => {
-  body.classList.toggle('is-scroll-locked', locked);
-};
+const setLocked = (locked) => body.classList.toggle('is-scroll-locked', locked);
 
-const setActiveDropdown = (key) => {
+const closeMenus = () => {
+  triggers.forEach((trigger) => trigger.setAttribute('aria-expanded', 'false'));
   dropdowns.forEach((dropdown) => {
-    const isOpen = dropdown.dataset.menuDropdown === key;
-    dropdown.hidden = !isOpen;
-    dropdown.setAttribute('aria-hidden', String(!isOpen));
+    dropdown.hidden = true;
+    dropdown.setAttribute('aria-hidden', 'true');
   });
-  toggleButtons.forEach((button) => {
-    const isActive = button.dataset.menuItem === key;
-    button.setAttribute('aria-expanded', String(isActive));
-    button.classList.toggle('is-active', isActive);
-  });
-  document.querySelector('.site-backdrop')?.classList.toggle('is-visible', Boolean(key));
-  lockScroll(Boolean(key));
+  if (backdrop && (!drawer || drawer.hidden)) backdrop.hidden = true;
+  setLocked(drawer && !drawer.hidden ? true : false);
 };
 
-toggleButtons.forEach((button) => {
-  button.addEventListener('click', () => {
-    const key = button.dataset.menuItem;
-    const isExpanded = button.getAttribute('aria-expanded') === 'true';
-    setActiveDropdown(isExpanded ? '' : key);
+const openMenu = (key) => {
+  closeMenus();
+  const trigger = document.querySelector(`[data-menu-item="${key}"]`);
+  const dropdown = document.querySelector(`[data-menu-dropdown="${key}"]`);
+  if (!trigger || !dropdown) return;
+  trigger.setAttribute('aria-expanded', 'true');
+  dropdown.hidden = false;
+  dropdown.setAttribute('aria-hidden', 'false');
+  if (backdrop) backdrop.hidden = false;
+  setLocked(true);
+  const firstRail = dropdown.querySelector('[data-rail-item]');
+  if (firstRail) activateRail(firstRail);
+};
+
+triggers.forEach((trigger) => {
+  trigger.addEventListener('click', () => {
+    const key = trigger.dataset.menuItem;
+    const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+    isOpen ? closeMenus() : openMenu(key);
   });
 });
 
+function activateRail(button) {
+  const panel = button.closest('[data-menu-dropdown]');
+  if (!panel) return;
+  const key = button.dataset.railItem;
+  panel.querySelectorAll('[data-rail-item]').forEach((item) => item.classList.toggle('is-active', item === button));
+  panel.querySelectorAll('[data-rail-content]').forEach((content) => {
+    const active = content.dataset.railContent === key;
+    content.hidden = !active;
+    content.classList.toggle('is-active', active);
+  });
+}
+
+document.querySelectorAll('[data-rail-item]').forEach((button) => {
+  button.addEventListener('mouseenter', () => activateRail(button));
+  button.addEventListener('focus', () => activateRail(button));
+});
+
+const closeMobile = () => {
+  if (!drawer) return;
+  drawer.hidden = true;
+  openDrawer?.setAttribute('aria-expanded', 'false');
+  if (backdrop && dropdowns.every((item) => item.hidden)) backdrop.hidden = true;
+  setLocked(false);
+};
+
+const openMobile = () => {
+  if (!drawer) return;
+  closeMenus();
+  drawer.hidden = false;
+  openDrawer?.setAttribute('aria-expanded', 'true');
+  if (backdrop) backdrop.hidden = false;
+  setLocked(true);
+  closeDrawer?.focus();
+};
+
+openDrawer?.addEventListener('click', openMobile);
+closeDrawer?.addEventListener('click', closeMobile);
+backdrop?.addEventListener('click', () => {
+  closeMenus();
+  closeMobile();
+});
+
 document.addEventListener('click', (event) => {
-  const target = event.target;
-  if (!menuRoot || !target) return;
-  if (!menuRoot.contains(target) && !target.closest('.site-backdrop')) {
-    setActiveDropdown('');
-  }
+  const clickedInsideHeader = event.target.closest('.site-header');
+  const clickedInsideDrawer = event.target.closest('.mobile-drawer');
+  if (!clickedInsideHeader && !clickedInsideDrawer) closeMenus();
 });
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') {
-    setActiveDropdown('');
-    if (drawer && !drawer.hidden) {
-      closeDrawer();
-    }
+    closeMenus();
+    closeMobile();
   }
 });
 
-const handleScroll = () => {
-  if (!header) return;
-  header.classList.toggle('is-scrolled', window.scrollY > 24);
-};
+window.addEventListener('scroll', () => {
+  header?.classList.toggle('is-scrolled', window.scrollY > 16);
+}, { passive: true });
 
-window.addEventListener('scroll', handleScroll, { passive: true });
-handleScroll();
-
-const openDrawer = () => {
-  if (!drawer) return;
-  drawer.hidden = false;
-  drawer.setAttribute('aria-hidden', 'false');
-  drawerToggle?.setAttribute('aria-expanded', 'true');
-  drawer.classList.add('is-open');
-  document.querySelector('.site-backdrop')?.classList.add('is-visible');
-  lockScroll(true);
-};
-
-const closeDrawer = () => {
-  if (!drawer) return;
-  drawer.hidden = true;
-  drawer.setAttribute('aria-hidden', 'true');
-  drawerToggle?.setAttribute('aria-expanded', 'false');
-  drawer.classList.remove('is-open');
-  lockScroll(false);
-  document.querySelector('.site-backdrop')?.classList.remove('is-visible');
-};
-
-drawerToggle?.addEventListener('click', () => {
-  if (drawer?.hidden !== false) {
-    openDrawer();
-  } else {
-    closeDrawer();
-  }
-});
-
-drawerClose?.addEventListener('click', closeDrawer);
-drawerBackdrop?.addEventListener('click', closeDrawer);
-
-filterButtons.forEach((button) => {
+document.querySelectorAll('.mobile-accordion > button, .accordion-item > button').forEach((button) => {
   button.addEventListener('click', () => {
-    const filter = button.dataset.portfolioFilter;
-    filterButtons.forEach((candidate) => candidate.setAttribute('aria-pressed', String(candidate === button)));
-    filterItems.forEach((item) => {
-      const categories = (item.dataset.portfolioCategories || '').split(/\s+/).filter(Boolean);
-      const visible = filter === 'all' || categories.includes(filter);
-      item.hidden = !visible;
-      item.setAttribute('aria-hidden', String(!visible));
+    const content = button.nextElementSibling;
+    const expanded = button.getAttribute('aria-expanded') === 'true';
+    button.setAttribute('aria-expanded', String(!expanded));
+    if (content) content.hidden = expanded;
+  });
+});
+
+document.querySelectorAll('.filter-controls [data-filter]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const controls = button.closest('.filter-controls');
+    const grid = controls?.parentElement?.querySelector('[data-filter-grid]');
+    const filter = button.dataset.filter;
+    controls.querySelectorAll('[data-filter]').forEach((item) => {
+      const active = item === button;
+      item.classList.toggle('is-active', active);
+      item.setAttribute('aria-pressed', String(active));
+    });
+    grid?.querySelectorAll('[data-category]').forEach((card) => {
+      const show = filter === 'all' || card.dataset.category === filter;
+      card.hidden = !show;
     });
   });
 });
 
-accordions.forEach((accordion) => {
-  const trigger = accordion.querySelector('[data-accordion-trigger]');
-  const panel = accordion.querySelector('[data-accordion-panel]');
-  if (!trigger || !panel) return;
-  trigger.addEventListener('click', () => {
-    const open = trigger.getAttribute('aria-expanded') === 'true';
-    trigger.setAttribute('aria-expanded', String(!open));
-    panel.hidden = open;
+document.querySelectorAll('[data-enhanced-form]').forEach((form) => {
+  form.addEventListener('submit', (event) => {
+    const invalid = [...form.querySelectorAll('[required]')].find((field) => !field.value.trim() || (field.type === 'email' && !field.validity.valid));
+    form.querySelectorAll('.field-error').forEach((node) => node.remove());
+    if (invalid) {
+      event.preventDefault();
+      const message = document.createElement('p');
+      message.className = 'field-error';
+      message.textContent = invalid.type === 'email' ? 'Enter a valid email address.' : 'Complete this required field.';
+      invalid.insertAdjacentElement('afterend', message);
+      invalid.focus();
+    }
   });
 });

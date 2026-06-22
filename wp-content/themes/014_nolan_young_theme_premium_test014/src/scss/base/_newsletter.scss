@@ -1,1 +1,2 @@
-.newsletter-form { display: grid; gap: 12px; }
+.newsletter-form { grid-template-columns: 1fr; margin-top: 1rem; }
+.site-footer .newsletter-form input { background: rgba(255,255,255,.08); border-color: rgba(226,232,240,.26); color: #fff; }

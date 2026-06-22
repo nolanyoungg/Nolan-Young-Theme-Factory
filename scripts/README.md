@@ -17,6 +17,7 @@ AI generation is limited to prepared theme source under `wp-content/themes/{them
 | `modes/ollama-only/` | Ollama-specific behavior. | Ollama batch definitions, generation prompt construction, targeted repair. | Shared deterministic work. | Internal. |
 | `shared/` | Reusable infrastructure. | Args, repo root, command runner, diagnostics, constants, path helpers, model validation/access. | One-off business logic or mode behavior. | Internal. |
 | `template-theme-copy/` | Prepares a theme from a template. | Template selection, numbering, slugging, copy, metadata updates, template source, manifest. | AI generation. | `theme:prepare`. |
+| `theme-cleanup/` | Deletes generated theme artifacts. | Exact-slug cleanup for theme source, static preview, ZIP, and run report. | Template source deletion, broad cleanup, AI repair. | `theme:delete`. |
 | `theme-preview/` | Static previews and gallery. | PHP preview harness, preview folder generation, gallery rebuild/validation. | Theme generation or packaging. | `theme:preview`, `theme:preview:index`. |
 | `theme-zipping/` | Cross-platform packaging. | Node ZIP creation, exclusions, top-level theme folder. | Shell `zip`, PowerShell archives, generation. | `theme:zip`. |
 | `validation/` | Deterministic checks and reports. | Template-aware checks, WordPress quality, PHP syntax, preview/ZIP checks, reports. | Provider repair loops. | `theme:validate`, internal reports. |
@@ -94,6 +95,24 @@ npm run theme:zip -- --theme-slug "000_nolan_young_theme_example"
 ```
 
 Creates `dist/zipped-themes/{theme_slug}.zip` with the theme folder as the top-level entry. Excludes `node_modules/`, `.git/`, `.generation/`, `reports/`, `*.log`, and `*.map`.
+
+### Delete Theme Artifacts
+
+```text
+npm run theme:delete -- --theme-slug "000_nolan_young_theme_example" --yes
+npm run theme:delete -- --theme-slug "000_nolan_young_theme_example" --dry-run
+```
+
+Deletes only the exact generated artifacts for one validated slug:
+
+```text
+wp-content/themes/{theme_slug}/
+docs/Preview-Themes-Github/{theme_slug}/
+dist/zipped-themes/{theme_slug}.zip
+reports/runs/{theme_slug}/
+```
+
+The command prints the deletion plan first, requires `--yes` unless `--dry-run` is used, and rebuilds/validates the preview gallery afterward. Use `--skip-gallery` only when running a controlled batch and rebuilding the gallery separately.
 
 ### Environment
 

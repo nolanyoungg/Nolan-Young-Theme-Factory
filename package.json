@@ -12,6 +12,7 @@
     "theme:preview": "node scripts/theme-preview/generate-static-preview.js",
     "theme:preview:index": "node scripts/theme-preview/rebuild-preview-gallery.js --validate",
     "theme:zip": "node scripts/theme-zipping/zip-theme.js",
+    "theme:delete": "node scripts/theme-cleanup/delete-theme-artifacts.js",
     "theme:env": "node scripts/environment/check-environment.js",
     "theme:model-check": "node scripts/environment/check-model-access.js",
     "test:scripts": "node scripts/workflow/smoke-test-scripts.js"

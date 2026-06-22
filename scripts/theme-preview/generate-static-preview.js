@@ -6,6 +6,7 @@ const { root } = require('../shared/repo-root');
 const { parseArgs, arg } = require('../shared/args');
 const { runCommand } = require('../shared/command-runner');
 const { assertThemeSlug } = require('../shared/theme-utils');
+const { PREVIEW_RUNTIME_WARNING_PATTERN } = require('../shared/constants');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalSlug] = args._;
@@ -91,6 +92,44 @@ $GLOBALS['preview_fixture'] = $fixture;
 $GLOBALS['preview_loop'] = isset($fixture['loop']) ? array_values($fixture['loop']) : array();
 $GLOBALS['preview_loop_index'] = 0;
 if (!defined('ABSPATH')) define('ABSPATH', $themeDir . DIRECTORY_SEPARATOR);
+function preview_sample_posts() {
+  return array(
+    (object) array(
+      'ID' => 21,
+      'post_title' => 'Planning a Higher-Converting Homepage',
+      'post_content' => '<p>A clear page structure, useful service proof, and focused calls to action help visitors understand the next step.</p>',
+      'post_excerpt' => 'A clear structure and focused copy can make a homepage do more work.',
+      'post_name' => 'planning-a-higher-converting-homepage',
+      'post_type' => 'post'
+    ),
+    (object) array(
+      'ID' => 22,
+      'post_title' => 'Why Local Theme Assets Matter',
+      'post_content' => '<p>Keeping images, scripts, and styles bundled with the theme makes previews and deployments predictable.</p>',
+      'post_excerpt' => 'Keeping assets bundled with the theme makes previews and deployments predictable.',
+      'post_name' => 'why-local-theme-assets-matter',
+      'post_type' => 'post'
+    ),
+    (object) array(
+      'ID' => 23,
+      'post_title' => 'Keeping WordPress Builds Maintainable',
+      'post_content' => '<p>Reusable templates, source SCSS, and small JavaScript modules make a WordPress site easier to improve over time.</p>',
+      'post_excerpt' => 'Practical guidance for teams that need maintainable themes and faster delivery.',
+      'post_name' => 'keeping-wordpress-builds-maintainable',
+      'post_type' => 'post'
+    )
+  );
+}
+function preview_post_array($post) {
+  return array(
+    'ID' => $post->ID ?? 1,
+    'post_title' => $post->post_title ?? '',
+    'post_content' => $post->post_content ?? '',
+    'post_excerpt' => $post->post_excerpt ?? '',
+    'post_name' => $post->post_name ?? sanitize_title_with_dashes($post->post_title ?? ''),
+    'post_type' => $post->post_type ?? 'post'
+  );
+}
 function preview_escape_attr($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_attr($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
@@ -130,7 +169,7 @@ function update_post_meta() {}
 function wp_insert_post($data) { return 1; }
 function wp_delete_post() {}
 function get_post_meta($post_id = 0, $key = '', $single = false) { return $single ? '' : array(); }
-function get_posts($args = array()) { return array(); }
+function get_posts($args = array()) { return array_map('preview_post_array', preview_sample_posts()); }
 function wp_get_attachment_image($attachment_id = 0, $size = 'thumbnail', $icon = false, $attr = array()) { return '<img src="assets/images/placeholder.svg" alt="Preview image">'; }
 function get_the_date($format = '', $post = null) { return date('Y-m-d'); }
 function date_i18n($format) { return date($format); }
@@ -140,8 +179,8 @@ function get_theme_file_uri($path = '') { return ltrim(str_replace('\\\\', '/', 
 function get_theme_file_path($path = '') { return $GLOBALS['preview_theme_dir'] . DIRECTORY_SEPARATOR . ltrim(str_replace('/', DIRECTORY_SEPARATOR, (string) $path), DIRECTORY_SEPARATOR); }
 function get_template_directory() { return $GLOBALS['preview_theme_dir']; }
 function get_stylesheet_directory() { return $GLOBALS['preview_theme_dir']; }
-function get_template_directory_uri() { return ''; }
-function get_stylesheet_directory_uri() { return ''; }
+function get_template_directory_uri() { return '.'; }
+function get_stylesheet_directory_uri() { return '.'; }
 function home_url($path = '') {
   $input = (string) $path;
   $route = ltrim($input, '/');
@@ -206,11 +245,7 @@ class WP_Query {
   public $post = null;
 
   public function __construct($args = array()) {
-    $sample_posts = array(
-      (object) array('post_title' => 'Building a Better WordPress Stack', 'post_content' => '<p>Practical guidance for teams that need maintainable themes and faster delivery.</p>'),
-      (object) array('post_title' => 'How to Plan a Homepage That Converts', 'post_content' => '<p>A clear structure and focused copy can make a homepage do more work.</p>'),
-      (object) array('post_title' => 'Why Local Assets Matter', 'post_content' => '<p>Keeping assets bundled with the theme makes previews and deployments predictable.</p>'),
-    );
+    $sample_posts = preview_sample_posts();
     $this->posts = isset($GLOBALS['preview_fixture']['loop']) && is_array($GLOBALS['preview_fixture']['loop']) && count($GLOBALS['preview_fixture']['loop']) > 0
       ? array_values($GLOBALS['preview_fixture']['loop'])
       : $sample_posts;
@@ -245,11 +280,7 @@ function get_pages($args = array()) {
   );
 }
 function wp_get_recent_posts($args = array()) {
-  return array(
-    array('ID' => 21, 'post_title' => 'Planning a Higher-Converting Homepage'),
-    array('ID' => 22, 'post_title' => 'Why Local Theme Assets Matter'),
-    array('ID' => 23, 'post_title' => 'Keeping WordPress Builds Maintainable'),
-  );
+  return array_map('preview_post_array', preview_sample_posts());
 }
 function get_category_link($term_id = 0) { return home_url('/category/' . absint($term_id) . '/'); }
 function the_posts_pagination() { echo '<nav class="pagination"><a href="#">1</a><a href="#">2</a><a href="#">Next</a></nav>'; }
@@ -285,8 +316,15 @@ function wp_link_pages() {}
 function the_title($before = '', $after = '') { echo $before . esc_html(get_the_title()) . $after; }
 function get_the_content() { return isset($GLOBALS['post']->post_content) ? $GLOBALS['post']->post_content : ''; }
 function the_content() { echo get_the_content(); }
-function get_permalink() { return home_url('/'); }
+function get_permalink($post = null) {
+  if (is_array($post) && isset($post['post_name'])) return home_url('/blog/' . $post['post_name'] . '/');
+  if (is_object($post) && isset($post->post_name)) return home_url('/blog/' . $post->post_name . '/');
+  if (isset($GLOBALS['post']) && is_object($GLOBALS['post']) && isset($GLOBALS['post']->post_name)) return home_url('/blog/' . $GLOBALS['post']->post_name . '/');
+  return home_url('/');
+}
+function get_the_permalink($post = null) { return get_permalink($post); }
 function the_permalink() { echo esc_url(get_permalink()); }
+function get_the_post_thumbnail_url($post = null, $size = 'post-thumbnail') { return 'assets/images/placeholder.svg'; }
 function get_search_query() { return ''; }
 function post_password_required() { return false; }
 function have_comments() { return false; }
@@ -327,6 +365,9 @@ function renderWithPhp(sourceRelative, fixture) {
   fs.rmSync(harnessPath, { force: true });
   if (result.status !== 0) {
     fail(`PHP preview render failed for ${sourceRelative}:\n${result.stderr || result.stdout || 'unknown error'}`);
+  }
+  if (PREVIEW_RUNTIME_WARNING_PATTERN.test(result.stdout)) {
+    fail(`PHP preview render produced warning output for ${sourceRelative}. Run validation for details.`);
   }
   return result.stdout;
 }

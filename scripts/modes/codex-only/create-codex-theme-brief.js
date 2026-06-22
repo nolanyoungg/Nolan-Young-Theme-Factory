@@ -84,8 +84,6 @@ You must:
 - Keep PHP, CSS, JavaScript, content, responsive behavior, forms, and accessibility coherent.
 - Put authored styling in src/scss/main.scss and related source SCSS files, not only in assets/css/bundle.css.
 - Keep src/js/main.js useful and compatible with the asset build.
-- Use 012_nolan_young_theme_master_template_prompt_filler_template_1 as the local quality benchmark: complete header navigation, Nolan-style menu behavior, local SVG/graphic assets, full homepage sections, finished business copy, source SCSS-driven styling, and static previews with no visible PHP warnings.
-- Do not leave generic fallback sections such as "Hero Content", "Project Title 1", "Service Title 1", "Our Mission", empty cards, inline <style> blocks in PHP templates, or root-relative /assets paths.
 - Preserve the copied template's webpack/Sass build tooling unless a deterministic build failure proves it must change.
 - Do not replace the generated theme's build system with a custom build script when the existing build can be made to work.
 - Do not package the ZIP.
@@ -107,8 +105,6 @@ You must:
 - Fix PHP, CSS, JavaScript, content, design, accessibility, responsiveness, and integration issues.
 - Put authored styling in src/scss/main.scss and related source SCSS files, not only in assets/css/bundle.css.
 - Keep src/js/main.js useful and compatible with the asset build.
-- Use 012_nolan_young_theme_master_template_prompt_filler_template_1 as the local quality benchmark: complete header navigation, Nolan-style menu behavior, local SVG/graphic assets, full homepage sections, finished business copy, source SCSS-driven styling, and static previews with no visible PHP warnings.
-- Replace generic fallback sections such as "Hero Content", "Project Title 1", "Service Title 1", "Our Mission", empty cards, inline <style> blocks in PHP templates, and root-relative /assets paths.
 - Resolve relevant validation failures from the validation report.
 - Preserve every required file from the selected template.
 - If fixing styling, update src/scss/main.scss or source partials so npm run build reproduces the finished CSS.
@@ -130,8 +126,6 @@ You must:
 - Avoid unrelated redesign.
 - Make the smallest complete changes that satisfy validation and prompt intent.
 - Replace all remaining copied Lorem ipsum, placeholder, TODO, FIXME, "Add ... here", and future-editor copy in the listed files.
-- Replace any generic fallback sections such as "Hero Content", "Project Title 1", "Service Title 1", "Our Mission", empty cards, inline <style> blocks in PHP templates, root-relative /assets paths, or PHP warnings visible in generated previews.
-- Bring the affected files up to the quality bar of 012_nolan_young_theme_master_template_prompt_filler_template_1 rather than merely passing syntax.
 - If a listed file is a generic fallback template, write concise finished fallback copy consistent with the selected creative prompt.
 - Preserve every required file from the selected template.
 - Keep edits focused inside the generated theme folder.
@@ -186,8 +180,6 @@ ${passInstructions}
 - Keep local assets and portable paths.
 - Remove secrets, CDN dependencies, and repo-local preview or dist paths from the theme.
 - Remove all Lorem ipsum, placeholder, TODO, FIXME, "Add ... here", and future-editor copy.
-- Remove generic generated-demo content such as "Project Title 1", "Service Title 1", "Hero Content", "Our Mission", empty cards, inline <style> blocks in PHP templates, root-relative /assets paths, and code that can emit PHP warnings in static previews.
-- The generated static preview should look and function like a completed theme, using 012_nolan_young_theme_master_template_prompt_filler_template_1 as the local benchmark.
 - Use the selected prompt as the authoritative creative brief.
 - Leave the theme ready for scripted validation and finalization.
 

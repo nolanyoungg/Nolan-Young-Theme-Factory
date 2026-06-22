@@ -1,4 +1,6 @@
-<section class="brand-statement">
-    <h2 class="section-title">Our Mission</h2>
-    <p>At Northstar Websites, we believe that a well-designed website is more than just pixels on a screen. It's the backbone of your online success. Our team is dedicated to creating WordPress solutions that not only look great but also drive results.</p>
+<section class="section brand-statement">
+	<div class="container split">
+		<div><p class="eyebrow"><?php esc_html_e( 'Positioning', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'A website should make your best next step obvious.', 'nolan-young-template' ); ?></h2></div>
+		<div><p><?php esc_html_e( 'Northstar Websites focuses on the practical pieces service businesses need: clear service pages, credible work presentation, useful articles, accessible forms, and a WordPress structure that can keep growing after launch.', 'nolan-young-template' ); ?></p><p><?php esc_html_e( 'The result is a content-forward site that feels polished without burying visitors in decorative complexity.', 'nolan-young-template' ); ?></p></div>
+	</div>
 </section>

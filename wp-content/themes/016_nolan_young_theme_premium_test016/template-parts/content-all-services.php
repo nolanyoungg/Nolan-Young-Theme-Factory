@@ -1,13 +1,11 @@
-<section class="all-services">
-    <h2 class="section-title">Our Services</h2>
-    <div class="services-grid">
-        <?php $services = ['Design', 'Development', 'Support']; ?>
-        <?php foreach ($services as $service): ?>
-            <div class="service-card">
-                <h3 class="service-title"><?php echo esc_html($service); ?></h3>
-                <p class="service-description">A detailed description of what we offer in this service.</p>
-                <a href="#" class="secondary-button">Learn More</a>
-            </div>
-        <?php endforeach; ?>
-    </div>
+<?php $services = nolan_young_template_services(); ?>
+<section class="section services-overview">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow"><?php esc_html_e( 'Services', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Website services for planning, building, launching, and improving.', 'nolan-young-template' ); ?></h2></div>
+		<div class="card-grid">
+			<?php foreach ( $services as $service ) : ?>
+				<article class="service-card"><?php nolan_young_template_render_image( $service['image'], $service['title'] ); ?><h3><a href="<?php echo esc_url( $service['url'] ); ?>"><?php echo esc_html( $service['title'] ); ?></a></h3><p><?php echo esc_html( $service['excerpt'] ); ?></p><a class="btn btn-text" href="<?php echo esc_url( $service['url'] ); ?>"><?php esc_html_e( 'View service', 'nolan-young-template' ); ?></a></article>
+			<?php endforeach; ?>
+		</div>
+	</div>
 </section>

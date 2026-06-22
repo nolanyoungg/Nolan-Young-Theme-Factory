@@ -1,3 +1,3 @@
 # Blocks
 
-This generated theme is template-first. Add custom blocks only when a future implementation needs editor-specific block behavior; keep shared presentation in template parts and bundled assets.
+This theme does not ship custom block registrations. The folder is reserved for future block documentation and should stay separate from template parts, page templates, and compiled assets.

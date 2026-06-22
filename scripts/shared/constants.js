@@ -16,7 +16,10 @@ const ZIP_EXCLUDED_FILE_PATTERN = /\.(log|map)$/i;
 const REQUIRED_ROOT_FILES = ['style.css', 'functions.php', 'index.php', 'header.php', 'footer.php'];
 const REQUIRED_BUNDLES = ['assets/css/bundle.css', 'assets/js/bundle.js'];
 
-const PLACEHOLDER_PATTERN = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder/i;
+const PLACEHOLDER_PATTERN = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder|Project Title\s*\d+|Service Title\s*\d+|Process Step Icon\s*\d+|Pillar Icon\s*\d+|Blog Post Image\s*\d+|Description of the project|Highlight Service Title|Service Image|Service Icon\s*\d+|We provide comprehensive Service\s*\d+/i;
+const INLINE_STYLE_BLOCK_PATTERN = /<style\b/i;
+const ABSOLUTE_LOCAL_ASSET_PATTERN = /\b(?:src|href)=["']\/assets\//i;
+const PREVIEW_RUNTIME_WARNING_PATTERN = /(?:Warning|Notice|Deprecated|Fatal error|Parse error):|Undefined array key|undefined function/i;
 const SECRET_PATTERN = /OPENAI_API_KEY|sk-[A-Za-z0-9_-]{20,}|BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|AWS_SECRET_ACCESS_KEY|(?:api[_-]?key|password|secret|token)\s*[:=]\s*["'][A-Za-z0-9_./+=-]{16,}["']/i;
 const REMOTE_RUNTIME_PATTERN = /<(script|link|img|source|video|audio)[^>]+(src|href)=["'][^"']*https?:\/\/|@import\s+url\(["']?https?:\/\/|url\(["']?https?:\/\/|\/\/cdn\.|cdnjs|jsdelivr|unpkg|fonts\.google|gstatic/i;
 const ALLOWED_REMOTE_REFERENCE_PATTERN = /schemas\.wp\.org|www\.w3\.org|gmpg\.org\/xfn\/11/i;
@@ -50,11 +53,14 @@ const COMMAND_FAILURE_CODES = {
 
 module.exports = {
   ALLOWED_REMOTE_REFERENCE_PATTERN,
+  ABSOLUTE_LOCAL_ASSET_PATTERN,
   COMMAND_FAILURE_CODES,
   CONTENT_SECTION_PATTERN,
+  INLINE_STYLE_BLOCK_PATTERN,
   GENERATED_THEME_PATHS,
   MODEL_FILE_BLOCK_MARKER_PATTERN,
   PLACEHOLDER_PATTERN,
+  PREVIEW_RUNTIME_WARNING_PATTERN,
   REMOTE_RUNTIME_PATTERN,
   REPO_LOCAL_PATH_PATTERN,
   REQUIRED_BUNDLES,

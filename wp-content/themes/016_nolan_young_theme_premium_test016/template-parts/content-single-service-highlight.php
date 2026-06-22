@@ -1,8 +1,6 @@
-<section class="single-service-highlight">
-    <h2 class="section-title">Service Highlight</h2>
-    <div class="service-content">
-        <img src="<?php echo get_template_directory_uri(); ?>/assets/images/placeholder.svg" alt="Service Image">
-        <h3 class="service-title">Highlight Service Title</h3>
-        <p class="service-description">A detailed description of the highlighted service, its features, and how it can benefit your business.</p>
-    </div>
+<section class="section solution-feature">
+	<div class="container split">
+		<?php nolan_young_template_render_image( 'assets/images/hero/business-solution.svg', __( 'Business website solution map', 'nolan-young-template' ), 'media-frame' ); ?>
+		<div><p class="eyebrow"><?php esc_html_e( 'Business solution', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Turn scattered service information into a guided decision path.', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Northstar pages connect service explanations, proof, process notes, FAQs, and forms so visitors can understand fit before reaching out.', 'nolan-young-template' ); ?></p><a class="btn btn-primary" href="<?php echo esc_url( home_url( '/services/' ) ); ?>"><?php esc_html_e( 'Explore services', 'nolan-young-template' ); ?></a></div>
+	</div>
 </section>

@@ -1,34 +1,15 @@
 <?php
 /**
  * Template Name: About Us
+ *
+ * @package Nolan_Young_Template
  */
 get_header();
 ?>
-
-<main id="main" class="site-main">
-    <section class="about-hero">
-        <h1>About Northstar Websites</h1>
-        <p>We are a dedicated team of website developers committed to helping businesses grow online.</p>
-        <a href="#" class="cta-button">Our Mission</a>
-        <a href="#" class="cta-button">Our Values</a>
-    </section>
-
-    <section class="about-team">
-        <h2>Meet Our Team</h2>
-        <p>Details are presented with clear next steps, practical context, and direct links to continue the conversation.</p>
-    </section>
-
-    <section class="about-history">
-        <h2>Company History</h2>
-        <p>Northstar Websites was founded in [year] with a vision to create exceptional websites that drive business growth.</p>
-    </section>
-
-    <section class="about-testimonials">
-        <h2>What Our Clients Say</h2>
-        <p>Details are presented with clear next steps, practical context, and direct links to continue the conversation.</p>
-    </section>
+<main id="primary" class="site-main page-about">
+	<section class="section page-hero"><div class="container split"><div><p class="eyebrow"><?php esc_html_e( 'About Northstar', 'nolan-young-template' ); ?></p><h1><?php esc_html_e( 'A practical website partner for service businesses.', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'Northstar Websites helps teams turn scattered ideas, services, and content into WordPress websites that are easier to understand, maintain, and improve.', 'nolan-young-template' ); ?></p></div><?php nolan_young_template_render_image( 'assets/images/hero/about-approach.svg', __( 'Website planning workspace', 'nolan-young-template' ), 'media-frame' ); ?></div></section>
+	<section class="section" id="values"><div class="container"><div class="card-grid card-grid--three"><article class="info-card"><h2><?php esc_html_e( 'Clear before clever', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Navigation, content, and forms are planned around the decisions visitors need to make.', 'nolan-young-template' ); ?></p></article><article class="info-card"><h2><?php esc_html_e( 'Built to keep working', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'The theme favors reusable components, local assets, and documented behavior over fragile one-off sections.', 'nolan-young-template' ); ?></p></article><article class="info-card"><h2><?php esc_html_e( 'Respectful collaboration', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Project work is organized around focused reviews, plain-language next steps, and realistic support needs.', 'nolan-young-template' ); ?></p></article></div></div></section>
+	<?php get_template_part( 'template-parts/content', 'process' ); ?>
+	<?php get_template_part( 'template-parts/content', 'cta-banner' ); ?>
 </main>
-
-<?php
-get_footer();
-?>
+<?php get_footer(); ?>

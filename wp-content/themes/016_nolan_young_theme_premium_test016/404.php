@@ -1,15 +1,1 @@
-<?php
-get_header();
-?>
-
-<main id="main" class="site-main">
-    <section class="error-404 not-found">
-        <h1>Oops! That page can't be found.</h1>
-        <p>It looks like nothing was found at this location. Maybe try a search?</p>
-        <?php get_search_form(); ?>
-    </section>
-</main>
-
-<?php
-get_footer();
-?>
+<?php get_header(); ?><main id="primary" class="site-main"><section class="section"><div class="container narrow"><h1><?php esc_html_e( 'Page not found', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'The page may have moved, or the address may be incomplete. Search the site or return to the homepage to keep exploring Northstar Websites.', 'nolan-young-template' ); ?></p><?php get_search_form(); ?><p><a class="btn btn-primary" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Return home', 'nolan-young-template' ); ?></a></p></div></section></main><?php get_footer(); ?>

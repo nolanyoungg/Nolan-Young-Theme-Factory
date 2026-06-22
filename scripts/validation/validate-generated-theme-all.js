@@ -6,6 +6,11 @@ const { root, scriptPath } = require('../shared/repo-root');
 const { parseArgs, arg } = require('../shared/args');
 const { runCommand } = require('../shared/command-runner');
 const { assertThemeSlug } = require('../shared/theme-utils');
+const {
+  ABSOLUTE_LOCAL_ASSET_PATTERN,
+  PLACEHOLDER_PATTERN,
+  PREVIEW_RUNTIME_WARNING_PATTERN
+} = require('../shared/constants');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalThemeSlug, positionalTemplate] = args._;
@@ -61,7 +66,9 @@ async function main() {
     const htmlFiles = fs.readdirSync(previewDir).filter((file) => file.endsWith('.html'));
     const html = htmlFiles.map((file) => fs.readFileSync(path.join(previewDir, file), 'utf8')).join('\n');
     if (!/<header[\s>]/i.test(html)) failCheck('Preview pages are missing header markup');
-    if (/Lorem ipsum|TODO|FIXME|Generation should replace|Static preview generated from|prepared WordPress theme folder/i.test(html)) failCheck('Preview contains unfinished placeholder/runtime copy');
+    if (PLACEHOLDER_PATTERN.test(html)) failCheck('Preview contains unfinished placeholder/runtime copy');
+    if (PREVIEW_RUNTIME_WARNING_PATTERN.test(html)) failCheck('Preview contains PHP/runtime warning output');
+    if (ABSOLUTE_LOCAL_ASSET_PATTERN.test(html)) failCheck('Preview contains root-relative /assets paths instead of portable preview asset paths');
     if (/<(script|link|img|source|video|audio)[^>]+(src|href)=["'][^"']*https?:\/\/|@import\s+url\(["']?https?:\/\/|url\(["']?https?:\/\/|\/\/cdn\.|cdnjs|jsdelivr|unpkg|fonts\.google|gstatic/i.test(html)) {
       failCheck('Preview contains a remote runtime dependency or CDN reference');
     }

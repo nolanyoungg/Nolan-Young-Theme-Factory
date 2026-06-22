@@ -1,6 +1,6 @@
 <?php
 /**
- * Newsletter handling.
+ * Newsletter signup management.
  *
  * @package Nolan_Young_Template
  */
@@ -9,174 +9,76 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Normalize an email address for storage.
- *
- * @param string $email Raw email.
- * @return string
- */
-function nolan_young_theme_normalize_newsletter_email( $email ) {
-	$email = sanitize_email( wp_unslash( $email ) );
-	return $email ? strtolower( $email ) : '';
-}
-
-/**
- * Find an existing newsletter subscriber by email.
- *
- * @param string $email Normalized email.
- * @return WP_Post|null
- */
-function nolan_young_theme_get_newsletter_subscriber_by_email( $email ) {
-	$posts = get_posts(
+function nolan_young_template_register_newsletter_cpt() {
+	register_post_type(
+		'northstar_subscriber',
 		array(
-			'post_type'      => 'newsletter_subscriber',
-			'post_status'    => array( 'publish', 'draft', 'private' ),
-			'posts_per_page' => 1,
-			'fields'         => 'ids',
-			'meta_query'     => array(
-				array(
-					'key'   => '_newsletter_email',
-					'value' => $email,
-				),
-			),
+			'labels'              => array( 'name' => __( 'Newsletter', 'nolan-young-template' ), 'singular_name' => __( 'Subscriber', 'nolan-young-template' ) ),
+			'public'              => false,
+			'show_ui'             => false,
+			'exclude_from_search' => true,
+			'show_in_rest'        => false,
+			'supports'            => array( 'title' ),
 		)
 	);
-
-	if ( empty( $posts ) ) {
-		return null;
-	}
-
-	return get_post( $posts[0] );
 }
+add_action( 'init', 'nolan_young_template_register_newsletter_cpt' );
 
-/**
- * Generate a public unsubscribe token.
- *
- * @return string
- */
-function nolan_young_theme_generate_newsletter_token() {
-	return wp_generate_password( 32, false, false );
-}
-
-/**
- * Build an unsubscribe URL for a subscriber.
- *
- * @param int $subscriber_id Subscriber post ID.
- * @return string
- */
-function nolan_young_theme_get_newsletter_unsubscribe_url( $subscriber_id ) {
-	$token = get_post_meta( $subscriber_id, '_newsletter_unsubscribe_token', true );
-	if ( empty( $token ) ) {
-		$token = nolan_young_theme_generate_newsletter_token();
-		update_post_meta( $subscriber_id, '_newsletter_unsubscribe_token', $token );
+function nolan_young_template_newsletter_signup() {
+	if ( ! isset( $_POST['nolan_young_template_newsletter_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nolan_young_template_newsletter_nonce'] ) ), 'nolan_young_template_newsletter' ) ) {
+		wp_die( esc_html__( 'Newsletter security check failed.', 'nolan-young-template' ), 403 );
 	}
-
-	return add_query_arg(
-		array(
-			'nl_unsubscribe' => 1,
-			'token'          => rawurlencode( $token ),
-		),
-		home_url( '/' )
-	);
-}
-
-/**
- * Handle newsletter signups.
- */
-function nolan_young_theme_process_newsletter_signup() {
-	if ( empty( $_POST['newsletter_signup_submit'] ) ) {
-		return;
-	}
-
-	if ( empty( $_POST['newsletter-signup-nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['newsletter-signup-nonce'] ) ), 'newsletter_signup_nonce' ) ) {
-		wp_die( esc_html__( 'Security check failed.', 'nolan-young-template' ) );
-	}
-
-	$honeypot = isset( $_POST['newsletter_company'] ) ? sanitize_text_field( wp_unslash( $_POST['newsletter_company'] ) ) : '';
-	if ( '' !== $honeypot ) {
-		wp_die( esc_html__( 'Spam detected.', 'nolan-young-template' ) );
-	}
-
-	$email = nolan_young_theme_normalize_newsletter_email( $_POST['email'] ?? '' );
-	$first_name = isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '';
-
-	if ( ! is_email( $email ) ) {
-		wp_die( esc_html__( 'Please enter a valid email address.', 'nolan-young-template' ) );
-	}
-
-	$existing = nolan_young_theme_get_newsletter_subscriber_by_email( $email );
-	if ( $existing ) {
-		$status = get_post_meta( $existing->ID, '_newsletter_status', true );
-		if ( 'unsubscribed' === $status ) {
-			update_post_meta( $existing->ID, '_newsletter_status', 'active' );
-			delete_post_meta( $existing->ID, '_newsletter_unsubscribed_at' );
-		}
-		update_post_meta( $existing->ID, '_newsletter_first_name', $first_name );
-		update_post_meta( $existing->ID, '_newsletter_signed_up_at', current_time( 'mysql' ) );
-		nolan_young_theme_get_newsletter_unsubscribe_url( $existing->ID );
-		wp_safe_redirect( add_query_arg( 'newsletter', 'success', wp_get_referer() ? wp_get_referer() : home_url( '/' ) ) );
+	if ( ! empty( $_POST['website'] ) ) {
+		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : home_url( '/' ) );
 		exit;
 	}
-
-	$subscriber_id = wp_insert_post(
-		array(
-			'post_type'   => 'newsletter_subscriber',
-			'post_status' => 'publish',
-			'post_title'  => $email,
-			'post_name'   => sanitize_title( str_replace( '@', '-', $email ) ),
-		),
-		true
-	);
-
-	if ( is_wp_error( $subscriber_id ) ) {
-		wp_die( esc_html( $subscriber_id->get_error_message() ) );
+	$email = isset( $_POST['email'] ) ? sanitize_email( strtolower( wp_unslash( $_POST['email'] ) ) ) : '';
+	$name  = isset( $_POST['first_name'] ) ? sanitize_text_field( wp_unslash( $_POST['first_name'] ) ) : '';
+	if ( ! is_email( $email ) ) {
+		wp_safe_redirect( add_query_arg( 'newsletter', 'invalid', wp_get_referer() ? wp_get_referer() : home_url( '/' ) ) );
+		exit;
 	}
-
-	update_post_meta( $subscriber_id, '_newsletter_email', $email );
-	update_post_meta( $subscriber_id, '_newsletter_first_name', $first_name );
-	update_post_meta( $subscriber_id, '_newsletter_status', 'active' );
-	update_post_meta( $subscriber_id, '_newsletter_signed_up_at', current_time( 'mysql' ) );
-	update_post_meta( $subscriber_id, '_newsletter_unsubscribe_token', nolan_young_theme_generate_newsletter_token() );
-
+	$existing = get_posts( array( 'post_type' => 'northstar_subscriber', 'post_status' => 'private', 'numberposts' => 1, 'meta_key' => '_email', 'meta_value' => $email ) );
+	$unsubscribe_hash = wp_generate_password( 32, false, false );
+	if ( $existing ) {
+		update_post_meta( $existing[0]->ID, '_status', 'Active' );
+		update_post_meta( $existing[0]->ID, '_unsubscribed_at', '' );
+	} else {
+		wp_insert_post( array( 'post_type' => 'northstar_subscriber', 'post_status' => 'private', 'post_title' => $email, 'meta_input' => array( '_email' => $email, '_first_name' => $name, '_status' => 'Active', '_token' => $unsubscribe_hash ) ) );
+	}
 	wp_safe_redirect( add_query_arg( 'newsletter', 'success', wp_get_referer() ? wp_get_referer() : home_url( '/' ) ) );
 	exit;
 }
-add_action( 'init', 'nolan_young_theme_process_newsletter_signup' );
+add_action( 'admin_post_nopriv_nolan_young_template_newsletter_signup', 'nolan_young_template_newsletter_signup' );
+add_action( 'admin_post_nolan_young_template_newsletter_signup', 'nolan_young_template_newsletter_signup' );
 
-/**
- * Handle unsubscribe requests.
- */
-function nolan_young_theme_process_newsletter_unsubscribe() {
-	if ( empty( $_GET['nl_unsubscribe'] ) || empty( $_GET['token'] ) ) {
-		return;
+function nolan_young_template_newsletter_menu() {
+	add_menu_page( __( 'Newsletter', 'nolan-young-template' ), __( 'Newsletter', 'nolan-young-template' ), 'manage_options', 'northstar-newsletter', 'nolan_young_template_newsletter_page', 'dashicons-email-alt2', 59 );
+}
+add_action( 'admin_menu', 'nolan_young_template_newsletter_menu' );
+
+function nolan_young_template_newsletter_page() {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( esc_html__( 'Not allowed.', 'nolan-young-template' ) );
 	}
-
-	$token = sanitize_text_field( wp_unslash( $_GET['token'] ) );
-
-	$matches = get_posts(
-		array(
-			'post_type'      => 'newsletter_subscriber',
-			'post_status'    => array( 'publish', 'draft', 'private' ),
-			'posts_per_page' => 1,
-			'fields'         => 'ids',
-			'meta_query'     => array(
-				array(
-					'key'   => '_newsletter_unsubscribe_token',
-					'value' => $token,
-				),
-			),
-		)
-	);
-
-	if ( empty( $matches ) ) {
-		wp_die( esc_html__( 'Invalid unsubscribe link.', 'nolan-young-template' ) );
+	if ( isset( $_GET['export'] ) && check_admin_referer( 'northstar_newsletter_export' ) ) {
+		nolan_young_template_export_newsletter();
 	}
+	$subscribers = get_posts( array( 'post_type' => 'northstar_subscriber', 'post_status' => 'private', 'numberposts' => 100 ) );
+	echo '<div class="wrap"><h1>' . esc_html__( 'Newsletter', 'nolan-young-template' ) . '</h1><p><a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin.php?page=northstar-newsletter&export=1' ), 'northstar_newsletter_export' ) ) . '">' . esc_html__( 'Export CSV', 'nolan-young-template' ) . '</a></p><table class="widefat striped"><thead><tr><th>Email</th><th>Name</th><th>Status</th><th>Signup date</th><th>Unsubscribed</th></tr></thead><tbody>';
+	foreach ( $subscribers as $subscriber ) {
+		echo '<tr><td>' . esc_html( get_post_meta( $subscriber->ID, '_email', true ) ) . '</td><td>' . esc_html( get_post_meta( $subscriber->ID, '_first_name', true ) ) . '</td><td>' . esc_html( get_post_meta( $subscriber->ID, '_status', true ) ) . '</td><td>' . esc_html( get_the_date( '', $subscriber ) ) . '</td><td>' . esc_html( get_post_meta( $subscriber->ID, '_unsubscribed_at', true ) ) . '</td></tr>';
+	}
+	echo '</tbody></table></div>';
+}
 
-	$subscriber_id = (int) $matches[0];
-	update_post_meta( $subscriber_id, '_newsletter_status', 'unsubscribed' );
-	update_post_meta( $subscriber_id, '_newsletter_unsubscribed_at', current_time( 'mysql' ) );
-
-	wp_safe_redirect( add_query_arg( 'newsletter', 'unsubscribed', home_url( '/' ) ) );
+function nolan_young_template_export_newsletter() {
+	header( 'Content-Type: text/csv; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename=northstar-newsletter-subscribers.csv' );
+	$output = fopen( 'php://output', 'w' );
+	fputcsv( $output, array( 'Email', 'First name', 'Status', 'Signup date', 'Unsubscribed at' ) );
+	foreach ( get_posts( array( 'post_type' => 'northstar_subscriber', 'post_status' => 'private', 'numberposts' => -1 ) ) as $subscriber ) {
+		fputcsv( $output, array( get_post_meta( $subscriber->ID, '_email', true ), get_post_meta( $subscriber->ID, '_first_name', true ), get_post_meta( $subscriber->ID, '_status', true ), get_the_date( 'c', $subscriber ), get_post_meta( $subscriber->ID, '_unsubscribed_at', true ) ) );
+	}
 	exit;
 }
-add_action( 'init', 'nolan_young_theme_process_newsletter_unsubscribe' );

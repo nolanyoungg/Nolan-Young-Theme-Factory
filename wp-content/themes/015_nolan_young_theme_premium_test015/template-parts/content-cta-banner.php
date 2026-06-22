@@ -1,14 +1,6 @@
-<?php
-/**
- * CTA Banner.
- *
- * @package Nolan_Young_Template
- */
-?>
-<section class="template-section">
-	<div class="template-container">
-		<p class="eyebrow"><?php esc_html_e( 'Ready to Talk?', 'nolan-young-template' ); ?></p>
-		<h2><?php esc_html_e( 'CTA Banner', 'nolan-young-template' ); ?></h2>
-		<p><?php esc_html_e( 'If you need a site that is easier to trust, easier to maintain, and more aligned with your services, this is a good place to start.', 'nolan-young-template' ); ?></p>
+<section class="footer-cta">
+	<div class="container footer-cta__inner">
+		<div><p class="eyebrow"><?php esc_html_e( 'Ready to organize the next version of your site?', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Start with a clear conversation about the business goal.', 'nolan-young-template' ); ?></h2></div>
+		<a class="btn btn-primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Us', 'nolan-young-template' ); ?></a>
 	</div>
 </section>

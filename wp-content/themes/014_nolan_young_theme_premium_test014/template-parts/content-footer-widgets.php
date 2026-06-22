@@ -1,80 +1,8 @@
-<?php
-/**
- * Footer Widgets Template Part
- *
- */
-?>
-
-<div class="footer-widget-section">
-    <div class="container">
-        <div class="widget-columns">
-            <div class="widget-column services-column">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="#">Service 1</a></li>
-                    <li><a href="#">Service 2</a></li>
-                    <li><a href="#">Service 3</a></li>
-                </ul>
-            </div>
-            <div class="widget-column company-column">
-                <h3>Company</h3>
-                <ul>
-                    <li><a href="#">About Us</a></li>
-                    <li><a href="#">Our Work</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-            </div>
-            <div class="widget-column blog-column">
-                <h3>From Our Blog</h3>
-                <ul>
-                    <li><a href="#">Blog Post 1</a></li>
-                    <li><a href="#">Blog Post 2</a></li>
-                    <li><a href="#">Blog Post 3</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<?php $services = nolan_young_template_services(); $articles = nolan_young_template_articles(); ?>
+<div class="footer-widgets">
+	<section class="footer-brand"><a class="site-branding" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php nolan_young_template_render_logo(); ?></a><p><?php esc_html_e( 'Northstar Websites designs, builds, and supports modern WordPress websites for service businesses that need clearer content and better conversion paths.', 'nolan-young-template' ); ?></p><?php nolan_young_template_render_newsletter_form(); ?></section>
+	<nav aria-label="<?php esc_attr_e( 'Footer services', 'nolan-young-template' ); ?>"><h2><?php esc_html_e( 'Services', 'nolan-young-template' ); ?></h2><?php foreach ( $services as $service ) : ?><a href="<?php echo esc_url( $service['url'] ); ?>"><?php echo esc_html( $service['title'] ); ?></a><?php endforeach; ?></nav>
+	<nav aria-label="<?php esc_attr_e( 'Footer company', 'nolan-young-template' ); ?>"><h2><?php esc_html_e( 'Company', 'nolan-young-template' ); ?></h2><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'About', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/work/' ) ); ?>"><?php esc_html_e( 'Work', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>"><?php esc_html_e( 'Blog', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact', 'nolan-young-template' ); ?></a></nav>
+	<nav aria-label="<?php esc_attr_e( 'Footer blog', 'nolan-young-template' ); ?>"><h2><?php esc_html_e( 'Blog', 'nolan-young-template' ); ?></h2><?php foreach ( array_slice( $articles, 0, 3 ) as $article ) : ?><a href="<?php echo esc_url( $article['url'] ); ?>"><?php echo esc_html( $article['title'] ); ?></a><?php endforeach; ?></nav>
+	<section class="footer-contact"><h2><?php esc_html_e( 'Contact', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Use the contact form to share goals, service needs, timeline considerations, and the best way to reply.', 'nolan-young-template' ); ?></p><a class="btn btn-secondary btn-small" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Send inquiry', 'nolan-young-template' ); ?></a></section>
 </div>
-
-<style>
-.footer-widget-section {
-    background-color: #101827;
-    color: #ffffff;
-    padding: 60px 0;
-}
-
-.widget-columns {
-    display: flex;
-    justify-content: space-around;
-    gap: 40px;
-}
-
-.widget-column {
-    width: calc(33.33% - 20px);
-}
-
-.widget-column h3 {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-}
-
-.widget-column ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.widget-column li {
-    margin-bottom: 10px;
-}
-
-.widget-column a {
-    color: #ffffff;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.widget-column a:hover {
-    color: #2563eb;
-}
-</style>

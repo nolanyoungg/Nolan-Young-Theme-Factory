@@ -1,12 +1,6 @@
-<section class="testimonials">
-    <h2 class="section-title">What Our Clients Say</h2>
-    <div class="testimonial-slider">
-        <?php for ($i = 0; $i < 3; $i++): ?>
-            <div class="testimonial-card">
-                <img src="<?php echo get_template_directory_uri(); ?>/assets/images/placeholder.svg" alt="Client Avatar">
-                <h3 class="client-name">John Doe</h3>
-                <p class="testimonial-quote">"Northstar Websites exceeded our expectations. Their team is highly professional and delivers exceptional results."</p>
-            </div>
-        <?php endfor; ?>
-    </div>
+<section class="section proof-section">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow"><?php esc_html_e( 'Proof without invented testimonials', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Credibility comes from process, structure, and visible quality.', 'nolan-young-template' ); ?></h2></div>
+		<div class="proof-grid"><div><strong><?php esc_html_e( 'Accessible', 'nolan-young-template' ); ?></strong><p><?php esc_html_e( 'Keyboard states, semantic sections, and reduced-motion handling are built into the theme.', 'nolan-young-template' ); ?></p></div><div><strong><?php esc_html_e( 'Maintainable', 'nolan-young-template' ); ?></strong><p><?php esc_html_e( 'Template parts, SCSS source files, and local assets keep the site easier to inspect.', 'nolan-young-template' ); ?></p></div><div><strong><?php esc_html_e( 'Portable', 'nolan-young-template' ); ?></strong><p><?php esc_html_e( 'No runtime CDN assets or machine-specific paths are required for the public theme.', 'nolan-young-template' ); ?></p></div></div>
+	</div>
 </section>

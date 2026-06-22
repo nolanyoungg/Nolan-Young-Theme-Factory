@@ -1,26 +1,29 @@
 # Northstar Websites WordPress Theme
 
-This is a premium WordPress theme designed for a modern website development company focused on modern WordPress design, build, and support services. The theme features a clean, professional look with a strong emphasis on usability, readability, and accessibility.
+Northstar Websites is a modern service-business WordPress theme for website design, build, support, work examples, resources, contact forms, and newsletter signup.
 
-## Features
-- Responsive header and footer
-- Clean and concise branding
-- Premium color palette
-- Modern typography
-- Navigation panels for Services, About, and Blog
-- Full-width footer with CTA band, navigation groups, contact information, and legal row
+The homepage is implemented in `front-page.php`. Page templates live in `page-templates/`; reusable sections live in `template-parts/`; PHP modules live in `inc/`; source assets live in `src/`; compiled bundles are `assets/css/bundle.css` and `assets/js/bundle.js`.
 
 ## Installation
-1. Download the theme ZIP file.
-2. Go to your WordPress dashboard.
-3. Navigate to Appearance > Themes.
-4. Click "Add New" and then "Upload Theme".
-5. Select the downloaded ZIP file and click "Install Now".
-6. Activate the theme.
 
-## Customization
-- You can customize colors, typography, and other settings through the WordPress customizer.
-- For advanced customization, you may need to edit the theme files directly. Make sure to back up your site before making any changes.
+Activate the theme in WordPress, create Home, About, Services, Work, Blog, Contact, Privacy Policy, and Terms pages, assign the matching templates, set Home as the static front page, configure Primary and Footer menus, and add a custom logo if desired.
 
-## Support
-For support or inquiries, please contact Northstar Websites at [contact@northstarwebsites.com](mailto:contact@northstarwebsites.com).
+## Build
+
+Use Node.js 18 or newer. Run `npm install`, `npm run dev` for watched development builds, and `npm run build` for minified production output. The required bundle names must remain `assets/css/bundle.css` and `assets/js/bundle.js`.
+
+## Features
+
+The theme includes desktop menu panels with rail hover/focus behavior, a mobile drawer with accordions, portfolio filtering, FAQ accordions, contact and service inquiry forms, private admin submission storage, newsletter subscriber management, responsive footer widgets, and policy-page routing.
+
+## Accessibility
+
+Keyboard operation, focus visibility, reduced motion, contrast, form validation, hidden-content behavior, and semantic landmarks are summarized in `accessibility/README.md`.
+
+## Images And Licensing
+
+All current visual assets are original local SVG interface graphics stored in `assets/images/hero/`, `assets/images/portfolio/`, `assets/images/texture/`, and `assets/icons/`. No external runtime images, CDN fonts, API keys, or third-party logos are required.
+
+## Known Limitations
+
+The theme manages newsletter subscribers but does not send bulk marketing campaigns. Policy pages render WordPress-managed content and do not provide legal text.

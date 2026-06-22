@@ -6,7 +6,9 @@ const { parseArgs, arg } = require('../shared/args');
 const { runCommand } = require('../shared/command-runner');
 const {
   ALLOWED_REMOTE_REFERENCE_PATTERN,
+  ABSOLUTE_LOCAL_ASSET_PATTERN,
   CONTENT_SECTION_PATTERN,
+  INLINE_STYLE_BLOCK_PATTERN,
   MODEL_FILE_BLOCK_MARKER_PATTERN,
   PLACEHOLDER_PATTERN,
   REMOTE_RUNTIME_PATTERN,
@@ -143,8 +145,10 @@ if (fs.existsSync(themeDir)) {
     const text = fs.readFileSync(file, 'utf8');
     if (SECRET_PATTERN.test(text)) failCheck('Potential secret or credential found in theme');
     if (REMOTE_RUNTIME_PATTERN.test(text) && !ALLOWED_REMOTE_REFERENCE_PATTERN.test(text)) failCheck('Remote runtime dependency or CDN reference found');
+    if (ABSOLUTE_LOCAL_ASSET_PATTERN.test(text)) failCheck(`Theme uses root-relative /assets path instead of portable theme asset path: ${relative}`);
     if (REPO_LOCAL_PATH_PATTERN.test(text)) failCheck('Theme contains repo-local, preview, dist, or machine-specific paths');
     if (/\.(php|css|js)$|README\.md$/i.test(relative) && PLACEHOLDER_PATTERN.test(text)) failCheck('Theme contains unfinished placeholder/runtime copy');
+    if (/\.php$/i.test(relative) && INLINE_STYLE_BLOCK_PATTERN.test(text)) failCheck(`Theme PHP contains inline <style> block instead of source SCSS styling: ${relative}`);
     if (/\.(php|css|scss|js)$/i.test(relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) failCheck(`Theme contains leaked model file-block marker: ${relative}`);
     if (/\.(php|css|scss|js)$/i.test(relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) failCheck(`Theme contains leaked markdown code fence marker: ${relative}`);
   }

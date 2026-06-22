@@ -1,0 +1,6 @@
+
+> 015-nolan-young-theme-premium-test015@1.0.0 build
+> node build/build.js
+
+Built assets\css\bundle.css and assets\js\bundle.js in production mode.
+Built assets for 015_nolan_young_theme_premium_test015

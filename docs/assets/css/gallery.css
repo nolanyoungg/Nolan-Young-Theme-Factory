@@ -1,15 +1,16 @@
 :root {
-  --ink: #18211e;
-  --muted: #5f6b66;
-  --paper: #f5f6f3;
-  --panel: #ffffff;
-  --panel-2: #f7f8f5;
-  --line: #d8dfd8;
-  --line-strong: #c0c9c0;
-  --accent: #1d6b5d;
-  --accent-2: #a96d2f;
+  --ink: #111827;
+  --muted: #526071;
+  --page: #080b12;
+  --page-2: #101827;
+  --panel: #f8fafc;
+  --panel-2: #eef2f7;
+  --line: #d7dee8;
+  --line-strong: #aeb9c8;
+  --accent: #38bdf8;
+  --accent-dark: #075985;
   --ok: #166534;
-  --warn: #8a5a0a;
+  --warn: #9a5b04;
 }
 
 * {
@@ -18,8 +19,9 @@
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  background:
+    linear-gradient(180deg, var(--page) 0%, var(--page-2) 48%, #0a0f19 100%);
+  color: #f8fafc;
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   line-height: 1.55;
 }
@@ -33,8 +35,7 @@ main,
 
 .site-header {
   position: relative;
-  padding: 60px 0 36px;
-  background: linear-gradient(180deg, rgb(255 255 255 / 86%), rgb(255 255 255 / 64%));
+  padding: 64px 0 34px;
 }
 
 .site-header::after {
@@ -42,7 +43,7 @@ main,
   display: block;
   height: 1px;
   margin-top: 28px;
-  background: linear-gradient(90deg, var(--line-strong), transparent 85%);
+  background: linear-gradient(90deg, rgb(148 163 184 / 70%), transparent 85%);
 }
 
 .eyebrow {
@@ -59,14 +60,14 @@ h1 {
   margin: 0 0 18px;
   font-size: clamp(3rem, 6vw, 5rem);
   line-height: 0.96;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 h2 {
   margin-bottom: 10px;
   font-size: clamp(1.6rem, 2vw, 2.3rem);
   line-height: 1.08;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
 }
 
 h2,
@@ -77,7 +78,7 @@ p {
 
 .lede {
   max-width: 700px;
-  color: var(--muted);
+  color: #bfcbda;
   font-size: 1.08rem;
 }
 
@@ -86,9 +87,20 @@ p {
   align-items: end;
   justify-content: space-between;
   gap: 24px;
-  padding: 18px 0 22px;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  padding: 22px 0 26px;
+  border-top: 1px solid rgb(148 163 184 / 34%);
+  border-bottom: 1px solid rgb(148 163 184 / 34%);
+  color: #dbe5f1;
+}
+
+.gallery-intro p {
+  max-width: 760px;
+  color: #aebbd0;
+}
+
+.gallery-intro code {
+  color: #f8fafc;
+  font-size: 0.92em;
 }
 
 .theme-grid {
@@ -103,7 +115,7 @@ p {
   display: block;
   grid-column: 1 / -1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  background: linear-gradient(90deg, transparent, rgb(148 163 184 / 60%), transparent);
 }
 
 .theme-card {
@@ -116,17 +128,18 @@ p {
   min-height: 620px;
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--panel);
-  box-shadow: 0 18px 45px rgb(23 32 28 / 7%);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 32%);
 }
 
 .theme-card__preview {
   position: relative;
-  overflow: hidden;
+  overflow: auto;
   border-bottom: 1px solid var(--line);
   background:
-    linear-gradient(180deg, rgb(29 107 93 / 8%), transparent 32%),
+    linear-gradient(180deg, rgb(56 189 248 / 10%), transparent 35%),
     var(--panel-2);
 }
 
@@ -147,7 +160,7 @@ p {
 .theme-card__body {
   display: grid;
   gap: 12px;
-  padding: 24px;
+  padding: 22px;
 }
 
 .theme-card h3 {
@@ -174,19 +187,22 @@ p {
   min-height: 28px;
   align-items: center;
   padding: 4px 9px;
-  border-radius: 999px;
-  background: #eef3ef;
+  border: 1px solid #dce4ee;
+  border-radius: 6px;
+  background: #eef3f8;
   color: var(--ink);
   font-size: 0.78rem;
   font-weight: 700;
 }
 
 .status-pill.is-ok {
-  background: #e9f7ee;
+  border-color: #b7e3c4;
+  background: #e8f7ee;
   color: var(--ok);
 }
 
 .status-pill.is-missing {
+  border-color: #f4d48d;
   background: #fff5dd;
   color: var(--warn);
 }
@@ -196,18 +212,18 @@ p {
   min-height: 40px;
   align-items: center;
   padding: 0 14px;
-  border: 1px solid #0e463d;
+  border: 1px solid var(--accent-dark);
   border-radius: 6px;
   color: #ffffff;
   font-weight: 800;
   text-decoration: none;
-  background: #0e463d;
+  background: var(--accent-dark);
 }
 
 .open-preview:hover,
 .open-preview:focus-visible {
-  background: #17584f;
-  border-color: #17584f;
+  background: #0c4a6e;
+  border-color: #0c4a6e;
 }
 
 .empty-state {
@@ -216,8 +232,8 @@ p {
 
 .site-footer {
   padding: 24px 0 44px;
-  border-top: 1px solid var(--line);
-  color: var(--muted);
+  border-top: 1px solid rgb(148 163 184 / 34%);
+  color: #aebbd0;
   font-size: 0.95rem;
 }
 

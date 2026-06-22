@@ -59,8 +59,6 @@ That means the theme itself must already satisfy these requirements:
 - header.php and footer.php are complete document wrappers
 - any referenced local image or icon path exists inside the theme, or is replaced with a local placeholder asset
 - homepage and section templates contain finished copy, not placeholder shells
-- the finished preview should resemble the quality bar of 012_nolan_young_theme_master_template_prompt_filler_template_1: complete header navigation, Nolan-style menu behavior, local SVG/graphic assets, full homepage sections, finished business copy, source SCSS-driven styling, and no visible PHP warnings
-- do not generate generic fallback sections such as "Hero Content", "Project Title 1", "Service Title 1", "Our Mission", empty cards, inline <style> blocks in PHP templates, or root-relative /assets paths
 
 ## Creative Prompt
 

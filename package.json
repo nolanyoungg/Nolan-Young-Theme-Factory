@@ -6,16 +6,16 @@
   "scripts": {
     "theme:run": "node scripts/run-theme-workflow.js",
     "theme:resume": "node scripts/run-theme-workflow.js --resume",
-    "theme:prepare": "node scripts/template-theme-copy/prepare-theme-from-template.js",
-    "theme:validate": "node scripts/validation/validate-generated-theme-all.js",
-    "theme:build": "node scripts/build/build-theme-assets.js",
-    "theme:preview": "node scripts/theme-preview/generate-static-preview.js",
-    "theme:preview:index": "node scripts/theme-preview/rebuild-preview-gallery.js --validate",
-    "theme:zip": "node scripts/theme-zipping/zip-theme.js",
-    "theme:delete": "node scripts/theme-cleanup/delete-theme-artifacts.js",
-    "theme:env": "node scripts/environment/check-environment.js",
-    "theme:model-check": "node scripts/environment/check-model-access.js",
-    "test:scripts": "node scripts/workflow/smoke-test-scripts.js"
+    "theme:prepare": "node scripts/prepare-theme.js",
+    "theme:validate": "node scripts/validate-theme.js",
+    "theme:build": "node scripts/build-theme.js",
+    "theme:preview": "node scripts/preview-theme.js",
+    "theme:preview:index": "node scripts/preview-theme.js --rebuild-index",
+    "theme:zip": "node scripts/package-theme.js",
+    "theme:delete": "node scripts/delete-theme.js",
+    "theme:env": "node scripts/check-environment.js",
+    "theme:model-check": "node scripts/check-model.js",
+    "test:scripts": "node scripts/tests/smoke.js"
   },
   "dependencies": {
     "archiver": "8.0.0",

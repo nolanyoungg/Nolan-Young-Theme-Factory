@@ -5,3 +5,6 @@ node_modules/
 Thumbs.db
 wp-content/themes/*/.generation/
 reports/runs/
+!reports/runs/README.md
+dist/zipped-themes/*.zip
+!dist/zipped-themes/README.md

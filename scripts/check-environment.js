@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root } = require('../shared/repo-root');
-const { parseArgs, arg, flag } = require('../shared/args');
-const { hasCommand, resolveCommand, runCommand } = require('../shared/command-runner');
+const { root } = require('./lib/repo-root');
+const { parseArgs, arg, flag } = require('./lib/args');
+const { hasCommand, resolveCommand, runCommand } = require('./lib/command-runner');
 const {
   checkCodexAccess,
   checkOllamaAccess,
   codexCommandName,
   parseOllamaModels
-} = require('../shared/model-access');
+} = require('./lib/model-access');
 
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
 
@@ -17,7 +17,7 @@ const args = parseArgs(process.argv.slice(2));
 const mode = arg(args, 'mode', 'all');
 const runModelCheck = flag(args, 'model-check');
 const liveModelCheck = flag(args, 'live-model-check');
-const modelCheckTimeoutMs = Number(arg(args, 'model-check-timeout-ms', defaults.validation?.model_check_timeout_ms || 120000));
+const modelCheckTimeoutMs = Number(arg(args, 'model-check-timeout-ms', defaults.validation?.model_check_timeout_ms || 300000));
 
 function providerNeeded(provider) {
   if (provider === 'ollama') return ['all', 'ollama-only', 'hybrid'].includes(mode);

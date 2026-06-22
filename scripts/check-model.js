@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-const { parseArgs, arg, flag } = require('../shared/args');
-const { fail } = require('../shared/theme-utils');
-const { checkCodexAccess, checkOllamaAccess } = require('../shared/model-access');
+const { parseArgs, arg, flag } = require('./lib/args');
+const { fail } = require('./lib/theme-utils');
+const { checkCodexAccess, checkOllamaAccess } = require('./lib/model-access');
 
 function positiveInteger(value, label) {
   const number = Number(value);
@@ -30,8 +30,8 @@ function runCheck(fn, options) {
 
 const args = parseArgs(process.argv.slice(2));
 const provider = arg(args, 'provider');
-const timeoutMs = positiveInteger(arg(args, 'model-check-timeout-ms', '120000'), '--model-check-timeout-ms');
-const live = !flag(args, 'dry-run') && !flag(args, 'skip-live');
+const timeoutMs = positiveInteger(arg(args, 'model-check-timeout-ms', '300000'), '--model-check-timeout-ms');
+const live = flag(args, 'live-model-check');
 
 if (provider === 'ollama') {
   printJson({
@@ -71,5 +71,5 @@ if (provider === 'ollama') {
     codex
   });
 } else {
-  fail('Usage: node scripts/environment/check-model-access.js --provider <ollama|codex|hybrid> [--ollama-model <model>] [--codex-model <model> --codex-reasoning <level>]');
+  fail('Usage: node scripts/check-model.js --provider <ollama|codex|hybrid> [--ollama-model <model>] [--codex-model <model> --codex-reasoning <level>]');
 }

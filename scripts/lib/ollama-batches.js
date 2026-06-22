@@ -94,7 +94,7 @@ const PROMPT_SECTIONS_BY_STAGE = {
   pages: ['01', '05'],
   assets: ['02', '04', '05', '06'],
   'forms-helpers': ['01', '03', '09', '10'],
-  repair: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']
+  all: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']
 };
 
 function creativePromptFromBrief(brief) {
@@ -125,7 +125,7 @@ function compactSection(text, maxChars = 3500) {
 
 function focusedOllamaBrief(brief, stageName) {
   const prompt = creativePromptFromBrief(brief);
-  const wanted = new Set(PROMPT_SECTIONS_BY_STAGE[stageName] || PROMPT_SECTIONS_BY_STAGE.repair);
+  const wanted = new Set(PROMPT_SECTIONS_BY_STAGE[stageName] || PROMPT_SECTIONS_BY_STAGE.all);
   const selected = splitPromptSections(prompt)
     .filter((section) => wanted.has(section.number) || section.number === '00')
     .map((section) => compactSection(section.text));

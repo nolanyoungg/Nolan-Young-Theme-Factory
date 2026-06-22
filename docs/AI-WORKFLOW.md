@@ -1,131 +1,108 @@
 # AI Workflow
 
-This repo uses one shared stage-based workflow for three modes:
+The workflow is template-first. A template is copied into `wp-content/themes/{theme_slug}/` before AI generation starts, and AI may edit only that prepared folder.
 
-* `ollama-only`
-* `codex-only`
-* `hybrid`
+Normal operation goes through npm scripts backed by `scripts/run-theme-workflow.js`.
 
-The workflow is template-first. A template is copied into `wp-content/themes/NNN_nolan_young_theme_[description]/` before any AI generation starts.
+## Sequence
 
-Script layout is documented in `scripts/README.md`. Normal operation should go through `npm run ...` commands backed by `scripts/run-theme-workflow.js`.
+```text
+resolve arguments and defaults
+check requested models and local commands
+prepare the selected template
+record the prepared-template baseline
+run the selected generation mode
+preserve raw generated output
+build assets once
+validate the generated theme
+generate static preview
+rebuild preview gallery
+package ZIP
+write final report
+```
 
-## Shared Stages
+Validation, preview generation, and packaging are deterministic. They report failures but do not rewrite generated theme source to make checks pass.
 
-The runner resolves stages from `config/workflow-modes.json` and defaults from `config/theme-factory.defaults.json`.
-
-Common stages:
-
-* `prepare_theme`
-* `create_generation_brief`
-* `create_template_manifest`
-* `ollama_generation_pass`
-* `codex_generation_pass`
-* `validate_before_finish`
-* `codex_finish_pass`
-* `build_theme_assets`
-* `generate_preview`
-* `rebuild_preview_gallery`
-* `package_theme`
-* `final_validate`
-* `write_run_summary`
-
-## Mode Summary
+## Modes
 
 ### `ollama-only`
 
-Scripts prepare the theme, Ollama generates inside the prepared folder, scripts validate, build theme assets, build previews, rebuild the gallery, package the ZIP, and write the run summary.
-
-Example:
+Runs the Ollama provider batches against the prepared theme folder.
 
 ```sh
-npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b
 ```
 
 ### `codex-only`
 
-Scripts prepare the theme and generate Codex brief artifacts. The workflow records the Codex step honestly and resumes when Codex is available.
-The normal Codex-only workflow uses one Codex build invocation, preserving the Theme 012 prompt contract, followed by deterministic finalization.
-
-Example:
+Runs one Codex generation pass against the prepared theme folder.
 
 ```sh
-npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.4 --codex-reasoning medium
+npm run theme:run -- --mode codex-only --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --codex-model gpt-5.5 --codex-reasoning medium
 ```
-
-The prompt path is only an example. Use the prompt file you want to generate from.
 
 ### `hybrid`
 
-Scripts prepare the theme, Ollama drafts it, scripts validate, then Codex receives a focused finishing brief. The workflow can resume after Codex finishes.
-Hybrid validates both providers before generation begins and does not downgrade to a single-provider run if either check fails.
-
-Example:
+Runs an Ollama draft followed by one Codex finish pass.
 
 ```sh
-npm run theme:run -- --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.4 --codex-reasoning medium
+npm run theme:run -- --mode hybrid --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --ollama-model qwen2.5-coder:14b --codex-model gpt-5.5 --codex-reasoning medium
 ```
+
+Hybrid does not add a third AI pass.
 
 ## Dry Run
 
 ```sh
-npm run theme:run -- --mode hybrid --prompt prompts/pending/000-testing.md --template NOLAN-YOUNG-theme-000 --dry-run
+npm run theme:run -- --mode hybrid --prompt prompts/pending/example.md --template NOLAN-YOUNG-theme-000 --dry-run
 ```
 
-Dry run prints the resolved stage plan and output paths without mutating the repo.
-It does not copy templates, write run state, create previews or ZIPs, install dependencies, or invoke live AI providers.
+Dry run prints the resolved plan and output paths without copying templates, writing state, installing dependencies, creating previews, creating ZIPs, or invoking AI providers.
 
 ## Model Checks
+
+Routine model checks validate executable availability, Ollama model tags, Codex CLI availability, model identifier format, and reasoning-level format.
+
+Live provider checks require `--live-model-check`.
+
+Default timeouts are intentionally conservative for local models:
+
+```text
+Ollama generation: 45 minutes per batch
+Model checks: 5 minutes
+Codex generation: 10 minutes
+Build and deterministic commands: 2 minutes
+```
+
+Ollama runs five focused batches, so a slow full Ollama pass can run for several hours before the workflow times out. Override with `--ollama-timeout-ms` only when you intentionally want a different per-batch limit.
 
 ```sh
 npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
 npm run theme:model-check -- --provider codex --codex-model gpt-5.5 --codex-reasoning high
-npm run theme:model-check -- --provider hybrid --ollama-model qwen2.5-coder:14b --codex-model gpt-5.5 --codex-reasoning high
 ```
 
-Model names and reasoning levels must be exact. The workflow records requested and resolved values in `run.config.json`, `workflow.state.json`, and `workflow.summary.md`; it does not fall back to another model after a failure.
+The workflow never substitutes another model after a failure.
 
-## Resume
+## Failure Handling
 
-```sh
-npm run theme:resume -- --theme-slug 001_nolan_young_theme_example
+Generation failure means the provider process failed or could not start.
+
+A generated theme can finish generation while failing build, validation, preview, or ZIP packaging. Those failures are recorded separately, and safe finalization steps continue where possible.
+
+Final statuses are:
+
+```text
+completed
+completed-with-failures
+blocked
 ```
 
-Use resume after a Codex pending state has been written to the run report.
+## Reports
 
-## Run Reports
-
-Each run writes artifacts under:
+Each run writes under:
 
 ```text
 reports/runs/{theme_slug}/
 ```
 
-Key files:
-
-* `run.config.json`
-* `workflow.state.json`
-* `template.manifest.json`
-* `validation.before-finish.json`
-* `validation.final.json`
-* `workflow.summary.md`
-
-## Finalization
-
-After generation and validation:
-
-* theme assets are built by the workflow with `node scripts/build/build-theme-assets.js --theme-slug {theme_slug}`
-* the build wrapper installs theme-local dependencies if needed and runs `npm run build` inside the generated theme folder
-* static preview is written to `docs/Preview-Themes-Github/{theme_slug}/`
-* the gallery is rebuilt in `docs/index.html`
-* the ZIP is written to `dist/zipped-themes/{theme_slug}.zip`
-
-## Repair
-
-If a run fails, inspect:
-
-* `reports/runs/{theme_slug}/errors.log`
-* `reports/runs/{theme_slug}/validation.before-finish.json`
-* `reports/runs/{theme_slug}/validation.final.json`
-
-Then resume or rerun the workflow with the same prompt and template.
+Key files include `run.config.json`, `workflow.state.json`, provider raw outputs, `build.report.json`, `validation.final.json`, and `workflow.summary.json`.

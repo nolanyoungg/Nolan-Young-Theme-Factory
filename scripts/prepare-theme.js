@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root } = require('../shared/repo-root');
-const { parseArgs, arg } = require('../shared/args');
+const { root } = require('./lib/repo-root');
+const { parseArgs, arg } = require('./lib/args');
 const {
   assertTemplateName,
   assertThemeSlug,
   nextThemeNumber,
-  slugifyPromptPath
-} = require('../shared/theme-utils');
+  slugifyPromptPath,
+  walkFiles
+} = require('./lib/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalPrompt, positionalTemplate] = args._;
@@ -198,45 +199,68 @@ function nolan_young_template_fallback_menu() {
 `);
 }
 
-if (!promptFile) fail('Usage: node scripts/template-theme-copy/prepare-theme-from-template.js --prompt <prompt-file> [--template <template-name>] [--theme-slug <theme-slug>]');
-if (promptFile.includes('..') || templateName.includes('..')) fail('Unsafe path segment detected.');
-assertTemplateName(templateName);
-
-const promptPath = path.isAbsolute(promptFile) ? promptFile : path.join(root, promptFile);
-if (!fs.existsSync(promptPath)) fail(`Prompt file not found: ${promptFile}`);
-const promptText = fs.readFileSync(promptPath, 'utf8');
-
-const templateDir = path.join(root, 'wordpress-themplate-themes', templateName);
-if (!fs.existsSync(templateDir)) fail(`Template not found: wordpress-themplate-themes/${templateName}`);
-
-const themeSlug = requestedThemeSlug || `${nextThemeNumber()}_nolan_young_theme_${slugifyPromptPath(promptPath)}`;
-assertThemeSlug(themeSlug);
-
-const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
-if (fs.existsSync(themeDir)) fail(`Theme already exists: wp-content/themes/${themeSlug}`);
-
-fs.cpSync(templateDir, themeDir, { recursive: true });
-completeCopiedTemplateScaffolds(themeDir, promptBusinessName(promptText));
-
-const title = themeSlug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
-const stylePath = path.join(themeDir, 'style.css');
-if (fs.existsSync(stylePath)) {
-  let style = fs.readFileSync(stylePath, 'utf8');
-  style = style.replace(/^Theme Name:.*$/m, `Theme Name: ${title}`);
-  style = style.replace(/^Description:.*$/m, `Description: Generated WordPress theme prepared from ${templateName}.`);
-  style = style.replace(/^Text Domain:.*$/m, `Text Domain: ${themeSlug}`);
-  fs.writeFileSync(stylePath, style);
+function createTemplateManifest(templateDir, selectedTemplateName) {
+  const files = walkFiles(templateDir)
+    .map((file) => path.relative(templateDir, file).replace(/\\/g, '/'))
+    .filter((file) => !/\.(log|tmp|swp|bak|map)$/i.test(file))
+    .sort();
+  return {
+    manifest_version: 1,
+    created_at: new Date().toISOString(),
+    template_name: selectedTemplateName,
+    normalized_template_root: `wordpress-themplate-themes/${selectedTemplateName}`,
+    required_files: files
+  };
 }
 
-const packageName = themeSlug.replace(/_/g, '-');
-updateJson(path.join(themeDir, 'package.json'), (pkg) => { pkg.name = packageName; });
-updateJson(path.join(themeDir, 'package-lock.json'), (lock) => {
-  lock.name = packageName;
-  if (lock.packages && lock.packages['']) lock.packages[''].name = packageName;
-});
+function prepareTheme(options = {}) {
+  const selectedPrompt = options.promptFile || promptFile;
+  const selectedTemplate = assertTemplateName(options.templateName || templateName);
+  const selectedSlug = options.themeSlug || requestedThemeSlug;
+  if (!selectedPrompt) fail('Usage: node scripts/prepare-theme.js --prompt <prompt-file> [--template <template-name>] [--theme-slug <theme-slug>]');
+  if (selectedPrompt.includes('..') || selectedTemplate.includes('..')) fail('Unsafe path segment detected.');
 
-fs.writeFileSync(path.join(themeDir, '.theme-template-source'), `template=${templateName}\nprepared_slug=${themeSlug}\n`);
+  const promptPath = path.isAbsolute(selectedPrompt) ? selectedPrompt : path.join(root, selectedPrompt);
+  if (!fs.existsSync(promptPath)) fail(`Prompt file not found: ${selectedPrompt}`);
+  const promptText = fs.readFileSync(promptPath, 'utf8');
+  const templateDir = path.join(root, 'wordpress-themplate-themes', selectedTemplate);
+  if (!fs.existsSync(templateDir)) fail(`Template not found: wordpress-themplate-themes/${selectedTemplate}`);
 
-console.log(`Prepared theme folder: wp-content/themes/${themeSlug}`);
-console.log(`Template source: wordpress-themplate-themes/${templateName}`);
-console.log(`Theme generation must edit only: wp-content/themes/${themeSlug}`);
+  const themeSlug = assertThemeSlug(selectedSlug || `${nextThemeNumber()}_nolan_young_theme_${slugifyPromptPath(promptPath)}`);
+  const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
+  if (fs.existsSync(themeDir)) fail(`Theme already exists: wp-content/themes/${themeSlug}`);
+
+  fs.cpSync(templateDir, themeDir, { recursive: true });
+  completeCopiedTemplateScaffolds(themeDir, promptBusinessName(promptText));
+
+  const title = themeSlug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const stylePath = path.join(themeDir, 'style.css');
+  if (fs.existsSync(stylePath)) {
+    let style = fs.readFileSync(stylePath, 'utf8');
+    style = style.replace(/^Theme Name:.*$/m, `Theme Name: ${title}`);
+    style = style.replace(/^Description:.*$/m, `Description: Generated WordPress theme prepared from ${selectedTemplate}.`);
+    style = style.replace(/^Text Domain:.*$/m, `Text Domain: ${themeSlug}`);
+    fs.writeFileSync(stylePath, style);
+  }
+
+  const packageName = themeSlug.replace(/_/g, '-');
+  updateJson(path.join(themeDir, 'package.json'), (pkg) => { pkg.name = packageName; });
+  updateJson(path.join(themeDir, 'package-lock.json'), (lock) => {
+    lock.name = packageName;
+    if (lock.packages && lock.packages['']) lock.packages[''].name = packageName;
+  });
+
+  const manifest = createTemplateManifest(templateDir, selectedTemplate);
+  fs.mkdirSync(path.join(themeDir, '.generation'), { recursive: true });
+  fs.writeFileSync(path.join(themeDir, '.generation', 'template.manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
+  fs.writeFileSync(path.join(themeDir, '.theme-template-source'), `template=${selectedTemplate}\nprepared_slug=${themeSlug}\n`);
+
+  console.log(`Prepared theme folder: wp-content/themes/${themeSlug}`);
+  console.log(`Template source: wordpress-themplate-themes/${selectedTemplate}`);
+  console.log(`Theme generation must edit only: wp-content/themes/${themeSlug}`);
+  return { themeSlug, themeDir, templateName: selectedTemplate };
+}
+
+if (require.main === module) prepareTheme();
+
+module.exports = { prepareTheme };

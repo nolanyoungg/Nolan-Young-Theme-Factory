@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root, scriptPath } = require('../shared/repo-root');
-const { parseArgs, arg, flag } = require('../shared/args');
-const { runCommand } = require('../shared/command-runner');
-const { artifactPlan, assertThemeSlug, existingArtifacts } = require('../shared/theme-utils');
-const { GENERATED_THEME_PATHS } = require('../shared/constants');
+const { root } = require('./lib/repo-root');
+const { parseArgs, arg, flag } = require('./lib/args');
+const { runCommand } = require('./lib/command-runner');
+const { artifactPlan, assertThemeSlug, existingArtifacts } = require('./lib/theme-utils');
+const { GENERATED_THEME_PATHS } = require('./lib/constants');
 
 const args = parseArgs(process.argv.slice(2));
 const [positionalSlug] = args._;
@@ -51,7 +51,7 @@ for (const item of planned) {
 }
 
 if (!skipGallery) {
-  const result = runCommand('node', [scriptPath('theme-preview', 'rebuild-preview-gallery.js'), '--validate'], { cwd: root });
+  const result = runCommand('node', [path.join(root, 'scripts', 'preview-theme.js'), '--rebuild-index'], { cwd: root });
   if (result.status !== 0) process.exit(result.status);
 }
 

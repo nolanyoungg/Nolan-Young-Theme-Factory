@@ -51,7 +51,7 @@ function assertCodexHelpSupports(helpText) {
     .map((item) => item.label);
 }
 
-function checkCodexAccess({ model, reasoning, timeoutMs = 120000, live = true, debugDir = '', mode = '', themeSlug = '', stage = 'codex-model-check' }) {
+function checkCodexAccess({ model, reasoning, timeoutMs = 300000, live = false, debugDir = '', mode = '', themeSlug = '', stage = 'codex-model-check' }) {
   let combination;
   try {
     combination = validateKnownCodexReasoningCombination(model, reasoning);
@@ -162,7 +162,7 @@ function parseOllamaModels(output) {
     .filter(Boolean);
 }
 
-function checkOllamaAccess({ model, timeoutMs = 180000, live = true, debugDir = '', mode = '', themeSlug = '', stage = 'ollama-model-check' }) {
+function checkOllamaAccess({ model, timeoutMs = 300000, live = false, debugDir = '', mode = '', themeSlug = '', stage = 'ollama-model-check' }) {
   const requestedModel = validateOllamaModel(model);
   if (!hasCommand('ollama')) {
     const error = new Error('ollama command is unavailable.');

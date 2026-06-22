@@ -1,490 +1,32 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const { root, scriptPath } = require('./shared/repo-root');
-const { parseArgs, arg, flag } = require('./shared/args');
-const { runCommand, spawnCommand } = require('./shared/command-runner');
-const { COMMAND_FAILURE_CODES, REQUIRED_BUNDLES } = require('./shared/constants');
-const { validateKnownCodexReasoningCombination, validateOllamaModel } = require('./shared/model-config');
-const { checkCodexAccess, checkOllamaAccess, codexExecArgs } = require('./shared/model-access');
-const {
-  artifactPlan,
-  assertTemplateName,
-  assertThemeSlug,
-  existingArtifacts,
-  removeThemeArtifacts,
-  safeRelativePath,
-  themeSlugForPrompt
-} = require('./shared/theme-utils');
+const { root } = require('./lib/repo-root');
+const { parseArgs, arg, flag } = require('./lib/args');
+const { artifactPlan, assertTemplateName, assertThemeSlug, existingArtifacts, removeThemeArtifacts, safeRelativePath, themeSlugForPrompt } = require('./lib/theme-utils');
+const { validateOllamaModel, validateKnownCodexReasoningCombination } = require('./lib/model-config');
+const { checkOllamaAccess, checkCodexAccess } = require('./lib/model-access');
+const { prepareTheme } = require('./prepare-theme');
+const { buildTheme } = require('./build-theme');
+const { validateTheme } = require('./validate-theme');
+const { previewTheme } = require('./preview-theme');
+const { packageTheme } = require('./package-theme');
+const { runOllamaGeneration } = require('./providers/ollama');
+const { runCodexGeneration, runCodexFinish } = require('./providers/codex');
 
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
-const modeConfig = JSON.parse(fs.readFileSync(path.join(root, 'config', 'workflow-modes.json'), 'utf8'));
-
-const scripts = {
-  applyThemeFileBlocks: scriptPath('ai-output', 'apply-theme-file-blocks.js'),
-  buildThemeAssets: scriptPath('build', 'build-theme-assets.js'),
-  createCodexThemeBrief: scriptPath('modes', 'codex-only', 'create-codex-theme-brief.js'),
-  createTemplateManifest: scriptPath('template-theme-copy', 'create-template-manifest.js'),
-  createThemeGenerationBrief: scriptPath('briefs', 'create-theme-generation-brief.js'),
-  generateStaticPreview: scriptPath('theme-preview', 'generate-static-preview.js'),
-  packageTheme: scriptPath('theme-zipping', 'zip-theme.js'),
-  prepareThemeFromTemplate: scriptPath('template-theme-copy', 'prepare-theme-from-template.js'),
-  rebuildPreviewGallery: scriptPath('theme-preview', 'rebuild-preview-gallery.js'),
-  runOllamaQualityRepairPass: scriptPath('modes', 'ollama-only', 'repair-theme.js'),
-  runOllamaThemePass: scriptPath('modes', 'ollama-only', 'generate-theme.js'),
-  themeQualityCheck: scriptPath('validation', 'theme-quality-check.js'),
-  validatePreviewGallery: scriptPath('theme-preview', 'validate-preview-gallery.js'),
-  validateThemeFromTemplate: scriptPath('validation', 'validate-theme-from-template.js'),
-  writeThemeValidationReport: scriptPath('validation', 'write-theme-validation-report.js')
-};
+const args = parseArgs(process.argv.slice(2));
 
 function fail(message) {
   console.error(`ERROR: ${message}`);
   process.exit(1);
 }
 
-function safePath(input, label) {
-  return safeRelativePath(input, label);
-}
-
-function run(cmd, args, options = {}) {
-  return runCommand(cmd, args, { cwd: root, ...options });
-}
-
-function sleep(ms) {
-  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
-}
-
 function help() {
   console.log(`Usage:
-  node scripts/run-theme-workflow.js --mode <ollama-only|codex-only|hybrid> --prompt <file> [--template <template>] [--theme-slug <slug>] [--ollama-model <model>] [--codex-model <model>] [--codex-reasoning <level>] [--dry-run]
+  node scripts/run-theme-workflow.js --mode <ollama-only|codex-only|hybrid> --prompt <file> [--template <template>] [--theme-slug <slug>] [--dry-run]
   node scripts/run-theme-workflow.js --resume --theme-slug <theme-slug>
 `);
-}
-
-function parsePreparedSlug(output) {
-  const match = output.match(/^Prepared theme folder: wp-content\/themes\/([^\r\n]+)$/m);
-  if (!match) fail('Could not determine prepared theme slug from preparation output.');
-  const slug = match[1].trim();
-  if (!/^([0-9]{3})_nolan_young_theme_[a-z0-9][a-z0-9_]*[a-z0-9]$/.test(slug)) fail(`Prepared theme slug is invalid: ${slug}`);
-  return slug;
-}
-
-function stagePlan(mode) {
-  const map = modeConfig[mode];
-  if (!map) fail(`Unsupported mode: ${mode}`);
-  return map;
-}
-
-function writeRunConfig(reportDir, config) {
-  fs.mkdirSync(reportDir, { recursive: true });
-  fs.writeFileSync(path.join(reportDir, 'run.config.json'), `${JSON.stringify(config, null, 2)}\n`);
-}
-
-function writeState(reportDir, state) {
-  fs.writeFileSync(path.join(reportDir, 'workflow.state.json'), `${JSON.stringify(state, null, 2)}\n`);
-}
-
-function ensureTemplateManifest(templateName, reportDir) {
-  const output = path.join(reportDir, 'template.manifest.json');
-  const result = run('node', [scripts.createTemplateManifest, templateName, output]);
-  if (result.status !== 0) fail('Template manifest generation failed.');
-  return output;
-}
-
-function ensureGenerationBrief(themeSlug, promptFile, mode, reportDir) {
-  const output = path.join(reportDir, 'ollama-generation', 'theme-generation-brief.md');
-  const result = run('node', [scripts.createThemeGenerationBrief, themeSlug, promptFile, mode]);
-  if (result.status !== 0) fail('Generation brief creation failed.');
-  return path.join('reports', 'runs', themeSlug, 'ollama-generation', 'theme-generation-brief.md');
-}
-
-function validationReportPassed(reportPath) {
-  if (!fs.existsSync(reportPath)) return false;
-  const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
-  return report.passed === true;
-}
-
-function failRun(reportDir, state, message) {
-  state.status = 'failed';
-  writeState(reportDir, state);
-  fail(message);
-}
-
-function buildThemeAssets(themeSlug, reportDir) {
-  const result = run('node', [scripts.buildThemeAssets, '--theme-slug', themeSlug, '--command-timeout-ms', String(defaults.validation.command_timeout_ms || 120000)]);
-  fs.writeFileSync(path.join(reportDir, 'build.output.txt'), `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
-  return result.status === 0;
-}
-
-function ensureThemeDevDependencies(themeSlug, reportDir, state) {
-  const themePath = path.join(root, defaults.paths.themes, themeSlug);
-  const packagePath = path.join(themePath, 'package.json');
-  if (!fs.existsSync(packagePath)) failRun(reportDir, state, `package.json missing; cannot start npm run dev for ${themeSlug}.`);
-
-  const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-  packageJson.scripts = packageJson.scripts || {};
-  if (!packageJson.scripts.dev) {
-    packageJson.scripts.dev = packageJson.scripts.watch || 'webpack --watch --config build/webpack.config.js';
-    fs.writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`, 'utf8');
-    console.log(`[theme-dev] Added npm run dev to ${path.relative(root, packagePath).replace(/\\/g, '/')}`);
-  }
-
-  if (fs.existsSync(path.join(themePath, 'node_modules'))) return;
-  const install = run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund'], {
-    cwd: themePath,
-    timeoutMs: state.timeouts.command_timeout_ms
-  });
-  fs.writeFileSync(path.join(reportDir, 'dev-watch.install.output.txt'), `${install.stdout || ''}${install.stderr || ''}`, 'utf8');
-  if (install.status !== 0) failRun(reportDir, state, `Dependency install failed before npm run dev for ${themeSlug}.`);
-}
-
-function waitForDevBundles(themeSlug, reportDir, state, watcher, startedAtMs) {
-  const themePath = path.join(root, defaults.paths.themes, themeSlug);
-  const timeoutMs = Math.min(Math.max(state.timeouts.command_timeout_ms, 30000), 120000);
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    if (watcher.exitCode !== null) {
-      failRun(reportDir, state, `npm run dev exited before initial bundles were ready for ${themeSlug}.`);
-    }
-    const ready = REQUIRED_BUNDLES.every((bundle) => {
-      const bundlePath = path.join(themePath, bundle);
-      if (!fs.existsSync(bundlePath)) return false;
-      const stat = fs.statSync(bundlePath);
-      return stat.size > 0 && stat.mtimeMs >= startedAtMs - 1000;
-    });
-    if (ready) return;
-    sleep(500);
-  }
-  failRun(reportDir, state, `npm run dev did not create initial bundles within ${timeoutMs}ms for ${themeSlug}.`);
-}
-
-function stopThemeDevWatcher(watcher) {
-  if (!watcher || !watcher.process || watcher.process.exitCode !== null) return;
-  if (process.platform === 'win32') {
-    run('taskkill', ['/pid', String(watcher.process.pid), '/t', '/f'], { echo: false, timeoutMs: 10000 });
-    return;
-  }
-  watcher.process.kill('SIGTERM');
-  const deadline = Date.now() + 5000;
-  while (watcher.process.exitCode === null && Date.now() < deadline) sleep(100);
-  if (watcher.process.exitCode === null) watcher.process.kill('SIGKILL');
-}
-
-function startThemeDevWatcher(themeSlug, reportDir, state, stageName) {
-  ensureThemeDevDependencies(themeSlug, reportDir, state);
-  const themePath = path.join(root, defaults.paths.themes, themeSlug);
-  const startedAtMs = Date.now();
-  const stdoutPath = path.join(reportDir, `dev-watch.${stageName}.stdout.log`);
-  const stderrPath = path.join(reportDir, `dev-watch.${stageName}.stderr.log`);
-  const stdout = fs.createWriteStream(stdoutPath, { flags: 'a' });
-  const stderr = fs.createWriteStream(stderrPath, { flags: 'a' });
-  const watcher = spawnCommand('npm', ['run', 'dev'], {
-    cwd: themePath,
-    env: { CI: '1' }
-  });
-  watcher.stdout.pipe(stdout);
-  watcher.stderr.pipe(stderr);
-  watcher.on('exit', (code, signal) => {
-    stderr.write(`\n[npm run dev exited] code=${code === null ? '' : code} signal=${signal || ''}\n`);
-    stdout.end();
-    stderr.end();
-  });
-
-  state.dev_watcher = {
-    active: true,
-    stage: stageName,
-    command: 'npm run dev',
-    cwd: path.relative(root, themePath).replace(/\\/g, '/'),
-    pid: watcher.pid,
-    stdout_log: path.relative(root, stdoutPath).replace(/\\/g, '/'),
-    stderr_log: path.relative(root, stderrPath).replace(/\\/g, '/'),
-    started_at: new Date(startedAtMs).toISOString()
-  };
-  writeState(reportDir, state);
-  console.log(`[theme-dev] Started npm run dev for ${themeSlug} during ${stageName}`);
-  waitForDevBundles(themeSlug, reportDir, state, watcher, startedAtMs);
-  return { process: watcher, stdout, stderr };
-}
-
-function withThemeDevWatcher(themeSlug, reportDir, state, stageName, task) {
-  const watcher = startThemeDevWatcher(themeSlug, reportDir, state, stageName);
-  try {
-    return task();
-  } finally {
-    stopThemeDevWatcher(watcher);
-    if (state.dev_watcher) {
-      state.dev_watcher.active = false;
-      state.dev_watcher.stopped_at = new Date().toISOString();
-      writeState(reportDir, state);
-    }
-    console.log(`[theme-dev] Stopped npm run dev for ${themeSlug} after ${stageName}`);
-  }
-}
-
-function checkModelAccess(provider, timeoutMs, reportDir, state) {
-  try {
-    const debugDir = path.join(reportDir, 'debug');
-    const report = provider === 'ollama'
-      ? checkOllamaAccess({ model: state.resolved.ollama_model, timeoutMs, live: true, debugDir, mode: state.mode, themeSlug: state.theme_slug })
-      : checkCodexAccess({ model: state.resolved.codex_model, reasoning: state.resolved.codex_reasoning, timeoutMs, live: true, debugDir, mode: state.mode, themeSlug: state.theme_slug });
-    fs.writeFileSync(path.join(reportDir, `model-check.${provider}.json`), `${JSON.stringify({ passed: true, ...report }, null, 2)}\n`, 'utf8');
-    state.model_checks[provider] = {
-      passed: true,
-      executable: report.executable,
-      version: report.version,
-      live_capability_check: report.live_capability_check
-    };
-    if (provider === 'ollama') {
-      console.log(`Ollama:
-  Executable: ${report.executable}
-  Version: ${report.version}
-  Requested model: ${report.requested_model}
-  Exact model installed: ${report.exact_model_installed ? 'yes' : 'no'}
-  Model details check: ${report.model_details_check}
-  Model access check: ${report.live_capability_check ? 'passed' : 'skipped'}`);
-    } else {
-      console.log(`Codex:
-  Executable: ${report.executable}
-  Version: ${report.version}
-  Requested model: ${report.requested_model}
-  Requested reasoning: ${report.requested_reasoning}
-  CLI option check: ${report.cli_option_check}
-  Model access check: ${report.live_capability_check ? 'passed' : 'skipped'}`);
-    }
-    writeState(reportDir, state);
-  } catch (error) {
-    const report = error.report || {};
-    fs.writeFileSync(path.join(reportDir, `model-check.${provider}.json`), `${JSON.stringify({
-      passed: false,
-      classification: error.classification || 'UNKNOWN_PROVIDER_FAILURE',
-      error: error.message,
-      ...report
-    }, null, 2)}\n`, 'utf8');
-    failRun(reportDir, state, `${provider} model access check failed: ${error.message}`);
-  }
-}
-
-function validateRequestedModels(stages, ollamaModel, codexModel, codexReasoning) {
-  try {
-    if (stages.ollama_generation_pass === 'ollama') validateOllamaModel(ollamaModel);
-    if (stages.codex_generation_pass === 'codex' || stages.codex_finish_pass === 'codex') {
-      return validateKnownCodexReasoningCombination(codexModel, codexReasoning);
-    }
-  } catch (error) {
-    fail(error.message);
-  }
-  return null;
-}
-
-function finalValidationNeedsCodexRepair(validationFinalPath) {
-  if (!fs.existsSync(validationFinalPath)) return false;
-  const report = JSON.parse(fs.readFileSync(validationFinalPath, 'utf8'));
-  return report.checks.some((check) => (
-    check.name === 'wordpress_quality'
-    && check.status === 'failed'
-    && /placeholder|Lorem ipsum|template part|header|footer|CSS|JS|bundle|content/i.test(check.details || '')
-  ));
-}
-
-function finalizationNeedsCodexRepair(themeSlug, reportDir, state, validationFinalPath) {
-  if (finalValidationNeedsCodexRepair(validationFinalPath)) return true;
-  if (!/Preview generation failed/i.test(state.last_finalization_error || '')) return false;
-  const previewOutputPath = path.join(reportDir, 'preview.output.txt');
-  if (!fs.existsSync(previewOutputPath)) return false;
-  const previewOutput = fs.readFileSync(previewOutputPath, 'utf8');
-  const themePathPattern = new RegExp(`wp-content[\\\\/]themes[\\\\/]${themeSlug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i');
-  return themePathPattern.test(previewOutput) && /(Fatal error|Parse error|Uncaught Error|undefined function)/i.test(previewOutput);
-}
-
-function writeCodexRepairEvidence(themeSlug, reportDir, state, validationFinalPath) {
-  const evidencePath = path.join(reportDir, 'codex.repair-findings.md');
-  const sections = [
-    '# Codex Repair Findings',
-    '',
-    `Theme slug: ${themeSlug}`,
-    `Failure: ${state.last_finalization_error || 'Final validation failed.'}`,
-    ''
-  ];
-  if (fs.existsSync(validationFinalPath)) {
-    sections.push('## Final Validation Report', '', fs.readFileSync(validationFinalPath, 'utf8').trim(), '');
-  }
-  for (const [label, fileName] of [['Preview Output', 'preview.output.txt'], ['Build Output', 'build.output.txt']]) {
-    const filePath = path.join(reportDir, fileName);
-    if (!fs.existsSync(filePath)) continue;
-    const text = fs.readFileSync(filePath, 'utf8').trim();
-    sections.push(`## ${label}`, '', text.length > 20000 ? text.slice(-20000) : text, '');
-  }
-  fs.writeFileSync(evidencePath, `${sections.join('\n')}\n`, 'utf8');
-  return evidencePath;
-}
-
-function finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath, options = {}) {
-  function finalizationFailure(message) {
-    if (options.allowFailure) {
-      state.status = options.failureStatus || 'finalization-failed';
-      state.last_finalization_error = message;
-      writeState(reportDir, state);
-      console.error(`ERROR: ${message}`);
-      return false;
-    }
-    failRun(reportDir, state, message);
-    return false;
-  }
-
-  if (!buildThemeAssets(themeSlug, reportDir)) return finalizationFailure('Theme asset build failed.');
-  const preview = run('node', [scripts.generateStaticPreview, themeSlug]);
-  fs.writeFileSync(path.join(reportDir, 'preview.output.txt'), `${preview.stdout || ''}${preview.stderr || ''}`, 'utf8');
-  if (preview.status !== 0) return finalizationFailure('Preview generation failed.');
-  const gallery = run('node', [scripts.rebuildPreviewGallery]);
-  fs.appendFileSync(path.join(reportDir, 'preview.output.txt'), `${gallery.stdout || ''}${gallery.stderr || ''}`, 'utf8');
-  if (gallery.status !== 0) return finalizationFailure('Preview gallery rebuild failed.');
-  const galleryValidation = run('node', [scripts.validatePreviewGallery]);
-  fs.appendFileSync(path.join(reportDir, 'preview.output.txt'), `${galleryValidation.stdout || ''}${galleryValidation.stderr || ''}`, 'utf8');
-  if (galleryValidation.status !== 0) return finalizationFailure('Preview gallery validation failed.');
-  const pack = run('node', [scripts.packageTheme, themeSlug]);
-  fs.writeFileSync(path.join(reportDir, 'package.output.txt'), `${pack.stdout || ''}${pack.stderr || ''}`, 'utf8');
-  if (pack.status !== 0) return finalizationFailure('Theme packaging failed.');
-  const finalReport = run('node', [scripts.writeThemeValidationReport, themeSlug, templateName, validationFinalPath, 'final']);
-  if (finalReport.status !== 0 || !validationReportPassed(validationFinalPath)) {
-    return finalizationFailure(`Final validation failed for ${state.mode} run.`);
-  }
-  fs.writeFileSync(path.join(reportDir, 'workflow.summary.md'), `# Workflow Summary
-
-Status: completed
-Mode: ${state.mode}
-Theme slug: ${themeSlug}
-Ollama model: ${state.resolved.ollama_model || 'not used'}
-Codex model: ${state.resolved.codex_model || 'not used'}
-Codex reasoning: ${state.resolved.codex_reasoning || 'not used'}
-
-## Invocation Counts
-
-- Provider capability checks: ${state.invocations.provider_capability_checks}
-- Ollama generation invocations: ${state.invocations.ollama_generation}
-- Codex generation invocations: ${state.invocations.codex_generation}
-- Codex finish invocations: ${state.invocations.codex_finish}
-- Targeted repair invocations: ${state.invocations.targeted_repairs}
-- Command retries: ${state.invocations.command_retries}
-- Failed invocations: ${state.invocations.failed_invocations}
-
-No model fallback or provider substitution was performed.
-`, 'utf8');
-  delete state.last_finalization_error;
-  state.status = 'completed';
-  writeState(reportDir, state);
-  return true;
-}
-
-function runCodexBrief(mode, reportDir, state) {
-  const briefName = state.status === 'codex-repair-pending'
-    ? 'codex.repair-brief.md'
-    : state.status === 'codex-build-pending' || mode === 'codex-only' ? 'codex.build-brief.md' : 'codex.finish-brief.md';
-  const codexBrief = path.join(reportDir, briefName);
-  if (!fs.existsSync(codexBrief)) failRun(reportDir, state, `Missing Codex brief: ${path.relative(root, codexBrief)}`);
-  const codexBriefText = fs.readFileSync(codexBrief, 'utf8');
-  const stage = briefName.includes('build') ? 'codex-build' : briefName.includes('repair') ? 'codex-repair' : 'codex-finish';
-  const codexResult = withThemeDevWatcher(state.theme_slug, reportDir, state, stage, () => (
-    run(process.platform === 'win32' ? 'codex.cmd' : 'codex', codexExecArgs(state.resolved.codex_model, state.resolved.codex_reasoning), {
-      debugDir: path.join(reportDir, 'debug'),
-      echo: false,
-      echoSummary: true,
-      input: codexBriefText,
-      mode,
-      model: state.resolved.codex_model,
-      provider: 'Codex',
-      reasoning: state.resolved.codex_reasoning,
-      stage,
-      themeSlug: state.theme_slug,
-      timeoutMs: state.timeouts.codex_timeout_ms
-    })
-  ));
-  const outputName = briefName.replace('-brief.md', '.output.txt');
-  fs.writeFileSync(path.join(reportDir, outputName), `${codexResult.stdout || ''}${codexResult.stderr || ''}`, 'utf8');
-  if (stage === 'codex-build') state.invocations.codex_generation += 1;
-  if (stage === 'codex-finish') state.invocations.codex_finish += 1;
-  if (stage === 'codex-repair') state.invocations.targeted_repairs += 1;
-  if (codexResult.status !== 0) {
-    state.invocations.failed_invocations += 1;
-    if (codexResult.classification === COMMAND_FAILURE_CODES.QUOTA_EXCEEDED) {
-      state.status = mode === 'hybrid' ? 'codex-finish-pending' : 'codex-build-pending';
-      state.codex_pending_reason = 'Codex execution is blocked by workspace credits, quota, billing, or usage limits.';
-      writeState(reportDir, state);
-      fs.writeFileSync(path.join(reportDir, 'workflow.summary.md'), `Codex pending for ${state.theme_slug}: ${state.codex_pending_reason}\n`, 'utf8');
-      console.error(state.codex_pending_reason);
-      process.exit(2);
-    }
-    failRun(reportDir, state, 'Codex execution failed or is unavailable.');
-  }
-  delete state.codex_pending_reason;
-  writeState(reportDir, state);
-  return true;
-}
-
-function runCodexRepair(mode, themeSlug, templateName, promptFile, reportDir, state, repairEvidencePath, manifestPath) {
-  const repairBrief = path.join(reportDir, 'codex.repair-brief.md');
-  const result = run('node', [
-    scripts.createCodexThemeBrief,
-    mode,
-    themeSlug,
-    templateName,
-    promptFile,
-    path.join(reportDir, 'generation-brief.path.txt'),
-    manifestPath,
-    repairEvidencePath,
-    state.resolved.codex_model,
-    state.resolved.codex_reasoning,
-    repairBrief
-  ], { timeoutMs: state.timeouts.command_timeout_ms });
-  if (result.status !== 0) failRun(reportDir, state, 'Codex repair brief creation failed.');
-  state.status = 'codex-repair-pending';
-  writeState(reportDir, state);
-  if (!runCodexBrief(mode, reportDir, state)) process.exit(2);
-  state.status = 'ready-for-finalization';
-  writeState(reportDir, state);
-}
-
-const args = parseArgs(process.argv.slice(2));
-if (args.help) {
-  help();
-  process.exit(0);
-}
-
-if (args.resume) {
-  const resumeSlug = args.resume === true ? arg(args, 'theme-slug', args._[0] || '') : args.resume;
-  const themeSlug = safePath(resumeSlug, 'resume slug');
-  const reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
-  const stateFile = path.join(reportDir, 'workflow.state.json');
-  if (!fs.existsSync(stateFile)) fail(`State file not found: ${stateFile}`);
-  const state = JSON.parse(fs.readFileSync(stateFile, 'utf8'));
-  const validationFinalPath = path.join(reportDir, 'validation.final.json');
-  if (state.status === 'codex-build-pending' || state.status === 'codex-finish-pending' || state.status === 'codex-repair-pending') {
-    console.log(`Resuming ${themeSlug} in state ${state.status}`);
-    if (!runCodexBrief(state.mode, reportDir, state)) process.exit(2);
-    state.status = 'ready-for-finalization';
-    writeState(reportDir, state);
-    finalizeTheme(themeSlug, state.template_name, reportDir, state, validationFinalPath);
-    console.log(`Workflow completed for ${themeSlug}`);
-    process.exit(0);
-  }
-  if (state.status === 'ready-for-finalization' || (state.status === 'failed' && state.last_finalization_error)) {
-    if (state.status === 'failed') {
-      console.log(`Resuming failed finalization for ${themeSlug}: ${state.last_finalization_error}`);
-      state.status = 'ready-for-finalization';
-      delete state.last_finalization_error;
-      writeState(reportDir, state);
-    }
-    finalizeTheme(themeSlug, state.template_name, reportDir, state, validationFinalPath);
-    console.log(`Workflow completed for ${themeSlug}`);
-    process.exit(0);
-  }
-  fail(`Nothing resumable for ${themeSlug}: ${state.status}`);
-}
-
-function sourceFor(key, configured, fallback) {
-  if (args[key] !== undefined && args[key] !== true) return 'command-line';
-  if (configured !== undefined && configured !== fallback) return 'repository-config';
-  return 'repository-default';
 }
 
 function positiveInteger(value, label) {
@@ -493,227 +35,175 @@ function positiveInteger(value, label) {
   return number;
 }
 
-const mode = arg(args, 'mode', defaults.default_mode);
-const promptFile = arg(args, 'prompt') ? safePath(arg(args, 'prompt'), 'prompt file') : '';
-const templateName = arg(args, 'template', defaults.default_template);
-const ollamaModel = arg(args, 'ollama-model', defaults.ollama.model);
-const codexModel = arg(args, 'codex-model', defaults.codex.model);
-const codexReasoningInput = arg(args, 'codex-reasoning', defaults.codex.reasoning);
-const dryRun = flag(args, 'dry-run');
-const explicitThemeSlug = arg(args, 'theme-slug') ? assertThemeSlug(arg(args, 'theme-slug')) : '';
-const replaceExistingTheme = flag(args, 'replace-existing-theme');
-const timeouts = {
-  model_check_timeout_ms: positiveInteger(arg(args, 'model-check-timeout-ms', defaults.validation.model_check_timeout_ms || 120000), '--model-check-timeout-ms'),
-  ollama_timeout_ms: positiveInteger(arg(args, 'ollama-timeout-ms', defaults.validation.ollama_timeout_ms || 180000), '--ollama-timeout-ms'),
-  codex_timeout_ms: positiveInteger(arg(args, 'codex-timeout-ms', defaults.validation.codex_timeout_ms || 180000), '--codex-timeout-ms'),
-  command_timeout_ms: positiveInteger(arg(args, 'command-timeout-ms', defaults.validation.command_timeout_ms || 120000), '--command-timeout-ms')
-};
+function modePlan(mode) {
+  switch (mode) {
+    case 'ollama-only':
+      return ['ollama-generation'];
+    case 'codex-only':
+      return ['codex-generation'];
+    case 'hybrid':
+      return ['ollama-generation', 'codex-finish'];
+    default:
+      fail(`Unsupported mode: ${mode}`);
+  }
+}
 
-if (!modeConfig[mode]) fail(`Unsupported mode: ${mode}`);
-if (!promptFile) fail('Missing --prompt');
-if (!templateName) fail('Missing --template');
-assertTemplateName(templateName);
-if (promptFile.includes('..')) fail('Prompt path traversal is not allowed.');
-if (!fs.existsSync(path.join(root, promptFile))) fail(`Prompt file not found: ${promptFile}`);
-if (!fs.existsSync(path.join(root, defaults.paths.templates, templateName))) fail(`Template not found: ${templateName}`);
+function expectedInvocations(mode) {
+  return {
+    ollama_generation: mode === 'ollama-only' || mode === 'hybrid' ? 5 : 0,
+    codex_generation: mode === 'codex-only' ? 1 : 0,
+    codex_finish: mode === 'hybrid' ? 1 : 0,
+    total_ai_passes: mode === 'hybrid' ? 2 : 1
+  };
+}
 
-const stages = stagePlan(mode);
-const codexCombination = validateRequestedModels(stages, ollamaModel, codexModel, codexReasoningInput);
-const codexReasoning = codexCombination ? codexCombination.reasoning : codexReasoningInput;
-const planned = Object.entries(stages).map(([stage, owner]) => ({ stage, owner }));
-let themeSlug = explicitThemeSlug || themeSlugForPrompt(promptFile, defaults.paths, { createDirs: !dryRun });
-let reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
-let themeDir = path.join(root, defaults.paths.themes, themeSlug);
-const artifacts = artifactPlan(themeSlug, defaults.paths);
-const foundExistingArtifacts = existingArtifacts(themeSlug, defaults.paths);
-const expectedInvocations = {
-  provider_capability_checks: (stages.ollama_generation_pass === 'ollama' ? 1 : 0) + ((stages.codex_generation_pass === 'codex' || stages.codex_finish_pass === 'codex') ? 1 : 0),
-  ollama_generation: stages.ollama_generation_pass === 'ollama' ? 5 : 0,
-  codex_generation: stages.codex_generation_pass === 'codex' ? 1 : 0,
-  codex_finish: stages.codex_finish_pass === 'codex' ? 1 : 0,
-  max_targeted_repairs: 1
-};
+function writeJson(file, value) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
 
-if (dryRun) {
-  console.log(JSON.stringify({
+function recordStep(state, name, status, details = '') {
+  state.steps.push({ name, status, details, ended_at: new Date().toISOString() });
+  state.status = status === 'failed' && state.status !== 'blocked' ? 'completed-with-failures' : state.status;
+  writeJson(path.join(state.report_dir, 'workflow.state.json'), state);
+}
+
+async function runSafe(state, name, fn, options = {}) {
+  state.status = options.state || state.status;
+  writeJson(path.join(state.report_dir, 'workflow.state.json'), state);
+  try {
+    const result = await fn();
+    recordStep(state, name, 'passed');
+    return { ok: true, result };
+  } catch (error) {
+    recordStep(state, name, 'failed', error.message);
+    if (options.blocking) state.status = 'blocked';
+    return { ok: false, error };
+  }
+}
+
+async function runWorkflow() {
+  if (args.help) {
+    help();
+    return 0;
+  }
+
+  const mode = arg(args, 'mode', defaults.default_mode);
+  const promptFile = arg(args, 'prompt') ? safeRelativePath(arg(args, 'prompt'), 'prompt file') : '';
+  const templateName = assertTemplateName(arg(args, 'template', defaults.default_template));
+  const ollamaModel = arg(args, 'ollama-model', defaults.ollama.model);
+  const codexModel = arg(args, 'codex-model', defaults.codex.model);
+  const codexReasoningInput = arg(args, 'codex-reasoning', defaults.codex.reasoning);
+  const dryRun = flag(args, 'dry-run');
+  const explicitThemeSlug = arg(args, 'theme-slug') ? assertThemeSlug(arg(args, 'theme-slug')) : '';
+  const replaceExistingTheme = flag(args, 'replace-existing-theme');
+  const liveModelCheck = flag(args, 'live-model-check');
+  const timeouts = {
+    model_check_timeout_ms: positiveInteger(arg(args, 'model-check-timeout-ms', defaults.validation.model_check_timeout_ms || 300000), '--model-check-timeout-ms'),
+    ollama_timeout_ms: positiveInteger(arg(args, 'ollama-timeout-ms', defaults.validation.ollama_timeout_ms || 2700000), '--ollama-timeout-ms'),
+    codex_timeout_ms: positiveInteger(arg(args, 'codex-timeout-ms', defaults.validation.codex_timeout_ms || 600000), '--codex-timeout-ms'),
+    command_timeout_ms: positiveInteger(arg(args, 'command-timeout-ms', defaults.validation.command_timeout_ms || 120000), '--command-timeout-ms')
+  };
+
+  const plan = modePlan(mode);
+  if (!promptFile) fail('Missing --prompt');
+  if (!fs.existsSync(path.join(root, promptFile))) fail(`Prompt file not found: ${promptFile}`);
+  if (!fs.existsSync(path.join(root, defaults.paths.templates, templateName))) fail(`Template not found: ${templateName}`);
+  if (plan.includes('ollama-generation')) validateOllamaModel(ollamaModel);
+  const codexCombination = plan.some((stage) => stage.startsWith('codex'))
+    ? validateKnownCodexReasoningCombination(codexModel, codexReasoningInput)
+    : null;
+  const codexReasoning = codexCombination ? codexCombination.reasoning : codexReasoningInput;
+  const themeSlug = explicitThemeSlug || themeSlugForPrompt(promptFile, defaults.paths, { createDirs: !dryRun });
+  const reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
+  const foundExistingArtifacts = existingArtifacts(themeSlug, defaults.paths);
+
+  if (dryRun) {
+    console.log(JSON.stringify({
+      theme_slug: themeSlug,
+      report_dir: path.relative(root, reportDir).replace(/\\/g, '/'),
+      theme_dir: `${defaults.paths.themes}/${themeSlug}`,
+      requested: { mode, prompt: promptFile, template: templateName, ollama_model: plan.includes('ollama-generation') ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '', timeouts },
+      stages: [
+        { stage: 'prepare_theme', owner: 'script' },
+        ...plan.map((stage) => ({ stage, owner: stage.startsWith('ollama') ? 'ollama' : 'codex' })),
+        { stage: 'build_theme_assets', owner: 'script' },
+        { stage: 'validate_theme', owner: 'script' },
+        { stage: 'generate_preview', owner: 'script' },
+        { stage: 'rebuild_preview_gallery', owner: 'script' },
+        { stage: 'package_theme', owner: 'script' },
+        { stage: 'write_run_summary', owner: 'script' }
+      ],
+      expected_invocations: expectedInvocations(mode),
+      replacement: { requested: replaceExistingTheme, existing_artifacts: foundExistingArtifacts }
+    }, null, 2));
+    return 0;
+  }
+
+  if (explicitThemeSlug && foundExistingArtifacts.length > 0 && !replaceExistingTheme) {
+    fail(`Theme slug already has artifacts. Re-run with --replace-existing-theme after reviewing: ${foundExistingArtifacts.join(', ')}`);
+  }
+  if (explicitThemeSlug && replaceExistingTheme) removeThemeArtifacts(themeSlug, defaults.paths);
+
+  const state = {
+    mode,
+    status: 'preflight',
     theme_slug: themeSlug,
-    report_dir: path.relative(root, reportDir).replace(/\\/g, '/'),
-    theme_dir: path.relative(root, themeDir).replace(/\\/g, '/'),
-    requested: {
-      mode,
-      prompt: promptFile,
-      template: templateName,
-      ollama_model: ollamaModel,
-      codex_model: codexModel,
-      codex_reasoning: codexReasoning,
-      timeouts
-    },
-    configuration_sources: {
-      ollama_model: sourceFor('ollama-model', defaults.ollama.model, 'qwen2.5-coder:14b'),
-      codex_model: sourceFor('codex-model', defaults.codex.model, 'gpt-5.4'),
-      codex_reasoning: sourceFor('codex-reasoning', defaults.codex.reasoning, 'medium')
-    },
-    replacement: {
-      requested: replaceExistingTheme,
-      existing_artifacts: foundExistingArtifacts
-    },
-    stages: planned,
-    expected_invocations: expectedInvocations
-  }, null, 2));
-  process.exit(0);
-}
+    template_name: templateName,
+    prompt_file: promptFile,
+    report_dir: reportDir,
+    live_model_check: liveModelCheck,
+    requested: { ollama_model: ollamaModel, codex_model: codexModel, codex_reasoning: codexReasoningInput },
+    resolved: { ollama_model: plan.includes('ollama-generation') ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '' },
+    timeouts,
+    steps: []
+  };
+  writeJson(path.join(reportDir, 'workflow.state.json'), state);
+  writeJson(path.join(reportDir, 'run.config.json'), state);
 
-if (explicitThemeSlug && foundExistingArtifacts.length > 0 && !replaceExistingTheme) {
-  fail(`Theme slug already has artifacts. Re-run with --replace-existing-theme after reviewing: ${foundExistingArtifacts.join(', ')}`);
-}
-if (explicitThemeSlug && replaceExistingTheme) {
-  console.log(`Replacing exact theme slug: ${themeSlug}`);
-  console.log(`Deleting only these artifacts if present:\n- ${artifacts.join('\n- ')}`);
-  removeThemeArtifacts(themeSlug, defaults.paths);
-}
+  await runSafe(state, 'model-check', () => {
+    if (plan.includes('ollama-generation')) checkOllamaAccess({ model: ollamaModel, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
+    if (codexCombination) checkCodexAccess({ model: codexModel, reasoning: codexReasoning, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
+  }, { blocking: true, state: 'preflight' });
+  if (state.status === 'blocked') return 2;
 
-const state = {
-  mode,
-  status: 'preflight',
-  theme_slug: themeSlug,
-  template_name: templateName,
-  prompt_file: promptFile,
-  requested: {
-    ollama_model: ollamaModel,
-    codex_model: codexModel,
-    codex_reasoning: codexReasoningInput
-  },
-  resolved: {
-    ollama_model: stages.ollama_generation_pass === 'ollama' ? ollamaModel : '',
-    codex_model: (stages.codex_generation_pass === 'codex' || stages.codex_finish_pass === 'codex') ? codexModel : '',
-    codex_reasoning: (stages.codex_generation_pass === 'codex' || stages.codex_finish_pass === 'codex') ? codexReasoning : ''
-  },
-  configuration_sources: {
-    ollama_model: sourceFor('ollama-model', defaults.ollama.model, 'qwen2.5-coder:14b'),
-    codex_model: sourceFor('codex-model', defaults.codex.model, 'gpt-5.4'),
-    codex_reasoning: sourceFor('codex-reasoning', defaults.codex.reasoning, 'medium')
-  },
-  replacement: {
-    requested: replaceExistingTheme,
-    artifacts
-  },
-  timeouts,
-  invocations: {
-    provider_capability_checks: 0,
-    ollama_generation: 0,
-    codex_generation: 0,
-    codex_finish: 0,
-    command_retries: 0,
-    targeted_repairs: 0,
-    failed_invocations: 0
-  },
-  model_checks: {}
-};
-writeRunConfig(reportDir, state);
-writeState(reportDir, state);
-console.log(`AI configuration validation
----------------------------
-Mode: ${mode}
+  await runSafe(state, 'prepare-theme', () => prepareTheme({ promptFile, templateName, themeSlug }), { blocking: true, state: 'prepared' });
+  if (state.status === 'blocked') return 2;
 
-Ollama model: ${state.resolved.ollama_model || 'not used'}
-Codex model: ${state.resolved.codex_model || 'not used'}
-Codex reasoning: ${state.resolved.codex_reasoning || 'not used'}
-Configuration source:
-  Ollama model: ${state.configuration_sources.ollama_model}
-  Codex model: ${state.configuration_sources.codex_model}
-  Codex reasoning: ${state.configuration_sources.codex_reasoning}
-Timeouts:
-  Model check: ${timeouts.model_check_timeout_ms}
-  Ollama: ${timeouts.ollama_timeout_ms}
-  Codex: ${timeouts.codex_timeout_ms}
-  Command: ${timeouts.command_timeout_ms}
-`);
-if (stages.ollama_generation_pass === 'ollama') {
-  checkModelAccess('ollama', timeouts.model_check_timeout_ms, reportDir, state);
-  state.invocations.provider_capability_checks += 1;
-}
-if (stages.codex_generation_pass === 'codex' || stages.codex_finish_pass === 'codex') {
-  checkModelAccess('codex', timeouts.model_check_timeout_ms, reportDir, state);
-  state.invocations.provider_capability_checks += 1;
-}
-
-const prep = run('node', [scripts.prepareThemeFromTemplate, '--prompt', promptFile, '--template', templateName, '--theme-slug', themeSlug], { timeoutMs: timeouts.command_timeout_ms });
-if (prep.status !== 0) fail('Theme preparation failed.');
-themeSlug = parsePreparedSlug(`${prep.stdout}${prep.stderr}`);
-if (themeSlug !== state.theme_slug) fail(`Prepared slug mismatch. Expected ${state.theme_slug}, got ${themeSlug}.`);
-reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
-themeDir = path.join(root, defaults.paths.themes, themeSlug);
-
-state.status = 'prepared';
-writeRunConfig(reportDir, state);
-writeState(reportDir, state);
-fs.writeFileSync(path.join(reportDir, 'prepare.output.txt'), `${prep.stdout}${prep.stderr}`, 'utf8');
-fs.writeFileSync(path.join(reportDir, 'generation-brief.path.txt'), ensureGenerationBrief(themeSlug, promptFile, mode, reportDir), 'utf8');
-const manifestPath = ensureTemplateManifest(templateName, reportDir);
-const validationBeforePath = path.join(reportDir, 'validation.before-finish.json');
-const validationFinalPath = path.join(reportDir, 'validation.final.json');
-
-state.status = mode === 'ollama-only' ? 'ollama-complete' : 'prepared';
-writeState(reportDir, state);
-
-if (stages.ollama_generation_pass === 'ollama') {
-  const ollama = withThemeDevWatcher(themeSlug, reportDir, state, 'ollama-generation', () => (
-    run('node', [scripts.runOllamaThemePass, '--theme-slug', themeSlug, '--prompt', promptFile, '--ollama-model', state.resolved.ollama_model, '--ollama-timeout-ms', String(timeouts.ollama_timeout_ms)], { timeoutMs: timeouts.ollama_timeout_ms * 6 })
-  ));
-  fs.writeFileSync(path.join(reportDir, 'ollama.pass.output.txt'), `${ollama.stdout}${ollama.stderr}`, 'utf8');
-  state.invocations.ollama_generation += 5;
-  if (ollama.status !== 0) {
-    state.invocations.failed_invocations += 1;
-    fail('Ollama generation failed.');
+  state.status = 'generating';
+  if (mode === 'ollama-only') {
+    await runSafe(state, 'ollama-generation', () => runOllamaGeneration({ mode, themeSlug, promptFile, model: ollamaModel, timeoutMs: timeouts.ollama_timeout_ms, reportDir }), { blocking: true });
+  } else if (mode === 'codex-only') {
+    await runSafe(state, 'codex-generation', () => runCodexGeneration({ mode, themeSlug, promptFile, templateName, model: codexModel, reasoning: codexReasoning, timeoutMs: timeouts.codex_timeout_ms, reportDir }), { blocking: true });
+  } else if (mode === 'hybrid') {
+    await runSafe(state, 'ollama-generation', () => runOllamaGeneration({ mode, themeSlug, promptFile, model: ollamaModel, timeoutMs: timeouts.ollama_timeout_ms, reportDir }), { blocking: true });
+    if (state.status !== 'blocked') {
+      const draftValidation = path.join(reportDir, 'validation.draft.json');
+      await validateTheme({ themeSlug, template: templateName, output: draftValidation }).catch(() => {});
+      await runSafe(state, 'codex-finish', () => runCodexFinish({ mode, themeSlug, promptFile, templateName, model: codexModel, reasoning: codexReasoning, timeoutMs: timeouts.codex_timeout_ms, reportDir, validationPath: draftValidation }), { blocking: true });
+    }
   }
-  if (stages.build_theme_assets === 'script' && !buildThemeAssets(themeSlug, reportDir)) {
-    failRun(reportDir, state, 'Theme asset build failed after Ollama generation.');
-  }
+  if (state.status === 'blocked') return 2;
+
+  state.status = 'building';
+  await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: timeouts.command_timeout_ms, reportPath: path.join(reportDir, 'build.report.json') }));
+  state.status = 'finalizing';
+  await runSafe(state, 'validate-theme', () => validateTheme({ themeSlug, template: templateName, output: path.join(reportDir, 'validation.final.json') }));
+  await runSafe(state, 'preview-theme', () => previewTheme({ themeSlug, rebuildIndex: true }));
+  await runSafe(state, 'package-theme', () => packageTheme({ themeSlug }));
+  state.status = state.steps.some((step) => step.status === 'failed') ? 'completed-with-failures' : 'completed';
+  writeJson(path.join(reportDir, 'workflow.state.json'), state);
+  writeJson(path.join(reportDir, 'workflow.summary.json'), state);
+  console.log(`Workflow ${state.status} for ${themeSlug}`);
+  return state.status === 'completed' ? 0 : 1;
 }
 
-const preFinish = run('node', [scripts.writeThemeValidationReport, themeSlug, templateName, validationBeforePath, 'pre-finish']);
-if (preFinish.status !== 0) failRun(reportDir, state, 'Pre-finish validation report failed.');
-const templateCheck = run('node', [scripts.validateThemeFromTemplate, themeSlug, templateName]);
-if (templateCheck.status !== 0) failRun(reportDir, state, 'Template-aware validation failed.');
-let qualityCheck = run('node', [scripts.themeQualityCheck, themeSlug]);
-if (qualityCheck.status !== 0 && mode === 'ollama-only') {
-  const repair = withThemeDevWatcher(themeSlug, reportDir, state, 'ollama-targeted-repair', () => (
-    run('node', [scripts.runOllamaQualityRepairPass, '--theme-slug', themeSlug, '--prompt', promptFile, '--ollama-model', state.resolved.ollama_model, '--ollama-timeout-ms', String(timeouts.ollama_timeout_ms)], { timeoutMs: timeouts.ollama_timeout_ms * 2 })
-  ));
-  fs.writeFileSync(path.join(reportDir, 'ollama.quality-repair.output.txt'), `${repair.stdout}${repair.stderr}`, 'utf8');
-  state.invocations.targeted_repairs += 1;
-  if (repair.status !== 0) failRun(reportDir, state, 'Ollama quality repair failed.');
-  if (!buildThemeAssets(themeSlug, reportDir)) failRun(reportDir, state, 'Theme asset build failed after Ollama quality repair.');
-  qualityCheck = run('node', [scripts.themeQualityCheck, themeSlug]);
-}
-if (qualityCheck.status !== 0 && mode === 'ollama-only') failRun(reportDir, state, 'Theme quality check failed after Ollama generation.');
-
-if (mode === 'ollama-only') {
-  finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath);
-  process.exit(0);
+if (args.resume) {
+  fail('Resume is limited to safe finalization in the simplified runner; rerun the workflow with the original arguments if generation never started.');
 }
 
-let codexBrief = path.join(reportDir, 'codex.finish-brief.md');
-if (mode === 'codex-only') {
-  codexBrief = path.join(reportDir, 'codex.build-brief.md');
-  run('node', [scripts.createCodexThemeBrief, mode, themeSlug, templateName, promptFile, path.join(reportDir, 'generation-brief.path.txt'), path.join(reportDir, 'template.manifest.json'), validationBeforePath, state.resolved.codex_model, state.resolved.codex_reasoning, codexBrief], { timeoutMs: timeouts.command_timeout_ms });
+if (require.main === module) {
+  runWorkflow().then((code) => process.exit(code)).catch((error) => fail(error.message));
 }
 
-if (mode !== 'codex-only') {
-  run('node', [scripts.createCodexThemeBrief, mode, themeSlug, templateName, promptFile, path.join(reportDir, 'generation-brief.path.txt'), path.join(reportDir, 'template.manifest.json'), path.join(reportDir, 'validation.before-finish.json'), state.resolved.codex_model, state.resolved.codex_reasoning, codexBrief], { timeoutMs: timeouts.command_timeout_ms });
-}
-if (!runCodexBrief(mode, reportDir, state)) process.exit(2);
-state.status = 'ready-for-finalization';
-writeState(reportDir, state);
-if (!finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath, { allowFailure: true, failureStatus: 'codex-repair-needed' })) {
-  if (!finalizationNeedsCodexRepair(themeSlug, reportDir, state, validationFinalPath)) {
-    failRun(reportDir, state, state.last_finalization_error || `Final validation failed for ${state.mode} run.`);
-  }
-  if (state.invocations.targeted_repairs >= 1) {
-    failRun(reportDir, state, 'Final validation failed after the allowed targeted repair.');
-  }
-  const repairEvidencePath = writeCodexRepairEvidence(themeSlug, reportDir, state, validationFinalPath);
-  runCodexRepair(mode, themeSlug, templateName, promptFile, reportDir, state, repairEvidencePath, manifestPath);
-  finalizeTheme(themeSlug, templateName, reportDir, state, validationFinalPath);
-}
-console.log(`Workflow completed for ${themeSlug}`);
+module.exports = { modePlan, runWorkflow };

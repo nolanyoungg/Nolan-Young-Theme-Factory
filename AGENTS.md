@@ -1,72 +1,64 @@
-# Nolan Young Theme Factory - Agent Rules
+# Nolan Young Theme Factory - Agent Policy
 
-This repo is a clean, template-first WordPress theme generator.
+This repository is a template-first WordPress theme factory. Infrastructure work and generated-theme evaluation are separate jobs.
 
-## Core Folders
+## Boundaries
 
-```text
-prompts/
-wordpress-themplate-themes/
-wp-content/themes/
-dist/zipped-themes/
-docs/
-scripts/
-```
+Theme source belongs only in `wp-content/themes/NNN_nolan_young_theme_[description]/`.
+
+ZIP files belong only in `dist/zipped-themes/NNN_nolan_young_theme_[description].zip`.
+
+GitHub Pages previews belong only in `docs/Preview-Themes-Github/NNN_nolan_young_theme_[description]/`.
 
 The folder name `wordpress-themplate-themes` is intentionally spelled this way.
 
-## Output Rules
+## Generation Rules
 
-Theme source belongs only in:
+The prep script copies the selected template into `wp-content/themes/{slug}` before AI generation starts.
 
-```text
-wp-content/themes/NNN_nolan_young_theme_[description]/
-```
+During theme generation, the model may edit only `wp-content/themes/{slug}/`.
 
-ZIP files belong only in:
+The model must not create the initial theme folder, copy templates, rename folders, generate previews, update docs, create ZIPs, edit scripts, edit prompts, or touch any file outside the prepared theme folder.
 
-```text
-dist/zipped-themes/NNN_nolan_young_theme_[description].zip
-```
+The repository agent must not modify generated themes to satisfy checks. Failed output is valid evaluation evidence and must be preserved.
 
-GitHub Pages previews belong only in:
+## Mode Rules
 
-```text
-docs/Preview-Themes-Github/NNN_nolan_young_theme_[description]/
-```
+`ollama-only` means Ollama generation only.
 
-Do not put WordPress theme source in `docs/`.
+`codex-only` means one Codex generation pass.
 
-## Strict Theme Generation Boundary
+`hybrid` means Ollama draft plus one Codex finish pass.
 
-The prep script copies a selected template into `wp-content/themes/{slug}` before any AI generation pass starts.
+There is no automatic model fallback and no second AI cleanup pass.
 
-During actual theme generation, AI may edit only:
+## Deterministic Work
 
-```text
-wp-content/themes/{slug}/
-```
+Build, validation, preview generation, ZIP packaging, cleanup, and reports are deterministic post-generation work.
 
-AI must not create the initial theme folder, copy templates, rename folders, generate previews, update docs, create ZIPs, edit scripts, edit prompts, or touch any file outside the prepared theme folder.
+Validation is observational and read-only. If a required template file is missing, validation reports it and does not copy it back.
 
-Codex usage is reserved for creative/code-heavy theme generation only. Deterministic setup, validation, preview indexing, and packaging must be handled by scripts.
+Preview generation may read generated themes and write only under `docs/Preview-Themes-Github/` and `docs/index.html`.
 
-## Validation
-
-Validation is template-aware. A generated theme must contain every file from its selected template in the same relative path. Extra files are allowed.
-
-Separate quality checks cover practical WordPress concerns: PHP syntax, required root files, secrets, CDN references, and bad repo-local paths.
-
-## Workflow Contract
-
-The shared workflow public entrypoint lives in `scripts/run-theme-workflow.js` and is driven by `config/workflow-modes.json` and `config/theme-factory.defaults.json`.
-
-The supported first-class modes are:
-
-* `ollama-only`
-* `codex-only`
-* `hybrid`
-
-`npm run theme:run -- ...` and `node scripts/run-theme-workflow.js ...` are the primary entry points.
+Packaging must package from a temporary copy and must not modify generated theme source.
 
 Run reports belong in `reports/runs/{theme_slug}/`. Do not store secrets there.
+
+## Public Commands
+
+Use npm scripts as the public command layer:
+
+```text
+npm run theme:run
+npm run theme:resume
+npm run theme:prepare
+npm run theme:validate
+npm run theme:build
+npm run theme:preview
+npm run theme:preview:index
+npm run theme:zip
+npm run theme:delete
+npm run theme:env
+npm run theme:model-check
+npm run test:scripts
+```

@@ -2,8 +2,8 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { runCommand } = require('../shared/command-runner');
-const { CONTENT_SECTION_PATTERN, THEME_SLUG_PATTERN } = require('../shared/constants');
+const { runCommand } = require('./command-runner');
+const { CONTENT_SECTION_PATTERN, THEME_SLUG_PATTERN } = require('./constants');
 
 const [sourceFile, themeDirArg] = process.argv.slice(2);
 const warnings = [];
@@ -17,7 +17,7 @@ function fail(message) {
 }
 
 if (!sourceFile || !themeDirArg) {
-  fail('Usage: node scripts/ai-output/apply-theme-file-blocks.js <source-output-file> <theme-dir>');
+  fail('Usage: node scripts/lib/model-output.js <source-output-file> <theme-dir>');
 }
 
 const themeDir = path.resolve(themeDirArg);

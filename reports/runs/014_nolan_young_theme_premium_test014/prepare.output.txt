@@ -1,0 +1,3 @@
+Prepared theme folder: wp-content/themes/014_nolan_young_theme_premium_test014
+Template source: wordpress-themplate-themes/NOLAN-YOUNG-theme-000
+Theme generation must edit only: wp-content/themes/014_nolan_young_theme_premium_test014

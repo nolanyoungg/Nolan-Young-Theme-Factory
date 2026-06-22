@@ -1,0 +1,29 @@
+Running Ollama model: qwen2.5-coder:14b
+Running Ollama batch: shell
+Applied 1 file block(s).
+Running Ollama batch: template-parts
+Applied 11 file block(s).
+Running Ollama batch: pages
+Applied 12 file block(s).
+Running Ollama batch: assets
+Applied 5 file block(s).
+Running Ollama batch: forms-helpers
+Applied 8 file block(s).
+Ollama generation complete for 014_nolan_young_theme_premium_test014
+[Ollama] Starting stage=ollama-shell model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-shell model=qwen2.5-coder:14b
+[Ollama] Starting stage=ollama-template-parts model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-template-parts model=qwen2.5-coder:14b
+[Ollama] Starting stage=ollama-pages model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-pages model=qwen2.5-coder:14b
+[Ollama] Starting stage=ollama-assets model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-assets model=qwen2.5-coder:14b
+WARNING: Removed leaked markdown code fence marker from assets/css/bundle.css.
+WARNING: Expanded assets/css/bundle.css with deterministic completion styles because generated CSS was too small.
+WARNING: Removed leaked markdown code fence marker from assets/js/bundle.js.
+WARNING: Removed leaked markdown code fence marker from src/js/main.js.
+WARNING: Removed leaked markdown code fence marker from src/scss/main.scss.
+WARNING: Expanded src/scss/main.scss with deterministic completion styles because generated CSS was too small.
+WARNING: Model output omitted END FILE markers; salvaged 5 complete file blocks.
+[Ollama] Starting stage=ollama-forms-helpers model=qwen2.5-coder:14b
+[Ollama] Completed stage=ollama-forms-helpers model=qwen2.5-coder:14b

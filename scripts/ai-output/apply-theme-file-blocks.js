@@ -284,6 +284,20 @@ function sanitizeUnsupportedCssColorFunctions(relativePath, content) {
   return sanitized;
 }
 
+function normalizeCssAssetUrls(relativePath, content) {
+  if (!/\.(css|scss)$/i.test(relativePath)) return content;
+  const assetPrefix = relativePath === 'src/scss/main.scss' ? '../../assets/' : '../';
+  const normalized = content.replace(/\r\n/g, '\n');
+  let updated = normalized.replace(/url\(\s*(['"]?)\/?assets\//gi, `url($1${assetPrefix}`);
+  if (relativePath === 'src/scss/main.scss') {
+    updated = updated.replace(/url\(\s*(['"]?)\.\.\/(icons|images|fonts)\//gi, 'url($1../../assets/$2/');
+  }
+  if (updated !== normalized) {
+    warnings.push(`Normalized local asset URLs in ${relativePath} for cross-platform asset builds.`);
+  }
+  return updated;
+}
+
 function supplementalThemeStyles() {
   return `
 
@@ -570,6 +584,7 @@ function writeFile(relativePath, content) {
   content = addMissingScssVariables(cleanedPath, content);
   content = normalizeScssEntrypoint(cleanedPath, content);
   if (content === null) return;
+  content = normalizeCssAssetUrls(cleanedPath, content);
   content = ensureFinishedStyles(cleanedPath, content);
   content = stripForbiddenHeaderFooterSections(cleanedPath, content);
   content = sanitizeScaffoldOnlyCopy(normalizePhpTemplateContent(cleanedPath, content));
@@ -607,7 +622,19 @@ function salvageLooseFileBlocks(text) {
 }
 
 function salvageMarkdownFileSections(text) {
-  const sectionPattern = /^#{1,6}\s*FILE:\s*([^\r\n]+)\r?\n+\s*```[a-zA-Z0-9_-]*\r?\n([\s\S]*?)\r?\n```/gm;
+  const sectionPattern = /^#{1,6}\s*FILE:\s*([^\r\n]+)\r?\n+\s*```[a-zA-Z0-9_-]*\r?\n([\s\S]*?)\r?\n```/gim;
+  let salvaged = 0;
+  let sectionMatch;
+  while ((sectionMatch = sectionPattern.exec(text)) !== null) {
+    const before = count;
+    writeFile(sectionMatch[1], `${sectionMatch[2].replace(/\r\n/g, '\n').replace(/\n?$/, '\n')}`);
+    if (count > before) salvaged += 1;
+  }
+  return salvaged;
+}
+
+function salvageBoldMarkdownFileSections(text) {
+  const sectionPattern = /^\*\*FILE:\s*([^*\r\n]+?)\s*\*\*\s*\r?\n+\s*```[a-zA-Z0-9_-]*\r?\n([\s\S]*?)\r?\n```/gim;
   let salvaged = 0;
   let sectionMatch;
   while ((sectionMatch = sectionPattern.exec(text)) !== null) {
@@ -707,6 +734,66 @@ function salvageMarkdownHeadingFileBlocks(text) {
   return salvaged;
 }
 
+function walkPhpFiles(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (['node_modules', '.git', '.generation'].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkPhpFiles(full, out);
+    else if (entry.isFile() && full.endsWith('.php')) out.push(full);
+  }
+  return out;
+}
+
+function replacementSuffixForPhpFile(file) {
+  return path.relative(themeDir, file)
+    .replace(/\\/g, '/')
+    .replace(/\.php$/i, '')
+    .replace(/[^A-Za-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toLowerCase();
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function ensureUniquePhpFunctionNames() {
+  const declarations = new Map();
+
+  for (const file of walkPhpFiles(themeDir)) {
+    const text = fs.readFileSync(file, 'utf8');
+    let match;
+    const pattern = /function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+    while ((match = pattern.exec(text)) !== null) {
+      const name = match[1];
+      if (!declarations.has(name)) declarations.set(name, []);
+      declarations.get(name).push(file);
+    }
+  }
+
+  let changed = 0;
+  for (const [name, files] of declarations.entries()) {
+    const uniqueFiles = [...new Set(files)];
+    if (uniqueFiles.length < 2) continue;
+
+    for (const file of uniqueFiles.slice(1)) {
+      const suffix = replacementSuffixForPhpFile(file);
+      const replacement = `${name}_${suffix}`;
+      const original = fs.readFileSync(file, 'utf8');
+      const updated = original.replace(new RegExp(`\\b${escapeRegExp(name)}\\b`, 'g'), replacement);
+      if (updated !== original && phpSyntaxIsValid(path.relative(themeDir, file).replace(/\\/g, '/'), updated)) {
+        fs.writeFileSync(file, updated, 'utf8');
+        changed += 1;
+      }
+    }
+  }
+
+  if (changed > 0) {
+    warnings.push(`Renamed duplicate generated PHP function declarations in ${changed} file(s).`);
+  }
+}
+
 if (count === 0) {
   const looseFiles = salvageLooseFileBlocks(input);
   if (looseFiles > 0) {
@@ -718,6 +805,13 @@ if (count === 0) {
   const markdownFiles = salvageMarkdownFileSections(input);
   if (markdownFiles > 0) {
     warnings.push(`Model output used markdown FILE headings; salvaged ${markdownFiles} complete file section${markdownFiles === 1 ? '' : 's'}.`);
+  }
+}
+
+if (count === 0) {
+  const boldMarkdownFiles = salvageBoldMarkdownFileSections(input);
+  if (boldMarkdownFiles > 0) {
+    warnings.push(`Model output used bold markdown FILE labels; salvaged ${boldMarkdownFiles} complete file section${boldMarkdownFiles === 1 ? '' : 's'}.`);
   }
 }
 
@@ -766,6 +860,8 @@ if (count === 0) {
 if (count === 0) {
   fail('No file blocks or JSON files payload were found.');
 }
+
+ensureUniquePhpFunctionNames();
 
 for (const warning of warnings) {
   console.warn(`WARNING: ${warning}`);

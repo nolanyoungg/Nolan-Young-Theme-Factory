@@ -44,6 +44,10 @@ function batchPrompt(brief, batch) {
   const focusedBrief = focusedOllamaBrief(brief, batch.name);
   return `You are editing a prepared WordPress theme folder.
 
+This is an authorized local software-generation task for a benign, fictional WordPress business theme.
+Generate normal WordPress theme source files for the requested batch.
+Do not refuse the task unless the requested file content itself would be unsafe.
+
 Target folder:
 wp-content/themes/${themeSlug}/
 

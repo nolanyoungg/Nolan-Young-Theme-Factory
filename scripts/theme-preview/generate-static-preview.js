@@ -135,6 +135,13 @@ function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES,
 function esc_attr($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_url($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function wp_kses_post($value) { return (string) $value; }
+function wpautop($value) {
+  $text = trim((string) $value);
+  if ($text === '') return '';
+  if (preg_match('/<p[\\s>]|<div[\\s>]|<section[\\s>]/i', $text)) return $text;
+  $paragraphs = preg_split('/\\n\\s*\\n/', $text);
+  return '<p>' . implode('</p><p>', array_map('trim', $paragraphs)) . '</p>';
+}
 function __($text) { return $text; }
 function _e($text) { echo $text; }
 function _x($text) { return $text; }

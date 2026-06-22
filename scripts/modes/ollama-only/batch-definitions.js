@@ -1,6 +1,6 @@
 const OUTPUT_FORMAT = `Return only file blocks in this exact format:
 
----FILE: relative/path.php---
+---FILE: relative/path.ext---
 line 1
 line 2
 ---END FILE---`;
@@ -16,6 +16,9 @@ const SHARED_GENERATION_RULES = [
   'Do not include secrets, tokens, passwords, or API keys.',
   'Replace Lorem ipsum in files you write.',
   'Do not write TODO comments, placeholder comments, "Add ... here" comments, empty cards, empty sections, or instructions for a future editor.',
+  'Do not put <style> blocks in PHP templates. Put authored styling in src/scss/main.scss so the build creates assets/css/bundle.css.',
+  'Do not output generic labels such as "Highlight Service Title", "Service Title", "Project Title", "Work Item", "Step Icon", "Pillar Icon", "Post Image", or "Client Avatar".',
+  'When using loops, define arrays with finished business-specific titles, descriptions, labels, and alt text instead of deriving visible labels from numeric counters.',
   'Every section you create must include finished copy and visible content appropriate to the selected creative prompt.',
   'header.php and footer.php must not include a standalone ?> line after an inline PHP comment.',
   'header.php must use lowercase <!doctype html> and a valid full document wrapper.',
@@ -75,7 +78,7 @@ const BATCHES = [
   },
   {
     name: 'assets',
-    files: ['assets/css/bundle.css', 'assets/js/bundle.js', 'src/js/main.js', 'src/scss/main.scss', 'assets/icons/icon1.svg'],
+    files: ['src/js/main.js', 'src/scss/main.scss', 'assets/icons/icon1.svg'],
     focus: 'Create the visual system, responsive layout, header interaction JavaScript, scroll animation hooks, local SVG logo/icon, and source mirrors requested by the creative prompt. Avoid starter CSS; write a complete responsive visual system that styles the actual generated sections. Write src/scss/main.scss as a self-contained stylesheet or preserve only imports that exist in the copied template tree; do not invent settings/, tools/, layouts/, or sections/ partial paths. If the prompt needs imagery but no matching source asset exists yet, generate local SVG placeholders or reusable CSS shapes instead of inventing broken file paths.'
   },
   {
@@ -88,8 +91,8 @@ const BATCHES = [
 const PROMPT_SECTIONS_BY_STAGE = {
   shell: ['01', '04', '05', '06', '07', '08'],
   'template-parts': ['01', '04', '05', '06', '08', '11'],
-  pages: ['01', '05', '09', '10', '12'],
-  assets: ['02', '04', '05', '06', '07', '08', '13'],
+  pages: ['01', '05'],
+  assets: ['02', '04', '05', '06'],
   'forms-helpers': ['01', '03', '09', '10'],
   repair: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']
 };

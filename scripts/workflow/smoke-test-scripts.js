@@ -64,6 +64,8 @@ function assertNoArtifacts(slug) {
 JSON.parse(fs.readFileSync(path.join(root, 'config', 'workflow-modes.json'), 'utf8'));
 JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
 const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
+const defaultTemplatePackage = JSON.parse(fs.readFileSync(path.join(root, 'wordpress-themplate-themes', 'NOLAN-YOUNG-theme-000', 'package.json'), 'utf8'));
+assert(defaultTemplatePackage.scripts && defaultTemplatePackage.scripts.dev, 'Default template must define npm run dev for live generation builds');
 
 for (const [name, command] of Object.entries(packageJson.scripts || {})) {
   assert(!/\.sh\b|bash\b|theme-factory\.sh/.test(command), `npm script ${name} references a shell script`);

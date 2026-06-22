@@ -86,8 +86,18 @@ function wordpressQuality() {
   if (!/<\/html>/i.test(footer)) throw new Error('footer.php missing closing html tag');
   if (CONTENT_SECTION_PATTERN.test(footer)) throw new Error('footer.php must not include site content sections');
 
+  const searchformPath = path.join(themeDir, 'searchform.php');
+  if (fs.existsSync(searchformPath) && /\bget_search_form\s*\(/i.test(fs.readFileSync(searchformPath, 'utf8'))) {
+    throw new Error('searchform.php must render a search form directly and must not call get_search_form() recursively');
+  }
+
   const templatePart = walkFiles(path.join(themeDir, 'template-parts')).find((file) => file.relative.endsWith('.php') && TEMPLATE_PART_WRAPPER_PATTERN.test(fs.readFileSync(file.full, 'utf8')));
   if (templatePart) throw new Error(`Template part must be a fragment only: ${templatePart.relative}`);
+
+  const phpFiles = walkFiles(themeDir).filter((file) => file.relative.endsWith('.php'));
+  const definesFormAttributes = phpFiles.some((file) => /\bfunction\s+get_form_attributes\s*\(/i.test(fs.readFileSync(file.full, 'utf8')));
+  const undefinedFormAttributesCall = phpFiles.find((file) => !definesFormAttributes && /\bget_form_attributes\s*\(/i.test(fs.readFileSync(file.full, 'utf8')));
+  if (undefinedFormAttributesCall) throw new Error(`Undefined theme helper call get_form_attributes() in ${undefinedFormAttributesCall.relative}`);
 
   const textFiles = walkFiles(themeDir).filter((file) => /\.(php|css|js)$|README\.md$/i.test(file.relative));
   const placeholderFiles = [];

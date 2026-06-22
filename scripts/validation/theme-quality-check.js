@@ -90,6 +90,14 @@ if (fs.existsSync(themeDir)) {
     if (CONTENT_SECTION_PATTERN.test(footer)) failCheck('footer.php must not include site content sections');
   }
 
+  const searchformPath = path.join(themeDir, 'searchform.php');
+  if (fs.existsSync(searchformPath)) {
+    const searchform = fs.readFileSync(searchformPath, 'utf8');
+    if (/\bget_search_form\s*\(/i.test(searchform)) {
+      failCheck('searchform.php must render a search form directly and must not call get_search_form() recursively');
+    }
+  }
+
   const cssBundle = path.join(themeDir, REQUIRED_BUNDLES[0]);
   const jsBundle = path.join(themeDir, REQUIRED_BUNDLES[1]);
   const scssEntry = path.join(themeDir, 'src', 'scss', 'main.scss');
@@ -116,6 +124,16 @@ if (fs.existsSync(themeDir)) {
     }
   } else {
     console.error('WARNING: php command not found; skipped PHP syntax lint.');
+  }
+
+  const phpFiles = walk(themeDir).filter((file) => file.endsWith('.php'));
+  const definesFormAttributes = phpFiles.some((file) => /\bfunction\s+get_form_attributes\s*\(/i.test(fs.readFileSync(file, 'utf8')));
+  for (const file of phpFiles) {
+    const relative = path.relative(themeDir, file).replace(/\\/g, '/');
+    const text = fs.readFileSync(file, 'utf8');
+    if (!definesFormAttributes && /\bget_form_attributes\s*\(/i.test(text)) {
+      failCheck(`Undefined theme helper call get_form_attributes() in ${relative}`);
+    }
   }
 
   const textFiles = walk(themeDir).filter((file) => !/\.(png|jpe?g|webp|gif|zip)$/i.test(file));

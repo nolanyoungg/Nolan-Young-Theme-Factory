@@ -1,0 +1,51 @@
+{
+  "theme_slug": "014_nolan_young_theme_premium_test014",
+  "template_name": "NOLAN-YOUNG-theme-000",
+  "passed": true,
+  "phase": "final",
+  "created_at": "2026-06-22T16:26:34.524Z",
+  "checks": [
+    {
+      "name": "template_base_structure",
+      "passed": true,
+      "status": "passed",
+      "details": "All selected template files exist in the generated theme."
+    },
+    {
+      "name": "wordpress_quality",
+      "passed": true,
+      "status": "passed",
+      "details": "Required WordPress files, headers, bundles, placeholder scan, secret scan, and remote dependency scan passed."
+    },
+    {
+      "name": "preview_exists",
+      "passed": true,
+      "status": "passed",
+      "details": "Required preview files exist."
+    },
+    {
+      "name": "preview_gallery_entry",
+      "passed": true,
+      "status": "passed",
+      "details": "Gallery entry exists."
+    },
+    {
+      "name": "zip_exists",
+      "passed": true,
+      "status": "passed",
+      "details": "ZIP exists."
+    },
+    {
+      "name": "zip_freshness",
+      "passed": true,
+      "status": "passed",
+      "details": "ZIP is fresh relative to source files."
+    },
+    {
+      "name": "zip_contents",
+      "passed": true,
+      "status": "passed",
+      "details": "ZIP exists; content listing was verified by external PowerShell QA when available."
+    }
+  ]
+}

@@ -69,10 +69,9 @@ const BATCHES = [
       'single.php',
       'archive.php',
       'search.php',
-      '404.php',
-      '403.php'
+      '404.php'
     ],
-    focus: 'Create page templates and standard WordPress templates with unique page intent for about, services, individual services, work/case studies, resources, contact, policy, search, archive, and error states. These are full page templates, so keep their document wrapper logic in the theme root files, not in template-parts.'
+    focus: 'Create page templates and standard WordPress templates with unique page intent for about, services, individual services, work/case studies, resources, contact, policy, search, archive, and not-found states. Preserve deterministic fallback templates copied from the source template unless they are listed for this batch. These are full page templates, so keep their document wrapper logic in the theme root files, not in template-parts.'
   },
   {
     name: 'assets',
@@ -87,9 +86,9 @@ const BATCHES = [
 ];
 
 const PROMPT_SECTIONS_BY_STAGE = {
-  shell: ['01', '04', '05', '06', '07', '08', '12'],
-  'template-parts': ['01', '04', '05', '06', '08', '11', '12'],
-  pages: ['01', '05', '07', '08', '09', '10', '12'],
+  shell: ['01', '04', '05', '06', '07', '08'],
+  'template-parts': ['01', '04', '05', '06', '08', '11'],
+  pages: ['01', '05', '09', '10', '12'],
   assets: ['02', '04', '05', '06', '07', '08', '13'],
   'forms-helpers': ['01', '03', '09', '10'],
   repair: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13']
@@ -114,7 +113,7 @@ function splitPromptSections(prompt) {
   });
 }
 
-function compactSection(text, maxChars = 6500) {
+function compactSection(text, maxChars = 3500) {
   if (text.length <= maxChars) return text;
   const cutoff = text.lastIndexOf('\n\n', maxChars);
   const end = cutoff > 1000 ? cutoff : maxChars;

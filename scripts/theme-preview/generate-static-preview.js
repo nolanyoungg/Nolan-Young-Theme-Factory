@@ -97,8 +97,12 @@ function esc_attr($value) { return htmlspecialchars((string) $value, ENT_QUOTES,
 function esc_url($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function wp_kses_post($value) { return (string) $value; }
 function __($text) { return $text; }
+function _e($text) { echo $text; }
+function _x($text) { return $text; }
 function esc_html__($text) { return esc_html($text); }
+function esc_html_x($text) { return esc_html($text); }
 function esc_attr__($text) { return esc_attr($text); }
+function esc_attr_x($text) { return esc_attr($text); }
 function esc_html_e($text) { echo esc_html($text); }
 function esc_attr_e($text) { echo esc_attr($text); }
 function selected($actual, $expected) { if ((string) $actual === (string) $expected) echo ' selected="selected"'; }

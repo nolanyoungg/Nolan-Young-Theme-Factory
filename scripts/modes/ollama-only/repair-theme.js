@@ -51,8 +51,11 @@ function addFinding(findings, relativePath, message) {
 
 function problemFindings(themeDir) {
   const findings = new Map();
+  const allFiles = walkFiles(themeDir);
+  const phpFiles = allFiles.filter((file) => file.endsWith('.php'));
+  const definesFormAttributes = phpFiles.some((file) => /\bfunction\s+get_form_attributes\s*\(/i.test(fs.readFileSync(file, 'utf8')));
 
-  for (const file of walkFiles(themeDir)) {
+  for (const file of allFiles) {
     const relative = path.relative(themeDir, file).replace(/\\/g, '/');
     if (relative === 'style.css' || relative === 'package-lock.json') continue;
     if (!(/\.(php|css|js)$/i.test(relative) || path.basename(relative) === 'README.md')) continue;
@@ -75,6 +78,12 @@ function problemFindings(themeDir) {
       if (!/<\/body>/i.test(text)) addFinding(findings, relative, 'Footer must close the body tag.');
       if (!/<\/html>/i.test(text)) addFinding(findings, relative, 'Footer must close the html tag.');
       if (CONTENT_SECTION_PATTERN.test(text)) addFinding(findings, relative, 'Footer must not include site content template parts.');
+    }
+    if (relative === 'searchform.php' && /\bget_search_form\s*\(/i.test(text)) {
+      addFinding(findings, relative, 'searchform.php must render a complete search form directly and must not call get_search_form(), which recursively loads itself in WordPress.');
+    }
+    if (/\.php$/i.test(relative) && !definesFormAttributes && /\bget_form_attributes\s*\(/i.test(text)) {
+      addFinding(findings, relative, 'Remove the undefined get_form_attributes() helper call. Render form attributes directly with escaped literal attributes or define a real helper before calling it.');
     }
   }
 
@@ -134,6 +143,8 @@ Rules:
 - Template-parts are fragments only. They must not call get_header(), get_footer(), wp_head(), or wp_footer(), and must not include <!doctype>, <html>, <head>, <body>, </body>, or </html>.
 - header.php must be a complete document header with <!doctype html>, <html>, <head>, wp_head(), and the opening <body> tag. It must not include content section template-parts such as content-hero or content-cta-banner.
 - footer.php must close the document with wp_footer(), </body>, and </html>. It must not include content section template-parts such as content-brand-statement or content-cta-banner.
+- searchform.php must render a complete <form role="search"> directly. It must not call get_search_form().
+- Do not call custom helper functions unless they are defined in the theme. In particular, remove get_form_attributes() calls by writing normal escaped form attributes directly.
 - If assets/css/bundle.css or src/scss/main.scss is listed, write a complete responsive visual system for the generated theme. src/scss/main.scss must be self-contained and must not use @use or @import.
 - If assets/css/bundle.css is listed, write a stylesheet above ${CSS_MIN_BYTES} bytes.
 `;

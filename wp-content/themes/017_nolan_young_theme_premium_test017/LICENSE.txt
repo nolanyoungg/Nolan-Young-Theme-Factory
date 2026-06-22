@@ -1,0 +1,3 @@
+GPL-2.0-or-later
+
+Lorem ipsum placeholder license text.

@@ -62,6 +62,10 @@ function problemFindings(themeDir) {
 
     const text = fs.readFileSync(file, 'utf8');
     if (PLACEHOLDER_PATTERN.test(text)) addFinding(findings, relative, 'Remove unfinished placeholder/runtime copy.');
+    if (/\.php$/i.test(relative) && /<style[\s>]/i.test(text)) {
+      addFinding(findings, relative, 'Move inline <style> blocks into src/scss/main.scss and remove the PHP style block.');
+      addFinding(findings, 'src/scss/main.scss', `Add any styling needed after removing inline styles from ${relative}.`);
+    }
     if (MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) addFinding(findings, relative, 'Remove leaked model file-block markers and any content from other file blocks.');
     if (/\.(php|css|scss|js)$/i.test(relative) && /^```[a-zA-Z0-9_-]*\s*$/m.test(text)) addFinding(findings, relative, 'Remove leaked markdown code fence markers.');
     if (relative.startsWith('template-parts/') && TEMPLATE_PART_WRAPPER_PATTERN.test(text)) {
@@ -136,6 +140,8 @@ Rules:
 - Keep every output path exactly one of the target paths listed above.
 - Keep output inside wp-content/themes/${themeSlug}/.
 - Remove all Lorem ipsum, TODO, FIXME, "Add ... here", and future-editor instructions.
+- Remove generic labels such as "Highlight Service Title", "Service Title", "Project Title", "Work Item", "Step Icon", "Pillar Icon", "Post Image", and "Client Avatar".
+- If a loop renders visible cards, define arrays with finished business-specific titles, descriptions, labels, and alt text instead of deriving visible copy from numeric counters.
 - Use finished copy aligned with the selected creative prompt.
 - Preserve valid WordPress PHP syntax for PHP files.
 - Do not use http://, https://, CDN scripts, remote images, secrets, tokens, or API keys.

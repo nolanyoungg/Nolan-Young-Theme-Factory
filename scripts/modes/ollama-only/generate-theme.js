@@ -41,6 +41,31 @@ function applyOutput(rawOutput, themeTarget) {
 }
 
 function batchPrompt(brief, batch) {
+  if (batch.name === 'assets') {
+    return `Generate front-end source files for a local fictional WordPress business theme named Northstar Websites.
+
+Target folder:
+wp-content/themes/${themeSlug}/
+
+Return only file blocks. Paths must be relative to the target folder.
+
+${OUTPUT_FORMAT}
+
+Required files:
+${batch.files.map((file) => `- ${file}`).join('\n')}
+
+Design direction:
+- Premium, modern, content-forward website for a WordPress design and support company.
+- Palette: white #ffffff, soft background #f4f7fb, dark navy #101827, blue #2563eb, teal #14b8a6, orange #f97316, text #111827, muted #64748b, border #e2e8f0.
+- Use a readable system font stack.
+- Style the actual generated header, navigation panels, mobile drawer, homepage sections, cards, forms, footer, filters, accordions, and buttons.
+- Keep src/scss/main.scss self-contained or only use imports that already exist in the copied template.
+- Implement vanilla JavaScript for menu toggles, rail panels, accordions, filters, scroll state, and reduced-motion friendly interactions.
+- Create a simple local SVG wordmark/mark in assets/icons/icon1.svg.
+- Do not use remote URLs or external runtime dependencies.
+`;
+  }
+
   const focusedBrief = focusedOllamaBrief(brief, batch.name);
   return `You are editing a prepared WordPress theme folder.
 

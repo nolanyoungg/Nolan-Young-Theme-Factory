@@ -356,7 +356,13 @@ if (args.resume) {
     console.log(`Workflow completed for ${themeSlug}`);
     process.exit(0);
   }
-  if (state.status === 'ready-for-finalization') {
+  if (state.status === 'ready-for-finalization' || (state.status === 'failed' && state.last_finalization_error)) {
+    if (state.status === 'failed') {
+      console.log(`Resuming failed finalization for ${themeSlug}: ${state.last_finalization_error}`);
+      state.status = 'ready-for-finalization';
+      delete state.last_finalization_error;
+      writeState(reportDir, state);
+    }
     finalizeTheme(themeSlug, state.template_name, reportDir, state, validationFinalPath);
     console.log(`Workflow completed for ${themeSlug}`);
     process.exit(0);

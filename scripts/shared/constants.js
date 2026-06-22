@@ -17,7 +17,7 @@ const REQUIRED_ROOT_FILES = ['style.css', 'functions.php', 'index.php', 'header.
 const REQUIRED_BUNDLES = ['assets/css/bundle.css', 'assets/js/bundle.js'];
 
 const PLACEHOLDER_PATTERN = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder/i;
-const SECRET_PATTERN = /OPENAI_API_KEY|sk-[A-Za-z0-9_-]{20,}|BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|AWS_SECRET_ACCESS_KEY|password\s*[:=]\s*\S+|token\s*[:=]\s*\S+/i;
+const SECRET_PATTERN = /OPENAI_API_KEY|sk-[A-Za-z0-9_-]{20,}|BEGIN [A-Z ]*PRIVATE KEY|ghp_[A-Za-z0-9]{20,}|AWS_SECRET_ACCESS_KEY|(?:api[_-]?key|password|secret|token)\s*[:=]\s*["'][A-Za-z0-9_./+=-]{16,}["']/i;
 const REMOTE_RUNTIME_PATTERN = /<(script|link|img|source|video|audio)[^>]+(src|href)=["'][^"']*https?:\/\/|@import\s+url\(["']?https?:\/\/|url\(["']?https?:\/\/|\/\/cdn\.|cdnjs|jsdelivr|unpkg|fonts\.google|gstatic/i;
 const ALLOWED_REMOTE_REFERENCE_PATTERN = /schemas\.wp\.org|www\.w3\.org|gmpg\.org\/xfn\/11/i;
 const REPO_LOCAL_PATH_PATTERN = /C:\\Users\\|\/Users\/|codex-ggi-nolan-local|docs\/Preview-Themes-Github|dist\/zipped-themes/i;

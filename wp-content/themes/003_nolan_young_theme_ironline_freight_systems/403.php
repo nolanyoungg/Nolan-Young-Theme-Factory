@@ -1,1 +1,0 @@
-<?php get_header(); ?><section class="section"><div class="container"><h1><?php esc_html_e( 'Access is restricted.', '003_nolan_young_theme_ironline_freight_systems' ); ?></h1><p><?php esc_html_e( 'This page is not available for public viewing.', '003_nolan_young_theme_ironline_freight_systems' ); ?></p></div></section><?php get_footer(); ?>

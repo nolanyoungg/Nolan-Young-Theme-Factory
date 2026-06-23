@@ -1,1 +1,0 @@
-<article class="proof-card"><h2><?php esc_html_e( 'No matching resources were found.', '005_nolan_young_theme_flowledger_crm_platform' ); ?></h2><p><?php esc_html_e( 'Try another search or visit the services overview.', '005_nolan_young_theme_flowledger_crm_platform' ); ?></p></article>

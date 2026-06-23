@@ -1,1 +1,0 @@
-<article class="proof-card"><h2><?php esc_html_e( 'No matching resources were found.', '003_nolan_young_theme_ironline_freight_systems' ); ?></h2><p><?php esc_html_e( 'Try another search or visit the services overview.', '003_nolan_young_theme_ironline_freight_systems' ); ?></p></article>

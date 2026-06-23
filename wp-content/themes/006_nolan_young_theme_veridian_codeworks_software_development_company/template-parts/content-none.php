@@ -1,1 +1,0 @@
-<article class="proof-card"><h2><?php esc_html_e( 'No matching resources were found.', '006_nolan_young_theme_veridian_codeworks_software_development_company' ); ?></h2><p><?php esc_html_e( 'Try another search or visit the services overview.', '006_nolan_young_theme_veridian_codeworks_software_development_company' ); ?></p></article>

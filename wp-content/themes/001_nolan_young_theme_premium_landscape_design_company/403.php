@@ -1,1 +1,0 @@
-<?php get_header(); ?><section class="section"><div class="container"><h1><?php esc_html_e( 'Access is restricted.', '001_nolan_young_theme_premium_landscape_design_company' ); ?></h1><p><?php esc_html_e( 'This page is not available for public viewing.', '001_nolan_young_theme_premium_landscape_design_company' ); ?></p></div></section><?php get_footer(); ?>

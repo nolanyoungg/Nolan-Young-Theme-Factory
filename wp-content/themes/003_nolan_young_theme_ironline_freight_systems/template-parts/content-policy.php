@@ -1,1 +1,0 @@
-<section class="section"><div class="container"><h1><?php echo esc_html( nytf_003_policy_title() ); ?></h1><p><?php esc_html_e( 'Project schedules, asset choices, and care recommendations are confirmed in writing for each engagement.', '003_nolan_young_theme_ironline_freight_systems' ); ?></p></div></section>

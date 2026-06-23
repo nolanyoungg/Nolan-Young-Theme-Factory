@@ -1,3 +1,0 @@
-GPL-2.0-or-later
-
-Project license and usage terms for this theme repository.

@@ -1,5 +1,0 @@
-
-> 011-nolan-young-theme-premium-test011@1.0.0 build
-> node build/build-theme.js build
-
-Built assets for 011_nolan_young_theme_premium_test011

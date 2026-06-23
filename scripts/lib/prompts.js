@@ -49,6 +49,20 @@ Inside \`${relTheme}/\`, fully code and fill the theme. Replace Lorem ipsum, add
 
 Use local assets only. Do not use CDN dependencies. Do not add secrets or credentials. Keep WordPress PHP valid and paths portable.
 
+## Output Contract
+
+Return only documented file blocks for writable files in the prepared theme tree.
+
+Use this exact format for every file:
+
+\`\`\`text
+---FILE: relative/path.ext---
+complete file contents
+---END FILE---
+\`\`\`
+
+Do not include commentary, summaries, Markdown prose, JSON, code fences outside the required file blocks, or any extra text before or after the file contents.
+
 ## Preview Contract
 
 The static preview step is read-only. It must render the completed theme as-is and must never require manual edits to the generated theme source.

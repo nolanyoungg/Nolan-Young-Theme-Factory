@@ -4,7 +4,7 @@ const { root } = require('../lib/repo-root');
 const { runCommand } = require('../lib/command-runner');
 const { checkOllamaAccess } = require('../lib/model-access');
 const { assertThemeSlug, safeRelativePath } = require('../lib/theme-utils');
-const { applyModelOutput } = require('../lib/model-output');
+const { applyModelOutput, parseExactFileBlocks } = require('../lib/model-output');
 const { BATCHES, OUTPUT_FORMAT, SHARED_GENERATION_RULES, SHARED_GLOBAL_REQUIREMENTS, validateStagePlan } = require('../lib/ollama-batches');
 const { assertCoverage, buildCoverage, parsePromptContract, promptSizeManifest, selectPromptSections } = require('../lib/prompt-contract');
 
@@ -49,6 +49,21 @@ function contextEntries(themeDir, files) {
 
 function declarationList(items, emptyText) {
   return items.length ? items.map((file) => `- ${file}`).join('\n') : emptyText;
+}
+
+function stripTransportNoise(text) {
+  const normalized = String(text || '').replace(/\u001b\[[0-9;]*[A-Za-z]/g, '');
+  const start = normalized.indexOf('---FILE: ');
+  if (start === -1) return normalized.trim();
+  let end = normalized.lastIndexOf('\n---END FILE---');
+  if (end === -1) end = normalized.lastIndexOf('---END FILE---');
+  if (end === -1) return normalized.slice(start).trim();
+  const endMarker = normalized.indexOf('---END FILE---', end);
+  return normalized.slice(start, endMarker + '---END FILE---'.length).trim();
+}
+
+function serializeFileBlocks(files) {
+  return files.map((file) => `---FILE: ${file.relativePath}---\n${String(file.content || '').replace(/\n?$/, '\n')}---END FILE---`).join('\n\n');
 }
 
 function batchPromptParts(themeSlug, themeDir, contract, batch) {
@@ -162,8 +177,11 @@ async function runOllamaGeneration(options) {
       themeSlug,
       timeoutMs
     });
-    fs.writeFileSync(rawOutput, `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
-    results.push({ batch: batch.name, status: result.status, raw_output: rawOutput });
+    const originalOutput = `${result.stdout || ''}${result.stderr || ''}`;
+    fs.writeFileSync(path.join(generationDir, `ollama-${batch.name}-raw-original.md`), originalOutput, 'utf8');
+    const files = parseExactFileBlocks(stripTransportNoise(originalOutput), themeSlug);
+    fs.writeFileSync(rawOutput, serializeFileBlocks(files), 'utf8');
+    results.push({ batch: batch.name, status: result.status, raw_output: rawOutput, original_raw_output: path.join(generationDir, `ollama-${batch.name}-raw-original.md`) });
     if (result.status !== 0) fail(`Ollama batch failed: ${batch.name}`);
     applyModelOutput({
       sourceFile: rawOutput,

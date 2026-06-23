@@ -21,6 +21,13 @@ function parseCsv(value) {
   return String(value || '').split(',').map((item) => item.trim()).filter(Boolean);
 }
 
+function unwrapMarkdownFence(content) {
+  const normalized = String(content || '').replace(/\r\n/g, '\n');
+  const match = normalized.match(/(?:^|\n)```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```(?:\n|$)/);
+  if (!match) return content;
+  return match[1];
+}
+
 function fileHash(file) {
   return fs.existsSync(file) ? sha256(fs.readFileSync(file)) : '';
 }
@@ -60,20 +67,26 @@ function normalizeRelativePath(input, themeSlug) {
 function parseExactFileBlocks(raw, themeSlug, options = {}) {
   const normalized = raw.replace(/\r\n/g, '\n');
   if (options.allowNoChange && normalized.trim() === '---NO CHANGES---') return [];
-  const blockPattern = /---FILE: ([^\n]+)---\n([\s\S]*?)\n---END FILE---/g;
+  const blockPattern = /^---FILE: ([^\n]+)---$/gm;
   const files = [];
-  let cursor = 0;
+  const matches = [];
   let match;
   while ((match = blockPattern.exec(normalized)) !== null) {
-    const between = normalized.slice(cursor, match.index);
-    if (between.trim()) fail('Model response contains text outside documented file blocks.');
-    files.push({
-      relativePath: normalizeRelativePath(match[1], themeSlug),
-      content: `${match[2].replace(/\n?$/, '\n')}`
-    });
-    cursor = blockPattern.lastIndex;
+    matches.push({ relativePath: match[1], contentStart: blockPattern.lastIndex, headerIndex: match.index });
   }
-  if (normalized.slice(cursor).trim()) fail('Model response contains trailing text outside documented file blocks.');
+  for (let index = 0; index < matches.length; index += 1) {
+    const current = matches[index];
+    const nextHeaderIndex = index + 1 < matches.length ? matches[index + 1].headerIndex : normalized.length;
+    let contentEnd = nextHeaderIndex;
+    const explicitEndIndex = normalized.indexOf('\n---END FILE---', current.contentStart);
+    if (explicitEndIndex !== -1 && explicitEndIndex < contentEnd) contentEnd = explicitEndIndex;
+    let content = normalized.slice(current.contentStart, contentEnd).replace(/^\n+/, '').replace(/\n+$/, '');
+    content = unwrapMarkdownFence(content);
+    files.push({
+      relativePath: normalizeRelativePath(current.relativePath, themeSlug),
+      content: `${String(content || '').replace(/\n?$/, '\n')}`
+    });
+  }
   if (files.length === 0) fail('No documented file blocks were found.');
   return files;
 }

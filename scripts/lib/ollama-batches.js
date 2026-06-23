@@ -13,9 +13,11 @@ const SHARED_GENERATION_RULES = [
   'Do not use external assets, CDN dependencies, remote fonts, remote images, secrets, or machine-specific paths.',
   'Preserve valid WordPress PHP structure.',
   'Close PHP before raw HTML.',
+  'Never place an unescaped apostrophe inside a single-quoted PHP string; use double quotes or escape the apostrophe when copy contains contractions or possessives.',
   'Keep template parts as fragments.',
   'Keep document wrappers only in header.php and footer.php.',
   'Use consistent function prefixes.',
+  'Never reuse a function name that already appears in any provided read-only context file or already-generated file for the current stage. Choose a distinct function name when a similar helper already exists elsewhere.',
   'Reference only local files that exist or that this stage is explicitly allowed to create.',
   'Do not leave TODOs, Lorem Ipsum, placeholder comments, empty sections, or instructions for future implementation.',
   'Before responding, check that every assigned file is complete and that all braces, parentheses, quotes, PHP blocks, and HTML structures are balanced.'
@@ -54,11 +56,25 @@ const BATCHES = [
     focus: 'Create the newsletter module only. Do not combine this with forms handling.'
   },
   {
-    name: 'supporting-php-modules',
-    files: ['inc/helpers.php', 'inc/custom-post-types.php', 'inc/customizer.php', 'inc/policy-routing.php'],
+    name: 'supporting-php-helpers',
+    files: ['inc/helpers.php'],
     readonly: ['functions.php', 'inc/forms.php', 'inc/newsletter.php'],
-    promptSections: ['03', '09', '10', '12', '15'],
-    focus: 'Create supporting PHP modules for helpers, custom post types, customizer data, and policy routing.'
+    promptSections: ['03', '15'],
+    focus: 'Create the shared helpers module only. Keep it limited to reusable helper functions and do not add forms, newsletter, or custom post type logic.'
+  },
+  {
+    name: 'supporting-php-custom-post-types',
+    files: ['inc/custom-post-types.php'],
+    readonly: ['functions.php', 'inc/forms.php', 'inc/newsletter.php'],
+    promptSections: ['03', '15'],
+    focus: 'Create the custom post types module only. Use unique function names such as nolan_young_template_register_projects_post_type and nolan_young_template_add_projects_admin_menu. Do not define form submission types, newsletter logic, or any function that belongs in inc/forms.php or inc/newsletter.php.'
+  },
+  {
+    name: 'supporting-php-customizer-routing',
+    files: ['inc/customizer.php', 'inc/policy-routing.php'],
+    readonly: ['functions.php', 'inc/forms.php', 'inc/newsletter.php'],
+    promptSections: ['03', '15'],
+    focus: 'Create the customizer and policy routing modules only. Keep the files focused on site settings and policy routing, with no forms, newsletter, or template markup logic.'
   },
   {
     name: 'header-markup',
@@ -131,9 +147,10 @@ const BATCHES = [
   {
     name: 'standard-wordpress-templates',
     files: ['page.php', 'single.php', 'archive.php', 'search.php', '404.php', '403.php', 'comments.php'],
-    readonly: ['header.php', 'footer.php', 'functions.php', 'template-parts/content-page.php', 'template-parts/content-single.php', 'template-parts/content-search.php', 'template-parts/content-none.php'],
-    promptSections: ['03', '11', '12', '15'],
-    focus: 'Create standard WordPress templates and comments handling.'
+    optionalFiles: ['inc/enqueue.php'],
+    readonly: ['front-page.php', 'header.php', 'footer.php', 'functions.php', 'package.json', 'package-lock.json', 'template-parts/content-page.php', 'template-parts/content-single.php', 'template-parts/content-search.php', 'template-parts/content-none.php'],
+    promptSections: ['11', '12', '15'],
+    focus: 'Create standard WordPress templates and comments handling only. Do not return front-page.php, package.json, or package-lock.json. front-page.php belongs to the homepage assembly stage.'
   },
   {
     name: 'scss-foundation',

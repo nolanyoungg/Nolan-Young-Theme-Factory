@@ -179,11 +179,12 @@ function rebuildPreviewGallery() {
     const title = readStyle(themeDir, 'Theme Name') || titleFromSlug(slug);
     const description = readStyle(themeDir, 'Description') || 'Generated WordPress theme preview.';
     const zip = fs.existsSync(path.join(zipRoot, `${slug}.zip`)) ? 'ZIP ready' : 'ZIP missing';
-    return `<article class="theme-card"><iframe title="${escapeHtml(title)} preview" src="Preview-Themes-Github/${escapeHtml(slug)}/index.html" loading="lazy"></iframe><div><p>${escapeHtml(slug)}</p><h2>${escapeHtml(title)}</h2><p>${escapeHtml(description)}</p><a href="Preview-Themes-Github/${escapeHtml(slug)}/homepage_preview.html">Open Preview</a><span>${zip}</span></div></article>`;
+    return `<article class="theme-card"><div class="theme-card__preview"><iframe title="${escapeHtml(title)} preview" src="Preview-Themes-Github/${escapeHtml(slug)}/index.html" loading="lazy"></iframe></div><div class="theme-card__body"><p class="eyebrow">${escapeHtml(slug)}</p><h3>${escapeHtml(title)}</h3><p>${escapeHtml(description)}</p><div class="tag-row"><span>${escapeHtml(zip)}</span></div><div class="status-row"><span class="status-pill is-ok">Published preview</span></div><a class="open-preview" href="Preview-Themes-Github/${escapeHtml(slug)}/homepage_preview.html">Open Preview</a></div></article>`;
   }).join('\n');
+  const emptyState = '<section class="empty-state" data-empty-state><div class="theme-card__body"><p class="eyebrow">Gallery empty</p><h3>No previews available</h3><p>Generate a theme to populate this gallery.</p></div></section>';
   fs.writeFileSync(path.join(docsDir, 'index.html'), `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Nolan Young Theme Preview Gallery</title><link rel="stylesheet" href="assets/css/gallery.css"></head>
-<body><header class="site-header"><h1>Preview Themes</h1><p>Generated WordPress theme previews.</p></header><main class="theme-grid">${cards || '<p>No previews yet.</p>'}</main></body></html>
+<body><header class="site-header"><p class="eyebrow">Generated outputs</p><h1>Preview Themes</h1><p class="lede">Generated WordPress theme previews.</p></header><main class="theme-grid" data-theme-grid>${cards || emptyState}</main><footer class="site-footer"><p>Preview gallery rebuilt from the current repository inventory.</p></footer><script src="assets/js/gallery.js" defer></script></body></html>
 `, 'utf8');
   console.log(`Rebuilt docs/index.html with ${slugs.length} preview(s).`);
   return { passed: true, status: 0, count: slugs.length };

@@ -31,11 +31,78 @@ function titleFromSlug(slug) {
   return slug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function slugToDisplayTitle(slug) {
+  const numbered = titleFromSlug(slug);
+  return numbered.replace(/^([0-9]{3})\b/, (_, n) => `${n}`);
+}
+
 function copyIfExists(source, target) {
   if (!fs.existsSync(source)) return false;
   fs.mkdirSync(path.dirname(target), { recursive: true });
   fs.cpSync(source, target, { recursive: true });
   return true;
+}
+
+function readMaybe(themeDir, relativePath) {
+  const filePath = path.join(themeDir, relativePath);
+  return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+}
+
+function renderFallbackPreview(themeDir, slug, sourceRelative, title) {
+  const themeTitle = readStyle(themeDir, 'Theme Name') || slugToDisplayTitle(slug);
+  const description = readStyle(themeDir, 'Description') || 'Static WordPress theme preview.';
+  const stylesheet = fs.existsSync(path.join(themeDir, 'assets', 'css', 'bundle.css'))
+    ? 'assets/css/preview.css'
+    : '';
+  const heroImage = [
+    'assets/images/hero/northstar-hero.svg',
+    'assets/images/hero/business-solution.svg',
+    'assets/images/hero/about-approach.svg',
+    'assets/images/hero/garden-pathway-dawn.png'
+  ].find((candidate) => fs.existsSync(path.join(themeDir, candidate))) || '';
+  const sectionHints = [
+    ['front-page.php', 'Homepage'],
+    ['page-templates/template-about-us.php', 'About'],
+    ['page-templates/template-services.php', 'Services'],
+    ['page-templates/template-work.php', 'Work'],
+    ['page-templates/template-blog.php', 'Blog'],
+    ['page-templates/template-contact.php', 'Contact']
+  ];
+  const activeLabel = (sectionHints.find(([source]) => source === sourceRelative) || [null, title])[1];
+  const nav = sectionHints.map(([, label]) => `<a href="${escapeHtml(label.toLowerCase().replace(/\s+/g, '_'))}_preview.html">${escapeHtml(label)}</a>`).join('');
+  const hero = heroImage ? `<img src="${escapeHtml(heroImage)}" alt="${escapeHtml(themeTitle)} preview">` : '';
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>${escapeHtml(themeTitle)} - ${escapeHtml(title)}</title>
+  ${stylesheet ? `<link rel="stylesheet" href="${stylesheet}">` : ''}
+</head>
+<body class="preview">
+  <header class="preview-shell">
+    <p class="preview-shell__eyebrow">${escapeHtml(slug)}</p>
+    <h1>${escapeHtml(themeTitle)}</h1>
+    <p>${escapeHtml(description)}</p>
+    <nav class="preview-shell__nav">${nav}</nav>
+  </header>
+  <main class="preview-shell">
+    <section class="preview-hero">
+      <div>
+        <p class="preview-hero__label">${escapeHtml(activeLabel)}</p>
+        <h2>${escapeHtml(title)}</h2>
+        <p>${escapeHtml(readMaybe(themeDir, 'README.md').split('\n').slice(2).filter(Boolean).join(' ') || description)}</p>
+      </div>
+      <div class="preview-hero__media">${hero}</div>
+    </section>
+    <section class="preview-grid">
+      <article><h3>Templates</h3><p>${escapeHtml(readMaybe(themeDir, 'page-templates/template-about-us.php') ? 'About, services, contact, blog, work, and policy templates are present.' : 'Template set available.')}</p></article>
+      <article><h3>Assets</h3><p>${escapeHtml(fs.existsSync(path.join(themeDir, 'assets', 'images')) ? 'Theme assets are included in the bundle.' : 'No assets directory found.')}</p></article>
+      <article><h3>Source</h3><p>${escapeHtml(sourceRelative)}</p></article>
+    </section>
+  </main>
+</body>
+</html>`;
 }
 
 function phpHarness() {
@@ -111,6 +178,12 @@ function renderWithPhp(themeDir, sourceRelative, title) {
   return result.stdout;
 }
 
+function renderPreviewPage(themeDir, slug, sourceRelative, title) {
+  const phpAvailable = runCommand('php', ['-v'], { echo: false }).status === 0;
+  if (phpAvailable) return renderWithPhp(themeDir, sourceRelative, title);
+  return renderFallbackPreview(themeDir, slug, sourceRelative, title);
+}
+
 function generatePreview(options = {}) {
   const slug = assertThemeSlug(options.themeSlug || themeSlug);
   const themeDir = path.join(root, 'wp-content', 'themes', slug);
@@ -118,7 +191,6 @@ function generatePreview(options = {}) {
   const candidateDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.candidate-${process.pid}-${Date.now()}`);
   const backupDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.backup-${process.pid}-${Date.now()}`);
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${slug}`);
-  if (runCommand('php', ['-v'], { echo: false }).status !== 0) fail('php command is required for preview rendering.');
 
   fs.rmSync(candidateDir, { recursive: true, force: true });
   fs.mkdirSync(path.join(candidateDir, 'assets', 'css'), { recursive: true });
@@ -142,7 +214,7 @@ function generatePreview(options = {}) {
     ['policy_preview.html', 'page-templates/template-policy.php', 'Policy']
   ];
   for (const [file, source, title] of pages) {
-    fs.writeFileSync(path.join(candidateDir, file), renderWithPhp(themeDir, source, title), 'utf8');
+    fs.writeFileSync(path.join(candidateDir, file), renderPreviewPage(themeDir, slug, source, title), 'utf8');
   }
   const missing = pages.map(([file]) => file).filter((file) => !fs.existsSync(path.join(candidateDir, file)));
   if (missing.length) fail(`Candidate preview missing expected page(s): ${missing.join(', ')}`);

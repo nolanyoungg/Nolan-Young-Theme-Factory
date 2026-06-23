@@ -15,10 +15,11 @@ run the selected planned generation mode
 preserve raw generated output
 freeze generated hashes
 build assets once
-validate the generated theme
+run source validation
 generate static preview
 rebuild preview gallery
 package ZIP
+run artifact validation
 write final report
 ```
 
@@ -27,6 +28,10 @@ Validation, preview generation, and packaging are deterministic. They report fai
 Model output is applied without semantic modification. The output layer parses only the documented file-block protocol, enforces the stage file allowlist, requires every assigned file exactly once, rejects duplicates and unassigned files, writes atomically, and records hashes. It does not fix PHP, rewrite SCSS, invent CSS, replace URLs, salvage malformed formats, or retain starter files in place of invalid generated files.
 
 Planned generation stages are declared before generation starts and always belong to the selected mode. Prompt count is not repair. A repair stage is any prompt or deterministic source rewrite triggered by build or validation failure; repair stages are prohibited.
+
+The selected prompt is parsed before planning. Numbered `## NN.` sections, `###` subsections, `####` feature requirements, line ranges, stable identifiers, and exact text are recorded. Ollama stage plans declare prompt section ownership, and missing coverage blocks an Ollama run before provider invocation.
+
+No prompt section is silently trimmed. Every Ollama stage records a context-budget manifest and fails before invoking the provider if the creative requirements plus writable and read-only file context exceed the configured budget.
 
 ## Modes
 
@@ -79,7 +84,7 @@ Codex generation: 10 minutes
 Build and deterministic commands: 2 minutes
 ```
 
-Ollama runs five focused batches, so a slow full Ollama pass can run for several hours before the workflow times out. Override with `--ollama-timeout-ms` only when you intentionally want a different per-batch limit.
+Ollama runs the configured prompt-aware stage sequence, so a slow full Ollama pass can run for several hours before the workflow times out. Override with `--ollama-timeout-ms` only when you intentionally want a different per-stage limit.
 
 ```sh
 npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
@@ -95,6 +100,12 @@ Generation failure means the provider process failed or could not start.
 A generated theme can finish generation while failing build, validation, preview, or ZIP packaging. Those failures are recorded separately, and safe finalization steps continue where possible.
 
 Failed generated output is valid evidence. Improving a failed run requires improving prompts or stage definitions and starting a fresh run.
+
+Ollama stage application is transactional: preserve the raw response, parse the complete file-block contract, apply files to a candidate copy, run stage checks on the candidate, and atomically replace the live theme only after checks pass. Failed candidate stages leave the live theme unchanged.
+
+Codex runs from the prepared theme directory with `--cd`, `--sandbox workspace-write`, and `--ephemeral`. The workflow snapshots the repository around the Codex process and blocks on out-of-bound changes.
+
+Preview generation is also transactional. It renders into a temporary sibling directory, verifies expected pages and warning-free output, then swaps the preview into place. An existing preview is not deleted before the candidate succeeds.
 
 Final statuses are:
 
@@ -112,4 +123,6 @@ Each run writes under:
 reports/runs/{theme_slug}/
 ```
 
-Key files include `run.config.json`, `workflow.state.json`, provider raw outputs, per-stage application manifests, `generated-theme-hashes.json`, `build.report.json`, `validation.final.json`, and `workflow.summary.json`.
+Key files include `run.config.json`, `workflow.state.json`, `prompt-coverage.json`, provider raw outputs, per-stage application manifests, context-size manifests, `generated-theme-hashes.json`, `build.report.json`, `validation.source.json`, `validation.artifacts.json`, `validation.final.json`, and `workflow.summary.json`.
+
+The starter template includes `assets/images/asset-manifest.json`. Third-party asset provenance must come from that manifest; models may create original local SVG marks, icons, textures, and illustrations without claiming they are photographs.

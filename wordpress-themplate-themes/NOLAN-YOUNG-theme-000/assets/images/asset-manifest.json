@@ -1,0 +1,13 @@
+{
+  "manifest_version": 1,
+  "assets": [
+    {
+      "file": "hero/brand-illustration.svg",
+      "kind": "original-illustration",
+      "source_url": null,
+      "creator": "Generated specifically for this theme",
+      "license": "Project asset",
+      "approved_uses": ["hero", "brand"]
+    }
+  ]
+}

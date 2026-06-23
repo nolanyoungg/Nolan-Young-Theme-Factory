@@ -39,26 +39,32 @@ There should be no inline style blocks within .php files, all styles should be i
 
 ### Theme ID
 
-Ensure the theme ID is up to date and reflect the proper naming:
+Preserve the prepared theme identity values assigned by the factory during preparation:
+
+- Theme Name
+- Description
+- Text Domain
+- generated theme slug
+- package name
+
+Do not hardcode replacement values for those prepared fields. The model may preserve and complete the remaining valid WordPress metadata:
 
 ```text
 /*
-Theme Name: Nolan Young theme ...???
-Theme URI: https://example.com/nolan-young-theme
 Author: Nolan Young
 Author URI: https://shibey.com
-Description: A polished filler classic WordPress theme with Latin sample copy, placeholder color blocks, responsive layouts, page templates, portfolio sections, and reusable template parts.
 Version: 1.0.0
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 8.0
 License: GNU General Public License v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain: nolan-young-theme
 Tags: custom-logo, custom-menu, featured-images, threaded-comments, translation-ready, blog, portfolio, one-column, two-columns
 */
 
 ```
+
+The selected starter template already contains the standard build scaffold. Preparation supplies valid build paths and package metadata. Preserve required build paths. Update source code and dependency declarations only when technically required by generated source. The factory never starts `npm run dev`; that command remains available for a human developer. The factory runs `npm run build` once after generation.
 
 ### CSS Architecture
 
@@ -375,12 +381,12 @@ Avoid extremely thin font weights for essential information.
   
     1) Services `nolan-menu` panel
     - Left rail items (exact labels):
-      - x1
-      - x2
-      - x3
-      - x4
-      - x5
-      - x6
+      - WordPress Design
+      - Custom Theme Development
+      - WooCommerce
+      - Website Redesign
+      - Integrations & Automation
+      - Website Care & Support
     
     - Right side per rail item MUST include:
       - Local photo
@@ -390,19 +396,19 @@ Avoid extremely thin font weights for essential information.
     
     2) About `nolan-menu` panel
     - Left rail items:
-      - x1
-      - x2
-      - x3
+      - Our Approach
+      - What We Value
+      - How We Work
     
     - Right side per rail item MUST include:
-      - Local photo
+      - Approved local image from the asset inventory, or an original local illustration when no approved photograph was supplied
       - Headline
       - Values list or short feature list
       - CTA linking to about page
     
     3) Blog `nolan-menu` panel
     - Use a grid of at least 4 blog cards.
-    - Each card must include a local photo, tag, title, excerpt, and link to its corresponding blog post.
+    - Each card must include an approved local image from the asset inventory, or an original local illustration when no approved photograph was supplied, plus tag, title, excerpt, and link to its corresponding blog post.
     - Cards should feel editorial and useful, not generic filler.
 
 
@@ -745,18 +751,15 @@ Every file in `page-templates/` must include a valid WordPress `Template Name` h
 
 Each of these template-.... .php files will simply just call template parts we have made above like so: 
 
-```text
+```php
 <?php
 /**
- * Template Name: name of template...
- * Template Post Type: ....?
+ * Template Name: About Us
+ * Template Post Type: page
  *
- *  Page template for the /name of page..../ page.
+ * Page template for the /about/ page.
  *
- * This template is intentionally built from focused template parts - below is a sample / example of what could be a careers page
- * - content-careers-hero.php introduces the collaboration message.
- * - content-careers-fit.php explains the types of collaborators Shibey is open to.
- * - content-careers-form.php captures a simple collaboration inquiry form.
+ * This template is intentionally built from focused template parts.
  *
  * @package Nolan_Young_Theme
  */
@@ -766,11 +769,12 @@ defined( 'ABSPATH' ) || exit;
 get_header();
 ?>
 
-<main id="primary" class="FILL IN HERE.... ADD OTHER IS NEEDED">
-	<div class="NOLAN-YOUNG-theme-careers-page">
-		<?php get_template_part( 'template-parts/content', 'careers-hero' ); ?>
-		<?php get_template_part( 'template-parts/content', 'careers-fit' ); ?>
-		<?php get_template_part( 'template-parts/content', 'careers-form' ); ?>
+<main id="primary" class="site-main nolan-about-page">
+	<div class="nolan-about-page__inner">
+		<?php get_template_part( 'template-parts/content', 'brand-statement' ); ?>
+		<?php get_template_part( 'template-parts/content', 'process' ); ?>
+		<?php get_template_part( 'template-parts/content', 'testimonials' ); ?>
+		<?php get_template_part( 'template-parts/content', 'cta-banner' ); ?>
 	</div>
 </main>
 
@@ -936,9 +940,9 @@ Do not generate legal promises, guarantees, privacy claims, cookie claims, or te
 
 Use real, relevant visual media rather than filler graphics or empty placeholders.
 
-Use only public-domain, CC0, or properly licensed assets that permit the intended use.
+Pre-approved local assets are supplied through the asset inventory at `assets/images/asset-manifest.json`. Select only from that inventory for third-party photos or raster media. Do not invent photo provenance, creators, source URLs, licenses, or download dates.
 
-Do not describe an asset as copyright-free unless its license actually supports that claim.
+Models may create original local SVG marks, icons, textures, and illustrations. Do not describe an illustration as a photograph. When no approved photograph exists, use an original local illustration or CSS presentation rather than fake licensing information.
 
 Store local visual assets only within the required asset structure:
 
@@ -965,7 +969,7 @@ Do not create alternate image directories that conflict with this structure.
 
 Do not hotlink runtime assets from third-party websites.
 
-Record the source URL, creator when required, license, and download date for every third-party asset in `README.md`.
+Record only asset provenance that appears in the approved asset inventory. Documentation must not invent licensing details.
 
 Optimize raster assets for web delivery and provide responsive sizes where appropriate.
 
@@ -1140,4 +1144,3 @@ Before finishing, verify every requirement in this table.
 | Originality | No copied third-party branding, text, protected assets, or direct site recreation is included |
 | Scope safety | The generated theme does not modify files outside its allowed theme folder |
 | Documentation | `README.md`, `CHANGELOG.md`, `LICENSE.txt`, and all required supporting documentation are complete |
-

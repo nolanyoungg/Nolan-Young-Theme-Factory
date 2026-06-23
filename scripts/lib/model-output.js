@@ -21,6 +21,10 @@ function parseCsv(value) {
   return String(value || '').split(',').map((item) => item.trim()).filter(Boolean);
 }
 
+function fileHash(file) {
+  return fs.existsSync(file) ? sha256(fs.readFileSync(file)) : '';
+}
+
 function parseArgs(argv) {
   const parsed = { _: [] };
   for (let index = 0; index < argv.length; index += 1) {
@@ -73,14 +77,15 @@ function parseExactFileBlocks(raw, themeSlug) {
   return files;
 }
 
-function assertContract(files, themeDir, allowedFiles, requiredFiles) {
+function assertContract(files, themeDir, allowedFiles, requiredFiles, allowedPatterns = []) {
   const allowed = new Set(allowedFiles);
   const required = new Set(requiredFiles.length ? requiredFiles : allowedFiles);
   const seen = new Set();
+  const patterns = allowedPatterns.map((pattern) => new RegExp(pattern));
   for (const file of files) {
     if (seen.has(file.relativePath)) fail(`Duplicate file returned: ${file.relativePath}`);
     seen.add(file.relativePath);
-    if (!allowed.has(file.relativePath)) fail(`Returned file is not in this stage allowlist: ${file.relativePath}`);
+    if (!allowed.has(file.relativePath) && !patterns.some((pattern) => pattern.test(file.relativePath))) fail(`Returned file is not in this stage allowlist: ${file.relativePath}`);
     const target = path.resolve(themeDir, file.relativePath);
     if (!target.startsWith(themeDir + path.sep)) fail(`Rejected path outside theme folder: ${file.relativePath}`);
   }
@@ -101,16 +106,88 @@ function stageFiles(themeDir, files) {
   return tempRoot;
 }
 
-function writeStagedFiles(themeDir, tempRoot, files) {
+function copyDirectory(source, target) {
+  fs.cpSync(source, target, { recursive: true, force: true });
+}
+
+function stageChecks(candidateDir, files, checkTypes = []) {
+  const checks = [];
+  const changed = files.map((file) => file.relativePath);
+  if (checkTypes.includes('php')) {
+    const phpFiles = changed.filter((file) => file.endsWith('.php'));
+    for (const file of phpFiles) {
+      const result = require('./command-runner').runCommand('php', ['-l', path.join(candidateDir, file)], { echo: false });
+      checks.push({ type: 'php-lint', file, passed: result.status === 0, details: result.stderr || result.stdout || '' });
+    }
+    const declarations = new Map();
+    for (const file of phpFiles) {
+      const text = fs.readFileSync(path.join(candidateDir, file), 'utf8');
+      let match;
+      const pattern = /function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+      while ((match = pattern.exec(text)) !== null) {
+        if (!declarations.has(match[1])) declarations.set(match[1], []);
+        declarations.get(match[1]).push(file);
+      }
+    }
+    const duplicates = [...declarations.entries()].filter(([, owners]) => owners.length > 1);
+    checks.push({ type: 'duplicate-functions', passed: duplicates.length === 0, details: duplicates.map(([name, owners]) => `${name}: ${owners.join(', ')}`).join('; ') });
+  }
+  if (checkTypes.includes('js')) {
+    for (const file of changed.filter((item) => item.endsWith('.js'))) {
+      const result = require('./command-runner').runCommand('node', ['--check', path.join(candidateDir, file)], { echo: false });
+      checks.push({ type: 'node-check', file, passed: result.status === 0, details: result.stderr || result.stdout || '' });
+    }
+  }
+  if (checkTypes.includes('scss')) {
+    for (const file of changed.filter((item) => item.endsWith('.scss'))) {
+      const text = fs.readFileSync(path.join(candidateDir, file), 'utf8');
+      let match;
+      const missing = [];
+      const importPattern = /@(use|import)\s+["']([^"']+)["']/g;
+      while ((match = importPattern.exec(text)) !== null) {
+        const specifier = match[2];
+        if (/^(?:http:|https:|sass:)/.test(specifier)) continue;
+        const base = path.dirname(path.join(candidateDir, file));
+        const parsed = path.posix.parse(specifier);
+        const candidates = [
+          path.resolve(base, specifier),
+          path.resolve(base, `${specifier}.scss`),
+          path.resolve(base, parsed.dir, `_${parsed.base}.scss`)
+        ];
+        if (!candidates.some((candidate) => fs.existsSync(candidate))) missing.push(specifier);
+      }
+      checks.push({ type: 'scss-imports', file, passed: missing.length === 0, details: missing.join(', ') });
+    }
+  }
+  for (const file of files) {
+    const target = path.join(candidateDir, file.relativePath);
+    checks.push({ type: 'assigned-file-present', file: file.relativePath, passed: fs.existsSync(target), details: '' });
+  }
+  return checks;
+}
+
+function inferCheckTypes(files, explicit = []) {
+  if (explicit.length) return explicit;
+  const out = new Set();
+  for (const file of files) {
+    if (file.relativePath.endsWith('.php')) out.add('php');
+    if (file.relativePath.endsWith('.js')) out.add('js');
+    if (file.relativePath.endsWith('.scss')) out.add('scss');
+    if (file.relativePath.startsWith('assets/')) out.add('assets');
+  }
+  return [...out];
+}
+
+function writeStagedFiles(candidateDir, tempRoot, files) {
   const written = [];
   for (const file of files) {
     const source = path.join(tempRoot, file.relativePath);
-    const target = path.join(themeDir, file.relativePath);
+    const target = path.join(candidateDir, file.relativePath);
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.copyFileSync(source, target);
     written.push({
       path: file.relativePath,
-      sha256: sha256(fs.readFileSync(target, 'utf8'))
+      sha256: fileHash(target)
     });
   }
   return written;
@@ -124,31 +201,66 @@ function applyModelOutput(options) {
   if (!sourceFile || !fs.existsSync(sourceFile)) fail(`Raw model response not found: ${sourceFile}`);
   if (!fs.existsSync(themeDir)) fail(`Theme folder not found: ${themeDir}`);
   const allowedFiles = (options.allowedFiles || []).map((file) => normalizeRelativePath(file, themeSlug));
+  const optionalFiles = (options.optionalFiles || []).map((file) => normalizeRelativePath(file, themeSlug));
   const requiredFiles = (options.requiredFiles || []).map((file) => normalizeRelativePath(file, themeSlug));
-  if (allowedFiles.length === 0) fail('A stage allowlist is required.');
+  const allowedPatterns = options.allowedPatterns || [];
+  if (allowedFiles.length + optionalFiles.length + allowedPatterns.length === 0) fail('A stage allowlist is required.');
   const raw = fs.readFileSync(sourceFile, 'utf8');
   const files = parseExactFileBlocks(raw, themeSlug);
-  assertContract(files, themeDir, allowedFiles, requiredFiles);
+  assertContract(files, themeDir, [...allowedFiles, ...optionalFiles], requiredFiles, allowedPatterns);
   const hashesBefore = files.map((file) => {
     const target = path.join(themeDir, file.relativePath);
     return {
       path: file.relativePath,
       existed: fs.existsSync(target),
-      sha256: fs.existsSync(target) ? sha256(fs.readFileSync(target, 'utf8')) : ''
+      sha256: fileHash(target)
     };
   });
   const tempRoot = stageFiles(themeDir, files);
+  const parent = path.dirname(themeDir);
+  const candidateDir = path.join(parent, `.${themeSlug}.${options.stage || 'stage'}.candidate-${process.pid}-${Date.now()}`);
+  const backupDir = path.join(parent, `.${themeSlug}.${options.stage || 'stage'}.backup-${process.pid}-${Date.now()}`);
   try {
-    const written = writeStagedFiles(themeDir, tempRoot, files);
+    copyDirectory(themeDir, candidateDir);
+    const written = writeStagedFiles(candidateDir, tempRoot, files);
+    const checks = stageChecks(candidateDir, files, inferCheckTypes(files, options.checkTypes || []));
+    const failedChecks = checks.filter((check) => check.passed === false);
+    if (failedChecks.length) {
+      if (options.candidateEvidenceDir) {
+        fs.mkdirSync(options.candidateEvidenceDir, { recursive: true });
+        copyDirectory(candidateDir, path.join(options.candidateEvidenceDir, 'candidate'));
+        fs.writeFileSync(path.join(options.candidateEvidenceDir, 'stage-checks.json'), `${JSON.stringify(checks, null, 2)}\n`, 'utf8');
+      }
+      const error = new Error(`Stage checks failed for ${options.stage || 'stage'}: ${failedChecks.map((check) => `${check.type}${check.file ? `:${check.file}` : ''}`).join(', ')}`);
+      error.checks = checks;
+      throw error;
+    }
+    fs.renameSync(themeDir, backupDir);
+    try {
+      fs.renameSync(candidateDir, themeDir);
+    } catch (error) {
+      if (fs.existsSync(themeDir)) fs.rmSync(themeDir, { recursive: true, force: true });
+      fs.renameSync(backupDir, themeDir);
+      throw error;
+    }
+    fs.rmSync(backupDir, { recursive: true, force: true });
     const manifest = {
       stage: options.stage || '',
       source_file: sourceFile,
       applied_at: new Date().toISOString(),
       allowed_files: allowedFiles,
+      optional_files: optionalFiles,
+      allowed_patterns: allowedPatterns,
       required_files: requiredFiles.length ? requiredFiles : allowedFiles,
       returned_files: files.map((file) => file.relativePath),
       hashes_before: hashesBefore,
-      files_written: written
+      files_written: written,
+      stage_checks: checks,
+      transaction: {
+        candidate_applied: true,
+        live_theme_changed_after_checks: true,
+        rollback_on_swap_failure: true
+      }
     };
     if (options.manifestPath) {
       fs.mkdirSync(path.dirname(options.manifestPath), { recursive: true });
@@ -157,6 +269,7 @@ function applyModelOutput(options) {
     return { passed: true, status: 0, manifest };
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
+    fs.rmSync(candidateDir, { recursive: true, force: true });
   }
 }
 

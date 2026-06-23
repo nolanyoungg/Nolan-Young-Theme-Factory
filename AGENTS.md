@@ -28,6 +28,8 @@ The repository agent must not modify generated themes to satisfy checks. Failed 
 
 Ollama-only uses multiple planned local-model stages. These stages are declared before generation starts and always run as part of the mode; prompt count is not repair.
 
+Every Ollama stage must declare its prompt-section ownership. Missing or nonexistent production prompt coverage blocks the run before model invocation.
+
 `codex-only` means one Codex generation pass.
 
 `hybrid` means Ollama draft plus one Codex finish pass.
@@ -42,11 +44,15 @@ A repair stage is triggered by a failed check or designed to make generated outp
 
 Build, validation, preview generation, ZIP packaging, cleanup, and reports are deterministic post-generation work.
 
-Validation is observational and read-only. If a required template file is missing, validation reports it and does not copy it back.
+Validation is observational and read-only. Source validation runs before preview and ZIP creation. Artifact validation runs after preview and ZIP packaging. If a required template file is missing, validation reports it and does not copy it back.
 
-Model output is applied without semantic modification. The application layer may parse the documented file-block protocol, enforce the stage allowlist, and write complete files atomically. It must not fix PHP, rewrite SCSS, invent fallback CSS, replace URLs, salvage malformed output, or keep old source when generated code is invalid.
+Model output is applied without semantic modification. The application layer may parse the documented file-block protocol, enforce the stage allowlist, write complete files through a candidate transaction, and run observational candidate checks. It must not fix PHP, rewrite SCSS, invent fallback CSS, replace URLs, salvage malformed output, or keep old source when generated code is invalid.
 
-Preview generation renders actual generated theme templates through a read-only PHP harness. It may read generated themes and write only under `docs/Preview-Themes-Github/` and `docs/index.html`.
+Codex must run from the prepared theme directory with a writable sandbox and ephemeral execution. Repository snapshots around Codex are required to detect out-of-bound changes.
+
+Preview generation renders actual generated theme templates through a read-only PHP harness. It may read generated themes and write only under `docs/Preview-Themes-Github/` and `docs/index.html`. Preview replacement must be transactional and must preserve an existing preview when candidate rendering fails.
+
+Approved third-party image use must come from `assets/images/asset-manifest.json`. Models may create original local SVG marks, icons, textures, and illustrations, but must not invent provenance or describe illustrations as photographs.
 
 Packaging must package from a temporary copy and must not modify generated theme source.
 

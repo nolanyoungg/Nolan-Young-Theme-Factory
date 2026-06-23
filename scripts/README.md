@@ -55,6 +55,14 @@ A planned generation stage is declared before generation starts, owns a file all
 
 Hybrid does not run draft validation before Codex and does not pass validation failures to Codex.
 
+Dry runs report `planned_generation_operations`, `ollama_provider_invocations`, and `codex_provider_invocations`. The workflow does not use the older ambiguous `total_ai_passes` field.
+
+## Prompt Coverage and Budgets
+
+`scripts/lib/prompt-contract.js` parses the selected prompt into numbered sections, subsections, feature requirements, line ranges, stable identifiers, and exact text. Ollama stages in `scripts/lib/ollama-batches.js` declare `promptSections`; missing or nonexistent section coverage blocks Ollama before model invocation.
+
+Each Ollama stage writes a size manifest with total prompt characters, estimated tokens, creative requirement characters, writable context characters, read-only context characters, and file counts. Stages that exceed the context budget fail before provider invocation with no truncation.
+
 ## Generated-Theme Boundary
 
 The prepared theme folder is the only AI edit target:
@@ -75,9 +83,11 @@ complete file contents
 
 Every assigned file must be returned exactly once. Unassigned files, duplicate files, malformed formats, Markdown wrappers, JSON alternatives, partial file blocks, and omitted files fail the stage. The application layer does not repair PHP, rewrite SCSS, add fallback CSS, replace URLs, salvage malformed output, or keep starter files when generated files are invalid.
 
+Stage application is transactional. Returned files are applied to a candidate copy first, stage checks run against that candidate, and the live theme directory is swapped only after all checks pass. Stage checks are observational only: PHP lint and duplicate function scans for PHP, import checks for SCSS, `node --check` for JavaScript, and assigned-file presence.
+
 ## Validation
 
-`validate-theme.js` is read-only. It checks containment, slug format, selected template file structure, required WordPress files, `style.css` headers, PHP syntax when PHP is available, duplicate PHP functions, unresolved SCSS imports, missing local assets, asset expectations, placeholder content, secrets, remote runtime dependencies, machine-specific paths, preview presence, gallery entry, and ZIP structure.
+`validate-theme.js` is read-only. `--phase source` checks containment, slug format, selected template file structure, required WordPress files, `style.css` headers, PHP syntax when PHP is available, duplicate PHP functions, unresolved SCSS imports, missing local assets, asset expectations, placeholder content, secrets, remote runtime dependencies, and machine-specific paths. `--phase artifacts` checks preview and ZIP artifacts after they are created. `--phase final` records the aggregate final state.
 
 Extra files are allowed. Missing template files are reported and are not restored by validation.
 
@@ -95,7 +105,9 @@ Run reports: `reports/runs/{theme_slug}/`
 
 Future run reports and ZIPs are ignored by default, with README placeholders allowed.
 
-Preview generation renders actual generated PHP templates through a read-only harness. It fails when rendering fails instead of writing generic substitute pages.
+Preview generation renders actual generated PHP templates through a read-only harness into a temporary sibling directory. It fails when rendering fails instead of writing generic substitute pages and replaces an existing preview only after the candidate is complete.
+
+`theme:resume` is deterministic finalization only. It can rerun build, source validation, preview, package, artifact validation, and final validation. It never invokes AI.
 
 ## Adding a Provider or Mode
 

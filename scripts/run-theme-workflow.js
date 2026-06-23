@@ -15,6 +15,7 @@ const { packageTheme } = require('./package-theme');
 const { runOllamaGeneration } = require('./providers/ollama');
 const { runCodexGeneration, runCodexFinish } = require('./providers/codex');
 const { BATCHES } = require('./lib/ollama-batches');
+const { buildCoverage, parsePromptContract } = require('./lib/prompt-contract');
 
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
 const args = parseArgs(process.argv.slice(2));
@@ -52,10 +53,9 @@ function modePlan(mode) {
 
 function expectedInvocations(mode) {
   return {
-    ollama_generation: mode === 'ollama-only' || mode === 'hybrid' ? BATCHES.length : 0,
-    codex_generation: mode === 'codex-only' ? 1 : 0,
-    codex_finish: mode === 'hybrid' ? 1 : 0,
-    total_ai_passes: mode === 'hybrid' ? 2 : 1
+    planned_generation_operations: mode === 'hybrid' ? 2 : 1,
+    ollama_provider_invocations: mode === 'ollama-only' || mode === 'hybrid' ? BATCHES.length : 0,
+    codex_provider_invocations: mode === 'codex-only' || mode === 'hybrid' ? 1 : 0
   };
 }
 
@@ -151,6 +151,8 @@ async function runWorkflow() {
   const themeSlug = explicitThemeSlug || themeSlugForPrompt(promptFile, defaults.paths, { createDirs: !dryRun });
   const reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
   const foundExistingArtifacts = existingArtifacts(themeSlug, defaults.paths);
+  const promptContract = parsePromptContract(path.join(root, promptFile));
+  const promptCoverage = buildCoverage(promptContract, BATCHES);
 
   if (dryRun) {
     console.log(JSON.stringify({
@@ -158,14 +160,22 @@ async function runWorkflow() {
       report_dir: path.relative(root, reportDir).replace(/\\/g, '/'),
       theme_dir: `${defaults.paths.themes}/${themeSlug}`,
       requested: { mode, prompt: promptFile, template: templateName, ollama_model: usesOllama ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '', timeouts },
+      prompt_contract: {
+        sections: promptContract.sections.map((section) => section.number),
+        section_count: promptContract.sections.length,
+        total_characters: promptContract.total_characters,
+        estimated_tokens: promptContract.estimated_tokens
+      },
+      prompt_coverage: promptCoverage,
       stages: [
         { stage: 'prepare_theme', owner: 'script' },
         ...plan.map((stage) => ({ stage, owner: stage.startsWith('ollama') ? 'ollama' : 'codex' })),
         { stage: 'build_theme_assets', owner: 'script' },
-        { stage: 'validate_theme', owner: 'script' },
+        { stage: 'validate_theme_source', owner: 'script' },
         { stage: 'generate_preview', owner: 'script' },
         { stage: 'rebuild_preview_gallery', owner: 'script' },
         { stage: 'package_theme', owner: 'script' },
+        { stage: 'validate_theme_artifacts', owner: 'script' },
         { stage: 'write_run_summary', owner: 'script' }
       ],
       expected_invocations: expectedInvocations(mode),
@@ -175,9 +185,9 @@ async function runWorkflow() {
   }
 
   if (explicitThemeSlug && foundExistingArtifacts.length > 0 && !replaceExistingTheme) {
-    fail(`Theme slug already has artifacts. Re-run with --replace-existing-theme after reviewing: ${foundExistingArtifacts.join(', ')}`);
+    fail(`Theme slug already has artifacts. Use a new unique slug or the explicit cleanup command first: ${foundExistingArtifacts.join(', ')}`);
   }
-  if (explicitThemeSlug && replaceExistingTheme) removeThemeArtifacts(themeSlug, defaults.paths);
+  if (replaceExistingTheme) fail('--replace-existing-theme is disabled for generation runs. Use npm run theme:delete for exact-slug cleanup.');
 
   const state = {
     mode,
@@ -194,6 +204,7 @@ async function runWorkflow() {
   };
   writeJson(path.join(reportDir, 'workflow.state.json'), state);
   writeJson(path.join(reportDir, 'run.config.json'), state);
+  writeJson(path.join(reportDir, 'prompt-coverage.json'), promptCoverage);
 
   await runSafe(state, 'model-check', () => {
     if (usesOllama) checkOllamaAccess({ model: ollamaModel, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
@@ -223,9 +234,11 @@ async function runWorkflow() {
   state.status = 'building';
   await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: timeouts.command_timeout_ms, reportPath: path.join(reportDir, 'build.report.json') }));
   state.status = 'finalizing';
-  await runSafe(state, 'validate-theme', () => validateTheme({ themeSlug, template: templateName, output: path.join(reportDir, 'validation.final.json') }));
+  await runSafe(state, 'validate-theme-source', () => validateTheme({ themeSlug, template: templateName, phase: 'source', output: path.join(reportDir, 'validation.source.json') }));
   await runSafe(state, 'preview-theme', () => previewTheme({ themeSlug, rebuildIndex: true }));
   await runSafe(state, 'package-theme', () => packageTheme({ themeSlug }));
+  await runSafe(state, 'validate-theme-artifacts', () => validateTheme({ themeSlug, template: templateName, phase: 'artifacts', output: path.join(reportDir, 'validation.artifacts.json') }));
+  await runSafe(state, 'validate-theme-final', () => validateTheme({ themeSlug, template: templateName, phase: 'final', output: path.join(reportDir, 'validation.final.json') }));
   state.status = state.steps.some((step) => step.status === 'failed') ? 'completed-with-failures' : 'completed';
   writeJson(path.join(reportDir, 'workflow.state.json'), state);
   writeJson(path.join(reportDir, 'workflow.summary.json'), state);
@@ -234,10 +247,32 @@ async function runWorkflow() {
 }
 
 if (args.resume) {
-  fail('Resume is limited to safe finalization in the simplified runner; rerun the workflow with the original arguments if generation never started.');
-}
-
-if (require.main === module) {
+  (async () => {
+    const themeSlug = assertThemeSlug(arg(args, 'theme-slug', ''));
+    const templateName = arg(args, 'template', '');
+    const reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
+    const commandTimeoutMs = positiveInteger(arg(args, 'command-timeout-ms', defaults.validation.command_timeout_ms || 120000), '--command-timeout-ms');
+    const state = {
+      mode: 'resume-finalization',
+      status: 'finalizing',
+      theme_slug: themeSlug,
+      report_dir: reportDir,
+      ai_invocations: { ollama_provider_invocations: 0, codex_provider_invocations: 0 },
+      steps: []
+    };
+    writeJson(path.join(reportDir, 'workflow.resume.state.json'), state);
+    await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: commandTimeoutMs, reportPath: path.join(reportDir, 'build.resume.report.json') }));
+    await runSafe(state, 'validate-theme-source', () => validateTheme({ themeSlug, template: templateName, phase: 'source', output: path.join(reportDir, 'validation.source.json') }));
+    await runSafe(state, 'preview-theme', () => previewTheme({ themeSlug, rebuildIndex: true }));
+    await runSafe(state, 'package-theme', () => packageTheme({ themeSlug }));
+    await runSafe(state, 'validate-theme-artifacts', () => validateTheme({ themeSlug, template: templateName, phase: 'artifacts', output: path.join(reportDir, 'validation.artifacts.json') }));
+    await runSafe(state, 'validate-theme-final', () => validateTheme({ themeSlug, template: templateName, phase: 'final', output: path.join(reportDir, 'validation.final.json') }));
+    state.status = state.steps.some((step) => step.status === 'failed') ? 'completed-with-failures' : 'completed';
+    writeJson(path.join(reportDir, 'workflow.resume.state.json'), state);
+    console.log(`Resume ${state.status} for ${themeSlug}`);
+    process.exit(state.status === 'completed' ? 0 : 1);
+  })().catch((error) => fail(error.message));
+} else if (require.main === module) {
   runWorkflow().then((code) => process.exit(code)).catch((error) => fail(error.message));
 }
 

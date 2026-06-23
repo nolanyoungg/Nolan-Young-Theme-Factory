@@ -19,8 +19,7 @@ const templateName = arg(args, 'template', positionalTemplate || process.env.THE
 const requestedThemeSlug = arg(args, 'theme-slug', process.env.THEME_SLUG || '');
 
 function fail(message) {
-  console.error(`ERROR: ${message}`);
-  process.exit(1);
+  throw new Error(message);
 }
 
 function updateJson(file, updater) {
@@ -95,8 +94,8 @@ function prepareTheme(options = {}) {
   fs.mkdirSync(path.join(themeDir, '.generation'), { recursive: true });
   fs.writeFileSync(path.join(themeDir, '.generation', 'template.manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
   fs.writeFileSync(path.join(themeDir, '.generation', 'prepared-theme-manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-  fs.writeFileSync(path.join(themeDir, '.generation', 'prepared-theme-hashes.json'), `${JSON.stringify({ created_at: new Date().toISOString(), files: hashThemeFiles(themeDir) }, null, 2)}\n`);
   fs.writeFileSync(path.join(themeDir, '.theme-template-source'), `template=${selectedTemplate}\nprepared_slug=${themeSlug}\n`);
+  fs.writeFileSync(path.join(themeDir, '.generation', 'prepared-theme-hashes.json'), `${JSON.stringify({ created_at: new Date().toISOString(), excludes: ['.generation/prepared-theme-hashes.json'], files: hashThemeFiles(themeDir).filter((entry) => entry.path !== '.generation/prepared-theme-hashes.json') }, null, 2)}\n`);
 
   console.log(`Prepared theme folder: wp-content/themes/${themeSlug}`);
   console.log(`Template source: wordpress-themplate-themes/${selectedTemplate}`);
@@ -104,6 +103,13 @@ function prepareTheme(options = {}) {
   return { themeSlug, themeDir, templateName: selectedTemplate };
 }
 
-if (require.main === module) prepareTheme();
+if (require.main === module) {
+  try {
+    prepareTheme();
+  } catch (error) {
+    console.error(`ERROR: ${error.message}`);
+    process.exit(1);
+  }
+}
 
 module.exports = { prepareTheme };

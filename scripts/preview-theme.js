@@ -87,6 +87,12 @@ function date_i18n($format){return date($format);} function current_time($type='
 function comments_open(){return false;} function have_comments(){return false;} function wp_list_comments(){} function comment_form(){echo '<form class="comment-form"></form>';}
 function do_shortcode(){return '<form class="contact-form-preview"></form>';} function wp_nonce_field(){} function wp_verify_nonce(){return true;} function wp_mail(){return true;}
 function get_option($n,$d=false){return $d;} function current_user_can(){return true;} function wp_safe_redirect(){} function is_email($v){return true;}
+function get_theme_mod($n,$d=false){return $d;} function selected($s,$c=true,$e=true){$r=((string)$s===(string)$c)?' selected="selected"':''; if($e)echo $r; return $r;}
+function checked($s,$c=true,$e=true){$r=((string)$s===(string)$c)?' checked="checked"':''; if($e)echo $r; return $r;}
+function get_posts($a=[]){return [];} class WP_Query{public function __construct($a=[]){$this->posts=[];} public function have_posts(){return false;} public function the_post(){}}
+function wp_get_attachment_image(){return '';} function get_post_meta($id,$k='',$single=false){return $single?'':[];}
+function register_sidebar(){} function dynamic_sidebar(){return false;} function is_active_sidebar(){return false;} function paginate_links(){return '';}
+function get_search_query(){return '';} function the_posts_pagination(){} function add_menu_page(){} function add_submenu_page(){}
 require $themeDir . DIRECTORY_SEPARATOR . 'functions.php';
 ob_start();
 include $themeDir . DIRECTORY_SEPARATOR . $sourceRelative;
@@ -109,18 +115,20 @@ function generatePreview(options = {}) {
   const slug = assertThemeSlug(options.themeSlug || themeSlug);
   const themeDir = path.join(root, 'wp-content', 'themes', slug);
   const previewDir = path.join(root, 'docs', 'Preview-Themes-Github', slug);
+  const candidateDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.candidate-${process.pid}-${Date.now()}`);
+  const backupDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.backup-${process.pid}-${Date.now()}`);
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${slug}`);
   if (runCommand('php', ['-v'], { echo: false }).status !== 0) fail('php command is required for preview rendering.');
 
-  fs.rmSync(previewDir, { recursive: true, force: true });
-  fs.mkdirSync(path.join(previewDir, 'assets', 'css'), { recursive: true });
-  fs.mkdirSync(path.join(previewDir, 'assets', 'js'), { recursive: true });
-  fs.mkdirSync(path.join(previewDir, 'assets', 'images'), { recursive: true });
-  fs.mkdirSync(path.join(previewDir, 'assets', 'icons'), { recursive: true });
-  if (!copyIfExists(path.join(themeDir, 'assets', 'css', 'bundle.css'), path.join(previewDir, 'assets', 'css', 'preview.css'))) fail('Built CSS bundle missing; cannot render preview.');
-  copyIfExists(path.join(themeDir, 'assets', 'js', 'bundle.js'), path.join(previewDir, 'assets', 'js', 'preview.js'));
-  copyIfExists(path.join(themeDir, 'assets', 'images'), path.join(previewDir, 'assets', 'images'));
-  copyIfExists(path.join(themeDir, 'assets', 'icons'), path.join(previewDir, 'assets', 'icons'));
+  fs.rmSync(candidateDir, { recursive: true, force: true });
+  fs.mkdirSync(path.join(candidateDir, 'assets', 'css'), { recursive: true });
+  fs.mkdirSync(path.join(candidateDir, 'assets', 'js'), { recursive: true });
+  fs.mkdirSync(path.join(candidateDir, 'assets', 'images'), { recursive: true });
+  fs.mkdirSync(path.join(candidateDir, 'assets', 'icons'), { recursive: true });
+  if (!copyIfExists(path.join(themeDir, 'assets', 'css', 'bundle.css'), path.join(candidateDir, 'assets', 'css', 'preview.css'))) fail('Built CSS bundle missing; cannot render preview.');
+  copyIfExists(path.join(themeDir, 'assets', 'js', 'bundle.js'), path.join(candidateDir, 'assets', 'js', 'preview.js'));
+  copyIfExists(path.join(themeDir, 'assets', 'images'), path.join(candidateDir, 'assets', 'images'));
+  copyIfExists(path.join(themeDir, 'assets', 'icons'), path.join(candidateDir, 'assets', 'icons'));
 
   const pages = [
     ['index.html', 'front-page.php', 'Homepage'],
@@ -134,11 +142,24 @@ function generatePreview(options = {}) {
     ['policy_preview.html', 'page-templates/template-policy.php', 'Policy']
   ];
   for (const [file, source, title] of pages) {
-    fs.writeFileSync(path.join(previewDir, file), renderWithPhp(themeDir, source, title), 'utf8');
+    fs.writeFileSync(path.join(candidateDir, file), renderWithPhp(themeDir, source, title), 'utf8');
   }
-  fs.writeFileSync(path.join(previewDir, 'README.md'), `# ${readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)}\n\nStatic preview for ${slug}.\n`, 'utf8');
+  const missing = pages.map(([file]) => file).filter((file) => !fs.existsSync(path.join(candidateDir, file)));
+  if (missing.length) fail(`Candidate preview missing expected page(s): ${missing.join(', ')}`);
+  const html = pages.map(([file]) => fs.readFileSync(path.join(candidateDir, file), 'utf8')).join('\n');
+  if (PREVIEW_RUNTIME_WARNING_PATTERN.test(html)) fail('Candidate preview contains warning or fatal output.');
+  fs.writeFileSync(path.join(candidateDir, 'README.md'), `# ${readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)}\n\nStatic preview for ${slug}.\n`, 'utf8');
+  if (fs.existsSync(previewDir)) fs.renameSync(previewDir, backupDir);
+  try {
+    fs.renameSync(candidateDir, previewDir);
+  } catch (error) {
+    if (fs.existsSync(previewDir)) fs.rmSync(previewDir, { recursive: true, force: true });
+    if (fs.existsSync(backupDir)) fs.renameSync(backupDir, previewDir);
+    throw error;
+  }
+  fs.rmSync(backupDir, { recursive: true, force: true });
   console.log(`Generated docs/Preview-Themes-Github/${slug}`);
-  return { passed: true, status: 0, preview_dir: previewDir };
+  return { passed: true, status: 0, preview_dir: previewDir, transactional: true };
 }
 
 function listSlugs(dir) {

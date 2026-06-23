@@ -24,9 +24,15 @@ function codexCommandName() {
   return process.platform === 'win32' ? 'codex.cmd' : 'codex';
 }
 
-function codexExecArgs(model, reasoning, extra = []) {
+function codexExecArgs(model, reasoning, extra = [], options = {}) {
+  const cd = options.cd || '';
+  const sandbox = options.sandbox || 'workspace-write';
   return [
     'exec',
+    ...(cd ? ['--cd', cd] : []),
+    '--sandbox',
+    sandbox,
+    '--ephemeral',
     '-m',
     model,
     '-c',
@@ -99,14 +105,8 @@ function checkCodexAccess({ model, reasoning, timeoutMs = 300000, live = false, 
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'theme-factory-codex-check-'));
     try {
       liveResult = runCommand(command, codexExecArgs(combination.model, combination.reasoning, [
-        '--sandbox',
-        'read-only',
         '--skip-git-repo-check',
-        '--cd',
-        tempDir,
-        '--ephemeral',
-        '--ignore-rules'
-      ]), {
+      ], { cd: tempDir, sandbox: 'read-only' }), {
         cwd: tempDir,
         debugDir: debugDir || providerDebugDir('codex'),
         echo: false,

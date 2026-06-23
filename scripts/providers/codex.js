@@ -9,6 +9,34 @@ function fail(message) {
   throw new Error(message);
 }
 
+function walkFiles(baseDir, out = []) {
+  if (!fs.existsSync(baseDir)) return out;
+  for (const entry of fs.readdirSync(baseDir, { withFileTypes: true })) {
+    if (['node_modules', '.git'].includes(entry.name)) continue;
+    const full = path.join(baseDir, entry.name);
+    if (entry.isDirectory()) walkFiles(full, out);
+    else out.push(full);
+  }
+  return out;
+}
+
+function repoSnapshot() {
+  const map = new Map();
+  for (const file of walkFiles(root)) {
+    const rel = path.relative(root, file).replace(/\\/g, '/');
+    const stat = fs.statSync(file);
+    map.set(rel, `${stat.size}:${Math.round(stat.mtimeMs)}`);
+  }
+  return map;
+}
+
+function changedSnapshotPaths(before, after, allowedPrefixes) {
+  const paths = new Set([...before.keys(), ...after.keys()]);
+  return [...paths].filter((item) => before.get(item) !== after.get(item))
+    .filter((item) => !allowedPrefixes.some((prefix) => item === prefix || item.startsWith(`${prefix}/`)))
+    .sort();
+}
+
 function walkThemeFiles(themeDir, out = []) {
   for (const entry of fs.readdirSync(themeDir, { withFileTypes: true })) {
     if (['node_modules', '.git', '.generation'].includes(entry.name)) continue;
@@ -66,7 +94,7 @@ ${promptText}
 
 ## Current Theme Context
 
-${currentThemeContext(options.themeSlug)}
+Inspect the complete prepared theme from the current working directory. Do not rely on a validation report, and do not ask for or perform a repair pass.
 `;
 }
 
@@ -87,7 +115,9 @@ async function runCodexGeneration(options) {
   fs.mkdirSync(path.dirname(briefPath), { recursive: true });
   fs.writeFileSync(briefPath, createBrief({ ...options, themeSlug, promptFile, model, reasoning }, passType), 'utf8');
   const stage = passType === 'finish' ? 'codex-finish' : 'codex-build';
-  const result = runCommand(process.platform === 'win32' ? 'codex.cmd' : 'codex', codexExecArgs(model, reasoning), {
+  const before = repoSnapshot();
+  const result = runCommand(process.platform === 'win32' ? 'codex.cmd' : 'codex', codexExecArgs(model, reasoning, [], { cd: themeDir, sandbox: 'workspace-write' }), {
+    cwd: themeDir,
     debugDir: path.join(reportDir, 'debug'),
     echo: false,
     echoSummary: true,
@@ -103,11 +133,19 @@ async function runCodexGeneration(options) {
   const outputPath = path.join(reportDir, passType === 'finish' ? 'codex.finish.output.txt' : 'codex.build.output.txt');
   fs.writeFileSync(outputPath, `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
   if (result.status !== 0) fail('Codex execution failed or is unavailable.');
-  return { passed: true, provider: 'codex', stage, status: result.status, output: outputPath };
+  const allowed = [
+    path.relative(root, themeDir).replace(/\\/g, '/'),
+    path.relative(root, reportDir).replace(/\\/g, '/')
+  ];
+  const outOfBound = changedSnapshotPaths(before, repoSnapshot(), allowed);
+  const boundaryReport = { stage, allowed_prefixes: allowed, out_of_bound_changes: outOfBound, passed: outOfBound.length === 0 };
+  fs.writeFileSync(path.join(reportDir, `${stage}.boundary.json`), `${JSON.stringify(boundaryReport, null, 2)}\n`, 'utf8');
+  if (outOfBound.length) fail(`Codex changed out-of-bound path(s): ${outOfBound.join(', ')}`);
+  return { passed: true, provider: 'codex', stage, status: result.status, output: outputPath, boundary: boundaryReport };
 }
 
 async function runCodexFinish(options) {
   return runCodexGeneration({ ...options, passType: 'finish' });
 }
 
-module.exports = { runCodexGeneration, runCodexFinish };
+module.exports = { createBrief, runCodexGeneration, runCodexFinish };

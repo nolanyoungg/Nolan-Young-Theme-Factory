@@ -1,0 +1,13 @@
+.template-container { width: min(100%, 1180px); margin-inline: auto; }
+.site-main,
+.site-header__inner,
+.site-footer__inner,
+.template-container,
+.section-inner {
+  width: min(100% - (var(--gutter) * 2), var(--container-width));
+  margin-inline: auto;
+}
+
+.section-inner {
+  padding-block: var(--section-space);
+}

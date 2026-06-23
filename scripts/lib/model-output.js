@@ -57,8 +57,9 @@ function normalizeRelativePath(input, themeSlug) {
   return value;
 }
 
-function parseExactFileBlocks(raw, themeSlug) {
+function parseExactFileBlocks(raw, themeSlug, options = {}) {
   const normalized = raw.replace(/\r\n/g, '\n');
+  if (options.allowNoChange && normalized.trim() === '---NO CHANGES---') return [];
   const blockPattern = /---FILE: ([^\n]+)---\n([\s\S]*?)\n---END FILE---/g;
   const files = [];
   let cursor = 0;
@@ -77,15 +78,20 @@ function parseExactFileBlocks(raw, themeSlug) {
   return files;
 }
 
-function assertContract(files, themeDir, allowedFiles, requiredFiles, allowedPatterns = []) {
-  const allowed = new Set(allowedFiles);
-  const required = new Set(requiredFiles.length ? requiredFiles : allowedFiles);
+function assertContract(files, themeDir, contract) {
+  const requiredFiles = contract.requiredFiles || [];
+  const optionalFiles = contract.optionalFiles || [];
+  const allowedPatterns = contract.allowedPatterns || [];
+  const overlap = requiredFiles.filter((file) => optionalFiles.includes(file));
+  if (overlap.length) fail(`Required file is also optional: ${overlap.join(', ')}`);
+  const required = new Set(requiredFiles);
+  const optional = new Set(optionalFiles);
   const seen = new Set();
   const patterns = allowedPatterns.map((pattern) => new RegExp(pattern));
   for (const file of files) {
     if (seen.has(file.relativePath)) fail(`Duplicate file returned: ${file.relativePath}`);
     seen.add(file.relativePath);
-    if (!allowed.has(file.relativePath) && !patterns.some((pattern) => pattern.test(file.relativePath))) fail(`Returned file is not in this stage allowlist: ${file.relativePath}`);
+    if (!required.has(file.relativePath) && !optional.has(file.relativePath) && !patterns.some((pattern) => pattern.test(file.relativePath))) fail(`Returned file is not in this stage allowlist: ${file.relativePath}`);
     const target = path.resolve(themeDir, file.relativePath);
     if (!target.startsWith(themeDir + path.sep)) fail(`Rejected path outside theme folder: ${file.relativePath}`);
   }
@@ -110,6 +116,61 @@ function copyDirectory(source, target) {
   fs.cpSync(source, target, { recursive: true, force: true });
 }
 
+function walkFiles(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkFiles(full, out);
+    else out.push(full);
+  }
+  return out;
+}
+
+function validateAssetManifest(candidateDir) {
+  const checks = [];
+  const manifestPath = path.join(candidateDir, 'assets/images/asset-manifest.json');
+  if (!fs.existsSync(manifestPath)) return [{ type: 'asset-manifest', passed: false, details: 'assets/images/asset-manifest.json is missing' }];
+  let parsed;
+  try {
+    parsed = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+    checks.push({ type: 'asset-manifest-json', passed: true, details: '' });
+  } catch (error) {
+    return [{ type: 'asset-manifest-json', passed: false, details: error.message }];
+  }
+  checks.push({ type: 'asset-manifest-version', passed: Boolean(parsed.manifest_version), details: 'manifest_version is required' });
+  checks.push({ type: 'asset-manifest-assets-array', passed: Array.isArray(parsed.assets), details: 'assets must be an array' });
+  if (!Array.isArray(parsed.assets)) return checks;
+  for (const asset of parsed.assets) {
+    const file = String(asset.file || '').replace(/\\/g, '/');
+    const safe = file && !path.isAbsolute(file) && !file.includes('..');
+    const target = path.resolve(candidateDir, 'assets/images', file);
+    const inside = target.startsWith(path.resolve(candidateDir, 'assets/images') + path.sep);
+    const original = /^original-|original/i.test(String(asset.kind || ''));
+    const thirdParty = !original;
+    checks.push({ type: 'asset-path-safe', file, passed: safe && inside, details: 'asset file must stay under assets/images' });
+    checks.push({ type: 'asset-file-exists', file, passed: safe && inside && fs.existsSync(target), details: 'manifest asset must exist' });
+    checks.push({ type: 'asset-kind-present', file, passed: Boolean(asset.kind), details: 'kind is required' });
+    checks.push({ type: 'asset-original-not-photo', file, passed: !(original && /photo/i.test(String(asset.kind))), details: 'original assets must not be classified as photographs' });
+    if (thirdParty) {
+      checks.push({ type: 'asset-third-party-provenance', file, passed: Boolean(asset.source_url && asset.creator && asset.license && asset.downloaded_at), details: 'third-party assets require source_url, creator, license, downloaded_at' });
+    }
+  }
+  return checks;
+}
+
+function validateReturnedAssets(candidateDir, changed) {
+  const checks = [];
+  for (const file of changed.filter((item) => item.endsWith('.svg'))) {
+    const text = fs.existsSync(path.join(candidateDir, file)) ? fs.readFileSync(path.join(candidateDir, file), 'utf8').trim() : '';
+    checks.push({ type: 'svg-basic-parse', file, passed: text.length > 0 && /<svg[\s>]/i.test(text) && /<\/svg>/i.test(text), details: 'SVG must be nonempty and contain svg root' });
+  }
+  for (const file of changed.filter((item) => /\.(png|jpe?g|webp|gif)$/i.test(item))) {
+    const target = path.join(candidateDir, file);
+    checks.push({ type: 'raster-nonempty', file, passed: fs.existsSync(target) && fs.statSync(target).size > 0, details: 'Raster asset must be nonempty' });
+  }
+  return checks;
+}
+
 function stageChecks(candidateDir, files, checkTypes = []) {
   const checks = [];
   const changed = files.map((file) => file.relativePath);
@@ -120,7 +181,8 @@ function stageChecks(candidateDir, files, checkTypes = []) {
       checks.push({ type: 'php-lint', file, passed: result.status === 0, details: result.stderr || result.stdout || '' });
     }
     const declarations = new Map();
-    for (const file of phpFiles) {
+    for (const full of walkFiles(candidateDir).filter((file) => file.endsWith('.php'))) {
+      const file = path.relative(candidateDir, full).replace(/\\/g, '/');
       const text = fs.readFileSync(path.join(candidateDir, file), 'utf8');
       let match;
       const pattern = /function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
@@ -129,8 +191,16 @@ function stageChecks(candidateDir, files, checkTypes = []) {
         declarations.get(match[1]).push(file);
       }
     }
-    const duplicates = [...declarations.entries()].filter(([, owners]) => owners.length > 1);
-    checks.push({ type: 'duplicate-functions', passed: duplicates.length === 0, details: duplicates.map(([name, owners]) => `${name}: ${owners.join(', ')}`).join('; ') });
+    const changedSet = new Set(phpFiles);
+    const duplicates = [...declarations.entries()]
+      .filter(([, owners]) => owners.length > 1)
+      .map(([name, owners]) => ({ name, files: owners, includes_changed_file: owners.some((file) => changedSet.has(file)) }))
+      .filter((item) => item.includes_changed_file);
+    checks.push({ type: 'duplicate-functions', passed: duplicates.length === 0, details: duplicates.map((item) => `${item.name}: ${item.files.join(', ')}`).join('; '), duplicates });
+  }
+  if (checkTypes.includes('assets')) {
+    checks.push(...validateReturnedAssets(candidateDir, changed));
+    checks.push(...validateAssetManifest(candidateDir));
   }
   if (checkTypes.includes('js')) {
     for (const file of changed.filter((item) => item.endsWith('.js'))) {
@@ -200,14 +270,13 @@ function applyModelOutput(options) {
   if (!THEME_SLUG_PATTERN.test(themeSlug)) fail(`Invalid theme folder slug: ${themeSlug}`);
   if (!sourceFile || !fs.existsSync(sourceFile)) fail(`Raw model response not found: ${sourceFile}`);
   if (!fs.existsSync(themeDir)) fail(`Theme folder not found: ${themeDir}`);
-  const allowedFiles = (options.allowedFiles || []).map((file) => normalizeRelativePath(file, themeSlug));
   const optionalFiles = (options.optionalFiles || []).map((file) => normalizeRelativePath(file, themeSlug));
   const requiredFiles = (options.requiredFiles || []).map((file) => normalizeRelativePath(file, themeSlug));
   const allowedPatterns = options.allowedPatterns || [];
-  if (allowedFiles.length + optionalFiles.length + allowedPatterns.length === 0) fail('A stage allowlist is required.');
+  if (requiredFiles.length + optionalFiles.length + allowedPatterns.length === 0) fail('A stage allowlist is required.');
   const raw = fs.readFileSync(sourceFile, 'utf8');
-  const files = parseExactFileBlocks(raw, themeSlug);
-  assertContract(files, themeDir, [...allowedFiles, ...optionalFiles], requiredFiles, allowedPatterns);
+  const files = parseExactFileBlocks(raw, themeSlug, { allowNoChange: options.allowNoChange });
+  assertContract(files, themeDir, { requiredFiles, optionalFiles, allowedPatterns });
   const hashesBefore = files.map((file) => {
     const target = path.join(themeDir, file.relativePath);
     return {
@@ -248,10 +317,10 @@ function applyModelOutput(options) {
       stage: options.stage || '',
       source_file: sourceFile,
       applied_at: new Date().toISOString(),
-      allowed_files: allowedFiles,
+      allowed_files: requiredFiles,
       optional_files: optionalFiles,
       allowed_patterns: allowedPatterns,
-      required_files: requiredFiles.length ? requiredFiles : allowedFiles,
+      required_files: requiredFiles,
       returned_files: files.map((file) => file.relativePath),
       hashes_before: hashesBefore,
       files_written: written,
@@ -280,8 +349,9 @@ if (require.main === module) {
     sourceFile,
     themeDir,
     stage: args.stage || '',
-    allowedFiles: parseCsv(args.allow || args.allowed || ''),
-    requiredFiles: parseCsv(args.required || ''),
+    requiredFiles: parseCsv(args.required || args.allow || args.allowed || ''),
+    optionalFiles: parseCsv(args.optional || ''),
+    allowedPatterns: parseCsv(args.patterns || ''),
     manifestPath: args.manifest || ''
   });
   console.log('Applied model output.');
@@ -289,5 +359,7 @@ if (require.main === module) {
 
 module.exports = {
   applyModelOutput,
+  assertContract,
+  validateAssetManifest,
   parseExactFileBlocks
 };

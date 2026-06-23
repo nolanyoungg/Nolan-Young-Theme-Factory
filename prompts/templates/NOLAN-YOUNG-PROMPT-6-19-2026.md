@@ -389,7 +389,7 @@ Avoid extremely thin font weights for essential information.
       - Website Care & Support
     
     - Right side per rail item MUST include:
-      - Local photo
+      - Approved local image from the asset inventory, or an original local illustration when no approved photograph was supplied
       - Premium title
       - Short editorial description
       - 3 to 5 bullet details

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { root } = require('../lib/repo-root');
 const { runCommand } = require('../lib/command-runner');
 const { checkCodexAccess, codexExecArgs } = require('../lib/model-access');
@@ -25,16 +26,27 @@ function repoSnapshot() {
   for (const file of walkFiles(root)) {
     const rel = path.relative(root, file).replace(/\\/g, '/');
     const stat = fs.statSync(file);
-    map.set(rel, `${stat.size}:${Math.round(stat.mtimeMs)}`);
+    map.set(rel, {
+      path: rel,
+      size: stat.size,
+      sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')
+    });
   }
   return map;
 }
 
-function changedSnapshotPaths(before, after, allowedPrefixes) {
+function snapshotDiff(before, after, allowedPrefixes) {
   const paths = new Set([...before.keys(), ...after.keys()]);
-  return [...paths].filter((item) => before.get(item) !== after.get(item))
-    .filter((item) => !allowedPrefixes.some((prefix) => item === prefix || item.startsWith(`${prefix}/`)))
-    .sort();
+  const diff = { added: [], deleted: [], modified: [] };
+  for (const item of [...paths].sort()) {
+    if (allowedPrefixes.some((prefix) => item === prefix || item.startsWith(`${prefix}/`))) continue;
+    const oldEntry = before.get(item);
+    const newEntry = after.get(item);
+    if (!oldEntry && newEntry) diff.added.push(newEntry);
+    else if (oldEntry && !newEntry) diff.deleted.push(oldEntry);
+    else if (oldEntry.sha256 !== newEntry.sha256) diff.modified.push({ before: oldEntry, after: newEntry });
+  }
+  return diff;
 }
 
 function walkThemeFiles(themeDir, out = []) {
@@ -137,10 +149,11 @@ async function runCodexGeneration(options) {
     path.relative(root, themeDir).replace(/\\/g, '/'),
     path.relative(root, reportDir).replace(/\\/g, '/')
   ];
-  const outOfBound = changedSnapshotPaths(before, repoSnapshot(), allowed);
-  const boundaryReport = { stage, allowed_prefixes: allowed, out_of_bound_changes: outOfBound, passed: outOfBound.length === 0 };
+  const outOfBound = snapshotDiff(before, repoSnapshot(), allowed);
+  const changedCount = outOfBound.added.length + outOfBound.deleted.length + outOfBound.modified.length;
+  const boundaryReport = { stage, allowed_prefixes: allowed, out_of_bound_changes: outOfBound, passed: changedCount === 0 };
   fs.writeFileSync(path.join(reportDir, `${stage}.boundary.json`), `${JSON.stringify(boundaryReport, null, 2)}\n`, 'utf8');
-  if (outOfBound.length) fail(`Codex changed out-of-bound path(s): ${outOfBound.join(', ')}`);
+  if (changedCount) fail(`Codex changed out-of-bound path(s): ${[...outOfBound.added, ...outOfBound.deleted, ...outOfBound.modified.map((item) => item.after)].map((item) => item.path).join(', ')}`);
   return { passed: true, provider: 'codex', stage, status: result.status, output: outputPath, boundary: boundaryReport };
 }
 
@@ -148,4 +161,4 @@ async function runCodexFinish(options) {
   return runCodexGeneration({ ...options, passType: 'finish' });
 }
 
-module.exports = { createBrief, runCodexGeneration, runCodexFinish };
+module.exports = { createBrief, repoSnapshot, snapshotDiff, runCodexGeneration, runCodexFinish };

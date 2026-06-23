@@ -95,21 +95,67 @@ function parsePromptContract(promptPath) {
   };
 }
 
-function buildCoverage(contract, stages, sharedSections = []) {
-  const bySection = new Map(contract.sections.map((section) => [section.number, []]));
+function requirementItems(contract) {
+  return contract.sections.flatMap((section) => [
+    { type: 'section', key: section.number, id: section.id, title: section.title, line_start: section.line_start, line_end: section.line_end, text: section.text },
+    ...section.subsections.map((subsection) => ({ type: 'subsection', key: subsection.id, id: subsection.id, section: section.number, title: subsection.title, line_start: subsection.line_start, line_end: subsection.line_end, text: subsection.text })),
+    ...section.features.map((feature) => ({ type: 'feature', key: feature.id, id: feature.id, section: section.number, title: feature.title, line_start: feature.line_start, line_end: feature.line_end, text: feature.text }))
+  ]);
+}
+
+function selectPromptSections(contract, sectionNumbers) {
+  const requested = sectionNumbers || [];
+  const seen = new Set();
+  for (const number of requested) {
+    if (seen.has(number)) throw new Error(`Duplicate prompt section requested: ${number}`);
+    seen.add(number);
+  }
+  const available = new Map(contract.sections.map((section) => [section.number, section]));
+  const missing = requested.filter((number) => !available.has(number));
+  if (missing.length) throw new Error(`Requested prompt section(s) do not exist: ${missing.join(', ')}`);
+  return contract.sections
+    .filter((section) => seen.has(section.number))
+    .map((section) => section.text)
+    .join('\n\n');
+}
+
+function expandStageRequirementIds(contract, stage) {
+  const explicit = stage.promptRequirements || [];
+  const sectionNumbers = stage.promptSections || [];
+  const ids = new Set(explicit);
+  for (const sectionNumber of sectionNumbers) {
+    const section = contract.sections.find((item) => item.number === sectionNumber);
+    if (!section) {
+      ids.add(sectionNumber);
+      continue;
+    }
+    ids.add(section.number);
+    ids.add(section.id);
+    section.subsections.forEach((subsection) => ids.add(subsection.id));
+    section.features.forEach((feature) => ids.add(feature.id));
+  }
+  return [...ids];
+}
+
+function buildCoverage(contract, stages, sharedRequirements = []) {
+  const items = requirementItems(contract);
+  const known = new Map(items.flatMap((item) => [[item.key, item], [item.id, item]]));
+  const shared = new Set(sharedRequirements);
+  const owners = new Map(items.map((item) => [item.id, []]));
   const referencedMissing = [];
   stages.forEach((stage) => {
-    (stage.promptSections || []).forEach((sectionNumber) => {
-      if (!bySection.has(sectionNumber)) referencedMissing.push({ stage: stage.name, section: sectionNumber });
-      else bySection.get(sectionNumber).push(stage.name);
+    expandStageRequirementIds(contract, stage).forEach((requirementId) => {
+      const item = known.get(requirementId);
+      if (!item) referencedMissing.push({ stage: stage.name, requirement: requirementId });
+      else if (!owners.get(item.id).includes(stage.name)) owners.get(item.id).push(stage.name);
     });
   });
   const uncovered = [];
   const multiplyOwned = [];
-  for (const section of contract.sections) {
-    const owners = bySection.get(section.number) || [];
-    if (owners.length === 0 && !sharedSections.includes(section.number)) uncovered.push(section.number);
-    if (owners.length > 1) multiplyOwned.push({ section: section.number, owners });
+  for (const item of items) {
+    const itemOwners = owners.get(item.id) || [];
+    if (itemOwners.length === 0 && !shared.has(item.id) && !shared.has(item.key)) uncovered.push({ type: item.type, id: item.id, title: item.title });
+    if (itemOwners.length > 1 && !shared.has(item.id) && !shared.has(item.key)) multiplyOwned.push({ type: item.type, id: item.id, owners: itemOwners });
   }
   return {
     all_sections: contract.sections.map((section) => ({
@@ -126,8 +172,15 @@ function buildCoverage(contract, stages, sharedSections = []) {
       line_start: subsection.line_start,
       line_end: subsection.line_end
     }))),
-    owning_generation_stages: Object.fromEntries([...bySection.entries()]),
-    shared_global_requirements: sharedSections,
+    all_features: contract.sections.flatMap((section) => section.features.map((feature) => ({
+      section: section.number,
+      title: feature.title,
+      id: feature.id,
+      line_start: feature.line_start,
+      line_end: feature.line_end
+    }))),
+    owning_generation_stages: Object.fromEntries([...owners.entries()]),
+    shared_global_requirements: sharedRequirements,
     uncovered_requirements: uncovered,
     multiply_owned_requirements: multiplyOwned,
     referenced_missing_requirements: referencedMissing,
@@ -137,26 +190,33 @@ function buildCoverage(contract, stages, sharedSections = []) {
 
 function assertCoverage(coverage) {
   if (coverage.referenced_missing_requirements.length) {
-    throw new Error(`Stage plan references nonexistent prompt section(s): ${coverage.referenced_missing_requirements.map((item) => `${item.stage}:${item.section}`).join(', ')}`);
+    throw new Error(`Stage plan references nonexistent prompt requirement(s): ${coverage.referenced_missing_requirements.map((item) => `${item.stage}:${item.requirement}`).join(', ')}`);
   }
   if (coverage.uncovered_requirements.length) {
-    throw new Error(`Prompt sections have no generation owner: ${coverage.uncovered_requirements.join(', ')}`);
+    throw new Error(`Prompt requirements have no generation owner: ${coverage.uncovered_requirements.map((item) => item.id).join(', ')}`);
   }
 }
 
-function promptSizeManifest(promptText, writableFiles, readonlyFiles, budgetCharacters) {
-  const creativeChars = promptText.length;
-  const writableChars = writableFiles.reduce((sum, file) => sum + (file.content || '').length, 0);
-  const readonlyChars = readonlyFiles.reduce((sum, file) => sum + (file.content || '').length, 0);
-  const total = creativeChars + writableChars + readonlyChars;
+function promptSizeManifest(parts, budgetCharacters) {
+  const creativeChars = parts.creativeText.length;
+  const sharedChars = parts.sharedText.length;
+  const requiredWritableChars = parts.requiredWritableFiles.reduce((sum, file) => sum + (file.content || '').length, 0);
+  const optionalWritableChars = parts.optionalWritableFiles.reduce((sum, file) => sum + (file.content || '').length, 0);
+  const readonlyChars = parts.readonlyFiles.reduce((sum, file) => sum + (file.content || '').length, 0);
+  const protocolChars = parts.protocolText.length;
+  const total = parts.finalPrompt.length;
   return {
     total_prompt_characters: total,
     estimated_tokens: Math.ceil(total / 4),
-    creative_requirement_characters: creativeChars,
-    writable_context_characters: writableChars,
+    stage_creative_requirement_characters: creativeChars,
+    shared_global_requirement_characters: sharedChars,
+    required_writable_context_characters: requiredWritableChars,
+    optional_writable_context_characters: optionalWritableChars,
     read_only_context_characters: readonlyChars,
-    number_of_writable_files: writableFiles.length,
-    number_of_read_only_files: readonlyFiles.length,
+    protocol_rules_characters: protocolChars,
+    number_of_required_writable_files: parts.requiredWritableFiles.length,
+    number_of_optional_writable_files: parts.optionalWritableFiles.length,
+    number_of_read_only_files: parts.readonlyFiles.length,
     budget_characters: budgetCharacters,
     within_budget: total <= budgetCharacters
   };
@@ -166,5 +226,7 @@ module.exports = {
   assertCoverage,
   buildCoverage,
   parsePromptContract,
-  promptSizeManifest
+  promptSizeManifest,
+  requirementItems,
+  selectPromptSections
 };

@@ -21,6 +21,7 @@ const {
   WALK_IGNORED_DIRECTORIES
 } = require('./lib/constants');
 const { assertThemeSlug, assertTemplateName, walkFiles } = require('./lib/theme-utils');
+const { validateAssetManifest } = require('./lib/model-output');
 
 const args = parseArgs(process.argv.slice(2));
 const themeSlug = arg(args, 'theme-slug', args._[0] || '');
@@ -157,6 +158,8 @@ async function validateTheme(options = {}) {
     add(checks, 'placeholder_content', placeholderFailures.length === 0, placeholderFailures.join(', '));
     add(checks, 'wordpress_quality', textFailures.length === 0, textFailures.join('; '));
     add(checks, 'missing_local_assets', missingAssets.length === 0, missingAssets.join('; '));
+    const assetChecks = validateAssetManifest(themeDir);
+    add(checks, 'asset_manifest', assetChecks.every((check) => check.passed), assetChecks.filter((check) => !check.passed).map((check) => `${check.type}${check.file ? `:${check.file}` : ''} ${check.details}`).join('; '));
 
     const declarations = new Map();
     for (const file of walkFiles(themeDir).filter((item) => item.endsWith('.php'))) {

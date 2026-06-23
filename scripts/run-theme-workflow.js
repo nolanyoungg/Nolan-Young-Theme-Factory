@@ -15,6 +15,7 @@ const { packageTheme } = require('./package-theme');
 const { runOllamaGeneration } = require('./providers/ollama');
 const { runCodexGeneration, runCodexFinish } = require('./providers/codex');
 const { BATCHES } = require('./lib/ollama-batches');
+const { validateStagePlan } = require('./lib/ollama-batches');
 const { buildCoverage, parsePromptContract } = require('./lib/prompt-contract');
 
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
@@ -81,6 +82,38 @@ function themeHashes(themeSlug) {
     path: path.relative(themeDir, file).replace(/\\/g, '/'),
     sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')
   })).sort((a, b) => a.path.localeCompare(b.path));
+}
+
+const RESUME_ALLOWED_MUTABLE_OUTPUTS = new Set([
+  'assets/css/bundle.css',
+  'assets/js/bundle.js',
+  'package-lock.json'
+]);
+
+function verifyFrozenSource(themeSlug, reportDir) {
+  const frozenPath = path.join(reportDir, 'generated-theme-hashes.json');
+  if (!fs.existsSync(frozenPath)) throw new Error(`Frozen generated source hash report not found: ${path.relative(root, frozenPath).replace(/\\/g, '/')}`);
+  const frozen = JSON.parse(fs.readFileSync(frozenPath, 'utf8')).files || [];
+  const current = themeHashes(themeSlug);
+  const expected = new Map(frozen.map((entry) => [entry.path, entry.sha256]));
+  const actual = new Map(current.map((entry) => [entry.path, entry.sha256]));
+  const drift = { changed_files: [], added_files: [], missing_files: [], allowed_mutable_files: [] };
+  for (const [file, expectedHash] of expected.entries()) {
+    const currentHash = actual.get(file);
+    if (!currentHash) drift.missing_files.push({ path: file, expected_hash: expectedHash, current_hash: '' });
+    else if (currentHash !== expectedHash) {
+      const item = { path: file, expected_hash: expectedHash, current_hash: currentHash };
+      if (RESUME_ALLOWED_MUTABLE_OUTPUTS.has(file)) drift.allowed_mutable_files.push(item);
+      else drift.changed_files.push(item);
+    }
+  }
+  for (const [file, currentHash] of actual.entries()) {
+    if (!expected.has(file) && !RESUME_ALLOWED_MUTABLE_OUTPUTS.has(file)) drift.added_files.push({ path: file, expected_hash: '', current_hash: currentHash });
+  }
+  const passed = drift.changed_files.length === 0 && drift.added_files.length === 0 && drift.missing_files.length === 0;
+  writeJson(path.join(reportDir, 'resume-source-drift.json'), { checked_at: new Date().toISOString(), allowed_mutable_outputs: [...RESUME_ALLOWED_MUTABLE_OUTPUTS], passed, ...drift });
+  if (!passed) throw new Error(`Frozen generated source drift detected. See ${path.relative(root, path.join(reportDir, 'resume-source-drift.json')).replace(/\\/g, '/')}`);
+  return { passed: true, drift };
 }
 
 function resultFailed(result) {
@@ -153,6 +186,7 @@ async function runWorkflow() {
   const foundExistingArtifacts = existingArtifacts(themeSlug, defaults.paths);
   const promptContract = parsePromptContract(path.join(root, promptFile));
   const promptCoverage = buildCoverage(promptContract, BATCHES);
+  validateStagePlan(BATCHES);
 
   if (dryRun) {
     console.log(JSON.stringify({
@@ -261,6 +295,8 @@ if (args.resume) {
       steps: []
     };
     writeJson(path.join(reportDir, 'workflow.resume.state.json'), state);
+    await runSafe(state, 'verify-frozen-source', () => verifyFrozenSource(themeSlug, reportDir), { blocking: true });
+    if (state.status === 'blocked') process.exit(2);
     await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: commandTimeoutMs, reportPath: path.join(reportDir, 'build.resume.report.json') }));
     await runSafe(state, 'validate-theme-source', () => validateTheme({ themeSlug, template: templateName, phase: 'source', output: path.join(reportDir, 'validation.source.json') }));
     await runSafe(state, 'preview-theme', () => previewTheme({ themeSlug, rebuildIndex: true }));
@@ -276,4 +312,4 @@ if (args.resume) {
   runWorkflow().then((code) => process.exit(code)).catch((error) => fail(error.message));
 }
 
-module.exports = { modePlan, runWorkflow };
+module.exports = { modePlan, runWorkflow, verifyFrozenSource };

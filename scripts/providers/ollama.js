@@ -5,8 +5,8 @@ const { runCommand } = require('../lib/command-runner');
 const { checkOllamaAccess } = require('../lib/model-access');
 const { assertThemeSlug, safeRelativePath } = require('../lib/theme-utils');
 const { applyModelOutput } = require('../lib/model-output');
-const { BATCHES, creativePromptFromBrief, OUTPUT_FORMAT, SHARED_GENERATION_RULES } = require('../lib/ollama-batches');
-const { assertCoverage, buildCoverage, parsePromptContract, promptSizeManifest } = require('../lib/prompt-contract');
+const { BATCHES, OUTPUT_FORMAT, SHARED_GENERATION_RULES, SHARED_GLOBAL_REQUIREMENTS, validateStagePlan } = require('../lib/ollama-batches');
+const { assertCoverage, buildCoverage, parsePromptContract, promptSizeManifest, selectPromptSections } = require('../lib/prompt-contract');
 
 function fail(message) {
   throw new Error(message);
@@ -47,12 +47,21 @@ function contextEntries(themeDir, files) {
   return files.map((file) => ({ path: file, content: readThemeFile(themeDir, file) }));
 }
 
-function batchPrompt(themeSlug, themeDir, brief, batch) {
+function declarationList(items, emptyText) {
+  return items.length ? items.map((file) => `- ${file}`).join('\n') : emptyText;
+}
+
+function batchPromptParts(themeSlug, themeDir, contract, batch) {
   const readonlyFiles = [
     ...(batch.readonly || []),
     ...(batch.readonlyDirectories || []).flatMap((dir) => directoryFiles(themeDir, dir))
   ];
-  return `You are editing a prepared WordPress theme folder.
+  const requiredFiles = batch.files || [];
+  const optionalFiles = batch.optionalFiles || [];
+  const allowedPatterns = batch.allowedPatterns || [];
+  const creativeText = selectPromptSections(contract, batch.promptSections || []);
+  const rulesText = `${OUTPUT_FORMAT}\n\nRules:\n${SHARED_GENERATION_RULES.map((rule) => `- ${rule}`).join('\n')}`;
+  const finalPrompt = `You are editing a prepared WordPress theme folder.
 
 Target folder:
 wp-content/themes/${themeSlug}/
@@ -62,13 +71,27 @@ Purpose: ${batch.focus}
 
 ## Creative Prompt
 
-${creativePromptFromBrief(brief)}
+${creativeText}
 
-## Writable Files
+${SHARED_GLOBAL_REQUIREMENTS}
 
-You must return every file below exactly once:
+## Required Writable Files
 
-${batch.files.map((file) => `- ${file}`).join('\n')}
+${declarationList(requiredFiles, 'No exact files are mandatory for this stage.')}
+
+Required files must be returned exactly once.
+
+## Optional Writable Files
+
+${declarationList(optionalFiles, 'No exact optional files are declared for this stage.')}
+
+Do not return optional files unless they are complete and needed.
+
+## Allowed New-File Patterns
+
+${declarationList(allowedPatterns, 'No pattern-created files are allowed for this stage.')}
+
+Pattern-created files may be returned only when needed, and every returned path must match one declared pattern.
 
 ## Read-Only Context
 
@@ -76,15 +99,23 @@ These files are provided only for integration context and must not be returned:
 
 ${readonlyFiles.length ? readonlyFiles.map((file) => `- ${file}`).join('\n') : '- No additional read-only files for this stage.'}
 
-${fileContext(themeDir, 'Current Writable File', batch.files)}
+${fileContext(themeDir, 'Current Required Writable File', requiredFiles)}
+
+${optionalFiles.length ? fileContext(themeDir, 'Current Optional Writable File', optionalFiles) : ''}
 
 ${readonlyFiles.length ? fileContext(themeDir, 'Read-Only Context File', readonlyFiles) : ''}
 
-${OUTPUT_FORMAT}
-
-Rules:
-${SHARED_GENERATION_RULES.map((rule) => `- ${rule}`).join('\n')}
+${rulesText}
 `;
+  return {
+    finalPrompt,
+    creativeText,
+    sharedText: SHARED_GLOBAL_REQUIREMENTS,
+    protocolText: rulesText,
+    requiredWritableFiles: contextEntries(themeDir, requiredFiles),
+    optionalWritableFiles: contextEntries(themeDir, optionalFiles),
+    readonlyFiles: contextEntries(themeDir, readonlyFiles)
+  };
 }
 
 async function runOllamaGeneration(options) {
@@ -96,6 +127,7 @@ async function runOllamaGeneration(options) {
   const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${themeSlug}`);
   if (!fs.existsSync(path.join(root, promptFile))) fail(`Prompt file missing: ${promptFile}`);
+  validateStagePlan(BATCHES);
   checkOllamaAccess({ model, live: false, timeoutMs });
   const contract = parsePromptContract(path.join(root, promptFile));
   const coverage = buildCoverage(contract, BATCHES);
@@ -103,8 +135,7 @@ async function runOllamaGeneration(options) {
   fs.mkdirSync(reportDir, { recursive: true });
   fs.writeFileSync(path.join(reportDir, 'prompt-coverage.json'), `${JSON.stringify(coverage, null, 2)}\n`, 'utf8');
 
-  const briefPath = createGenerationBrief(themeSlug, promptFile, options.mode || 'ollama-only');
-  const brief = fs.readFileSync(path.join(root, briefPath), 'utf8');
+  createGenerationBrief(themeSlug, promptFile, options.mode || 'ollama-only');
   const generationDir = path.join(reportDir, 'ollama-generation');
   fs.mkdirSync(generationDir, { recursive: true });
   const results = [];
@@ -112,20 +143,12 @@ async function runOllamaGeneration(options) {
     const promptPath = path.join(generationDir, `ollama-${batch.name}-prompt.md`);
     const rawOutput = path.join(generationDir, `ollama-${batch.name}-raw.md`);
     const manifestPath = path.join(generationDir, `ollama-${batch.name}-application.json`);
-    const readonlyFiles = [
-      ...(batch.readonly || []),
-      ...(batch.readonlyDirectories || []).flatMap((dir) => directoryFiles(themeDir, dir))
-    ];
-    const sizeManifest = promptSizeManifest(
-      creativePromptFromBrief(brief),
-      contextEntries(themeDir, batch.files),
-      contextEntries(themeDir, readonlyFiles),
-      Number(options.contextBudgetCharacters || 180000)
-    );
+    const promptParts = batchPromptParts(themeSlug, themeDir, contract, batch);
+    const sizeManifest = promptSizeManifest(promptParts, Number(options.contextBudgetCharacters || 180000));
     const stageManifestPath = path.join(generationDir, `ollama-${batch.name}-stage-manifest.json`);
     fs.writeFileSync(stageManifestPath, `${JSON.stringify({ stage: batch.name, prompt_sections: batch.promptSections || [], ...sizeManifest }, null, 2)}\n`, 'utf8');
     if (!sizeManifest.within_budget) fail(`Ollama stage ${batch.name} exceeds context budget (${sizeManifest.total_prompt_characters} > ${sizeManifest.budget_characters}). Split the stage; requirements and file context were not truncated.`);
-    fs.writeFileSync(promptPath, batchPrompt(themeSlug, themeDir, brief, batch), 'utf8');
+    fs.writeFileSync(promptPath, promptParts.finalPrompt, 'utf8');
     const result = runCommand('ollama', ['run', model, '--nowordwrap'], {
       debugDir: path.join(reportDir, 'debug'),
       echo: false,
@@ -146,10 +169,9 @@ async function runOllamaGeneration(options) {
       sourceFile: rawOutput,
       themeDir,
       stage: batch.name,
-      allowedFiles: batch.files,
+      requiredFiles: batch.files || [],
       optionalFiles: batch.optionalFiles || [],
       allowedPatterns: batch.allowedPatterns || [],
-      requiredFiles: batch.files,
       manifestPath,
       candidateEvidenceDir: path.join(generationDir, `ollama-${batch.name}-failed-candidate`)
     });
@@ -157,4 +179,4 @@ async function runOllamaGeneration(options) {
   return { passed: true, status: 0, provider: 'ollama', results };
 }
 
-module.exports = { runOllamaGeneration };
+module.exports = { batchPromptParts, runOllamaGeneration };

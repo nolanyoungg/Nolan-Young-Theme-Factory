@@ -21,6 +21,16 @@ const SHARED_GENERATION_RULES = [
   'Before responding, check that every assigned file is complete and that all braces, parentheses, quotes, PHP blocks, and HTML structures are balanced.'
 ];
 
+const SHARED_GLOBAL_REQUIREMENTS = `## Shared Global Requirements
+
+- Edit only the prepared generated-theme folder.
+- Do not use CDN dependencies, remote fonts, remote images, secrets, or machine-specific paths.
+- Return complete files through the strict file-block protocol.
+- Preserve valid WordPress escaping, sanitization, PHP syntax, and local asset references.
+- Do not leave placeholder content, TODOs, Lorem Ipsum, or future-work instructions.
+- Use approved local assets from the asset inventory, or original local SVG marks, icons, textures, and illustrations when no approved photograph was supplied.
+- Apply the definition-of-done rules that directly affect this stage's files.`;
+
 const BATCHES = [
   {
     name: 'foundation',
@@ -163,7 +173,7 @@ const BATCHES = [
   {
     name: 'page-interaction-javascript',
     files: ['src/js/main.js'],
-    readonly: ['src/js/main.js', 'header.php', 'footer.php', 'front-page.php'],
+    readonly: ['header.php', 'footer.php', 'front-page.php'],
     readonlyDirectories: ['template-parts', 'page-templates'],
     promptSections: ['07', '11', '12', '13', '15'],
     focus: 'Preserve navigation behavior and add FAQ accordions, work filtering, carousels, before-after behavior, reduced motion handling, and content interactions.'
@@ -187,6 +197,34 @@ const BATCHES = [
   }
 ];
 
+function validateStagePlan(batches = BATCHES) {
+  const errors = [];
+  for (const batch of batches) {
+    const required = batch.files || [];
+    const optional = batch.optionalFiles || [];
+    const readonly = batch.readonly || [];
+    const readonlyDirs = batch.readonlyDirectories || [];
+    const exactGroups = [
+      ['required', required],
+      ['optional', optional],
+      ['readonly', readonly],
+      ['readonlyDirectories', readonlyDirs]
+    ];
+    for (const [label, values] of exactGroups) {
+      const seen = new Set();
+      values.forEach((value) => {
+        if (seen.has(value)) errors.push(`${batch.name}: duplicate ${label} path ${value}`);
+        seen.add(value);
+      });
+    }
+    required.filter((file) => optional.includes(file)).forEach((file) => errors.push(`${batch.name}: required file is also optional: ${file}`));
+    required.filter((file) => readonly.includes(file)).forEach((file) => errors.push(`${batch.name}: required file is also read-only: ${file}`));
+    optional.filter((file) => readonly.includes(file)).forEach((file) => errors.push(`${batch.name}: optional file is also read-only: ${file}`));
+  }
+  if (errors.length) throw new Error(`Invalid Ollama stage plan:\n${errors.join('\n')}`);
+  return true;
+}
+
 function creativePromptFromBrief(brief) {
   const marker = '\n## Creative Prompt\n';
   const markerIndex = brief.indexOf(marker);
@@ -197,5 +235,7 @@ module.exports = {
   BATCHES,
   creativePromptFromBrief,
   OUTPUT_FORMAT,
-  SHARED_GENERATION_RULES
+  SHARED_GENERATION_RULES,
+  SHARED_GLOBAL_REQUIREMENTS,
+  validateStagePlan
 };

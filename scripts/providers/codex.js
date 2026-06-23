@@ -9,12 +9,31 @@ function fail(message) {
   throw new Error(message);
 }
 
+function walkThemeFiles(themeDir, out = []) {
+  for (const entry of fs.readdirSync(themeDir, { withFileTypes: true })) {
+    if (['node_modules', '.git', '.generation'].includes(entry.name)) continue;
+    const full = path.join(themeDir, entry.name);
+    if (entry.isDirectory()) walkThemeFiles(full, out);
+    else if (entry.isFile() && !/\.(png|jpe?g|webp|gif|zip)$/i.test(entry.name)) out.push(full);
+  }
+  return out;
+}
+
+function currentThemeContext(themeSlug) {
+  const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
+  return walkThemeFiles(themeDir)
+    .sort()
+    .map((file) => {
+      const relative = path.relative(themeDir, file).replace(/\\/g, '/');
+      const text = fs.readFileSync(file, 'utf8');
+      return `## Current File: ${relative}\n\n\`\`\`text\n${text}\n\`\`\``;
+    })
+    .join('\n\n');
+}
+
 function createBrief(options, passType) {
   const themeDir = `wp-content/themes/${options.themeSlug}`;
   const promptText = fs.readFileSync(path.join(root, options.promptFile), 'utf8').trim();
-  const validationText = options.validationPath && fs.existsSync(options.validationPath)
-    ? fs.readFileSync(options.validationPath, 'utf8').trim()
-    : '';
   return `# Codex Theme ${passType === 'finish' ? 'Finish' : 'Generation'} Brief
 
 Mode: ${options.mode}
@@ -35,17 +54,19 @@ ${themeDir}/
 
 Do not create, modify, delete, rename, or move files outside that folder. Do not generate previews, update docs, package ZIP files, edit prompts, edit scripts, or run watch/dev/server commands.
 
-${passType === 'finish' ? 'Finish the existing Ollama draft in one Codex pass.' : 'Implement the requested WordPress theme completely in one Codex generation pass.'}
+${passType === 'finish' ? 'Finish, improve, and unify the existing Ollama draft in this one planned Codex pass.' : 'Implement the requested WordPress theme completely in one Codex generation pass.'}
 
 Use local assets only. Do not add secrets, CDN dependencies, remote images, or machine-specific paths. Preserve every required file from the selected template. Leave the theme ready for deterministic build, validation, preview, and packaging.
+
+This brief is not a validation-failure checklist. Do not treat this as a build cleanup or repair pass; it is the planned creative generation stage for the selected mode.
 
 ## Creative Prompt
 
 ${promptText}
 
-## Current Validation Report
+## Current Theme Context
 
-${validationText || '(No validation report is available yet.)'}
+${currentThemeContext(options.themeSlug)}
 `;
 }
 
@@ -82,7 +103,7 @@ async function runCodexGeneration(options) {
   const outputPath = path.join(reportDir, passType === 'finish' ? 'codex.finish.output.txt' : 'codex.build.output.txt');
   fs.writeFileSync(outputPath, `${result.stdout || ''}${result.stderr || ''}`, 'utf8');
   if (result.status !== 0) fail('Codex execution failed or is unavailable.');
-  return { provider: 'codex', stage, status: result.status, output: outputPath };
+  return { passed: true, provider: 'codex', stage, status: result.status, output: outputPath };
 }
 
 async function runCodexFinish(options) {

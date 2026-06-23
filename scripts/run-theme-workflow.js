@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const crypto = require('crypto');
 const path = require('path');
 const { root } = require('./lib/repo-root');
 const { parseArgs, arg, flag } = require('./lib/args');
@@ -13,6 +14,7 @@ const { previewTheme } = require('./preview-theme');
 const { packageTheme } = require('./package-theme');
 const { runOllamaGeneration } = require('./providers/ollama');
 const { runCodexGeneration, runCodexFinish } = require('./providers/codex');
+const { BATCHES } = require('./lib/ollama-batches');
 
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
 const args = parseArgs(process.argv.slice(2));
@@ -38,11 +40,11 @@ function positiveInteger(value, label) {
 function modePlan(mode) {
   switch (mode) {
     case 'ollama-only':
-      return ['ollama-generation'];
+      return BATCHES.map((batch) => `ollama-${batch.name}`);
     case 'codex-only':
       return ['codex-generation'];
     case 'hybrid':
-      return ['ollama-generation', 'codex-finish'];
+      return [...BATCHES.map((batch) => `ollama-${batch.name}`), 'codex-finish'];
     default:
       fail(`Unsupported mode: ${mode}`);
   }
@@ -50,7 +52,7 @@ function modePlan(mode) {
 
 function expectedInvocations(mode) {
   return {
-    ollama_generation: mode === 'ollama-only' || mode === 'hybrid' ? 5 : 0,
+    ollama_generation: mode === 'ollama-only' || mode === 'hybrid' ? BATCHES.length : 0,
     codex_generation: mode === 'codex-only' ? 1 : 0,
     codex_finish: mode === 'hybrid' ? 1 : 0,
     total_ai_passes: mode === 'hybrid' ? 2 : 1
@@ -60,6 +62,32 @@ function expectedInvocations(mode) {
 function writeJson(file, value) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+function walkFiles(dir, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (['node_modules', '.git'].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) walkFiles(full, out);
+    else out.push(full);
+  }
+  return out;
+}
+
+function themeHashes(themeSlug) {
+  const themeDir = path.join(root, defaults.paths.themes, themeSlug);
+  return walkFiles(themeDir).map((file) => ({
+    path: path.relative(themeDir, file).replace(/\\/g, '/'),
+    sha256: crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex')
+  })).sort((a, b) => a.path.localeCompare(b.path));
+}
+
+function resultFailed(result) {
+  if (!result) return false;
+  if (result.passed === false || result.ok === false) return true;
+  if (Number.isInteger(result.status) && result.status !== 0) return true;
+  return false;
 }
 
 function recordStep(state, name, status, details = '') {
@@ -73,6 +101,11 @@ async function runSafe(state, name, fn, options = {}) {
   writeJson(path.join(state.report_dir, 'workflow.state.json'), state);
   try {
     const result = await fn();
+    if (resultFailed(result)) {
+      recordStep(state, name, 'failed', JSON.stringify(result));
+      if (options.blocking) state.status = 'blocked';
+      return { ok: false, result };
+    }
     recordStep(state, name, 'passed');
     return { ok: true, result };
   } catch (error) {
@@ -109,7 +142,8 @@ async function runWorkflow() {
   if (!promptFile) fail('Missing --prompt');
   if (!fs.existsSync(path.join(root, promptFile))) fail(`Prompt file not found: ${promptFile}`);
   if (!fs.existsSync(path.join(root, defaults.paths.templates, templateName))) fail(`Template not found: ${templateName}`);
-  if (plan.includes('ollama-generation')) validateOllamaModel(ollamaModel);
+  const usesOllama = plan.some((stage) => stage.startsWith('ollama-'));
+  if (usesOllama) validateOllamaModel(ollamaModel);
   const codexCombination = plan.some((stage) => stage.startsWith('codex'))
     ? validateKnownCodexReasoningCombination(codexModel, codexReasoningInput)
     : null;
@@ -123,7 +157,7 @@ async function runWorkflow() {
       theme_slug: themeSlug,
       report_dir: path.relative(root, reportDir).replace(/\\/g, '/'),
       theme_dir: `${defaults.paths.themes}/${themeSlug}`,
-      requested: { mode, prompt: promptFile, template: templateName, ollama_model: plan.includes('ollama-generation') ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '', timeouts },
+      requested: { mode, prompt: promptFile, template: templateName, ollama_model: usesOllama ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '', timeouts },
       stages: [
         { stage: 'prepare_theme', owner: 'script' },
         ...plan.map((stage) => ({ stage, owner: stage.startsWith('ollama') ? 'ollama' : 'codex' })),
@@ -154,7 +188,7 @@ async function runWorkflow() {
     report_dir: reportDir,
     live_model_check: liveModelCheck,
     requested: { ollama_model: ollamaModel, codex_model: codexModel, codex_reasoning: codexReasoningInput },
-    resolved: { ollama_model: plan.includes('ollama-generation') ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '' },
+    resolved: { ollama_model: usesOllama ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '' },
     timeouts,
     steps: []
   };
@@ -162,7 +196,7 @@ async function runWorkflow() {
   writeJson(path.join(reportDir, 'run.config.json'), state);
 
   await runSafe(state, 'model-check', () => {
-    if (plan.includes('ollama-generation')) checkOllamaAccess({ model: ollamaModel, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
+    if (usesOllama) checkOllamaAccess({ model: ollamaModel, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
     if (codexCombination) checkCodexAccess({ model: codexModel, reasoning: codexReasoning, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
   }, { blocking: true, state: 'preflight' });
   if (state.status === 'blocked') return 2;
@@ -178,12 +212,13 @@ async function runWorkflow() {
   } else if (mode === 'hybrid') {
     await runSafe(state, 'ollama-generation', () => runOllamaGeneration({ mode, themeSlug, promptFile, model: ollamaModel, timeoutMs: timeouts.ollama_timeout_ms, reportDir }), { blocking: true });
     if (state.status !== 'blocked') {
-      const draftValidation = path.join(reportDir, 'validation.draft.json');
-      await validateTheme({ themeSlug, template: templateName, output: draftValidation }).catch(() => {});
-      await runSafe(state, 'codex-finish', () => runCodexFinish({ mode, themeSlug, promptFile, templateName, model: codexModel, reasoning: codexReasoning, timeoutMs: timeouts.codex_timeout_ms, reportDir, validationPath: draftValidation }), { blocking: true });
+      await runSafe(state, 'codex-finish', () => runCodexFinish({ mode, themeSlug, promptFile, templateName, model: codexModel, reasoning: codexReasoning, timeoutMs: timeouts.codex_timeout_ms, reportDir }), { blocking: true });
     }
   }
   if (state.status === 'blocked') return 2;
+
+  writeJson(path.join(reportDir, 'generated-theme-hashes.json'), { created_at: new Date().toISOString(), files: themeHashes(themeSlug) });
+  writeJson(path.join(reportDir, 'generated-theme-manifest.json'), { theme_slug: themeSlug, files: themeHashes(themeSlug).map((entry) => entry.path) });
 
   state.status = 'building';
   await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: timeouts.command_timeout_ms, reportPath: path.join(reportDir, 'build.report.json') }));

@@ -6,6 +6,8 @@ const yauzl = require('yauzl');
 const { root } = require('../lib/repo-root');
 const { runCommand } = require('../lib/command-runner');
 const { existingArtifacts } = require('../lib/theme-utils');
+const { applyModelOutput } = require('../lib/model-output');
+const { BATCHES } = require('../lib/ollama-batches');
 
 const slug = '999_nolan_young_theme_architecture_smoke';
 const prompt = 'prompts/pending/MASTER-TEMPLATE-PROMPT-filler-template (1).md';
@@ -67,6 +69,17 @@ function assertSameSnapshot(before, after, label) {
   assert.deepStrictEqual([...after.entries()].sort(), [...before.entries()].sort(), `${label} modified theme source`);
 }
 
+function assertThrowsMessage(fn, pattern, label) {
+  let thrown = null;
+  try {
+    fn();
+  } catch (error) {
+    thrown = error;
+  }
+  assert(thrown, `${label} did not throw`);
+  assert(pattern.test(thrown.message), `${label} threw "${thrown.message}"`);
+}
+
 function zipEntries(zipPath) {
   return new Promise((resolve, reject) => {
     const entries = [];
@@ -116,21 +129,67 @@ async function main() {
   const runner = fs.readFileSync(path.join(root, 'scripts', 'run-theme-workflow.js'), 'utf8');
   assert(!/npm['"],\s*\['run',\s*'dev'/.test(runner), 'Workflow starts npm run dev');
   assert(!/package\.json[\s\S]{0,120}writeFileSync/.test(runner), 'Workflow rewrites generated package.json');
+  assert(!/validation\.draft|validationPath/.test(runner), 'Hybrid workflow passes draft validation to Codex');
+
+  const modelOutputText = fs.readFileSync(path.join(root, 'scripts', 'lib', 'model-output.js'), 'utf8');
+  for (const forbidden of [
+    /sanitizeRemoteReferences/,
+    /sanitizeScaffoldOnlyCopy/,
+    /scssFallbackValue/,
+    /completion styles/i,
+    /ensureUniquePhpFunctionNames/,
+    /salvage/,
+    /kept existing template file/,
+    /phpSyntaxIsValid/,
+    /normalizePhpTemplateContent/
+  ]) {
+    assert(!forbidden.test(modelOutputText), `model-output.js contains prohibited behavior: ${forbidden}`);
+  }
+  for (const batch of BATCHES) {
+    assert(Array.isArray(batch.files) && batch.files.length > 0, `${batch.name} missing writable file allowlist`);
+    assert('readonly' in batch || 'readonlyDirectories' in batch, `${batch.name} missing read-only context declaration`);
+  }
 
   for (const mode of ['ollama-only', 'codex-only', 'hybrid']) {
     const result = mustRun('node', [path.join(root, 'scripts', 'run-theme-workflow.js'), '--mode', mode, '--prompt', prompt, '--template', template, '--theme-slug', slug, '--dry-run', '--ollama-model', 'qwen2.5-coder:14b', '--codex-model', 'gpt-5.5', '--codex-reasoning', 'high']);
     const parsed = JSON.parse(result.stdout);
     const aiStages = parsed.stages.filter((stage) => stage.owner === 'ollama' || stage.owner === 'codex').map((stage) => stage.stage);
-    if (mode === 'ollama-only') assert.deepStrictEqual(aiStages, ['ollama-generation']);
+    const ollamaStages = BATCHES.map((batch) => `ollama-${batch.name}`);
+    if (mode === 'ollama-only') assert.deepStrictEqual(aiStages, ollamaStages);
     if (mode === 'codex-only') assert.deepStrictEqual(aiStages, ['codex-generation']);
-    if (mode === 'hybrid') assert.deepStrictEqual(aiStages, ['ollama-generation', 'codex-finish']);
+    if (mode === 'hybrid') assert.deepStrictEqual(aiStages, [...ollamaStages, 'codex-finish']);
     assert(parsed.expected_invocations.total_ai_passes <= 2, 'Dry run plans a third AI pass');
   }
   assert.deepStrictEqual(existingArtifacts(slug), [], 'Dry run created artifacts');
 
   mustRun('node', [path.join(root, 'scripts', 'prepare-theme.js'), '--prompt', prompt, '--template', template, '--theme-slug', slug]);
   const themeDir = path.join(root, 'wp-content', 'themes', slug);
+  const preparedHeader = fs.readFileSync(path.join(themeDir, 'header.php'), 'utf8');
+  const templateHeader = fs.readFileSync(path.join(root, 'wordpress-themplate-themes', template, 'header.php'), 'utf8');
+  assert.strictEqual(preparedHeader, templateHeader, 'Preparation rewrote header content');
   fs.writeFileSync(path.join(themeDir, 'extra-smoke-file.txt'), 'extra files are allowed\n', 'utf8');
+
+  const rawDir = path.join(root, 'reports', 'runs', slug, 'model-output-tests');
+  fs.mkdirSync(rawDir, { recursive: true });
+  const validRaw = path.join(rawDir, 'valid.md');
+  fs.writeFileSync(validRaw, '---FILE: README.md---\nStrict output test\n---END FILE---\n', 'utf8');
+  applyModelOutput({ sourceFile: validRaw, themeDir, stage: 'strict-test', allowedFiles: ['README.md'], requiredFiles: ['README.md'], manifestPath: path.join(rawDir, 'valid.json') });
+  assert.strictEqual(fs.readFileSync(path.join(themeDir, 'README.md'), 'utf8'), 'Strict output test\n');
+  const badRemote = path.join(rawDir, 'remote.md');
+  fs.writeFileSync(badRemote, '---FILE: README.md---\nhttps://example.com\n---END FILE---\n', 'utf8');
+  applyModelOutput({ sourceFile: badRemote, themeDir, stage: 'strict-test', allowedFiles: ['README.md'], requiredFiles: ['README.md'] });
+  assert.strictEqual(fs.readFileSync(path.join(themeDir, 'README.md'), 'utf8'), 'https://example.com\n', 'Remote URL was rewritten');
+  const badPartial = path.join(rawDir, 'partial.md');
+  fs.writeFileSync(badPartial, '---FILE: README.md---\nPartial\n---END FILE---\n---FILE: unassigned.php---\n<?php\n---END FILE---\n', 'utf8');
+  const beforeUnassignedFailure = snapshot(themeDir);
+  assertThrowsMessage(() => applyModelOutput({ sourceFile: badPartial, themeDir, stage: 'strict-test', allowedFiles: ['README.md'], requiredFiles: ['README.md'] }), /not in this stage allowlist/, 'Unassigned file rejection');
+  assertSameSnapshot(beforeUnassignedFailure, snapshot(themeDir), 'Strict failed output');
+  const missingRequired = path.join(rawDir, 'missing.md');
+  fs.writeFileSync(missingRequired, '---FILE: README.md---\nOnly one\n---END FILE---\n', 'utf8');
+  assertThrowsMessage(() => applyModelOutput({ sourceFile: missingRequired, themeDir, stage: 'strict-test', allowedFiles: ['README.md', 'CHANGELOG.md'], requiredFiles: ['README.md', 'CHANGELOG.md'] }), /omitted required/, 'Missing required file rejection');
+  const malformed = path.join(rawDir, 'malformed.md');
+  fs.writeFileSync(malformed, '## FILE: README.md\n```text\nNo salvage\n```\n', 'utf8');
+  assertThrowsMessage(() => applyModelOutput({ sourceFile: malformed, themeDir, stage: 'strict-test', allowedFiles: ['README.md'], requiredFiles: ['README.md'] }), /No documented file blocks|outside documented file blocks/, 'Malformed output rejection');
   const extraReport = path.join(root, 'reports', 'runs', slug, 'extra-validation.json');
   runCommand('node', [path.join(root, 'scripts', 'validate-theme.js'), '--theme-slug', slug, '--template', template, '--output', extraReport], { echo: false });
   const extraParsed = JSON.parse(fs.readFileSync(extraReport, 'utf8'));

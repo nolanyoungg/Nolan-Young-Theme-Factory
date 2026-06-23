@@ -63,6 +63,19 @@ function add(checks, name, passed, details = '') {
   checks.push({ name, status: passed ? 'passed' : 'failed', details });
 }
 
+function scssImportCandidates(baseDir, specifier) {
+  const parsed = path.posix.parse(specifier);
+  const direct = path.resolve(baseDir, specifier);
+  const underscored = path.resolve(baseDir, parsed.dir, `_${parsed.base}`);
+  return [direct, `${direct}.scss`, `${direct}.sass`, underscored, `${underscored}.scss`, `${underscored}.sass`, path.resolve(baseDir, specifier, 'index.scss'), path.resolve(baseDir, specifier, '_index.scss')];
+}
+
+function localAssetReferences(text) {
+  return [...text.matchAll(/\b(?:src|href)=["']([^"']+)["']|url\(["']?([^"')]+)["']?\)/g)]
+    .map((match) => match[1] || match[2])
+    .filter((value) => value && !/^(?:https?:|data:|mailto:|tel:|#)/i.test(value));
+}
+
 async function validateTheme(options = {}) {
   const selectedSlug = assertThemeSlug(options.themeSlug || themeSlug);
   const themesRoot = path.resolve(root, 'wp-content', 'themes');
@@ -109,6 +122,7 @@ async function validateTheme(options = {}) {
 
     const textFailures = [];
     const placeholderFailures = [];
+    const missingAssets = [];
     for (const file of walkFiles(themeDir).filter((item) => !/\.(png|jpe?g|webp|gif|zip)$/i.test(item))) {
       const relative = rel(file, themeDir);
       if (relative === 'package-lock.json') continue;
@@ -121,9 +135,45 @@ async function validateTheme(options = {}) {
       if (/\.php$/i.test(relative) && INLINE_STYLE_BLOCK_PATTERN.test(text)) textFailures.push(`${relative}: inline style block`);
       if (/\.(php|css|scss|js)$/i.test(relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) textFailures.push(`${relative}: model file block marker`);
       if (relative.startsWith('template-parts/') && TEMPLATE_PART_WRAPPER_PATTERN.test(text)) textFailures.push(`${relative}: template part document wrapper`);
+      for (const reference of localAssetReferences(text)) {
+        if (/^\//.test(reference)) continue;
+        const candidate = reference.startsWith('assets/') ? path.join(themeDir, reference) : path.resolve(path.dirname(file), reference);
+        if (!fs.existsSync(candidate) && /\.(svg|png|jpe?g|webp|gif|css|js|woff2?)($|[?#])/i.test(reference)) missingAssets.push(`${relative}: ${reference}`);
+      }
     }
     add(checks, 'placeholder_content', placeholderFailures.length === 0, placeholderFailures.join(', '));
     add(checks, 'wordpress_quality', textFailures.length === 0, textFailures.join('; '));
+    add(checks, 'missing_local_assets', missingAssets.length === 0, missingAssets.join('; '));
+
+    const declarations = new Map();
+    for (const file of walkFiles(themeDir).filter((item) => item.endsWith('.php'))) {
+      const relative = rel(file, themeDir);
+      const text = fs.readFileSync(file, 'utf8');
+      let match;
+      const functionPattern = /function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+      while ((match = functionPattern.exec(text)) !== null) {
+        if (!declarations.has(match[1])) declarations.set(match[1], []);
+        declarations.get(match[1]).push(relative);
+      }
+    }
+    const duplicateFunctions = [...declarations.entries()].filter(([, files]) => files.length > 1).map(([name, files]) => `${name}: ${files.join(', ')}`);
+    add(checks, 'duplicate_php_functions', duplicateFunctions.length === 0, duplicateFunctions.join('; '));
+
+    const unresolvedImports = [];
+    for (const file of walkFiles(path.join(themeDir, 'src', 'scss')).filter((item) => item.endsWith('.scss'))) {
+      const relative = rel(file, themeDir);
+      const text = fs.readFileSync(file, 'utf8');
+      let match;
+      const importPattern = /@(use|import)\s+["']([^"']+)["']/g;
+      while ((match = importPattern.exec(text)) !== null) {
+        const specifier = match[2];
+        if (specifier.startsWith('http:') || specifier.startsWith('https:') || specifier.startsWith('sass:')) continue;
+        if (!scssImportCandidates(path.dirname(file), specifier).some((candidate) => fs.existsSync(candidate))) {
+          unresolvedImports.push(`${relative}: ${specifier}`);
+        }
+      }
+    }
+    add(checks, 'unresolved_scss_imports', unresolvedImports.length === 0, unresolvedImports.join('; '));
   }
 
   const previewDir = path.join(root, 'docs', 'Preview-Themes-Github', selectedSlug);
@@ -154,6 +204,7 @@ async function validateTheme(options = {}) {
     template_name: templateName,
     checked_at: new Date().toISOString(),
     passed,
+    status: passed ? 0 : 1,
     checks
   };
   const reportPath = options.output || outputArg || path.join(root, 'reports', 'runs', selectedSlug, 'validation.json');

@@ -49,11 +49,15 @@ npm run test:scripts
 
 `ollama-only` runs Ollama generation batches and no Codex pass.
 
+Ollama-only intentionally uses many smaller planned prompts. Smaller local models are more reliable when each stage has a narrow file allowlist and complete current-file context.
+
 `codex-only` runs one Codex generation pass.
 
 `hybrid` runs an Ollama draft followed by one Codex finish pass.
 
-The workflow does not run a second AI cleanup pass and does not substitute a fallback model.
+The workflow does not run a validation-triggered cleanup pass and does not substitute a fallback model.
+
+A planned generation stage is declared before generation starts and always belongs to the selected mode. A repair stage is triggered by a failed check and is prohibited.
 
 ## Generated-Theme Boundary
 
@@ -64,6 +68,10 @@ wp-content/themes/{theme_slug}/
 ```
 
 The repository scripts handle template copying, builds, validation, preview generation, ZIP packaging, deletion, and reports. Generated themes are not rewritten by validation or infrastructure scripts to satisfy checks.
+
+Model output is applied strictly: one documented file-block protocol, exact stage file allowlists, atomic writes, and no semantic source modification. Malformed output blocks the run rather than being salvaged.
+
+Preview generation renders the actual generated PHP templates through a read-only harness. It does not substitute generic mock pages when rendering fails.
 
 ## Artifacts
 

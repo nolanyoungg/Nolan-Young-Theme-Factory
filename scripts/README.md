@@ -39,17 +39,21 @@ scripts/
   tests/
 ```
 
-`lib/` contains shared argument, command, path, state, prompt, and model-output helpers. `providers/` contains only Ollama and Codex provider modules. `tests/` contains smoke coverage for the script layer.
+`lib/` contains shared argument, command, path, state, prompt, stage-plan, and model-output helpers. `providers/` contains only Ollama and Codex provider modules. `tests/` contains smoke coverage for the script layer.
 
 ## Workflow Modes
 
-`ollama-only`: prepare the template, run Ollama generation batches, then build, validate, preview, package, and report.
+`ollama-only`: prepare the template, run the full predefined Ollama stage sequence, then build, validate, preview, package, and report. The Ollama sequence uses multiple planned prompts because smaller local models need narrower scope and complete current-file context.
 
 `codex-only`: prepare the template, run one Codex generation pass, then build, validate, preview, package, and report.
 
-`hybrid`: prepare the template, run an Ollama draft, run one Codex finish pass, then build, validate, preview, package, and report.
+`hybrid`: prepare the template, run the full predefined Ollama stage sequence, run one planned Codex creative finish pass, then build, validate, preview, package, and report.
 
 There is no automatic fallback provider and no automatic model-driven cleanup after validation.
+
+A planned generation stage is declared before generation starts, owns a file allowlist, receives current theme context, and always belongs to the selected mode. A repair stage is triggered by a failed check and is prohibited.
+
+Hybrid does not run draft validation before Codex and does not pass validation failures to Codex.
 
 ## Generated-Theme Boundary
 
@@ -61,9 +65,19 @@ wp-content/themes/{theme_slug}/
 
 AI must not create previews, ZIP files, reports, docs, scripts, prompts, or template copies. Deterministic scripts own that work.
 
+Model output is applied through one strict protocol:
+
+```text
+---FILE: relative/path.ext---
+complete file contents
+---END FILE---
+```
+
+Every assigned file must be returned exactly once. Unassigned files, duplicate files, malformed formats, Markdown wrappers, JSON alternatives, partial file blocks, and omitted files fail the stage. The application layer does not repair PHP, rewrite SCSS, add fallback CSS, replace URLs, salvage malformed output, or keep starter files when generated files are invalid.
+
 ## Validation
 
-`validate-theme.js` is read-only. It checks containment, slug format, selected template file structure, required WordPress files, `style.css` headers, PHP syntax when PHP is available, asset expectations, placeholder content, secrets, remote runtime dependencies, machine-specific paths, preview presence, gallery entry, and ZIP structure.
+`validate-theme.js` is read-only. It checks containment, slug format, selected template file structure, required WordPress files, `style.css` headers, PHP syntax when PHP is available, duplicate PHP functions, unresolved SCSS imports, missing local assets, asset expectations, placeholder content, secrets, remote runtime dependencies, machine-specific paths, preview presence, gallery entry, and ZIP structure.
 
 Extra files are allowed. Missing template files are reported and are not restored by validation.
 
@@ -80,6 +94,8 @@ ZIP files: `dist/zipped-themes/{theme_slug}.zip`
 Run reports: `reports/runs/{theme_slug}/`
 
 Future run reports and ZIPs are ignored by default, with README placeholders allowed.
+
+Preview generation renders actual generated PHP templates through a read-only harness. It fails when rendering fails instead of writing generic substitute pages.
 
 ## Adding a Provider or Mode
 

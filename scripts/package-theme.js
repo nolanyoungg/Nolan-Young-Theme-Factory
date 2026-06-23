@@ -60,7 +60,7 @@ async function packageTheme(options = {}) {
     await writeZip();
     if (!fs.existsSync(zipPath)) fail(`ZIP was not created: dist/zipped-themes/${selectedSlug}.zip`);
     console.log(`Created dist/zipped-themes/${selectedSlug}.zip`);
-    return { zipPath };
+    return { passed: true, status: 0, zipPath };
   } finally {
     fs.rmSync(tempRoot, { recursive: true, force: true });
   }

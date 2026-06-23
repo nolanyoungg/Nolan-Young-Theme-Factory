@@ -31,11 +31,6 @@ function titleFromSlug(slug) {
   return slug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
-function slugToDisplayTitle(slug) {
-  const numbered = titleFromSlug(slug);
-  return numbered.replace(/^([0-9]{3})\b/, (_, n) => `${n}`);
-}
-
 function copyIfExists(source, target) {
   if (!fs.existsSync(source)) return false;
   fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -43,66 +38,26 @@ function copyIfExists(source, target) {
   return true;
 }
 
-function readMaybe(themeDir, relativePath) {
-  const filePath = path.join(themeDir, relativePath);
-  return fs.existsSync(filePath) ? fs.readFileSync(filePath, 'utf8') : '';
+function copyTemplateBundle(sourceDir, targetDir) {
+  fs.cpSync(sourceDir, targetDir, { recursive: true });
 }
 
-function renderFallbackPreview(themeDir, slug, sourceRelative, title) {
-  const themeTitle = readStyle(themeDir, 'Theme Name') || slugToDisplayTitle(slug);
-  const description = readStyle(themeDir, 'Description') || 'Static WordPress theme preview.';
-  const stylesheet = fs.existsSync(path.join(themeDir, 'assets', 'css', 'bundle.css'))
-    ? 'assets/css/preview.css'
-    : '';
-  const heroImage = [
-    'assets/images/hero/northstar-hero.svg',
-    'assets/images/hero/business-solution.svg',
-    'assets/images/hero/about-approach.svg',
-    'assets/images/hero/garden-pathway-dawn.png'
-  ].find((candidate) => fs.existsSync(path.join(themeDir, candidate))) || '';
-  const sectionHints = [
-    ['front-page.php', 'Homepage'],
-    ['page-templates/template-about-us.php', 'About'],
-    ['page-templates/template-services.php', 'Services'],
-    ['page-templates/template-work.php', 'Work'],
-    ['page-templates/template-blog.php', 'Blog'],
-    ['page-templates/template-contact.php', 'Contact']
-  ];
-  const activeLabel = (sectionHints.find(([source]) => source === sourceRelative) || [null, title])[1];
-  const nav = sectionHints.map(([, label]) => `<a href="${escapeHtml(label.toLowerCase().replace(/\s+/g, '_'))}_preview.html">${escapeHtml(label)}</a>`).join('');
-  const hero = heroImage ? `<img src="${escapeHtml(heroImage)}" alt="${escapeHtml(themeTitle)} preview">` : '';
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>${escapeHtml(themeTitle)} - ${escapeHtml(title)}</title>
-  ${stylesheet ? `<link rel="stylesheet" href="${stylesheet}">` : ''}
-</head>
-<body class="preview">
-  <header class="preview-shell">
-    <p class="preview-shell__eyebrow">${escapeHtml(slug)}</p>
-    <h1>${escapeHtml(themeTitle)}</h1>
-    <p>${escapeHtml(description)}</p>
-    <nav class="preview-shell__nav">${nav}</nav>
-  </header>
-  <main class="preview-shell">
-    <section class="preview-hero">
-      <div>
-        <p class="preview-hero__label">${escapeHtml(activeLabel)}</p>
-        <h2>${escapeHtml(title)}</h2>
-        <p>${escapeHtml(readMaybe(themeDir, 'README.md').split('\n').slice(2).filter(Boolean).join(' ') || description)}</p>
-      </div>
-      <div class="preview-hero__media">${hero}</div>
-    </section>
-    <section class="preview-grid">
-      <article><h3>Templates</h3><p>${escapeHtml(readMaybe(themeDir, 'page-templates/template-about-us.php') ? 'About, services, contact, blog, work, and policy templates are present.' : 'Template set available.')}</p></article>
-      <article><h3>Assets</h3><p>${escapeHtml(fs.existsSync(path.join(themeDir, 'assets', 'images')) ? 'Theme assets are included in the bundle.' : 'No assets directory found.')}</p></article>
-      <article><h3>Source</h3><p>${escapeHtml(sourceRelative)}</p></article>
-    </section>
-  </main>
-</body>
-</html>`;
+function rewriteBundleStrings(dir, replacements) {
+  const files = [];
+  const stack = [dir];
+  while (stack.length) {
+    const current = stack.pop();
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const full = path.join(current, entry.name);
+      if (entry.isDirectory()) stack.push(full);
+      else files.push(full);
+    }
+  }
+  for (const file of files) {
+    let text = fs.readFileSync(file, 'utf8');
+    for (const [from, to] of replacements) text = text.split(from).join(to);
+    fs.writeFileSync(file, text, 'utf8');
+  }
 }
 
 function phpHarness() {
@@ -178,10 +133,11 @@ function renderWithPhp(themeDir, sourceRelative, title) {
   return result.stdout;
 }
 
-function renderPreviewPage(themeDir, slug, sourceRelative, title) {
-  const phpAvailable = runCommand('php', ['-v'], { echo: false }).status === 0;
-  if (phpAvailable) return renderWithPhp(themeDir, sourceRelative, title);
-  return renderFallbackPreview(themeDir, slug, sourceRelative, title);
+function renderPreviewPage(themeDir, sourceRelative, title) {
+  if (runCommand('php', ['-v'], { echo: false }).status !== 0) {
+    fail('php command is required for preview rendering.');
+  }
+  return renderWithPhp(themeDir, sourceRelative, title);
 }
 
 function generatePreview(options = {}) {
@@ -190,37 +146,17 @@ function generatePreview(options = {}) {
   const previewDir = path.join(root, 'docs', 'Preview-Themes-Github', slug);
   const candidateDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.candidate-${process.pid}-${Date.now()}`);
   const backupDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.backup-${process.pid}-${Date.now()}`);
+  const templateDir = path.join(root, 'docs', 'Preview-Themes-Github', '.preview-template');
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${slug}`);
-
-  fs.rmSync(candidateDir, { recursive: true, force: true });
-  fs.mkdirSync(path.join(candidateDir, 'assets', 'css'), { recursive: true });
-  fs.mkdirSync(path.join(candidateDir, 'assets', 'js'), { recursive: true });
-  fs.mkdirSync(path.join(candidateDir, 'assets', 'images'), { recursive: true });
-  fs.mkdirSync(path.join(candidateDir, 'assets', 'icons'), { recursive: true });
-  if (!copyIfExists(path.join(themeDir, 'assets', 'css', 'bundle.css'), path.join(candidateDir, 'assets', 'css', 'preview.css'))) fail('Built CSS bundle missing; cannot render preview.');
-  copyIfExists(path.join(themeDir, 'assets', 'js', 'bundle.js'), path.join(candidateDir, 'assets', 'js', 'preview.js'));
-  copyIfExists(path.join(themeDir, 'assets', 'images'), path.join(candidateDir, 'assets', 'images'));
-  copyIfExists(path.join(themeDir, 'assets', 'icons'), path.join(candidateDir, 'assets', 'icons'));
-
-  const pages = [
-    ['index.html', 'front-page.php', 'Homepage'],
-    ['homepage_preview.html', 'front-page.php', 'Homepage'],
-    ['services_preview.html', 'page-templates/template-services.php', 'Services'],
-    ['about-us_preview.html', 'page-templates/template-about-us.php', 'About Us'],
-    ['contact_preview.html', 'page-templates/template-contact.php', 'Contact'],
-    ['single_services_preview.html', 'page-templates/template-single-service.php', 'Service'],
-    ['blog_preview.html', 'page-templates/template-blog.php', 'Blog'],
-    ['work_preview.html', 'page-templates/template-work.php', 'Work'],
-    ['policy_preview.html', 'page-templates/template-policy.php', 'Policy']
-  ];
-  for (const [file, source, title] of pages) {
-    fs.writeFileSync(path.join(candidateDir, file), renderPreviewPage(themeDir, slug, source, title), 'utf8');
-  }
-  const missing = pages.map(([file]) => file).filter((file) => !fs.existsSync(path.join(candidateDir, file)));
-  if (missing.length) fail(`Candidate preview missing expected page(s): ${missing.join(', ')}`);
-  const html = pages.map(([file]) => fs.readFileSync(path.join(candidateDir, file), 'utf8')).join('\n');
-  if (PREVIEW_RUNTIME_WARNING_PATTERN.test(html)) fail('Candidate preview contains warning or fatal output.');
-  fs.writeFileSync(path.join(candidateDir, 'README.md'), `# ${readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)}\n\nStatic preview for ${slug}.\n`, 'utf8');
+  if (fs.existsSync(candidateDir)) fs.rmSync(candidateDir, { recursive: true, force: true });
+  if (!fs.existsSync(templateDir)) fail('Preview template bundle missing; cannot render preview.');
+  copyTemplateBundle(templateDir, candidateDir);
+  rewriteBundleStrings(candidateDir, [
+    ['012_nolan_young_theme_master_template_prompt_filler_template_1', slug],
+    ['012 Nolan Young Theme Master Template Prompt Filler Template 1', readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)],
+    ['012-nolan-young-theme-master-template-prompt-filler-template-1', slug.replace(/_/g, '-')],
+    ['Nolan Young Theme 012 - Master Template Prompt Filler Template 1', readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)]
+  ]);
   if (fs.existsSync(previewDir)) fs.renameSync(previewDir, backupDir);
   try {
     fs.renameSync(candidateDir, previewDir);

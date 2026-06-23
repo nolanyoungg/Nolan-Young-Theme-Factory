@@ -1,32 +1,339 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>000 Nolan Young Theme Master Template Prompt Filler Template 1 - Homepage</title>
-  <link rel="stylesheet" href="assets/css/preview.css">
-</head>
-<body class="preview">
-  <header class="preview-shell">
-    <p class="preview-shell__eyebrow">000_nolan_young_theme_master_template_prompt_filler_template_1</p>
-    <h1>000 Nolan Young Theme Master Template Prompt Filler Template 1</h1>
-    <p>Generated WordPress theme prepared from NOLAN-YOUNG-theme-000.</p>
-    <nav class="preview-shell__nav"><a href="homepage_preview.html">Homepage</a><a href="about_preview.html">About</a><a href="services_preview.html">Services</a><a href="work_preview.html">Work</a><a href="blog_preview.html">Blog</a><a href="contact_preview.html">Contact</a></nav>
-  </header>
-  <main class="preview-shell">
-    <section class="preview-hero">
-      <div>
-        <p class="preview-hero__label">Homepage</p>
-        <h2>Homepage</h2>
-        <p>Northstar Websites is a modern service-business WordPress theme for website design, build, support, work examples, resources, contact forms, and newsletter signup.  The homepage is implemented in `front-page.php`. Page templates live in `page-templates/`; reusable sections live in `template-parts/`; PHP modules live in `inc/`; source assets live in `src/`; compiled bundles are `assets/css/bundle.css` and `assets/js/bundle.js`.  ## Installation  Activate the theme in WordPress, create Home, About, Services, Work, Blog, Contact, Privacy Policy, and Terms pages, assign the matching templates, set Home as the static front page, configure Primary and Footer menus, and add a custom logo if desired.  ## Build  Use Node.js 18 or newer. Run `npm install`, `npm run dev` for watched development builds, and `npm run build` for minified production output. The required bundle names must remain `assets/css/bundle.css` and `assets/js/bundle.js`.  ## Features  The theme includes desktop menu panels with rail hover/focus behavior, a mobile drawer with accordions, portfolio filtering, FAQ accordions, contact and service inquiry forms, private admin submission storage, newsletter subscriber management, responsive footer widgets, and policy-page routing.  ## Accessibility  Keyboard operation, focus visibility, reduced motion, contrast, form validation, hidden-content behavior, and semantic landmarks are summarized in `accessibility/README.md`.  ## Images And Licensing  All current visual assets are original local SVG interface graphics stored in `assets/images/hero/`, `assets/images/portfolio/`, `assets/images/texture/`, and `assets/icons/`. No external runtime images, CDN fonts, API keys, or third-party logos are required.  ## Known Limitations  The theme manages newsletter subscribers but does not send bulk marketing campaigns. Policy pages render WordPress-managed content and do not provide legal text. </p>
-      </div>
-      <div class="preview-hero__media"><img src="assets/images/hero/northstar-hero.svg" alt="000 Nolan Young Theme Master Template Prompt Filler Template 1 preview"></div>
-    </section>
-    <section class="preview-grid">
-      <article><h3>Templates</h3><p>About, services, contact, blog, work, and policy templates are present.</p></article>
-      <article><h3>Assets</h3><p>Theme assets are included in the bundle.</p></article>
-      <article><h3>Source</h3><p>front-page.php</p></article>
-    </section>
-  </main>
-</body>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/bundle.css"></head>
+<body class="home page-template-front-page">
+<a class="skip-link screen-reader-text" href="#primary">Skip to content</a>
+<div class="menu-backdrop" data-menu-backdrop hidden></div>
+<header class="site-header" data-site-header>
+	<div class="site-header__inner">
+		<a class="site-branding" href="homepage_preview.html" rel="home">	<span class="brand-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Northstar Websites compass mark"><rect width="64" height="64" rx="14" fill="#2563eb"/><path d="M32 8l5.8 17.4L56 32l-18.2 6.6L32 56l-5.8-17.4L8 32l18.2-6.6L32 8z" fill="#fff"/><circle cx="32" cy="32" r="6" fill="#14b8a6"/></svg>
+</span>
+	<span class="site-branding__text">
+		<span class="site-branding__name">Northstar Websites</span>
+		<span class="site-branding__tagline">Websites that help businesses grow.</span>
+	</span>
+	</a>
+		<nav class="primary-navigation" aria-label="Primary navigation">
+			<button class="nav-trigger" type="button" data-menu-item="services" aria-controls="services-menu" aria-expanded="false">Services</button>
+			<button class="nav-trigger" type="button" data-menu-item="about" aria-controls="about-menu" aria-expanded="false">About</button>
+			<a class="nav-link" href="work_preview.html">Work</a>
+			<button class="nav-trigger" type="button" data-menu-item="blog" aria-controls="blog-menu" aria-expanded="false">Blog</button>
+		</nav>
+		<a class="btn btn-header-cta" href="contact_preview.html">Contact Us</a>
+		<button class="mobile-menu-toggle" type="button" data-mobile-menu-open aria-controls="mobile-drawer" aria-expanded="false"><span></span><span></span><span></span><span class="screen-reader-text">Open menu</span></button>
+	</div>
+	<div class="nolan-menu" id="services-menu" data-menu-dropdown="services" hidden>
+		<div class="nolan-menu__inner">
+			<div class="nolan-menu__rail" role="list">
+									<button type="button" data-rail-item="strategy">Website Strategy</button>
+									<button type="button" data-rail-item="design">Modern WordPress Design</button>
+									<button type="button" data-rail-item="development">Custom Theme Build</button>
+									<button type="button" data-rail-item="integration">Content and Tool Integration</button>
+									<button type="button" data-rail-item="support">Care and Support</button>
+									<button type="button" data-rail-item="results">Optimization and Results</button>
+							</div>
+			<div class="nolan-menu__content">
+									<section data-rail-content="strategy">
+						<img src="assets/images/portfolio/service-strategy.svg" alt="Website Strategy" class="" loading="lazy" decoding="async">						<div><p class="eyebrow">Service</p><h2>Website Strategy</h2><p>A practical roadmap for content, structure, conversion paths, and launch priorities before design begins.</p><ul><li>Discovery and goals</li><li>Sitemap and content model</li><li>Conversion path planning</li><li>Launch priorities</li></ul><a class="btn btn-text" href="services_preview.html">Explore service</a></div>
+					</section>
+									<section data-rail-content="design">
+						<img src="assets/images/portfolio/service-design.svg" alt="Modern WordPress Design" class="" loading="lazy" decoding="async">						<div><p class="eyebrow">Service</p><h2>Modern WordPress Design</h2><p>Content-forward page designs with responsive layouts, accessible patterns, and a flexible visual system.</p><ul><li>Page design systems</li><li>Reusable sections</li><li>Mobile-first layouts</li><li>Editor-friendly styling</li></ul><a class="btn btn-text" href="services_preview.html">Explore service</a></div>
+					</section>
+									<section data-rail-content="development">
+						<img src="assets/images/portfolio/service-development.svg" alt="Custom Theme Build" class="" loading="lazy" decoding="async">						<div><p class="eyebrow">Service</p><h2>Custom Theme Build</h2><p>Clean WordPress theme implementation with maintainable templates, local assets, and predictable build tooling.</p><ul><li>Theme architecture</li><li>Template parts</li><li>Performance-minded assets</li><li>Quality checks</li></ul><a class="btn btn-text" href="services_preview.html">Explore service</a></div>
+					</section>
+									<section data-rail-content="integration">
+						<img src="assets/images/portfolio/service-integration.svg" alt="Content and Tool Integration" class="" loading="lazy" decoding="async">						<div><p class="eyebrow">Service</p><h2>Content and Tool Integration</h2><p>Connect forms, publishing workflows, analytics-ready events, and practical operational details without clutter.</p><ul><li>Forms and routing</li><li>Content structures</li><li>Admin workflows</li><li>Launch configuration</li></ul><a class="btn btn-text" href="services_preview.html">Explore service</a></div>
+					</section>
+									<section data-rail-content="support">
+						<img src="assets/images/portfolio/service-support.svg" alt="Care and Support" class="" loading="lazy" decoding="async">						<div><p class="eyebrow">Service</p><h2>Care and Support</h2><p>Post-launch improvements, troubleshooting, updates, and guidance that keep the site useful after launch.</p><ul><li>Site health review</li><li>Content support</li><li>Issue triage</li><li>Improvement planning</li></ul><a class="btn btn-text" href="services_preview.html">Explore service</a></div>
+					</section>
+									<section data-rail-content="results">
+						<img src="assets/images/portfolio/service-results.svg" alt="Optimization and Results" class="" loading="lazy" decoding="async">						<div><p class="eyebrow">Service</p><h2>Optimization and Results</h2><p>Refine navigation, calls to action, page speed, and content clarity based on business priorities.</p><ul><li>Conversion review</li><li>Usability fixes</li><li>Content improvements</li><li>Maintenance roadmap</li></ul><a class="btn btn-text" href="services_preview.html">Explore service</a></div>
+					</section>
+							</div>
+		</div>
+	</div>
+	<div class="nolan-menu" id="about-menu" data-menu-dropdown="about" hidden>
+		<div class="nolan-menu__inner">
+			<div class="nolan-menu__rail" role="list">
+				<button type="button" data-rail-item="approach">Approach</button>
+				<button type="button" data-rail-item="values">Values</button>
+				<button type="button" data-rail-item="collaboration">Collaboration</button>
+			</div>
+			<div class="nolan-menu__content">
+				<section data-rail-content="approach"><img src="assets/images/hero/about-approach.svg" alt="Planning board for a website project" class="" loading="lazy" decoding="async"><div><h2>Built around clarity before production.</h2><ul><li>Discovery leads the design direction.</li><li>Content structure is planned early.</li><li>Launch work stays practical and documented.</li></ul><a class="btn btn-secondary" href="about-us_preview.html">Meet Northstar</a></div></section>
+				<section data-rail-content="values"><img src="assets/images/hero/about-values.svg" alt="Website quality values" class="" loading="lazy" decoding="async"><div><h2>Useful design, responsible code, direct communication.</h2><ul><li>Accessible interactions.</li><li>Portable local assets.</li><li>Plain-language handoff notes.</li></ul><a class="btn btn-secondary" href="about-us_preview.html">Read values</a></div></section>
+				<section data-rail-content="collaboration"><img src="assets/images/hero/about-collaboration.svg" alt="Collaborative website review" class="" loading="lazy" decoding="async"><div><h2>A calm process for busy teams.</h2><ul><li>Focused checkpoints.</li><li>Clear revision windows.</li><li>Support options after launch.</li></ul><a class="btn btn-secondary" href="contact_preview.html">Start a conversation</a></div></section>
+			</div>
+		</div>
+	</div>
+	<div class="nolan-menu nolan-menu--blog" id="blog-menu" data-menu-dropdown="blog" hidden>
+		<div class="nolan-menu__blog-grid">
+							<article class="blog-card"><img src="assets/images/portfolio/article-brief.svg" alt="What a useful website brief should include" class="" loading="lazy" decoding="async"><p class="eyebrow">Planning</p><h3><a href="blog_preview.html">What a useful website brief should include</a></h3><p>A concise guide to goals, audiences, content, and decisions that make a build move cleanly.</p></article>
+							<article class="blog-card"><img src="assets/images/portfolio/article-structure.svg" alt="Choosing a WordPress structure that stays manageable" class="" loading="lazy" decoding="async"><p class="eyebrow">WordPress</p><h3><a href="blog_preview.html">Choosing a WordPress structure that stays manageable</a></h3><p>How templates, reusable parts, and editor settings can keep future publishing straightforward.</p></article>
+							<article class="blog-card"><img src="assets/images/portfolio/article-launch.svg" alt="A practical website launch checklist" class="" loading="lazy" decoding="async"><p class="eyebrow">Launch</p><h3><a href="blog_preview.html">A practical website launch checklist</a></h3><p>Content, redirects, forms, accessibility, and performance checks to review before a site goes live.</p></article>
+							<article class="blog-card"><img src="assets/images/portfolio/article-review.svg" alt="What to review after the first month online" class="" loading="lazy" decoding="async"><p class="eyebrow">Support</p><h3><a href="blog_preview.html">What to review after the first month online</a></h3><p>Early signals that help teams improve content, calls to action, and support workflows.</p></article>
+					</div>
+	</div>
+</header>
+<aside class="mobile-drawer" id="mobile-drawer" data-mobile-drawer hidden>
+	<div class="mobile-drawer__top"><a class="site-branding" href="homepage_preview.html">	<span class="brand-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Northstar Websites compass mark"><rect width="64" height="64" rx="14" fill="#2563eb"/><path d="M32 8l5.8 17.4L56 32l-18.2 6.6L32 56l-5.8-17.4L8 32l18.2-6.6L32 8z" fill="#fff"/><circle cx="32" cy="32" r="6" fill="#14b8a6"/></svg>
+</span>
+	<span class="site-branding__text">
+		<span class="site-branding__name">Northstar Websites</span>
+		<span class="site-branding__tagline">Websites that help businesses grow.</span>
+	</span>
+	</a><button type="button" class="mobile-drawer__close" data-mobile-menu-close>Close</button></div>
+	<nav aria-label="Mobile navigation">
+					<section class="mobile-accordion"><button type="button" aria-expanded="false">Services</button><div hidden><a href="services_preview.html">Website Strategy</a><a href="services_preview.html">Modern WordPress Design</a><a href="services_preview.html">Custom Theme Build</a><a href="services_preview.html">Content and Tool Integration</a><a href="services_preview.html">Care and Support</a><a href="services_preview.html">Optimization and Results</a></div></section>
+				<section class="mobile-accordion"><button type="button" aria-expanded="false">About Us</button><div hidden><a href="about-us_preview.html">Company approach</a><a href="about-us_preview.html#values">Values</a><a href="contact_preview.html">Contact Northstar</a></div></section>
+		<a href="work_preview.html">Work</a>
+		<section class="mobile-accordion"><button type="button" aria-expanded="false">Blog</button><div hidden><a href="blog_preview.html">All articles</a><a href="blog_preview.html">What a useful website brief should include</a><a href="blog_preview.html">Choosing a WordPress structure that stays manageable</a><a href="blog_preview.html">A practical website launch checklist</a><a href="blog_preview.html">What to review after the first month online</a></div></section>
+		<a class="btn btn-primary btn-full" href="contact_preview.html">Contact Us</a>
+	</nav>
+</aside>
+<main id="primary" class="site-main">
+	<section class="hero">
+	<div class="container hero__grid">
+		<div class="hero__copy">
+			<p class="eyebrow">Northstar Websites</p>
+			<h1>Modern WordPress websites built around business clarity.</h1>
+			<p>Northstar Websites designs, builds, and supports service-business websites with clear navigation, useful content systems, accessible interactions, and practical launch workflows.</p>
+			<div class="button-row"><a class="btn btn-primary" href="contact_preview.html">Contact Us</a><a class="btn btn-secondary" href="work_preview.html">See Work</a></div>
+			<ul class="trust-row"><li>Strategy</li><li>Design</li><li>Development</li><li>Support</li></ul>
+		</div>
+		<div class="hero__visual"><img src="assets/images/hero/northstar-hero.svg" alt="Layered website planning interface" class="" loading="lazy" decoding="async"></div>
+	</div>
+</section>
+	<section class="section featured-strip">
+	<div class="container">
+		<div class="section-heading section-heading--row"><div><p class="eyebrow">Featured work</p><h2>Practical website systems, not decorative demos.</h2></div><a class="btn btn-secondary" href="work_preview.html">View all work</a></div>
+		<div class="featured-strip__grid">
+							<article><img src="assets/images/portfolio/work-roadmap.svg" alt="Service Website Roadmap" class="" loading="lazy" decoding="async"><p class="eyebrow">Strategy</p><h3><a href="work_preview.html">Service Website Roadmap</a></h3></article>
+							<article><img src="assets/images/portfolio/work-redesign.svg" alt="Professional Services Redesign" class="" loading="lazy" decoding="async"><p class="eyebrow">Design</p><h3><a href="work_preview.html">Professional Services Redesign</a></h3></article>
+							<article><img src="assets/images/portfolio/work-theme.svg" alt="Custom WordPress Theme" class="" loading="lazy" decoding="async"><p class="eyebrow">Development</p><h3><a href="work_preview.html">Custom WordPress Theme</a></h3></article>
+					</div>
+	</div>
+</section>
+	<section class="section brand-statement">
+	<div class="container split">
+		<div><p class="eyebrow">Positioning</p><h2>A website should make your best next step obvious.</h2></div>
+		<div><p>Northstar Websites focuses on the practical pieces service businesses need: clear service pages, credible work presentation, useful articles, accessible forms, and a WordPress structure that can keep growing after launch.</p><p>The result is a content-forward site that feels polished without burying visitors in decorative complexity.</p></div>
+	</div>
+</section>
+	<section class="section services-overview">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow">Services</p><h2>Website services for planning, building, launching, and improving.</h2></div>
+		<div class="card-grid">
+							<article class="service-card"><img src="assets/images/portfolio/service-strategy.svg" alt="Website Strategy" class="" loading="lazy" decoding="async"><h3><a href="services_preview.html">Website Strategy</a></h3><p>A practical roadmap for content, structure, conversion paths, and launch priorities before design begins.</p><a class="btn btn-text" href="services_preview.html">View service</a></article>
+							<article class="service-card"><img src="assets/images/portfolio/service-design.svg" alt="Modern WordPress Design" class="" loading="lazy" decoding="async"><h3><a href="services_preview.html">Modern WordPress Design</a></h3><p>Content-forward page designs with responsive layouts, accessible patterns, and a flexible visual system.</p><a class="btn btn-text" href="services_preview.html">View service</a></article>
+							<article class="service-card"><img src="assets/images/portfolio/service-development.svg" alt="Custom Theme Build" class="" loading="lazy" decoding="async"><h3><a href="services_preview.html">Custom Theme Build</a></h3><p>Clean WordPress theme implementation with maintainable templates, local assets, and predictable build tooling.</p><a class="btn btn-text" href="services_preview.html">View service</a></article>
+							<article class="service-card"><img src="assets/images/portfolio/service-integration.svg" alt="Content and Tool Integration" class="" loading="lazy" decoding="async"><h3><a href="services_preview.html">Content and Tool Integration</a></h3><p>Connect forms, publishing workflows, analytics-ready events, and practical operational details without clutter.</p><a class="btn btn-text" href="services_preview.html">View service</a></article>
+							<article class="service-card"><img src="assets/images/portfolio/service-support.svg" alt="Care and Support" class="" loading="lazy" decoding="async"><h3><a href="services_preview.html">Care and Support</a></h3><p>Post-launch improvements, troubleshooting, updates, and guidance that keep the site useful after launch.</p><a class="btn btn-text" href="services_preview.html">View service</a></article>
+							<article class="service-card"><img src="assets/images/portfolio/service-results.svg" alt="Optimization and Results" class="" loading="lazy" decoding="async"><h3><a href="services_preview.html">Optimization and Results</a></h3><p>Refine navigation, calls to action, page speed, and content clarity based on business priorities.</p><a class="btn btn-text" href="services_preview.html">View service</a></article>
+					</div>
+	</div>
+</section>
+	<section class="section process section-dark">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow">Process</p><h2>A complete path from inquiry to support.</h2></div>
+		<ol class="process-list">
+							<li><span>Inquiry</span><p>Inquiry work is documented with clear decisions, next actions, and review points.</p></li>
+							<li><span>Discovery</span><p>Discovery work is documented with clear decisions, next actions, and review points.</p></li>
+							<li><span>Planning</span><p>Planning work is documented with clear decisions, next actions, and review points.</p></li>
+							<li><span>Design</span><p>Design work is documented with clear decisions, next actions, and review points.</p></li>
+							<li><span>Build</span><p>Build work is documented with clear decisions, next actions, and review points.</p></li>
+							<li><span>Launch</span><p>Launch work is documented with clear decisions, next actions, and review points.</p></li>
+							<li><span>Support</span><p>Support work is documented with clear decisions, next actions, and review points.</p></li>
+					</ol>
+	</div>
+</section>
+
+	<section class="section portfolio-filter" aria-labelledby="work-filter-title">
+		<div class="container">
+			<div class="section-heading">
+				<p class="eyebrow">Featured work filter</p>
+				<h2 id="work-filter-title">Browse the kinds of website problems Northstar helps organize.</h2>
+			</div>
+			<div class="filter-controls" role="tablist" aria-label="Work categories">
+				<button type="button" class="is-active" data-filter="all" aria-pressed="true">All</button>
+									<button type="button" data-filter="Strategy" aria-pressed="false">Strategy</button>
+									<button type="button" data-filter="Design" aria-pressed="false">Design</button>
+									<button type="button" data-filter="Development" aria-pressed="false">Development</button>
+									<button type="button" data-filter="Integration" aria-pressed="false">Integration</button>
+									<button type="button" data-filter="Support" aria-pressed="false">Support</button>
+									<button type="button" data-filter="Results" aria-pressed="false">Results</button>
+							</div>
+			<div class="portfolio-grid" data-filter-grid>
+									<article class="portfolio-card" data-category="Strategy">
+						<img src="assets/images/portfolio/work-roadmap.svg" alt="Service Website Roadmap" class="" loading="lazy" decoding="async">						<p class="eyebrow">Strategy</p>
+						<h3><a href="work_preview.html">Service Website Roadmap</a></h3>
+						<p>A reorganized site plan that clarified service pages, lead paths, and editorial priorities.</p>
+					</article>
+									<article class="portfolio-card" data-category="Design">
+						<img src="assets/images/portfolio/work-redesign.svg" alt="Professional Services Redesign" class="" loading="lazy" decoding="async">						<p class="eyebrow">Design</p>
+						<h3><a href="work_preview.html">Professional Services Redesign</a></h3>
+						<p>A modern visual system with calmer navigation, stronger page hierarchy, and reusable sections.</p>
+					</article>
+									<article class="portfolio-card" data-category="Development">
+						<img src="assets/images/portfolio/work-theme.svg" alt="Custom WordPress Theme" class="" loading="lazy" decoding="async">						<p class="eyebrow">Development</p>
+						<h3><a href="work_preview.html">Custom WordPress Theme</a></h3>
+						<p>A maintainable theme build using modular PHP, SCSS source files, and compiled production bundles.</p>
+					</article>
+									<article class="portfolio-card" data-category="Integration">
+						<img src="assets/images/portfolio/work-inquiry.svg" alt="Inquiry Workflow Upgrade" class="" loading="lazy" decoding="async">						<p class="eyebrow">Integration</p>
+						<h3><a href="work_preview.html">Inquiry Workflow Upgrade</a></h3>
+						<p>Structured forms and admin views that made new website inquiries easier to review and export.</p>
+					</article>
+									<article class="portfolio-card" data-category="Support">
+						<img src="assets/images/portfolio/work-care.svg" alt="Content Care System" class="" loading="lazy" decoding="async">						<p class="eyebrow">Support</p>
+						<h3><a href="work_preview.html">Content Care System</a></h3>
+						<p>A support workflow for keeping content accurate, pages current, and small improvements moving.</p>
+					</article>
+									<article class="portfolio-card" data-category="Results">
+						<img src="assets/images/portfolio/work-results.svg" alt="Conversion Path Refresh" class="" loading="lazy" decoding="async">						<p class="eyebrow">Results</p>
+						<h3><a href="work_preview.html">Conversion Path Refresh</a></h3>
+						<p>Navigation and CTA updates that made important actions clearer without overstating outcomes.</p>
+					</article>
+							</div>
+		</div>
+	</section>
+
+	<section class="section case-study section-dark">
+		<div class="container split">
+			<div>
+				<p class="eyebrow">Featured case study</p>
+				<h2>A service website rebuilt around clearer choices.</h2>
+				<p>This representative case study shows the kind of work the theme supports: a scattered service site became a more direct system of service pages, proof points, content prompts, and inquiry paths.</p>
+				<dl class="case-study__list">
+					<dt>Challenge</dt><dd>Visitors could not quickly compare services or understand the next step.</dd>
+					<dt>Solution</dt><dd>Northstar-style templates emphasized services, process, support, and contact flow.</dd>
+					<dt>Outcome</dt><dd>The site became easier to scan, maintain, and extend without claiming unsupported performance numbers.</dd>
+				</dl>
+			</div>
+			<img src="assets/images/hero/case-study.svg" alt="Website case study interface" class="media-frame" loading="lazy" decoding="async">		</div>
+	</section>
+
+	<section class="section before-after" aria-labelledby="comparison-title">
+		<div class="container">
+			<div class="section-heading">
+				<p class="eyebrow">Before and after</p>
+				<h2 id="comparison-title">From scattered pages to a guided website system.</h2>
+			</div>
+			<div class="comparison-grid">
+				<article><h3>Before</h3><ul><li>Services described in disconnected page blocks.</li><li>Navigation relied on visitors guessing what mattered.</li><li>Forms lacked context for the inquiry type.</li></ul></article>
+				<article><h3>After</h3><ul><li>Service paths, work examples, and FAQs support decisions.</li><li>Header panels expose the most important destinations.</li><li>Contact and service forms capture useful context.</li></ul></article>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<div class="section-heading"><p class="eyebrow">Engagement options</p><h2>Choose the level of help that fits the project stage.</h2></div>
+			<div class="card-grid card-grid--three">
+									<article class="info-card"><h3>Plan</h3><p>Strategy, sitemap, content priorities, and launch requirements for teams preparing a build.</p><a class="btn btn-text" href="contact_preview.html">Discuss fit</a></article>
+									<article class="info-card"><h3>Build</h3><p>Design and WordPress implementation for a focused business website or service section.</p><a class="btn btn-text" href="contact_preview.html">Discuss fit</a></article>
+									<article class="info-card"><h3>Improve</h3><p>Refinement, support, accessibility checks, and content improvements after launch.</p><a class="btn btn-text" href="contact_preview.html">Discuss fit</a></article>
+							</div>
+		</div>
+	</section>
+
+	<section class="section solution-feature">
+	<div class="container split">
+		<img src="assets/images/hero/business-solution.svg" alt="Business website solution map" class="media-frame" loading="lazy" decoding="async">		<div><p class="eyebrow">Business solution</p><h2>Turn scattered service information into a guided decision path.</h2><p>Northstar pages connect service explanations, proof, process notes, FAQs, and forms so visitors can understand fit before reaching out.</p><a class="btn btn-primary" href="services_preview.html">Explore services</a></div>
+	</div>
+</section>
+	<section class="section experience-feature">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow">Customer experience</p><h2>What working together should feel like.</h2></div>
+		<div class="card-grid card-grid--three">
+			<article class="info-card"><h3>Before</h3><p>You get a clear conversation about goals, content, decision makers, and practical scope.</p></article>
+			<article class="info-card"><h3>During</h3><p>Work is reviewed through focused checkpoints that keep design, content, and development aligned.</p></article>
+			<article class="info-card"><h3>After</h3><p>Launch notes, support options, and improvement priorities help the site stay useful.</p></article>
+		</div>
+	</div>
+</section>
+	<section class="section proof-section">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow">Proof without invented testimonials</p><h2>Credibility comes from process, structure, and visible quality.</h2></div>
+		<div class="proof-grid"><div><strong>Accessible</strong><p>Keyboard states, semantic sections, and reduced-motion handling are built into the theme.</p></div><div><strong>Maintainable</strong><p>Template parts, SCSS source files, and local assets keep the site easier to inspect.</p></div><div><strong>Portable</strong><p>No runtime CDN assets or machine-specific paths are required for the public theme.</p></div></div>
+	</div>
+</section>
+	<section class="section blog-preview">
+	<div class="container">
+		<div class="section-heading section-heading--row"><div><p class="eyebrow">Resources</p><h2>Useful website planning articles.</h2></div><a class="btn btn-secondary" href="blog_preview.html">Visit blog</a></div>
+		<div class="card-grid">
+							<article class="blog-card"><img src="assets/images/portfolio/article-brief.svg" alt="What a useful website brief should include" class="" loading="lazy" decoding="async"><p class="eyebrow">Planning</p><h3><a href="blog_preview.html">What a useful website brief should include</a></h3><p>A concise guide to goals, audiences, content, and decisions that make a build move cleanly.</p></article>
+							<article class="blog-card"><img src="assets/images/portfolio/article-structure.svg" alt="Choosing a WordPress structure that stays manageable" class="" loading="lazy" decoding="async"><p class="eyebrow">WordPress</p><h3><a href="blog_preview.html">Choosing a WordPress structure that stays manageable</a></h3><p>How templates, reusable parts, and editor settings can keep future publishing straightforward.</p></article>
+							<article class="blog-card"><img src="assets/images/portfolio/article-launch.svg" alt="A practical website launch checklist" class="" loading="lazy" decoding="async"><p class="eyebrow">Launch</p><h3><a href="blog_preview.html">A practical website launch checklist</a></h3><p>Content, redirects, forms, accessibility, and performance checks to review before a site goes live.</p></article>
+							<article class="blog-card"><img src="assets/images/portfolio/article-review.svg" alt="What to review after the first month online" class="" loading="lazy" decoding="async"><p class="eyebrow">Support</p><h3><a href="blog_preview.html">What to review after the first month online</a></h3><p>Early signals that help teams improve content, calls to action, and support workflows.</p></article>
+					</div>
+	</div>
+</section>
+
+	<section class="section faq-section">
+		<div class="container narrow">
+			<p class="eyebrow">FAQ</p>
+			<h2>Questions teams usually ask before starting.</h2>
+							<section class="accordion-item"><button type="button" aria-expanded="false">What do you need before a project starts?</button><div hidden><p>A clear business goal, decision maker, available content, and any technical requirements are enough to begin discovery.</p></div></section>
+							<section class="accordion-item"><button type="button" aria-expanded="false">Can the site be edited in WordPress?</button><div hidden><p>The theme is structured around reusable templates and WordPress-managed content so routine updates can stay practical.</p></div></section>
+							<section class="accordion-item"><button type="button" aria-expanded="false">How are timelines handled?</button><div hidden><p>Timelines depend on scope, content readiness, review cycles, and integrations. The process section is designed to make those dependencies visible early.</p></div></section>
+							<section class="accordion-item"><button type="button" aria-expanded="false">Do you support existing websites?</button><div hidden><p>Yes. Support can focus on cleanup, accessibility, content improvements, maintenance planning, or targeted rebuilds.</p></div></section>
+							<section class="accordion-item"><button type="button" aria-expanded="false">What happens after launch?</button><div hidden><p>Post-launch work can include issue review, documentation, content support, and a prioritized improvement list.</p></div></section>
+							<section class="accordion-item"><button type="button" aria-expanded="false">Can forms identify service inquiries?</button><div hidden><p>The service template includes a form that passes the related service identifier with each submission.</p></div></section>
+							<section class="accordion-item"><button type="button" aria-expanded="false">How do we get started?</button><div hidden><p>Use the contact form with a short project summary and the most important outcome you need the website to support.</p></div></section>
+					</div>
+	</section>
+
+	<section class="section final-cta section-dark">
+		<div class="container center">
+			<p class="eyebrow">Next step</p>
+			<h2>Build a website that makes the next decision clearer.</h2>
+			<p>Share the project stage, the audience, and the business action your site needs to support.</p>
+			<div class="button-row"><a class="btn btn-primary" href="contact_preview.html">Contact Us</a><a class="btn btn-secondary" href="work_preview.html">View Work</a></div>
+		</div>
+	</section>
+</main>
+<footer class="site-footer">
+	<section class="footer-cta">
+	<div class="container footer-cta__inner">
+		<div><p class="eyebrow">Ready to organize the next version of your site?</p><h2>Start with a clear conversation about the business goal.</h2></div>
+		<a class="btn btn-primary" href="contact_preview.html">Contact Us</a>
+	</div>
+</section>
+	<div class="site-footer__inner">
+		<div class="footer-widgets">
+	<section class="footer-brand"><a class="site-branding" href="homepage_preview.html">	<span class="brand-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Northstar Websites compass mark"><rect width="64" height="64" rx="14" fill="#2563eb"/><path d="M32 8l5.8 17.4L56 32l-18.2 6.6L32 56l-5.8-17.4L8 32l18.2-6.6L32 8z" fill="#fff"/><circle cx="32" cy="32" r="6" fill="#14b8a6"/></svg>
+</span>
+	<span class="site-branding__text">
+		<span class="site-branding__name">Northstar Websites</span>
+		<span class="site-branding__tagline">Websites that help businesses grow.</span>
+	</span>
+	</a><p>Northstar Websites designs, builds, and supports modern WordPress websites for service businesses that need clearer content and better conversion paths.</p>	<form class="newsletter-form" method="post" action="admin-post.php" data-enhanced-form>
+		<input type="hidden" name="action" value="nolan_young_template_newsletter_signup">
+		<input type="hidden" name="nolan_young_template_newsletter_nonce" value="preview-nonce">		<div class="form-honeypot" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+		<label>First name<input name="first_name" type="text" autocomplete="given-name"></label>
+		<label>Email address<input required name="email" type="email" autocomplete="email"></label>
+		<button class="btn btn-secondary" type="submit">Subscribe</button>
+	</form>
+	</section>
+	<nav aria-label="Footer services"><h2>Services</h2><a href="services_preview.html">Website Strategy</a><a href="services_preview.html">Modern WordPress Design</a><a href="services_preview.html">Custom Theme Build</a><a href="services_preview.html">Content and Tool Integration</a><a href="services_preview.html">Care and Support</a><a href="services_preview.html">Optimization and Results</a></nav>
+	<nav aria-label="Footer company"><h2>Company</h2><a href="about-us_preview.html">About</a><a href="work_preview.html">Work</a><a href="blog_preview.html">Blog</a><a href="contact_preview.html">Contact</a></nav>
+	<nav aria-label="Footer blog"><h2>Blog</h2><a href="blog_preview.html">What a useful website brief should include</a><a href="blog_preview.html">Choosing a WordPress structure that stays manageable</a><a href="blog_preview.html">A practical website launch checklist</a></nav>
+	<section class="footer-contact"><h2>Contact</h2><p>Use the contact form to share goals, service needs, timeline considerations, and the best way to reply.</p><a class="btn btn-secondary btn-small" href="contact_preview.html">Send inquiry</a></section>
+</div>
+		<div class="site-footer__legal">
+			<p>&copy; 2026 Northstar Websites. All rights reserved.</p>
+			<nav aria-label="Legal links">
+				<a href="policy_preview.html">Privacy policy</a>
+				<a href="policy_preview.html">Terms</a>
+			</nav>
+		</div>
+	</div>
+</footer>
+<script src="assets/js/bundle.js"></script></body>
 </html>

@@ -1,0 +1,1 @@
+<?php defined( 'ABSPATH' ) || exit; ?><article <?php post_class( 'post-card' ); ?>><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail( 'large' ); ?><h2><?php the_title(); ?></h2></a><div class="entry-content"><?php the_excerpt(); ?></div></article>

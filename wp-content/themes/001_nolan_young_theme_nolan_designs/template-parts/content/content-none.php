@@ -1,0 +1,1 @@
+<?php defined( 'ABSPATH' ) || exit; ?><section class="card"><h2><?php esc_html_e( 'Nothing found', 'nolan-young-theme-template-01' ); ?></h2><p><?php esc_html_e( 'Try a different search or browse the main site sections.', 'nolan-young-theme-template-01' ); ?></p><?php get_search_form(); ?></section>

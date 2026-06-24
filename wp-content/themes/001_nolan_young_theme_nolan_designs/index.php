@@ -1,13 +1,26 @@
 <?php
 /**
- * Index.
+ * Ultimate fallback template.
  *
- * @package Nolan_Young_Template
+ * @package NolanYoungThemeTemplate01
  */
+
+defined( 'ABSPATH' ) || exit;
 
 get_header();
 ?>
-<main id="primary" class="site-main">
-	<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', get_post_type() ); endwhile; the_posts_navigation(); else : get_template_part( 'template-parts/content', 'none' ); endif; ?>
+<main id="primary" class="nytt01-site-main nytt01-container nytt01-content-area">
+	<?php if ( have_posts() ) : ?>
+		<?php
+		while ( have_posts() ) :
+			the_post();
+			get_template_part( 'template-parts/content/content', get_post_type() );
+		endwhile;
+		?>
+		<?php nytt01_posts_pagination(); ?>
+	<?php else : ?>
+		<?php get_template_part( 'template-parts/content/content', 'none' ); ?>
+	<?php endif; ?>
 </main>
-<?php get_footer();
+<?php
+get_footer();

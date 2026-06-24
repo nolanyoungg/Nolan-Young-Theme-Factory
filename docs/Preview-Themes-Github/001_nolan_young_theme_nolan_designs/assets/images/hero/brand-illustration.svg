@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-labelledby="title desc">
-  <title id="title">Nolan Designs brand illustration</title>
-  <desc id="desc">Abstract layered panels representing custom WordPress design systems.</desc>
-  <rect width="240" height="160" fill="#f6f2ea"/>
-  <path d="M38 112h96c12 0 22-10 22-22V48H60c-12 0-22 10-22 22v42Z" fill="#153f3a"/>
-  <path d="M86 126h74c16 0 30-13 30-30V62h-74c-16 0-30 13-30 30v34Z" fill="#d8a24a"/>
-  <path d="M70 86h104" stroke="#fff8eb" stroke-width="8" stroke-linecap="round"/>
-  <path d="M70 106h72" stroke="#fff8eb" stroke-width="8" stroke-linecap="round"/>
-</svg>

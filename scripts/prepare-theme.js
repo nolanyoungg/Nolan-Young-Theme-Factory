@@ -15,7 +15,7 @@ const {
 const args = parseArgs(process.argv.slice(2));
 const [positionalPrompt, positionalTemplate] = args._;
 const promptFile = arg(args, 'prompt', positionalPrompt || process.env.THEME_PROMPT_FILE || '');
-const templateName = arg(args, 'template', positionalTemplate || process.env.THEME_TEMPLATE || 'NOLAN-YOUNG-theme-000');
+const templateName = arg(args, 'template', positionalTemplate || process.env.THEME_TEMPLATE || 'nolan-young-theme-template-01');
 const requestedThemeSlug = arg(args, 'theme-slug', process.env.THEME_SLUG || '');
 
 function fail(message) {

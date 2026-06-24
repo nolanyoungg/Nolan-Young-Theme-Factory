@@ -65,6 +65,8 @@ function phpHarness() {
 $themeDir = $argv[1];
 $sourceRelative = $argv[2];
 $fixtureTitle = $argv[3] ?? 'Preview';
+$siteName = $argv[4] ?? 'Preview Site';
+$siteDescription = $argv[5] ?? 'Generated theme preview';
 if (!defined('ABSPATH')) define('ABSPATH', $themeDir . DIRECTORY_SEPARATOR);
 $GLOBALS['preview_theme_dir'] = $themeDir;
 function esc_html($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
@@ -75,6 +77,8 @@ function esc_html_e($t){echo esc_html($t);} function esc_attr_e($t){echo esc_att
 function __($t){return $t;} function _e($t){echo $t;}
 function wp_kses_post($v){return (string)$v;} function wp_json_encode($v){return json_encode($v);}
 function wpautop($v){return '<p>'.str_replace("\\n\\n", '</p><p>', trim((string)$v)).'</p>';}
+function wp_strip_all_tags($v){return trim(strip_tags((string)$v));}
+function wp_date($format){return date((string)$format);}
 function sanitize_text_field($v){return trim(strip_tags((string)$v));}
 function sanitize_email($v){return trim((string)$v);} function sanitize_textarea_field($v){return trim(strip_tags((string)$v));}
 function sanitize_key($v){return strtolower(preg_replace('/[^a-z0-9_\\-]/','',(string)$v));}
@@ -86,7 +90,7 @@ function route_preview($p=''){ $r=ltrim((string)$p,'/'); if(str_starts_with($r,'
 function get_template_directory(){return $GLOBALS['preview_theme_dir'];} function get_stylesheet_directory(){return $GLOBALS['preview_theme_dir'];}
 function get_template_directory_uri(){return '.';} function get_stylesheet_directory_uri(){return '.';}
 function get_theme_file_uri($p=''){return ltrim((string)$p,'/');} function get_theme_file_path($p=''){return $GLOBALS['preview_theme_dir'].DIRECTORY_SEPARATOR.ltrim(str_replace('/',DIRECTORY_SEPARATOR,(string)$p),DIRECTORY_SEPARATOR);}
-function bloginfo($s=''){echo get_bloginfo($s);} function get_bloginfo($s=''){return ['charset'=>'UTF-8','name'=>'Preview Site','description'=>'Generated theme preview','stylesheet_url'=>'assets/css/bundle.css'][$s] ?? 'Preview Site';}
+function bloginfo($s=''){echo get_bloginfo($s);} function get_bloginfo($s=''){global $siteName,$siteDescription; return ['charset'=>'UTF-8','name'=>$siteName,'description'=>$siteDescription,'stylesheet_url'=>'assets/css/bundle.css'][$s] ?? $siteName;}
 function language_attributes(){echo 'lang="en"';} function body_class(){echo 'class="preview"';}
 function wp_head(){echo '<link rel="stylesheet" href="assets/css/bundle.css">';} function wp_footer(){echo '<script src="assets/js/bundle.js"></script>';}
 function wp_body_open(){} function wp_enqueue_script(){} function wp_enqueue_style(){} function wp_register_script(){} function wp_register_style(){}
@@ -115,6 +119,7 @@ function get_option($n,$d=false){return $d;} function current_user_can(){return 
 function get_theme_mod($n,$d=false){return $d;} function selected($s,$c=true,$e=true){$r=((string)$s===(string)$c)?' selected="selected"':''; if($e)echo $r; return $r;}
 function checked($s,$c=true,$e=true){$r=((string)$s===(string)$c)?' checked="checked"':''; if($e)echo $r; return $r;}
 function get_posts($a=[]){return [];} class WP_Query{public function __construct($a=[]){$this->posts=[];} public function have_posts(){return false;} public function the_post(){}}
+function setup_postdata(){} function wp_reset_postdata(){}
 function wp_get_attachment_image(){return '';} function get_post_meta($id,$k='',$single=false){return $single?'':[];}
 function register_sidebar(){} function dynamic_sidebar(){return false;} function is_active_sidebar(){return false;} function paginate_links(){return '';}
 function get_search_query(){return '';} function the_posts_pagination(){} function add_menu_page(){} function add_submenu_page(){}
@@ -129,7 +134,9 @@ function renderWithPhp(themeDir, sourceRelative, title) {
   if (!fs.existsSync(path.join(themeDir, sourceRelative))) fail(`Preview source missing: ${sourceRelative}`);
   const harnessPath = path.join(os.tmpdir(), `theme-preview-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.php`);
   fs.writeFileSync(harnessPath, phpHarness(), 'utf8');
-  const result = runCommand('php', [harnessPath, themeDir, sourceRelative, title], { cwd: root, echo: false });
+  const siteName = readStyle(themeDir, 'Theme Name') || titleFromSlug(path.basename(themeDir));
+  const siteDescription = readStyle(themeDir, 'Description') || 'Generated WordPress theme preview.';
+  const result = runCommand('php', [harnessPath, themeDir, sourceRelative, title, siteName, siteDescription], { cwd: root, echo: false });
   fs.rmSync(harnessPath, { force: true });
   if (result.status !== 0) fail(`PHP preview render failed for ${sourceRelative}: ${result.stderr || result.stdout || result.error}`);
   if (PREVIEW_RUNTIME_WARNING_PATTERN.test(result.stdout)) fail(`PHP preview render produced warning output for ${sourceRelative}.`);

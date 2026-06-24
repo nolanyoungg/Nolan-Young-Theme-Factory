@@ -1,0 +1,700 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Nolan Young Theme Template 01 1.1.2\n"
+"POT-Creation-Date: 2026-06-23 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Domain: nolan-young-theme-template-01\n"
+
+#: inc/template-tags.php:84
+msgid "% comments"
+msgstr ""
+
+#: template-parts/header/mega-menu-featured.php:26
+#: template-parts/header/mega-menu-featured.php:57
+#, php-format
+msgid "%s related links"
+msgstr ""
+
+#: comments.php:22
+msgid "%1$s comment on “%2$s”"
+msgid_plural "%1$s comments on “%2$s”"
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/navigation.php:277
+msgid "(current section)"
+msgstr ""
+
+#: inc/template-tags.php:83
+msgid "1 comment"
+msgstr ""
+
+#: inc/navigation.php:102
+msgid "A collaborative engagement for improving the structure, usability, and accessibility of an existing digital experience."
+msgstr ""
+
+#: template-parts/front-page/content-process.php:22
+msgid "A controlled path from idea to production"
+msgstr ""
+
+#: template-parts/footer/footer-widgets.php:13
+msgid "A disciplined WordPress foundation built for accessibility, maintainability, and reliable production delivery."
+msgstr ""
+
+#: patterns/hero.php:14
+msgid "A flexible starting point for a fast, accessible, maintainable WordPress site."
+msgstr ""
+
+#: inc/navigation.php:91
+msgid "A focused service package designed to turn a defined business need into a clear, measurable implementation plan."
+msgstr ""
+
+#: inc/customizer.php:36 template-parts/global/content-hero.php:12
+msgid "A production-ready foundation for service businesses, agencies, and product teams that need a fast, accessible WordPress presence."
+msgstr ""
+
+#: inc/navigation.php:227 inc/setup.php:150
+msgid "About"
+msgstr ""
+
+#: inc/navigation.php:151
+msgid "About Us"
+msgstr ""
+
+#: inc/navigation.php:107
+msgid "Accessibility"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:47
+msgid "Accessibility remediation"
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:19
+msgid "Accessible by design"
+msgstr ""
+
+#: page-templates/template-contact.php:25
+msgid "Activate the Nolan Young Core plugin to display the contact form."
+msgstr ""
+
+#: patterns/featured-work.php:10
+msgid "Add a concise case-study summary."
+msgstr ""
+
+#: inc/navigation.php:158
+msgid "Approach"
+msgstr ""
+
+#: inc/navigation.php:180
+msgid "Benefits"
+msgstr ""
+
+#: inc/setup.php:160
+msgid "Blog"
+msgstr ""
+
+#: template-parts/front-page/content-process.php:13
+msgid "Build"
+msgstr ""
+
+#: patterns/hero.php:12
+msgid "Build a clearer digital experience."
+msgstr ""
+
+#: patterns/services-grid.php:10
+msgid "Build maintainable, standards-based WordPress solutions."
+msgstr ""
+
+#: template-parts/front-page/content-single-service-highlight.php:14
+msgid "Built for the full lifecycle, not just launch day."
+msgstr ""
+
+#: inc/template-tags.php:47
+msgid "By %s"
+msgstr ""
+
+#: inc/navigation.php:96
+msgid "Capabilities"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:29
+msgid "Capabilities organized around real outcomes"
+msgstr ""
+
+#: inc/navigation.php:173
+msgid "Careers"
+msgstr ""
+
+#: template-parts/global/content-brand-statement.php:12
+msgid "Clear strategy. Deliberate design. Maintainable engineering. Every layer is built to support the next."
+msgstr ""
+
+#: patterns/testimonials.php:10
+msgid "Client name, Organization"
+msgstr ""
+
+#: comments.php:43
+msgid "Comments are closed."
+msgstr ""
+
+#: template-parts/front-page/content-single-service-highlight.php:20
+msgid "Companion-plugin content portability"
+msgstr ""
+
+#: header.php:28
+msgid "Contact"
+msgstr ""
+
+#: patterns/call-to-action.php:10 template-parts/global/content-cta-banner.php:17
+msgid "Contact us"
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:20
+msgid "Content models and processing remain in the plugin so a future theme change does not hide business data."
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:21
+msgid "Controlled releases"
+msgstr ""
+
+#: inc/customizer.php:21
+msgid "Controls presentation text only. Persistent business content belongs in WordPress content or the companion plugin."
+msgstr ""
+
+#: template-parts/front-page/content-process.php:12
+msgid "Create a clear information system and accessible interaction model."
+msgstr ""
+
+#: inc/navigation.php:179
+msgid "Culture"
+msgstr ""
+
+#: template-parts/front-page/content-process.php:11
+msgid "Define users, outcomes, constraints, and measurable success."
+msgstr ""
+
+#: patterns/featured-work.php:10
+msgid "Describe the result and the value delivered."
+msgstr ""
+
+#: inc/navigation.php:168 template-parts/front-page/content-process.php:12
+msgid "Design"
+msgstr ""
+
+#: template-parts/front-page/content-single-service-highlight.php:21
+msgid "Deterministic builds and versioned assets"
+msgstr ""
+
+#: patterns/services-grid.php:10
+msgid "Development"
+msgstr ""
+
+#: template-parts/front-page/content-process.php:11
+msgid "Discover"
+msgstr ""
+
+#: inc/template-tags.php:92
+msgid "Edit %s"
+msgstr ""
+
+#: template-parts/content/content-page.php:28
+msgid "Edit page"
+msgstr ""
+
+#: inc/navigation.php:169
+msgid "Engineering"
+msgstr ""
+
+#: template-parts/errors/content-403.php:11
+msgid "Error 403"
+msgstr ""
+
+#: 404.php:14
+msgid "Error 404"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:44
+msgid "Experience design"
+msgstr ""
+
+#: inc/navigation.php:106
+msgid "Experience review"
+msgstr ""
+
+#: inc/navigation.php:190
+msgid "Experiments"
+msgstr ""
+
+#: template-parts/header/mega-menu-featured.php:52 template-parts/header/mega-menu-featured.php:72
+msgid "Explore %s"
+msgstr ""
+
+#: inc/navigation.php:174
+msgid "Explore opportunities to contribute to thoughtful, standards-based work in a collaborative environment."
+msgstr ""
+
+#: inc/navigation.php:224
+msgid "Explore services"
+msgstr ""
+
+#: archive-ny_service.php:15
+msgid "Explore the services available through this site."
+msgstr ""
+
+#: patterns/featured-work.php:10
+msgid "Featured work"
+msgstr ""
+
+#: inc/template-tags.php:65
+msgid "Filed under %s"
+msgstr ""
+
+#: inc/setup.php:59
+msgid "Footer Navigation"
+msgstr ""
+
+#: inc/setup.php:85
+msgid "Footer Widgets"
+msgstr ""
+
+#: template-parts/front-page/content-blog-preview.php:24 template-parts/header/mega-menu-blog.php:38
+msgid "From the blog"
+msgstr ""
+
+#: inc/customizer.php:20
+msgid "Front Page Presentation"
+msgstr ""
+
+#: inc/navigation.php:184
+msgid "Future Work"
+msgstr ""
+
+#: inc/customizer.php:37
+msgid "Hero description"
+msgstr ""
+
+#: inc/customizer.php:29
+msgid "Hero eyebrow"
+msgstr ""
+
+#: inc/customizer.php:33
+msgid "Hero heading"
+msgstr ""
+
+#: template-parts/front-page/content-process.php:13
+msgid "Implement maintainable WordPress components with explicit boundaries."
+msgstr ""
+
+#: patterns/services-grid.php:10
+msgid "Improve reliability through measured maintenance."
+msgstr ""
+
+#: template-parts/front-page/content-blog-preview.php:23
+msgid "Insights"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:54
+msgid "Install the companion plugin and publish Service entries to replace this starter content."
+msgstr ""
+
+#: inc/navigation.php:118
+msgid "Integrations"
+msgstr ""
+
+#: template-parts/content/content-policy.php:18
+msgid "Last updated: %s"
+msgstr ""
+
+#: template-parts/header/mega-menu-blog.php:39
+msgid "Latest insights"
+msgstr ""
+
+#: inc/navigation.php:167
+msgid "Leadership"
+msgstr ""
+
+#: inc/navigation.php:152
+msgid "Learn how the team approaches strategy, design, engineering, and long-term product stewardship."
+msgstr ""
+
+#: inc/navigation.php:228
+msgid "Learn more about us"
+msgstr ""
+
+#: inc/template-tags.php:82
+msgid "Leave a comment"
+msgstr ""
+
+#: inc/navigation.php:128
+msgid "Maintenance"
+msgstr ""
+
+#: inc/navigation.php:163
+msgid "Meet the people responsible for planning, designing, building, testing, and supporting each engagement."
+msgstr ""
+
+#: inc/navigation.php:162
+msgid "Meet the Team"
+msgstr ""
+
+#: header.php:31
+msgid "Menu"
+msgstr ""
+
+#: inc/template-tags.php:110 single.php:21
+msgid "Next"
+msgstr ""
+
+#: template-parts/header/mega-menu-blog.php:72
+msgid "No blog posts are published yet."
+msgstr ""
+
+#: template-parts/content/content-none.php:13
+msgid "No results matched your search. Try different keywords."
+msgstr ""
+
+#: inc/block-styles.php:20
+msgid "Nolan Young Card"
+msgstr ""
+
+#: inc/block-styles.php:28
+msgid "Nolan Young Outline"
+msgstr ""
+
+#: template-parts/content/content-none.php:11
+msgid "Nothing found"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:48
+msgid "Ongoing maintenance"
+msgstr ""
+
+#: inc/navigation.php:124
+msgid "Ongoing technical stewardship focused on performance, stability, security, and controlled continuous improvement."
+msgstr ""
+
+#: inc/navigation.php:178
+msgid "Open roles"
+msgstr ""
+
+#: inc/navigation.php:108
+msgid "Optimization"
+msgstr ""
+
+#: inc/navigation.php:156
+msgid "Our story"
+msgstr ""
+
+#: inc/navigation.php:95
+msgid "Overview"
+msgstr ""
+
+#: template-parts/content/content-page.php:22 template-parts/content/content-single.php:25
+msgid "Page"
+msgstr ""
+
+#: inc/navigation.php:129
+msgid "Performance"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:46
+msgid "Performance optimization"
+msgstr ""
+
+#: patterns/services-grid.php:10
+msgid "Plan the right structure before implementation."
+msgstr ""
+
+#: template-parts/content/content-policy.php:12
+msgid "Policy"
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:20
+msgid "Portable content"
+msgstr ""
+
+#: inc/block-styles.php:42
+msgid "Portfolio"
+msgstr ""
+
+#: inc/template-tags.php:109 single.php:20
+msgid "Previous"
+msgstr ""
+
+#: inc/setup.php:58
+msgid "Primary Navigation"
+msgstr ""
+
+#: template-parts/header/primary-navigation.php:10
+msgid "Primary navigation"
+msgstr ""
+
+#: inc/navigation.php:97 template-parts/front-page/content-process.php:21
+msgid "Process"
+msgstr ""
+
+#: template-parts/front-page/content-single-service-highlight.php:13
+msgid "Production discipline"
+msgstr ""
+
+#: inc/navigation.php:113
+msgid "Production engineering for maintainable WordPress systems, custom integrations, and dependable release workflows."
+msgstr ""
+
+#: patterns/featured-work.php:10
+msgid "Project one"
+msgstr ""
+
+#: patterns/featured-work.php:10
+msgid "Project two"
+msgstr ""
+
+#: template-parts/front-page/content-featured-work.php:37
+msgid "Publish posts to populate this section."
+msgstr ""
+
+#: inc/template-tags.php:34
+msgid "Published %s"
+msgstr ""
+
+#: template-parts/content/content-search.php:21 template-parts/header/mega-menu-blog.php:63
+msgid "Read more"
+msgstr ""
+
+#: template-parts/global/content-cta-banner.php:14
+msgid "Ready to build?"
+msgstr ""
+
+#: patterns/call-to-action.php:10
+msgid "Ready to discuss the next step?"
+msgstr ""
+
+#: template-parts/front-page/content-featured-work.php:23
+msgid "Recent ideas and outcomes"
+msgstr ""
+
+#: inc/navigation.php:119
+msgid "Release systems"
+msgstr ""
+
+#: inc/navigation.php:189
+msgid "Research"
+msgstr ""
+
+#: 404.php:18 template-parts/errors/content-403.php:18
+msgid "Return home"
+msgstr ""
+
+#: inc/navigation.php:191
+msgid "Roadmap"
+msgstr ""
+
+#: search.php:18
+msgid "Search results for “%s”"
+msgstr ""
+
+#: inc/navigation.php:185
+msgid "See the research, experiments, and emerging capabilities shaping the team’s future direction."
+msgstr ""
+
+#: template-parts/front-page/content-featured-work.php:22
+msgid "Selected work"
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:19
+msgid "Semantic structure, keyboard operation, visible focus, and reduced-motion support are built into the baseline."
+msgstr ""
+
+#: inc/navigation.php:90
+msgid "Service 1"
+msgstr ""
+
+#: inc/navigation.php:101
+msgid "Service 2"
+msgstr ""
+
+#: inc/navigation.php:112
+msgid "Service 3"
+msgstr ""
+
+#: inc/navigation.php:123
+msgid "Service 4"
+msgstr ""
+
+#: inc/block-styles.php:43 inc/navigation.php:223 inc/setup.php:145 patterns/services-grid.php:10 template-parts/front-page/content-all-services.php:28
+msgid "Services"
+msgstr ""
+
+#: template-parts/errors/content-403.php:16
+msgid "Sign in"
+msgstr ""
+
+#: template-parts/errors/content-403.php:13
+msgid "Sign in with an authorized account or return to the home page."
+msgstr ""
+
+#: header.php:20
+msgid "Skip to content"
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:21
+msgid "Source, generated assets, tests, and production packages are separated and validated before installation."
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:14
+msgid "Standards"
+msgstr ""
+
+#: patterns/hero.php:15 template-parts/global/content-hero.php:21
+msgid "Start a project"
+msgstr ""
+
+#: patterns/services-grid.php:10
+msgid "Strategy"
+msgstr ""
+
+#: inc/customizer.php:28 template-parts/global/content-hero.php:10
+msgid "Strategy, design, and engineering"
+msgstr ""
+
+#: patterns/services-grid.php:10
+msgid "Support"
+msgstr ""
+
+#: inc/template-tags.php:73
+msgid "Tagged %s"
+msgstr ""
+
+#: inc/navigation.php:130
+msgid "Technical support"
+msgstr ""
+
+#: template-parts/front-page/content-process.php:14
+msgid "Test functionality, accessibility, performance, and release packaging."
+msgstr ""
+
+#: inc/block-styles.php:44
+msgid "Testimonials"
+msgstr ""
+
+#: 404.php:15
+msgid "That page could not be found."
+msgstr ""
+
+#: 404.php:16
+msgid "The address may be incorrect, or the page may have moved. Search the site or return to the home page."
+msgstr ""
+
+#: template-parts/front-page/content-single-service-highlight.php:17
+msgid "The architecture separates presentation from permanent functionality, keeps source and generated assets distinct, and provides explicit release checks for security, accessibility, compatibility, and packaging."
+msgstr ""
+
+#: patterns/testimonials.php:10
+msgid "The process was structured, transparent, and focused on measurable results."
+msgstr ""
+
+#: template-parts/front-page/content-style-pillars.php:15
+msgid "The rules that protect quality"
+msgstr ""
+
+#: template-parts/front-page/content-testimonials.php:13
+msgid "The strongest WordPress systems are understandable before they are clever. Every file should make its purpose obvious."
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:45
+msgid "Theme engineering"
+msgstr ""
+
+#: template-parts/front-page/content-testimonials.php:14
+msgid "Theme engineering principle"
+msgstr ""
+
+#: template-parts/content/content-none.php:16
+msgid "There is no content to display yet."
+msgstr ""
+
+#: template-parts/global/content-cta-banner.php:15
+msgid "Turn the next idea into a dependable WordPress experience."
+msgstr ""
+
+#: template-parts/front-page/content-process.php:14
+msgid "Validate"
+msgstr ""
+
+#: inc/navigation.php:157
+msgid "Values"
+msgstr ""
+
+#: template-parts/front-page/content-featured-work.php:25
+msgid "View all"
+msgstr ""
+
+#: template-parts/header/mega-menu-blog.php:41
+msgid "View all posts"
+msgstr ""
+
+#: template-parts/global/content-hero.php:22
+msgid "View our work"
+msgstr ""
+
+#: template-parts/header/mega-menu-featured.php:63
+msgid "View overview"
+msgstr ""
+
+#: template-parts/header/mega-menu-blog.php:73
+msgid "Visit the blog"
+msgstr ""
+
+#: inc/customizer.php:32 template-parts/global/content-hero.php:11
+msgid "Web experiences built to perform."
+msgstr ""
+
+#: inc/setup.php:87
+msgid "Widgets displayed in the site footer."
+msgstr ""
+
+#: inc/navigation.php:117
+msgid "WordPress development"
+msgstr ""
+
+#: template-parts/front-page/content-all-services.php:43
+msgid "WordPress strategy"
+msgstr ""
+
+#: template-parts/front-page/content-single-service-highlight.php:19
+msgid "WordPress-native template hierarchy"
+msgstr ""
+
+#: inc/setup.php:156
+msgid "Work"
+msgstr ""
+
+#: template-parts/errors/content-403.php:12
+msgid "You do not have permission to view this page."
+msgstr ""
+
+#: footer.php:18
+msgid "© %1$s %2$s. All rights reserved."
+msgstr ""
+
+#: searchform.php:14
+msgctxt "label"
+msgid "Search for:"
+msgstr ""
+
+#: inc/template-tags.php:59 inc/template-tags.php:60
+msgctxt "list item separator"
+msgid ", "
+msgstr ""
+
+#: searchform.php:16
+msgctxt "placeholder"
+msgid "Search…"
+msgstr ""
+
+#: searchform.php:17
+msgctxt "submit button"
+msgid "Search"
+msgstr ""

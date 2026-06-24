@@ -1,186 +1,38 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/bundle.css"></head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="assets/css/bundle.css"></head>
 <body class="preview">
-<header class="site-header" data-header>
-	<a class="skip-link screen-reader-text" href="#primary">Skip to content</a>
-	<div class="site-header__backdrop" data-backdrop hidden></div>
-	<div class="site-header__inner">
-		<a class="site-logo" href="homepage_preview.html" rel="home">
-			<svg class="site-logo__mark" viewBox="0 0 64 64" role="img" aria-hidden="true" focusable="false">
-		<rect x="4" y="4" width="56" height="56" rx="16" fill="currentColor" opacity="0.1"></rect>
-		<path d="M18 44V20h8l20 24V20h8v24h-8L26 20v24h-8z" fill="currentColor"></path>
-	</svg>			<span class="site-logo__text">
-				<strong>Preview Site</strong>
-				<span>Websites that help businesses grow.</span>
-			</span>
-		</a>
-		<nav class="site-header__nav" aria-label="Primary navigation">
-			<button class="site-nav__trigger" type="button" data-menu-item="services" aria-controls="services-menu" aria-expanded="false">Services</button>
-			<button class="site-nav__trigger" type="button" data-menu-item="about" aria-controls="about-menu" aria-expanded="false">About</button>
-			<a class="site-nav__link" href="work_preview.html">Work</a>
-			<button class="site-nav__trigger" type="button" data-menu-item="blog" aria-controls="blog-menu" aria-expanded="false">Blog</button>
-		</nav>
-		<div class="site-header__cta">
-			<a class="btn btn-header-cta" href="contact_preview.html">Contact Us</a>
-			<button class="mobile-menu-toggle" type="button" data-mobile-open aria-controls="mobile-drawer" aria-expanded="false">Menu</button>
-		</div>
+<a class="skip-link screen-reader-text" href="#primary">Skip to content</a>
+<div id="page" class="site">
+<header class="site-header" role="banner">
+	<div class="site-wrap site-header__inner">
+		<div class="site-branding"><a class="site-branding__mark" href="homepage_preview.html" rel="home"><svg viewBox="0 0 48 48" role="img" aria-label="Nolan Designs"><rect width="48" height="48" rx="12" fill="#2563eb"/><path d="M13 32V16h4l8 10V16h4v16h-4l-8-10v10z" fill="#fff"/></svg></a><div class="site-branding__text"><p class="site-title"><a href="homepage_preview.html" rel="home">Nolan Young Theme Nolan Designs</a></p><p class="site-description">Modern WordPress business theme for Nolan Designs.</p></div></div>
+		<nav class="site-nav primary-nav" aria-label="Primary navigation"><ul><li><button type="button" class="nav-trigger" data-menu-item="services" aria-controls="services-menu" aria-expanded="false">Services</button></li><li><button type="button" class="nav-trigger" data-menu-item="about" aria-controls="about-menu" aria-expanded="false">About</button></li><li><a href="work_preview.html">Work</a></li><li><button type="button" class="nav-trigger" data-menu-item="blog" aria-controls="blog-menu" aria-expanded="false">Blog</button></li></ul></nav>
+		<div class="header-cta"><a class="btn btn-header-cta" href="contact_preview.html">Contact Us</a></div>
+		<button class="mobile-toggle btn btn-secondary btn-small" type="button" data-mobile-toggle aria-controls="mobile-drawer" aria-expanded="false">Menu</button>
 	</div>
-	<div class="site-header__panels">
-		<div class="site-panel" id="services-menu" data-menu-dropdown="services" hidden>
-			<div class="site-panel__grid">
-				<div class="site-panel__rail">
-											<button type="button" data-rail-item="wordpress-design">Wordpress Design</button>
-											<button type="button" data-rail-item="custom-theme-development">Custom Theme Development</button>
-											<button type="button" data-rail-item="woocommerce">Woocommerce</button>
-											<button type="button" data-rail-item="website-redesign">Website Redesign</button>
-											<button type="button" data-rail-item="integrations-automation">Integrations Automation</button>
-											<button type="button" data-rail-item="website-care-support">Website Care Support</button>
-									</div>
-				<div class="site-panel__content">
-											<section data-rail-content="wordpress-design" >
-							<h3>WordPress Design</h3>
-							<p>Premium editorial layouts and conversion-focused page systems.</p>
-							<ul><li>Built for clarity</li><li>Mobile-ready by default</li><li>Structured for growth</li></ul>
-						</section>
-											<section data-rail-content="custom-theme-development" hidden>
-							<h3>Custom Theme Development</h3>
-							<p>Hand-built templates and reusable theme architecture.</p>
-							<ul><li>Built for clarity</li><li>Mobile-ready by default</li><li>Structured for growth</li></ul>
-						</section>
-											<section data-rail-content="woocommerce" hidden>
-							<h3>WooCommerce</h3>
-							<p>Commerce experiences that stay fast, usable, and brand-led.</p>
-							<ul><li>Built for clarity</li><li>Mobile-ready by default</li><li>Structured for growth</li></ul>
-						</section>
-											<section data-rail-content="website-redesign" hidden>
-							<h3>Website Redesign</h3>
-							<p>Modernize an existing site without losing what already works.</p>
-							<ul><li>Built for clarity</li><li>Mobile-ready by default</li><li>Structured for growth</li></ul>
-						</section>
-											<section data-rail-content="integrations-automation" hidden>
-							<h3>Integrations &amp; Automation</h3>
-							<p>Connect forms, newsletters, and back-office systems.</p>
-							<ul><li>Built for clarity</li><li>Mobile-ready by default</li><li>Structured for growth</li></ul>
-						</section>
-											<section data-rail-content="website-care-support" hidden>
-							<h3>Website Care &amp; Support</h3>
-							<p>Monthly support for updates, fixes, and steady improvement.</p>
-							<ul><li>Built for clarity</li><li>Mobile-ready by default</li><li>Structured for growth</li></ul>
-						</section>
-									</div>
-			</div>
-		</div>
-		<div class="site-panel" id="about-menu" data-menu-dropdown="about" hidden>
-			<div class="site-panel__grid">
-				<div class="site-panel__rail">
-											<button type="button" data-rail-item="our-approach">Our Approach</button>
-											<button type="button" data-rail-item="what-we-value">What We Value</button>
-											<button type="button" data-rail-item="how-we-work">How We Work</button>
-									</div>
-				<div class="site-panel__content">
-					<section data-rail-content="our-approach">
-						<h3>Purposeful, editorial, and practical.</h3>
-						<p>We design systems that help service businesses communicate clearly and convert consistently.</p>
-					</section>
-					<section data-rail-content="what-we-value" hidden>
-						<h3>Craft, clarity, and maintainability.</h3>
-						<p>Good work should be understandable, durable, and easy to build on later.</p>
-					</section>
-					<section data-rail-content="how-we-work" hidden>
-						<h3>Small steps, visible progress.</h3>
-						<p>Discovery, design, development, and support stay connected through one plan.</p>
-					</section>
-				</div>
-			</div>
-		</div>
-		<div class="site-panel site-panel--blog" id="blog-menu" data-menu-dropdown="blog" hidden>
-			<div class="blog-grid">
-									<article class="blog-card">
-						<p class="blog-card__tag">Strategy</p>
-						<h3>How to plan a WordPress redesign without losing clarity</h3>
-						<p>A practical process for setting goals, preserving content, and avoiding scope drift.</p>
-						<a href="blog_preview.html">Read article</a>
-					</article>
-									<article class="blog-card">
-						<p class="blog-card__tag">Design</p>
-						<h3>Choosing the right homepage structure for a service business</h3>
-						<p>A breakdown of sections, hierarchy, and calls to action that support conversion.</p>
-						<a href="blog_preview.html">Read article</a>
-					</article>
-									<article class="blog-card">
-						<p class="blog-card__tag">Development</p>
-						<h3>What reusable components do for long-term WordPress maintenance</h3>
-						<p>Why a disciplined component system keeps future work predictable and faster.</p>
-						<a href="blog_preview.html">Read article</a>
-					</article>
-									<article class="blog-card">
-						<p class="blog-card__tag">Support</p>
-						<h3>A simple support rhythm that keeps sites healthy after launch</h3>
-						<p>Monthly checks, content updates, and a realistic plan for ongoing improvement.</p>
-						<a href="blog_preview.html">Read article</a>
-					</article>
-							</div>
-		</div>
-	</div>
-	<div class="mobile-drawer" id="mobile-drawer" data-mobile-drawer hidden>
-		<button class="mobile-drawer__close" type="button" data-mobile-close>Close</button>
-		<a class="btn btn-header-cta mobile-drawer__cta" href="contact_preview.html">Contact Us</a>
-		<div class="mobile-drawer__section">
-			<button type="button" data-accordion-trigger="mobile-services" aria-expanded="false">Services</button>
-			<div data-accordion-panel="mobile-services" hidden>
-									<a href="services_preview.html">WordPress Design</a>
-									<a href="services_preview.html">Custom Theme Development</a>
-									<a href="services_preview.html">WooCommerce</a>
-									<a href="services_preview.html">Website Redesign</a>
-									<a href="services_preview.html">Integrations &amp; Automation</a>
-									<a href="services_preview.html">Website Care &amp; Support</a>
-							</div>
-		</div>
-		<div class="mobile-drawer__section">
-			<button type="button" data-accordion-trigger="mobile-about" aria-expanded="false">About</button>
-			<div data-accordion-panel="mobile-about" hidden>
-				<a href="about-us_preview.html">Our Approach</a>
-			</div>
-		</div>
-		<div class="mobile-drawer__section">
-			<button type="button" data-accordion-trigger="mobile-blog" aria-expanded="false">Blog</button>
-			<div data-accordion-panel="mobile-blog" hidden>
-				<a href="blog_preview.html">Blog Archive</a>
-			</div>
-		</div>
-		<a href="work_preview.html">Work</a>
-	</div>
+	<div class="backdrop" data-backdrop></div>
+	<nav id="mobile-drawer" class="mobile-drawer" data-mobile-drawer aria-label="Mobile navigation"><button type="button" class="btn btn-secondary btn-small" data-mobile-toggle aria-expanded="true">Close</button><ul class="menu"><li><a href="homepage_preview.html">Home</a></li><li><a href="work_preview.html">Work</a></li><li><a href="contact_preview.html" class="btn btn-primary btn-small">Contact Us</a></li></ul></nav>
+	<div id="services-menu" data-menu-dropdown="services" aria-hidden="true" class="dropdown-panel"><div class="site-wrap dropdown-panel__grid"><div class="rail"><button type="button" data-rail-item="wordpress-design" aria-pressed="true">WordPress Design</button><button type="button" data-rail-item="custom-theme-development" aria-pressed="false">Custom Theme Development</button><button type="button" data-rail-item="woocommerce" aria-pressed="false">WooCommerce</button><button type="button" data-rail-item="website-redesign" aria-pressed="false">Website Redesign</button><button type="button" data-rail-item="integrations-automation" aria-pressed="false">Integrations &amp; Automation</button><button type="button" data-rail-item="support" aria-pressed="false">Website Care &amp; Support</button></div><div class="rail-content"><section data-rail-content="wordpress-design" class="rail-section is-active"><h3>Wordpress Design</h3><p>Purposeful, editorial WordPress websites.</p></section><section data-rail-content="custom-theme-development" class="rail-section"><h3>Custom Theme Development</h3><p>Reusable themes built for maintainability.</p></section><section data-rail-content="woocommerce" class="rail-section"><h3>Woocommerce</h3><p>Commerce sites that stay clear and usable.</p></section><section data-rail-content="website-redesign" class="rail-section"><h3>Website Redesign</h3><p>Sharper structure for existing content.</p></section><section data-rail-content="integrations-automation" class="rail-section"><h3>Integrations Automation</h3><p>Practical handoff between tools and forms.</p></section><section data-rail-content="support" class="rail-section"><h3>Support</h3><p>Care plans that keep sites healthy.</p></section></div></div></div>
+	<div id="blog-menu" data-menu-dropdown="blog" aria-hidden="true" class="dropdown-panel"><div class="site-wrap"><div class="blog-grid"><article class="post-card"><p class="eyebrow">Article</p><h3>Blog post 1</h3><p>Useful guidance for WordPress planning, launches, and maintenance.</p></article><article class="post-card"><p class="eyebrow">Article</p><h3>Blog post 2</h3><p>Useful guidance for WordPress planning, launches, and maintenance.</p></article><article class="post-card"><p class="eyebrow">Article</p><h3>Blog post 3</h3><p>Useful guidance for WordPress planning, launches, and maintenance.</p></article><article class="post-card"><p class="eyebrow">Article</p><h3>Blog post 4</h3><p>Useful guidance for WordPress planning, launches, and maintenance.</p></article></div></div></div>
 </header>
-<main id="primary" class="site-main"><section class="template-section">
-	<div class="template-container">
-		<p class="eyebrow">Lorem ipsum</p>
-		<h2>Single Content</h2>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae lectus non velit gravida fermentum.</p>
-	</div>
-</section>
-</main><footer class="site-footer">
-	<div class="site-footer__cta">
-		<h2>Ready to build a clearer site?</h2>
-		<a class="btn btn-primary" href="contact_preview.html">Contact Us</a>
-	</div>
-	<div class="site-footer__grid">
-		<div><section class="template-section">
-	<div class="template-container">
-		<p class="eyebrow">Lorem ipsum</p>
-		<h2>Footer Widgets</h2>
-		<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed vitae lectus non velit gravida fermentum.</p>
-	</div>
-</section>
+<main id="primary" class="site-main"><div class="site-wrap"><article class="card content-single"><h1>Service</h1><div class="entry-content"><p>Preview fixture content rendered through the generated template.</p></div></article>
+</div></main>	<footer id="colophon" class="footer">
+		<div class="site-wrap">
+			<div class="footer-grid"><div><p class="eyebrow">Nolan Designs</p><p>Websites that help businesses grow.</p></div><div><h2>Services</h2><ul><li><a href="services_preview.html">WordPress Design</a></li><li><a href="services_preview.html">Development</a></li><li><a href="services_preview.html">Support</a></li></ul></div><div><h2>Company</h2><ul><li><a href="about-us_preview.html">About</a></li><li><a href="work_preview.html">Work</a></li><li><a href="contact_preview.html">Contact</a></li></ul></div><div><h2>Blog</h2><ul><li><a href="blog_preview.html">Blog archive</a></li></ul></div><div><h2>Contact</h2><p><a href="contact_preview.html">Start a project</a></p></div></div>
+			<div class="legal-row">
+				<p>&copy; 2026 Nolan Young Theme Nolan Designs</p>
+				<nav aria-label="Footer legal navigation">
+					<ul class="inline-links">
+						<li><a href="homepage_preview.html">Privacy Policy</a></li>
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</footer>
 </div>
-	</div>
-	<div class="site-footer__legal">
-		<p>&copy; 2026 Preview Site</p>
-		<a href="homepage_preview.html">Privacy Policy</a>
-	</div>
-</footer>
 <script src="assets/js/bundle.js"></script></body>
 </html>

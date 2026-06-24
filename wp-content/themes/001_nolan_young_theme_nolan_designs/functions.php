@@ -1,24 +1,3 @@
 <?php
-/**
- * Theme bootstrap.
- *
- * @package Nolan_Young_Template
- */
-
 defined( 'ABSPATH' ) || exit;
-
-foreach ( array(
-	'inc/setup.php',
-	'inc/helpers.php',
-	'inc/template-tags.php',
-	'inc/enqueue.php',
-	'inc/custom-post-types.php',
-	'inc/forms.php',
-	'inc/newsletter.php',
-	'inc/policy-routing.php',
-) as $nolan_young_template_include ) {
-	$path = get_template_directory() . '/' . $nolan_young_template_include;
-	if ( file_exists( $path ) ) {
-		require_once $path;
-	}
-}
+foreach ( array( '/inc/setup.php', '/inc/navigation.php', '/inc/enqueue.php', '/inc/editor.php', '/inc/template-tags.php', '/inc/template-functions.php', '/inc/customizer.php', '/inc/block-styles.php', '/inc/integrations/nolan-young-core.php' ) as $file ) { $path = get_theme_file_path( $file ); if ( file_exists( $path ) ) require_once $path; }

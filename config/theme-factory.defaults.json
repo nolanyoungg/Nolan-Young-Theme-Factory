@@ -1,6 +1,6 @@
 {
   "default_mode": "hybrid",
-  "default_template": "NOLAN-YOUNG-theme-000",
+  "default_template": "nolan-young-theme-template-01",
   "ollama": {
     "model": "qwen2.5-coder:14b"
   },

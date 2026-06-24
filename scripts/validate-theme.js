@@ -4,7 +4,7 @@ const path = require('path');
 const yauzl = require('yauzl');
 const { root } = require('./lib/repo-root');
 const { parseArgs, arg } = require('./lib/args');
-const { PREVIEW_RUNTIME_WARNING_PATTERN, REMOTE_RUNTIME_PATTERN, WALK_IGNORED_DIRECTORIES } = require('./lib/constants');
+const { PLACEHOLDER_PATTERN, PREVIEW_RUNTIME_WARNING_PATTERN, REMOTE_RUNTIME_PATTERN, WALK_IGNORED_DIRECTORIES } = require('./lib/constants');
 const { assertThemeSlug, assertTemplateName, walkFiles } = require('./lib/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
@@ -62,6 +62,27 @@ function localAssetReferences(text) {
     .filter((value) => value && !/^(?:https?:|data:|mailto:|tel:|#)/i.test(value));
 }
 
+function renderCriticalFiles(themeDir) {
+  const files = [];
+  const frontPage = path.join(themeDir, 'front-page.php');
+  if (fs.existsSync(frontPage)) files.push('front-page.php');
+  const templatePartsDir = path.join(themeDir, 'template-parts');
+  if (fs.existsSync(templatePartsDir)) {
+    for (const file of walkFiles(templatePartsDir)) {
+      const relative = rel(file, themeDir);
+      if (/^template-parts\/content-.*\.php$/i.test(relative)) files.push(relative);
+    }
+  }
+  const pageTemplatesDir = path.join(themeDir, 'page-templates');
+  if (fs.existsSync(pageTemplatesDir)) {
+    for (const file of walkFiles(pageTemplatesDir)) {
+      const relative = rel(file, themeDir);
+      if (/^page-templates\/.*\.php$/i.test(relative)) files.push(relative);
+    }
+  }
+  return [...new Set(files)].sort();
+}
+
 async function validateTheme(options = {}) {
   const selectedSlug = assertThemeSlug(options.themeSlug || themeSlug);
   const themesRoot = path.resolve(root, 'wp-content', 'themes');
@@ -72,7 +93,7 @@ async function validateTheme(options = {}) {
   add(checks, 'theme_path_containment', themeDir.startsWith(`${themesRoot}${path.sep}`), rel(themeDir));
   add(checks, 'theme_folder_exists', fs.existsSync(themeDir), `wp-content/themes/${selectedSlug}`);
 
-  const templateName = assertTemplateName(options.template || templateArg || readTemplateSource(themeDir) || 'NOLAN-YOUNG-theme-000');
+  const templateName = assertTemplateName(options.template || templateArg || readTemplateSource(themeDir) || 'nolan-young-theme-template-01');
   const templateRoot = path.resolve(root, 'wordpress-themplate-themes', templateName);
   add(checks, 'template_exists', fs.existsSync(templateRoot), `wordpress-themplate-themes/${templateName}`);
 
@@ -86,7 +107,8 @@ async function validateTheme(options = {}) {
 
   if ((phase === 'source' || phase === 'final') && fs.existsSync(themeDir)) {
     const declarations = new Map();
-    for (const file of walkFiles(themeDir).filter((item) => item.endsWith('.php'))) {
+    const themeFiles = walkFiles(themeDir);
+    for (const file of themeFiles.filter((item) => item.endsWith('.php'))) {
       const relative = rel(file, themeDir);
       const text = fs.readFileSync(file, 'utf8');
       let match;
@@ -98,6 +120,24 @@ async function validateTheme(options = {}) {
     }
     const duplicateFunctions = [...declarations.entries()].filter(([, files]) => files.length > 1).map(([name, files]) => `${name}: ${files.join(', ')}`);
     add(checks, 'duplicate_php_functions', duplicateFunctions.length === 0, duplicateFunctions.join('; '));
+
+    const placeholderHits = themeFiles
+      .filter((file) => /\.(php|html|css|scss|sass|js|json|svg|md|txt)$/i.test(file))
+      .map((file) => {
+        const text = fs.readFileSync(file, 'utf8');
+        return PLACEHOLDER_PATTERN.test(text) ? rel(file, themeDir) : '';
+      })
+      .filter(Boolean);
+    add(checks, 'placeholder_content', placeholderHits.length === 0, placeholderHits.join(', '));
+
+    const unchangedCritical = renderCriticalFiles(themeDir)
+      .filter((file) => fs.existsSync(path.join(templateRoot, file)))
+      .filter((file) => {
+        const themeText = fs.readFileSync(path.join(themeDir, file), 'utf8');
+        const templateText = fs.readFileSync(path.join(templateRoot, file), 'utf8');
+        return themeText === templateText && PLACEHOLDER_PATTERN.test(themeText);
+      });
+    add(checks, 'critical_template_fragments_replaced', unchangedCritical.length === 0, unchangedCritical.join(', '));
   }
 
   if (phase === 'artifacts' || phase === 'final') {

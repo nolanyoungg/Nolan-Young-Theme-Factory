@@ -1,0 +1,1 @@
+<?php /** Template Name: Service Detail */ defined( 'ABSPATH' ) || exit; get_header(); ?><main id="primary" class="site-main"><div class="site-wrap"><?php get_template_part( 'template-parts/front-page/content', 'single-service-highlight' ); ?></div></main><?php get_footer();

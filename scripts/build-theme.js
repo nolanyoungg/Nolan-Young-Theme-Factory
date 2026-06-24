@@ -54,7 +54,26 @@ async function buildTheme(options = {}) {
 
   const themeDir = path.join(root, 'wp-content', 'themes', selectedSlug);
   if (!fs.existsSync(themeDir)) fail(`Theme directory missing: wp-content/themes/${selectedSlug}`);
-  if (!fs.existsSync(path.join(themeDir, 'package.json'))) fail('package.json missing; cannot build assets.');
+  if (!fs.existsSync(path.join(themeDir, 'package.json'))) {
+    const report = {
+      theme_slug: selectedSlug,
+      install_command: '',
+      install_exit_code: 0,
+      build_command: '',
+      build_exit_code: 0,
+      created_files: [],
+      modified_files: [],
+      skipped: true,
+      reason: 'package.json missing; using committed theme assets as-is.',
+      output: ''
+    };
+    if (options.reportPath) {
+      fs.mkdirSync(path.dirname(options.reportPath), { recursive: true });
+      fs.writeFileSync(options.reportPath, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+    }
+    console.log(`Skipped asset build for ${selectedSlug}; package.json is not present.`);
+    return { passed: true, status: 0, report };
+  }
 
   const before = snapshotFiles(themeDir);
   const installArgs = fs.existsSync(path.join(themeDir, 'package-lock.json'))

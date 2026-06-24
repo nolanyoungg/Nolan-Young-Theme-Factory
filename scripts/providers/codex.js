@@ -98,6 +98,8 @@ ${passType === 'finish' ? 'Finish, improve, and unify the existing Ollama draft 
 
 Use local assets only. Do not add secrets, CDN dependencies, remote images, or machine-specific paths. Preserve every required file from the selected template. Leave the theme ready for deterministic build, validation, preview, and packaging.
 
+Do not delete, rename, or move any file that exists in the prepared theme at the start of the pass. Every file copied from the selected template is required unless the brief explicitly asks to replace it. Treat the prepared file list as a hard preserve list.
+
 This brief is not a validation-failure checklist. Do not treat this as a build cleanup or repair pass; it is the planned creative generation stage for the selected mode.
 
 ## Creative Prompt

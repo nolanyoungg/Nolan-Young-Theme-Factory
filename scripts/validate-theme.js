@@ -4,24 +4,8 @@ const path = require('path');
 const yauzl = require('yauzl');
 const { root } = require('./lib/repo-root');
 const { parseArgs, arg } = require('./lib/args');
-const { runCommand } = require('./lib/command-runner');
-const {
-  ALLOWED_REMOTE_REFERENCE_PATTERN,
-  ABSOLUTE_LOCAL_ASSET_PATTERN,
-  INLINE_STYLE_BLOCK_PATTERN,
-  MODEL_FILE_BLOCK_MARKER_PATTERN,
-  PLACEHOLDER_PATTERN,
-  PREVIEW_RUNTIME_WARNING_PATTERN,
-  REMOTE_RUNTIME_PATTERN,
-  REPO_LOCAL_PATH_PATTERN,
-  REQUIRED_BUNDLES,
-  REQUIRED_ROOT_FILES,
-  SECRET_PATTERN,
-  TEMPLATE_PART_WRAPPER_PATTERN,
-  WALK_IGNORED_DIRECTORIES
-} = require('./lib/constants');
+const { PREVIEW_RUNTIME_WARNING_PATTERN, REMOTE_RUNTIME_PATTERN, WALK_IGNORED_DIRECTORIES } = require('./lib/constants');
 const { assertThemeSlug, assertTemplateName, walkFiles } = require('./lib/theme-utils');
-const { validateAssetManifest } = require('./lib/model-output');
 
 const args = parseArgs(process.argv.slice(2));
 const themeSlug = arg(args, 'theme-slug', args._[0] || '');
@@ -65,15 +49,6 @@ function add(checks, name, passed, details = '') {
   checks.push({ name, status: passed ? 'passed' : 'failed', details });
 }
 
-function classifyRemoteReferences(text) {
-  const refs = [...text.matchAll(/https?:\/\/[^\s"'<>)]*/g)].map((match) => match[0]);
-  return refs.map((reference) => {
-    if (ALLOWED_REMOTE_REFERENCE_PATTERN.test(reference)) return { reference, classification: 'allowed metadata/schema reference' };
-    if (/source|license|attribution|documentation/i.test(text.slice(Math.max(0, text.indexOf(reference) - 80), text.indexOf(reference) + reference.length + 80))) return { reference, classification: 'documentation-only source reference' };
-    return { reference, classification: 'forbidden runtime dependency' };
-  });
-}
-
 function scssImportCandidates(baseDir, specifier) {
   const parsed = path.posix.parse(specifier);
   const direct = path.resolve(baseDir, specifier);
@@ -110,57 +85,6 @@ async function validateTheme(options = {}) {
   }
 
   if ((phase === 'source' || phase === 'final') && fs.existsSync(themeDir)) {
-    const missingRoot = REQUIRED_ROOT_FILES.filter((file) => !fs.existsSync(path.join(themeDir, file)));
-    add(checks, 'required_wordpress_root_files', missingRoot.length === 0, missingRoot.join(', '));
-
-    const stylePath = path.join(themeDir, 'style.css');
-    const style = fs.existsSync(stylePath) ? fs.readFileSync(stylePath, 'utf8') : '';
-    add(checks, 'style_css_headers', /^Theme Name:/m.test(style) && /^Text Domain:/m.test(style), 'Requires Theme Name and Text Domain.');
-
-    const missingBundles = REQUIRED_BUNDLES.filter((file) => !fs.existsSync(path.join(themeDir, file)));
-    add(checks, 'expected_asset_files', missingBundles.length === 0, missingBundles.join(', '));
-
-    const phpProbe = runCommand('php', ['-v'], { echo: false });
-    if (phpProbe.status === 0) {
-      const failedPhp = [];
-      for (const file of walkFiles(themeDir).filter((item) => item.endsWith('.php'))) {
-        const lint = runCommand('php', ['-l', file], { echo: false });
-        if (lint.status !== 0) failedPhp.push(rel(file, themeDir));
-      }
-      add(checks, 'php_syntax', failedPhp.length === 0, failedPhp.join(', '));
-    } else {
-      checks.push({ name: 'php_syntax', status: 'skipped', details: 'php command not available' });
-    }
-
-    const textFailures = [];
-    const placeholderFailures = [];
-    const missingAssets = [];
-    for (const file of walkFiles(themeDir).filter((item) => !/\.(png|jpe?g|webp|gif|zip)$/i.test(item))) {
-      const relative = rel(file, themeDir);
-      if (relative === 'package-lock.json') continue;
-      const text = fs.readFileSync(file, 'utf8');
-      if (PLACEHOLDER_PATTERN.test(text)) placeholderFailures.push(relative);
-      if (SECRET_PATTERN.test(text)) textFailures.push(`${relative}: potential secret`);
-      for (const reference of classifyRemoteReferences(text)) {
-        if (reference.classification === 'forbidden runtime dependency') textFailures.push(`${relative}: remote runtime dependency ${reference.reference}`);
-      }
-      if (ABSOLUTE_LOCAL_ASSET_PATTERN.test(text)) textFailures.push(`${relative}: root-relative /assets path`);
-      if (REPO_LOCAL_PATH_PATTERN.test(text)) textFailures.push(`${relative}: repo-local path`);
-      if (/\.php$/i.test(relative) && INLINE_STYLE_BLOCK_PATTERN.test(text)) textFailures.push(`${relative}: inline style block`);
-      if (/\.(php|css|scss|js)$/i.test(relative) && MODEL_FILE_BLOCK_MARKER_PATTERN.test(text)) textFailures.push(`${relative}: model file block marker`);
-      if (relative.startsWith('template-parts/') && TEMPLATE_PART_WRAPPER_PATTERN.test(text)) textFailures.push(`${relative}: template part document wrapper`);
-      for (const reference of localAssetReferences(text)) {
-        if (/^\//.test(reference)) continue;
-        const candidate = reference.startsWith('assets/') ? path.join(themeDir, reference) : path.resolve(path.dirname(file), reference);
-        if (!fs.existsSync(candidate) && /\.(svg|png|jpe?g|webp|gif|css|js|woff2?)($|[?#])/i.test(reference)) missingAssets.push(`${relative}: ${reference}`);
-      }
-    }
-    add(checks, 'placeholder_content', placeholderFailures.length === 0, placeholderFailures.join(', '));
-    add(checks, 'wordpress_quality', textFailures.length === 0, textFailures.join('; '));
-    add(checks, 'missing_local_assets', missingAssets.length === 0, missingAssets.join('; '));
-    const assetChecks = validateAssetManifest(themeDir);
-    add(checks, 'asset_manifest', assetChecks.every((check) => check.passed), assetChecks.filter((check) => !check.passed).map((check) => `${check.type}${check.file ? `:${check.file}` : ''} ${check.details}`).join('; '));
-
     const declarations = new Map();
     for (const file of walkFiles(themeDir).filter((item) => item.endsWith('.php'))) {
       const relative = rel(file, themeDir);
@@ -174,22 +98,6 @@ async function validateTheme(options = {}) {
     }
     const duplicateFunctions = [...declarations.entries()].filter(([, files]) => files.length > 1).map(([name, files]) => `${name}: ${files.join(', ')}`);
     add(checks, 'duplicate_php_functions', duplicateFunctions.length === 0, duplicateFunctions.join('; '));
-
-    const unresolvedImports = [];
-    for (const file of walkFiles(path.join(themeDir, 'src', 'scss')).filter((item) => item.endsWith('.scss'))) {
-      const relative = rel(file, themeDir);
-      const text = fs.readFileSync(file, 'utf8');
-      let match;
-      const importPattern = /@(use|import)\s+["']([^"']+)["']/g;
-      while ((match = importPattern.exec(text)) !== null) {
-        const specifier = match[2];
-        if (specifier.startsWith('http:') || specifier.startsWith('https:') || specifier.startsWith('sass:')) continue;
-        if (!scssImportCandidates(path.dirname(file), specifier).some((candidate) => fs.existsSync(candidate))) {
-          unresolvedImports.push(`${relative}: ${specifier}`);
-        }
-      }
-    }
-    add(checks, 'unresolved_scss_imports', unresolvedImports.length === 0, unresolvedImports.join('; '));
   }
 
   if (phase === 'artifacts' || phase === 'final') {

@@ -1,0 +1,1 @@
+<?php get_header(); ?><main id="primary" class="site-main"><section class="template-section"><h1><?php esc_html_e( 'Lorem ipsum page not found', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', 'nolan-young-template' ); ?></p><?php get_search_form(); ?></section></main><?php get_footer(); ?>

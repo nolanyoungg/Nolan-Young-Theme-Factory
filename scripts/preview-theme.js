@@ -86,9 +86,9 @@ function route_preview($p=''){ $r=ltrim((string)$p,'/'); if(str_starts_with($r,'
 function get_template_directory(){return $GLOBALS['preview_theme_dir'];} function get_stylesheet_directory(){return $GLOBALS['preview_theme_dir'];}
 function get_template_directory_uri(){return '.';} function get_stylesheet_directory_uri(){return '.';}
 function get_theme_file_uri($p=''){return ltrim((string)$p,'/');} function get_theme_file_path($p=''){return $GLOBALS['preview_theme_dir'].DIRECTORY_SEPARATOR.ltrim(str_replace('/',DIRECTORY_SEPARATOR,(string)$p),DIRECTORY_SEPARATOR);}
-function bloginfo($s=''){echo get_bloginfo($s);} function get_bloginfo($s=''){return ['charset'=>'UTF-8','name'=>'Preview Site','description'=>'Generated theme preview','stylesheet_url'=>'assets/css/preview.css'][$s] ?? 'Preview Site';}
+function bloginfo($s=''){echo get_bloginfo($s);} function get_bloginfo($s=''){return ['charset'=>'UTF-8','name'=>'Preview Site','description'=>'Generated theme preview','stylesheet_url'=>'assets/css/bundle.css'][$s] ?? 'Preview Site';}
 function language_attributes(){echo 'lang="en"';} function body_class(){echo 'class="preview"';}
-function wp_head(){echo '<link rel="stylesheet" href="assets/css/preview.css">';} function wp_footer(){echo '<script src="assets/js/preview.js"></script>';}
+function wp_head(){echo '<link rel="stylesheet" href="assets/css/bundle.css">';} function wp_footer(){echo '<script src="assets/js/bundle.js"></script>';}
 function wp_body_open(){} function wp_enqueue_script(){} function wp_enqueue_style(){} function wp_register_script(){} function wp_register_style(){}
 function add_action(){} function add_filter(){} function add_theme_support(){} function register_nav_menus(){} function register_post_type(){}
 function wp_nav_menu(){echo '<ul class="menu"><li><a href="services_preview.html">Services</a></li><li><a href="about-us_preview.html">About</a></li><li><a href="contact_preview.html">Contact</a></li></ul>';}
@@ -106,6 +106,9 @@ function wp_trim_words($t,$n=55){return implode(' ', array_slice(preg_split('/\\
 function the_permalink(){echo esc_url(get_permalink());} function get_permalink(){return 'homepage_preview.html';}
 function post_class($c=''){echo 'class="'.esc_attr($c).'"';} function get_the_date(){return date('Y-m-d');}
 function date_i18n($format){return date($format);} function current_time($type='mysql'){return date('Y-m-d H:i:s');}
+function get_the_archive_title(){global $fixtureTitle; return $fixtureTitle;}
+function the_archive_title($before='',$after=''){global $fixtureTitle; echo $before.esc_html($fixtureTitle).$after;}
+function get_the_archive_description(){return 'Preview archive description.';}
 function comments_open(){return false;} function have_comments(){return false;} function wp_list_comments(){} function comment_form(){echo '<form class="comment-form"></form>';}
 function do_shortcode(){return '<form class="contact-form-preview"></form>';} function wp_nonce_field(){} function wp_verify_nonce(){return true;} function wp_mail(){return true;}
 function get_option($n,$d=false){return $d;} function current_user_can(){return true;} function wp_safe_redirect(){} function is_email($v){return true;}
@@ -140,23 +143,59 @@ function renderPreviewPage(themeDir, sourceRelative, title) {
   return renderWithPhp(themeDir, sourceRelative, title);
 }
 
+function copyThemeAssets(themeDir, previewDir) {
+  const templateDir = path.join(root, 'docs', 'Preview-Themes-Github', '.preview-template');
+  const assetsDir = path.join(themeDir, 'assets');
+  const templateAssetsDir = path.join(templateDir, 'assets');
+  if (!fs.existsSync(templateDir)) fail('Preview template bundle missing; cannot render preview.');
+  if (!fs.existsSync(templateAssetsDir)) fail('Preview template assets missing; cannot render preview.');
+  if (!fs.existsSync(assetsDir)) fail('Theme assets folder missing; build must run before preview generation.');
+  fs.cpSync(templateAssetsDir, path.join(previewDir, 'assets'), { recursive: true });
+  fs.cpSync(assetsDir, path.join(previewDir, 'assets'), { recursive: true });
+}
+
+function writePreviewFile(previewDir, filename, html) {
+  fs.mkdirSync(previewDir, { recursive: true });
+  fs.writeFileSync(path.join(previewDir, filename), html, 'utf8');
+}
+
+function generateRenderedPreview(themeDir, previewDir) {
+  copyThemeAssets(themeDir, previewDir);
+
+  const renderedPages = [
+    { output: 'index.html', source: 'front-page.php', title: 'Home' },
+    { output: 'homepage_preview.html', source: 'front-page.php', title: 'Home' },
+    { output: 'about-us_preview.html', source: 'page.php', title: 'About Us' },
+    { output: 'work_preview.html', source: 'page.php', title: 'Work' },
+    { output: 'blog_preview.html', source: 'page.php', title: 'Blog' },
+    { output: 'contact_preview.html', source: 'page.php', title: 'Contact' },
+    { output: 'services_preview.html', source: 'page.php', title: 'Services' },
+    { output: 'policy_preview.html', source: 'page.php', title: 'Privacy Policy' },
+    { output: 'single_services_preview.html', source: 'single.php', title: 'Service' }
+  ];
+
+  for (const page of renderedPages) {
+    writePreviewFile(previewDir, page.output, renderPreviewPage(themeDir, page.source, page.title));
+  }
+
+  const previewName = readStyle(themeDir, 'Theme Name') || titleFromSlug(path.basename(themeDir));
+  const readme = `# ${previewName}
+
+Rendered preview for ${path.basename(themeDir)} generated from the current theme source.
+`;
+  fs.writeFileSync(path.join(previewDir, 'README.md'), readme, 'utf8');
+}
+
 function generatePreview(options = {}) {
   const slug = assertThemeSlug(options.themeSlug || themeSlug);
   const themeDir = path.join(root, 'wp-content', 'themes', slug);
   const previewDir = path.join(root, 'docs', 'Preview-Themes-Github', slug);
   const candidateDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.candidate-${process.pid}-${Date.now()}`);
   const backupDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.backup-${process.pid}-${Date.now()}`);
-  const templateDir = path.join(root, 'docs', 'Preview-Themes-Github', '.preview-template');
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${slug}`);
   if (fs.existsSync(candidateDir)) fs.rmSync(candidateDir, { recursive: true, force: true });
-  if (!fs.existsSync(templateDir)) fail('Preview template bundle missing; cannot render preview.');
-  copyTemplateBundle(templateDir, candidateDir);
-  rewriteBundleStrings(candidateDir, [
-    ['012_nolan_young_theme_master_template_prompt_filler_template_1', slug],
-    ['012 Nolan Young Theme Master Template Prompt Filler Template 1', readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)],
-    ['012-nolan-young-theme-master-template-prompt-filler-template-1', slug.replace(/_/g, '-')],
-    ['Nolan Young Theme 012 - Master Template Prompt Filler Template 1', readStyle(themeDir, 'Theme Name') || titleFromSlug(slug)]
-  ]);
+  fs.mkdirSync(candidateDir, { recursive: true });
+  generateRenderedPreview(themeDir, candidateDir);
   if (fs.existsSync(previewDir)) fs.renameSync(previewDir, backupDir);
   try {
     fs.renameSync(candidateDir, previewDir);

@@ -1,22 +1,18 @@
 <?php
 /**
- * Footer template.
+ * Site footer.
  *
  * @package NolanYoungThemeTemplate01
  */
 
 defined( 'ABSPATH' ) || exit;
 ?>
-	<footer id="colophon" class="footer">
-		<div class="site-wrap">
+	<footer id="colophon" class="nytt01-site-footer">
+		<div class="nytt01-container">
 			<?php get_template_part( 'template-parts/footer/footer', 'widgets' ); ?>
-			<div class="legal-row">
-				<p>&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php echo esc_html( get_bloginfo( 'name' ) ); ?></p>
-				<nav aria-label="<?php esc_attr_e( 'Footer legal navigation', 'nolan-young-theme-template-01' ); ?>">
-					<ul class="inline-links">
-						<li><a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'nolan-young-theme-template-01' ); ?></a></li>
-					</ul>
-				</nav>
+			<div class="nytt01-site-footer__legal">
+				<p><?php printf( esc_html__( '© %1$s %2$s. All rights reserved.', 'nolan-young-theme-template-01' ), esc_html( wp_date( 'Y' ) ), esc_html( get_bloginfo( 'name' ) ) ); ?></p>
+				<?php wp_nav_menu( array( 'theme_location' => 'footer', 'container' => 'nav', 'container_class' => 'nytt01-footer-navigation', 'menu_class' => 'nytt01-footer-menu', 'fallback_cb' => false, 'depth' => 1 ) ); ?>
 			</div>
 		</div>
 	</footer>

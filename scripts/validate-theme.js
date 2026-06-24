@@ -62,6 +62,55 @@ function localAssetReferences(text) {
     .filter((value) => value && !/^(?:https?:|data:|mailto:|tel:|#)/i.test(value));
 }
 
+function phpLiteralTemplatePartReferences(text) {
+  const references = [];
+  const patterns = [
+    /get_template_part\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]*)['"]\s*\)/g,
+    /get_template_part\(\s*['"]([^'"]+)['"]\s*\)/g
+  ];
+  let match;
+  for (const pattern of patterns) {
+    while ((match = pattern.exec(text)) !== null) {
+      const base = match[1];
+      const slug = typeof match[2] === 'string' ? match[2] : '';
+      const file = slug ? `${base}-${slug}.php` : `${base}.php`;
+      references.push(file.replace(/\\/g, '/'));
+    }
+  }
+  return references;
+}
+
+function literalDataAttributes(text) {
+  return [...text.matchAll(/\b(data-[a-z0-9-]+)=/gi)].map((match) => match[1].toLowerCase());
+}
+
+function templatePartInventory(file) {
+  if (!fs.existsSync(file)) return [];
+  return [...new Set(phpLiteralTemplatePartReferences(fs.readFileSync(file, 'utf8')))].sort();
+}
+
+function phpDeclarations(file, kind) {
+  if (!fs.existsSync(file)) return [];
+  const text = fs.readFileSync(file, 'utf8');
+  const pattern = kind === 'class'
+    ? /\bclass\s+([A-Za-z_][A-Za-z0-9_]*)\b/g
+    : /\bfunction\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+  const names = [];
+  let match;
+  while ((match = pattern.exec(text)) !== null) names.push(match[1]);
+  return [...new Set(names)].sort();
+}
+
+function fileStructureMetrics(file) {
+  if (!fs.existsSync(file)) return { tags: 0, classes: 0, bytes: 0 };
+  const text = fs.readFileSync(file, 'utf8');
+  return {
+    tags: (text.match(/<([a-z][a-z0-9-]*)\b/gi) || []).length,
+    classes: (text.match(/\bclass\s*=\s*["'][^"']+["']/gi) || []).length,
+    bytes: Buffer.byteLength(text, 'utf8')
+  };
+}
+
 function renderCriticalFiles(themeDir) {
   const files = [];
   const frontPage = path.join(themeDir, 'front-page.php');
@@ -138,6 +187,67 @@ async function validateTheme(options = {}) {
         return themeText === templateText && PLACEHOLDER_PATTERN.test(themeText);
       });
     add(checks, 'critical_template_fragments_replaced', unchangedCritical.length === 0, unchangedCritical.join(', '));
+
+    const missingTemplatePartRefs = themeFiles
+      .filter((file) => file.endsWith('.php'))
+      .flatMap((file) => {
+        const relative = rel(file, themeDir);
+        const text = fs.readFileSync(file, 'utf8');
+        return phpLiteralTemplatePartReferences(text)
+          .filter((reference) => reference.startsWith('template-parts/'))
+          .filter((reference) => !fs.existsSync(path.join(themeDir, reference)))
+          .map((reference) => `${relative} -> ${reference}`);
+      });
+    add(checks, 'template_part_references_resolve', missingTemplatePartRefs.length === 0, missingTemplatePartRefs.join(', '));
+
+    const templateHeaderInventory = templatePartInventory(path.join(templateRoot, 'header.php'));
+    const themeHeaderInventory = new Set(templatePartInventory(path.join(themeDir, 'header.php')));
+    const missingHeaderInventory = templateHeaderInventory.filter((reference) => !themeHeaderInventory.has(reference));
+    add(checks, 'header_scaffold_inventory_preserved', missingHeaderInventory.length === 0, missingHeaderInventory.join(', '));
+
+    const templateHeaderText = fs.existsSync(path.join(templateRoot, 'header.php')) ? fs.readFileSync(path.join(templateRoot, 'header.php'), 'utf8') : '';
+    const themeHeaderText = fs.existsSync(path.join(themeDir, 'header.php')) ? fs.readFileSync(path.join(themeDir, 'header.php'), 'utf8') : '';
+    const requiredHeaderDataAttrs = [...new Set(literalDataAttributes(templateHeaderText))];
+    const themeHeaderDataAttrs = new Set(literalDataAttributes(themeHeaderText));
+    const missingHeaderDataAttrs = requiredHeaderDataAttrs.filter((attribute) => !themeHeaderDataAttrs.has(attribute));
+    add(checks, 'header_scaffold_behavior_preserved', missingHeaderDataAttrs.length === 0, missingHeaderDataAttrs.join(', '));
+
+    const templateFrontPageInventory = templatePartInventory(path.join(templateRoot, 'front-page.php'));
+    const themeFrontPageInventoryList = templatePartInventory(path.join(themeDir, 'front-page.php'));
+    const themeFrontPageInventory = new Set(themeFrontPageInventoryList);
+    const missingFrontPageInventory = templateFrontPageInventory.filter((reference) => !themeFrontPageInventory.has(reference));
+    add(checks, 'front_page_section_inventory_preserved', missingFrontPageInventory.length === 0, missingFrontPageInventory.join(', '));
+    add(
+      checks,
+      'front_page_section_sequence_preserved',
+      JSON.stringify(themeFrontPageInventoryList) === JSON.stringify(templateFrontPageInventory),
+      `expected=${templateFrontPageInventory.join(' | ')} actual=${themeFrontPageInventoryList.join(' | ')}`
+    );
+
+    const simplifiedFrontPageSections = templateFrontPageInventory
+      .filter((reference) => fs.existsSync(path.join(templateRoot, reference)) && fs.existsSync(path.join(themeDir, reference)))
+      .filter((reference) => {
+        const templateMetrics = fileStructureMetrics(path.join(templateRoot, reference));
+        const themeMetrics = fileStructureMetrics(path.join(themeDir, reference));
+        if (templateMetrics.tags < 8 && templateMetrics.bytes < 800) return false;
+        const minTags = Math.max(4, Math.floor(templateMetrics.tags * 0.6));
+        const minBytes = Math.floor(templateMetrics.bytes * 0.45);
+        return themeMetrics.tags < minTags || themeMetrics.bytes < minBytes;
+      });
+    add(checks, 'front_page_section_density_preserved', simplifiedFrontPageSections.length === 0, simplifiedFrontPageSections.join(', '));
+
+    const templateNavigationFunctions = phpDeclarations(path.join(templateRoot, 'inc', 'navigation.php'), 'function');
+    const themeNavigationFunctions = new Set(phpDeclarations(path.join(themeDir, 'inc', 'navigation.php'), 'function'));
+    const missingNavigationFunctions = templateNavigationFunctions.filter((name) => !themeNavigationFunctions.has(name));
+    const templateNavigationClasses = phpDeclarations(path.join(templateRoot, 'inc', 'navigation.php'), 'class');
+    const themeNavigationClasses = new Set(phpDeclarations(path.join(themeDir, 'inc', 'navigation.php'), 'class'));
+    const missingNavigationClasses = templateNavigationClasses.filter((name) => !themeNavigationClasses.has(name));
+    add(
+      checks,
+      'navigation_scaffold_inventory_preserved',
+      missingNavigationFunctions.length === 0 && missingNavigationClasses.length === 0,
+      [...missingNavigationFunctions, ...missingNavigationClasses].join(', ')
+    );
   }
 
   if (phase === 'artifacts' || phase === 'final') {

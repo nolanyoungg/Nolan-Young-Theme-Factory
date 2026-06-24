@@ -1,3 +1,1 @@
-<?php
-defined( 'ABSPATH' ) || exit;
-add_action( 'init', function () { register_block_style( 'core/button', array( 'name' => 'primary', 'label' => __( 'Primary', 'nolan-young-theme-template-01' ) ) ); } );
+<?php defined( 'ABSPATH' ) || exit; add_action( 'after_setup_theme', function () { register_block_style( 'core/button', array( 'name' => 'btn-primary', 'label' => __( 'Primary button', 'nolan-young-theme-template-01' ) ) ); register_block_style( 'core/button', array( 'name' => 'btn-secondary', 'label' => __( 'Secondary button', 'nolan-young-theme-template-01' ) ) ); } );

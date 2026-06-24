@@ -1,3 +1,1 @@
-<?php
-defined( 'ABSPATH' ) || exit;
-function nytt01_service_link( $slug ) { return home_url( '/services/' . trailingslashit( sanitize_title( $slug ) ) ); }
+<?php defined( 'ABSPATH' ) || exit; if ( ! function_exists( 'nytt01_has_core_plugin' ) ) { function nytt01_has_core_plugin() { return post_type_exists( 'ny_service' ); } }

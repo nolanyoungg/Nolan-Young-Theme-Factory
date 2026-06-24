@@ -1,3 +1,14 @@
 <?php
+/** Presentation helpers and safe fallbacks. */
 defined( 'ABSPATH' ) || exit;
-function nytt01_year() { return wp_date( 'Y' ); }
+function nytt01_body_classes( $classes ) { if ( ! is_singular() ) $classes[] = 'hfeed'; if ( is_front_page() ) $classes[] = 'nytt01-front-page'; if ( ! is_active_sidebar( 'footer-widgets' ) ) $classes[] = 'nytt01-no-footer-widgets'; return $classes; }
+add_filter( 'body_class', 'nytt01_body_classes' );
+function nytt01_pingback_header() { if ( is_singular() && pings_open() ) printf( '<link rel="pingback" href="%s">' . "\n", esc_url( get_bloginfo( 'pingback_url' ) ) ); }
+add_action( 'wp_head', 'nytt01_pingback_header' );
+function nytt01_nav_menu_link_attributes( $atts, $menu_item, $args ) { if ( isset( $args->theme_location ) && 'primary' === $args->theme_location && $menu_item->current ) $atts['aria-current'] = 'page'; return $atts; }
+add_filter( 'nav_menu_link_attributes', 'nytt01_nav_menu_link_attributes', 10, 3 );
+function nytt01_primary_menu_fallback() { echo '<ul id="primary-menu" class="nytt01-menu nytt01-menu--fallback"><li><a href="' . esc_url( home_url( '/services/' ) ) . '">' . esc_html__( 'Services', 'nolan-young-theme-template-01' ) . '</a></li><li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About', 'nolan-young-theme-template-01' ) . '</a></li><li><a href="' . esc_url( home_url( '/work/' ) ) . '">' . esc_html__( 'Work', 'nolan-young-theme-template-01' ) . '</a></li><li><a href="' . esc_url( home_url( '/blog/' ) ) . '">' . esc_html__( 'Blog', 'nolan-young-theme-template-01' ) . '</a></li></ul>'; }
+function nytt01_posted_on() { echo '<span class="posted-on">' . sprintf( esc_html__( 'Published %s', 'nolan-young-theme-template-01' ), esc_html( get_the_date() ) ) . '</span>'; }
+function nytt01_posted_by() { echo '<span class="byline">' . sprintf( esc_html__( 'By %s', 'nolan-young-theme-template-01' ), '<a href="' . esc_url( get_author_posts_url( (int) get_the_author_meta( 'ID' ) ) ) . '">' . esc_html( get_the_author() ) . '</a>' ) . '</span>'; }
+function nytt01_entry_footer() { if ( 'post' === get_post_type() ) { $categories = get_the_category_list( ', ' ); if ( $categories ) echo '<span class="cat-links">' . sprintf( esc_html__( 'Filed under %s', 'nolan-young-theme-template-01' ), wp_kses_post( $categories ) ) . '</span>'; } if ( ! is_single() && comments_open() ) echo '<span class="comments-link">' . wp_kses_post( comments_popup_link( esc_html__( 'Leave a comment', 'nolan-young-theme-template-01' ), esc_html__( '1 comment', 'nolan-young-theme-template-01' ), esc_html__( '% comments', 'nolan-young-theme-template-01' ), '', false ) ) . '</span>'; edit_post_link( esc_html__( 'Edit', 'nolan-young-theme-template-01' ), '<span class="edit-link">', '</span>' ); }
+function nytt01_posts_pagination() { the_posts_pagination( array( 'mid_size' => 2, 'prev_text' => esc_html__( 'Previous', 'nolan-young-theme-template-01' ), 'next_text' => esc_html__( 'Next', 'nolan-young-theme-template-01' ) ) ); }

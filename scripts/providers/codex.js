@@ -89,6 +89,37 @@ function isWritableTextFile(relativePath) {
   return !/\.(png|jpe?g|webp|gif|zip)$/i.test(relativePath);
 }
 
+function phpLiteralTemplatePartReferencesFromFile(file) {
+  if (!fs.existsSync(file)) return [];
+  const text = fs.readFileSync(file, 'utf8');
+  const references = [];
+  const patterns = [
+    /get_template_part\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]*)['"]\s*\)/g,
+    /get_template_part\(\s*['"]([^'"]+)['"]\s*\)/g
+  ];
+  let match;
+  for (const pattern of patterns) {
+    while ((match = pattern.exec(text)) !== null) {
+      const base = match[1];
+      const slug = typeof match[2] === 'string' ? match[2] : '';
+      references.push((slug ? `${base}-${slug}.php` : `${base}.php`).replace(/\\/g, '/'));
+    }
+  }
+  return [...new Set(references)].sort();
+}
+
+function phpDeclarationsFromFile(file, kind) {
+  if (!fs.existsSync(file)) return [];
+  const text = fs.readFileSync(file, 'utf8');
+  const pattern = kind === 'class'
+    ? /\bclass\s+([A-Za-z_][A-Za-z0-9_]*)\b/g
+    : /\bfunction\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+  const names = [];
+  let match;
+  while ((match = pattern.exec(text)) !== null) names.push(match[1]);
+  return [...new Set(names)].sort();
+}
+
 function codexWritableContract(themeSlug) {
   const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
   const manifest = preparedManifest(themeDir);
@@ -127,6 +158,31 @@ function codexWritableContract(themeSlug) {
   const requiredFiles = [...required].sort();
   const optionalFiles = preparedFiles.filter((file) => !required.has(file)).sort();
   return { requiredFiles, optionalFiles, allowedPatterns: [] };
+}
+
+function preservedScaffold(themeSlug) {
+  const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
+  return {
+    headerRefs: phpLiteralTemplatePartReferencesFromFile(path.join(themeDir, 'header.php')),
+    frontPageRefs: phpLiteralTemplatePartReferencesFromFile(path.join(themeDir, 'front-page.php')),
+    navigationFunctions: phpDeclarationsFromFile(path.join(themeDir, 'inc', 'navigation.php'), 'function'),
+    navigationClasses: phpDeclarationsFromFile(path.join(themeDir, 'inc', 'navigation.php'), 'class')
+  };
+}
+
+function scaffoldReferenceContext(themeSlug, references) {
+  const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
+  const ordered = [
+    'header.php',
+    'front-page.php',
+    'inc/navigation.php',
+    ...references
+  ];
+  return ordered
+    .filter((file, index) => ordered.indexOf(file) === index)
+    .filter((file) => fs.existsSync(path.join(themeDir, file)))
+    .map((file) => `### ${file}\n\n\`\`\`php\n${fs.readFileSync(path.join(themeDir, file), 'utf8').trim()}\n\`\`\``)
+    .join('\n\n');
 }
 
 function currentThemeContext(themeSlug) {
@@ -182,6 +238,8 @@ function createBrief(options, passType) {
   const themeDir = `wp-content/themes/${options.themeSlug}`;
   const promptText = fs.readFileSync(path.join(root, options.promptFile), 'utf8').trim();
   const contract = codexWritableContract(options.themeSlug);
+  const scaffold = preservedScaffold(options.themeSlug);
+  const scaffoldContext = scaffoldReferenceContext(options.themeSlug, scaffold.frontPageRefs);
   return `# Codex Theme ${passType === 'finish' ? 'Finish' : 'Generation'} Brief
 
 Mode: ${options.mode}
@@ -213,6 +271,37 @@ Do not create new files. Edit the prepared template only. If a needed concept is
 You must replace starter scaffold content inherited from the template. A failed run includes any remaining placeholder text, TODO/FIXME markers, generic starter copy, or render-critical template parts left in their starter state.
 
 Render-critical files must be finished: header/footer, front-page, page templates, and any template-parts/content-*.php files used by the homepage or preview pages.
+
+Preserve and extend the selected template scaffold. Do not flatten the prepared theme into a simpler architecture.
+
+- Keep the prepared header/navigation system intact. Preserve the existing header template-part wiring, mobile-toggle behavior hooks, WordPress-managed navigation flow, and the prepared class/design system. Improve the content and presentation without replacing the scaffold with simpler generic markup.
+- Keep the prepared front-page section inventory intact. Preserve the prepared section template-part structure and make those existing sections richer, more specific, and more visually developed instead of collapsing them into fewer generic blocks.
+- Keep template-part references valid. Do not introduce references to missing files, misspelled template-part names, or simplified replacement paths.
+- Use the prepared CSS/component language as the baseline. Extend the existing design system and component structure instead of switching to an unrelated minimal class set.
+
+## Required Scaffold To Preserve
+
+Header template-part references that must remain present:
+
+${scaffold.headerRefs.length ? scaffold.headerRefs.map((file) => `- ${file}`).join('\n') : '- None'}
+
+Front-page template-part references that must remain present:
+
+${scaffold.frontPageRefs.length ? scaffold.frontPageRefs.map((file) => `- ${file}`).join('\n') : '- None'}
+
+Navigation scaffold PHP functions that must remain present:
+
+${scaffold.navigationFunctions.length ? scaffold.navigationFunctions.map((name) => `- ${name}`).join('\n') : '- None'}
+
+Navigation scaffold PHP classes that must remain present:
+
+${scaffold.navigationClasses.length ? scaffold.navigationClasses.map((name) => `- ${name}`).join('\n') : '- None'}
+
+## Scaffold Reference Files
+
+Treat the following prepared files as the structural baseline to preserve and extend.
+
+${scaffoldContext || 'No scaffold reference files were available.'}
 
 This brief is not a validation-failure checklist. Do not treat this as a build cleanup or repair pass; it is the planned creative generation stage for the selected mode.
 

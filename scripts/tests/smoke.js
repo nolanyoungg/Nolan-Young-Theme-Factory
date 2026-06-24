@@ -253,6 +253,11 @@ async function main() {
   const codexBrief = createBrief({ mode: 'codex-only', themeSlug: slug, promptFile: prompt, templateName: template, model: 'gpt-5.5', reasoning: 'high' }, 'build');
   assert(!codexBrief.includes('## Current File:'), 'Codex brief inlines full current file context');
   assert(!/validation\.final\.json|validation\.source\.json|validation\.artifacts\.json/.test(codexBrief), 'Codex brief includes validation report file context');
+  assert(codexBrief.includes('Preserve and extend the selected template scaffold.'), 'Codex brief does not enforce scaffold preservation');
+  assert(codexBrief.includes('Keep the prepared header/navigation system intact.'), 'Codex brief does not enforce header scaffold preservation');
+  assert(codexBrief.includes('Keep the prepared front-page section inventory intact.'), 'Codex brief does not enforce front-page scaffold preservation');
+  assert(codexBrief.includes('## Required Scaffold To Preserve'), 'Codex brief does not enumerate preserved scaffold requirements');
+  assert(codexBrief.includes('## Scaffold Reference Files'), 'Codex brief does not include scaffold reference file context');
   const headerBatch = BATCHES.find((batch) => batch.name === 'header-markup');
   const headerPromptParts = batchPromptParts(slug, themeDir, contract, headerBatch);
   assert(headerPromptParts.finalPrompt.includes(selectPromptSections(contract, ['07'])), 'Assigned stage did not receive exact selected section text');
@@ -333,6 +338,13 @@ async function main() {
   runCommand('node', [path.join(root, 'scripts', 'validate-theme.js'), '--theme-slug', slug, '--template', template, '--phase', 'source', '--output', extraReport], { echo: false });
   const extraParsed = JSON.parse(fs.readFileSync(extraReport, 'utf8'));
   assert.strictEqual(extraParsed.checks.find((check) => check.name === 'selected_template_file_structure').status, 'passed', 'Template-aware validation rejected extra files');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'template_part_references_resolve').status, 'passed', 'Source validation rejected valid template-part references');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'header_scaffold_inventory_preserved').status, 'passed', 'Source validation rejected valid header scaffold inventory');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'header_scaffold_behavior_preserved').status, 'passed', 'Source validation rejected valid header behavior markers');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'front_page_section_inventory_preserved').status, 'passed', 'Source validation rejected valid front-page section inventory');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'front_page_section_sequence_preserved').status, 'passed', 'Source validation rejected valid front-page section sequence');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'front_page_section_density_preserved').status, 'passed', 'Source validation rejected valid front-page section density');
+  assert.strictEqual(extraParsed.checks.find((check) => check.name === 'navigation_scaffold_inventory_preserved').status, 'passed', 'Source validation rejected valid navigation scaffold inventory');
   assert(!extraParsed.checks.some((check) => check.name === 'preview_exists' || check.name === 'zip_exists'), 'Source validation required preview or ZIP');
 
   const requiredFile = path.join(themeDir, 'index.php');

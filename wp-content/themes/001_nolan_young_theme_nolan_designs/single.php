@@ -1,1 +1,1 @@
-<?php defined( 'ABSPATH' ) || exit; get_header(); ?><main id="primary" class="site-main"><div class="site-wrap"><?php while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content/content', 'single' ); endwhile; ?></div></main><?php get_footer();
+<?php defined( 'ABSPATH' ) || exit; get_header(); ?><main id="primary" class="nytt01-site-main"><?php while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content/content', 'single' ); endwhile; ?></main><?php get_footer();

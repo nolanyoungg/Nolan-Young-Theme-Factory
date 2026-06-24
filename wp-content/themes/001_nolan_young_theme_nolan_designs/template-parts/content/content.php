@@ -1,1 +1,1 @@
-<?php defined( 'ABSPATH' ) || exit; ?><article <?php post_class( 'card content-default' ); ?>><?php the_title( '<h2>', '</h2>' ); ?><div class="entry-content"><?php the_excerpt(); ?></div></article>
+<?php defined( 'ABSPATH' ) || exit; ?><article <?php post_class( 'nytt01-card' ); ?>><h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2><div class="entry-content"><?php the_excerpt(); ?></div></article>

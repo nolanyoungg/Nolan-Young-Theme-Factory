@@ -144,13 +144,8 @@ function renderPreviewPage(themeDir, sourceRelative, title) {
 }
 
 function copyThemeAssets(themeDir, previewDir) {
-  const templateDir = path.join(root, 'docs', 'Preview-Themes-Github', '.preview-template');
   const assetsDir = path.join(themeDir, 'assets');
-  const templateAssetsDir = path.join(templateDir, 'assets');
-  if (!fs.existsSync(templateDir)) fail('Preview template bundle missing; cannot render preview.');
-  if (!fs.existsSync(templateAssetsDir)) fail('Preview template assets missing; cannot render preview.');
   if (!fs.existsSync(assetsDir)) fail('Theme assets folder missing; build must run before preview generation.');
-  fs.cpSync(templateAssetsDir, path.join(previewDir, 'assets'), { recursive: true });
   fs.cpSync(assetsDir, path.join(previewDir, 'assets'), { recursive: true });
 }
 

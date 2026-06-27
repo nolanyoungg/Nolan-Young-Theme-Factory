@@ -74,6 +74,12 @@ That means the theme itself must already satisfy these requirements:
 - any referenced local image or icon path exists inside the theme, or is replaced with a local placeholder asset
 - homepage and section templates contain finished copy, not placeholder shells
 
+## Scaffold Authority
+
+The creative prompt must be passed through intact, but the prepared theme tree on disk is authoritative for execution.
+
+If the prompt mentions file paths, build layers, modules, or template names that are not present in the prepared theme, preserve the intended behavior and implement it using the actual prepared files instead of inventing a different scaffold.
+
 ## Creative Prompt
 
 ${prompt}

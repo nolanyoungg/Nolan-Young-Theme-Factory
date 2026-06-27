@@ -1,0 +1,43 @@
+body {
+	color: var(--nytt01-color-ink);
+	font-family: var(--nytt01-font-sans);
+	font-size: 1rem;
+	line-height: 1.65;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--nytt01-color-navy);
+	line-height: 1.12;
+	margin-block: 0 0.75em;
+	text-wrap: balance;
+}
+
+h1 {
+	font-size: clamp(2.4rem, 7vw, 5.5rem);
+}
+
+h2 {
+	font-size: clamp(1.8rem, 4vw, 3rem);
+}
+
+h3 {
+	font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+
+p {
+	margin-block: 0 1.25rem;
+}
+
+a {
+	color: var(--nytt01-color-blue);
+	text-underline-offset: 0.18em;
+}
+
+a:hover {
+	color: var(--nytt01-color-blue-dark);
+}

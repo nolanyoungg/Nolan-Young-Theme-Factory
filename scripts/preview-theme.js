@@ -31,6 +31,13 @@ function titleFromSlug(slug) {
   return slug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function previewDescription(themeDir) {
+  const description = readStyle(themeDir, 'Description');
+  if (!description) return '';
+  if (/^Generated WordPress theme prepared from\b/i.test(description)) return '';
+  return description;
+}
+
 function copyIfExists(source, target) {
   if (!fs.existsSync(source)) return false;
   fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -72,7 +79,7 @@ $GLOBALS['preview_theme_dir'] = $themeDir;
 function esc_html($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
 function esc_attr($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
 function esc_url($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
-function esc_html__($t){return esc_html($t);} function esc_attr__($t){return esc_attr($t);}
+function esc_html__($t){return esc_html($t);} function esc_attr__($t){return esc_attr($t);} function esc_html_x($t){return esc_html($t);}
 function esc_html_e($t){echo esc_html($t);} function esc_attr_e($t){echo esc_attr($t);}
 function __($t){return $t;} function _e($t){echo $t;}
 function wp_kses_post($v){return (string)$v;} function wp_json_encode($v){return json_encode($v);}
@@ -159,28 +166,28 @@ function get_the_title($post=null){ $resolved = preview_resolve_post($post); glo
 function get_the_content(){return 'Preview fixture content rendered through the generated template.';} function get_the_excerpt($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->excerpt) ? $resolved->excerpt : 'Preview fixture excerpt.'; } function the_excerpt(){echo esc_html(get_the_excerpt());}
 function wp_trim_words($t,$n=55){return implode(' ', array_slice(preg_split('/\\s+/', trim((string)$t)),0,$n));}
 function the_permalink(){echo esc_url(get_permalink());} function get_permalink($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->permalink) ? $resolved->permalink : 'homepage_preview.html';}
-function post_class($c=''){echo 'class="'.esc_attr($c).'"';} function get_the_date(){return date('Y-m-d');}
+function post_class($c=''){echo 'class="'.esc_attr($c).'"';} function get_the_date($format='Y-m-d'){return date((string)$format);} function get_the_modified_date($format='Y-m-d'){return date((string)$format);}
 function wp_link_pages($args=[]){}
-function date_i18n($format){return date($format);} function current_time($type='mysql'){return date('Y-m-d H:i:s');}
+function date_i18n($format){return date($format);} function current_time($type='mysql'){return date('Y-m-d H:i:s');} function get_the_time($format='U'){return $format === 'U' ? time() : date((string)$format);} function get_the_modified_time($format='U'){return $format === 'U' ? time() : date((string)$format);}
 function get_the_archive_title(){global $fixtureTitle; return $fixtureTitle;}
 function post_type_archive_title($prefix='',$display=true){global $fixtureTitle; $value = $prefix . $fixtureTitle; if($display) echo esc_html($value); return $value;}
 function the_archive_title($before='',$after=''){global $fixtureTitle; echo $before.esc_html($fixtureTitle).$after;}
 function get_the_archive_description(){return 'Preview archive description.';}
-function comments_open(){return false;} function have_comments(){return false;} function get_comments_number(){return 0;} function wp_list_comments(){} function comment_form(){echo '<form class="comment-form"></form>';}
+function comments_open(){return false;} function have_comments(){return false;} function get_comments_number(){return 0;} function post_password_required(){return false;} function wp_list_comments(){} function comment_form(){echo '<form class="comment-form"></form>';}
 function comments_template(){echo '<section class="comments-area"></section>';} function the_post_navigation(){echo '<nav class="post-navigation"></nav>';}
-function do_shortcode(){return '<form class="contact-form-preview"></form>';} function wp_nonce_field(){} function wp_verify_nonce(){return true;} function wp_mail(){return true;}
+function do_shortcode(){return '<form class="contact-form-preview"></form>';} function shortcode_exists(){return true;} function wp_nonce_field(){} function wp_verify_nonce(){return true;} function wp_mail(){return true;}
 function get_option($n,$d=false){return $d;} function current_user_can(){return true;} function wp_safe_redirect(){} function is_email($v){return true;}
 function get_theme_mod($n,$d=false){return $d;} function selected($s,$c=true,$e=true){$r=((string)$s===(string)$c)?' selected="selected"':''; if($e)echo $r; return $r;}
 function checked($s,$c=true,$e=true){$r=((string)$s===(string)$c)?' checked="checked"':''; if($e)echo $r; return $r;}
-function get_posts($a=[]){ $postType = isset($a['post_type']) ? (string) $a['post_type'] : 'post'; $posts = preview_fixture_posts($postType); if (isset($a['posts_per_page']) && is_numeric($a['posts_per_page']) && (int) $a['posts_per_page'] > -1) $posts = array_slice($posts, 0, (int) $a['posts_per_page']); return $posts; } function get_post_type($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->post_type) ? $resolved->post_type : 'post'; } function post_type_exists($type){ return in_array((string) $type, array('post', 'ny_service'), true); } function get_post_type_object($type){return (object) ['labels' => (object) ['singular_name' => ucfirst(str_replace('_', ' ', (string) $type))]];} function post_type_supports($type,$feature){return false;} function pings_open(){return false;}
-class WP_Query{public $posts = []; private $index = -1; public function __construct($a=[]){$this->posts = get_posts($a);} public function have_posts(){return ($this->index + 1) < count($this->posts);} public function the_post(){ $this->index++; if(isset($this->posts[$this->index])) $GLOBALS['preview_current_post'] = $this->posts[$this->index]; }}
+function get_posts($a=[]){ $postType = isset($a['post_type']) ? (string) $a['post_type'] : 'post'; $posts = preview_fixture_posts($postType); if (isset($a['posts_per_page']) && is_numeric($a['posts_per_page']) && (int) $a['posts_per_page'] > -1) $posts = array_slice($posts, 0, (int) $a['posts_per_page']); return $posts; } function wp_get_recent_posts($a=[],$output='ARRAY_A'){ $posts = get_posts(['post_type' => $a['post_type'] ?? 'post', 'posts_per_page' => $a['numberposts'] ?? $a['posts_per_page'] ?? 5]); return array_map(function($post){ return ['ID' => $post->ID ?? 0, 'post_title' => $post->title ?? '', 'post_excerpt' => $post->excerpt ?? '', 'post_type' => $post->post_type ?? 'post']; }, $posts); } function get_post_type($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->post_type) ? $resolved->post_type : 'post'; } function post_type_exists($type){ return in_array((string) $type, array('post', 'ny_service'), true); } function get_post_type_object($type){return (object) ['labels' => (object) ['singular_name' => ucfirst(str_replace('_', ' ', (string) $type))]];} function post_type_supports($type,$feature){return false;} function pings_open(){return false;}
+class WP_Query{public $posts = []; public $post_count = 0; private $index = -1; public function __construct($a=[]){$this->posts = get_posts($a); $this->post_count = count($this->posts);} public function have_posts(){return ($this->index + 1) < $this->post_count;} public function the_post(){ $this->index++; if(isset($this->posts[$this->index])) $GLOBALS['preview_current_post'] = $this->posts[$this->index]; }}
 class Walker_Nav_Menu { public function start_el(&$output, $menu_item, $depth = 0, $args = null, $id = 0) { $classes = array_filter((array) ($menu_item->classes ?? array())); $output .= '<li' . ($classes ? ' class="' . esc_attr(implode(' ', $classes)) . '"' : '') . '><a href="' . esc_url($menu_item->url ?? '#') . '">' . esc_html($menu_item->title ?? '') . '</a></li>'; } }
 function setup_postdata($post=null){ if($post) $GLOBALS['preview_current_post'] = $post; } function wp_reset_postdata(){ $GLOBALS['preview_current_post'] = null; }
-function wp_get_attachment_image(){return '';} function has_post_thumbnail($post=null){return false;} function the_post_thumbnail($size='post-thumbnail'){echo '';} function get_post_meta($id,$k='',$single=false){return $single?'':[];}
+function wp_get_attachment_image(){return '';} function has_post_thumbnail($post=null){return false;} function the_post_thumbnail($size='post-thumbnail'){echo '';} function get_the_post_thumbnail_url($post=null,$size='post-thumbnail'){return '';} function get_the_ID(){ $post = preview_resolve_post(); return $post && isset($post->ID) ? (int) $post->ID : 0; } function the_ID(){ echo (int) get_the_ID(); } function get_post_meta($id,$k='',$single=false){return $single?'':[];}
 function register_sidebar(){} function dynamic_sidebar(){return false;} function is_active_sidebar(){return false;} function paginate_links(){return '';}
 function get_search_query(){return '';} function the_posts_pagination(){} function add_menu_page(){} function add_submenu_page(){}
 function get_post_field($field,$id){return '';} function wp_parse_url($url,$component=-1){return parse_url((string)$url,$component);}
-function get_the_category_list($sep=', '){ $post = preview_resolve_post(); return $post && !empty($post->categories) ? implode($sep, $post->categories) : 'Category'; } function the_category($sep=', '){ echo esc_html(get_the_category_list($sep)); } function comments_popup_link($zero='',$one='',$more='',$css='',$none=false){return $zero ?: 'Leave a comment';} function edit_post_link($text='',$before='',$after=''){} function has_nav_menu($location){return true;} function get_nav_menu_locations(){return ['primary' => 1];} function wp_get_nav_menu_items($menu){return [];} function get_queried_object(){return (object) ['name' => 'Preview'];} function get_post_type_archive_link($type){return 'services_preview.html';}
+function get_the_category_list($sep=', '){ $post = preview_resolve_post(); return $post && !empty($post->categories) ? implode($sep, $post->categories) : 'Category'; } function get_the_tag_list($before='',$sep=', ',$after=''){ return ''; } function get_author_posts_url($id){ return 'blog_preview.html'; } function get_the_author_meta($field){ return $field === 'ID' ? 1 : 'Preview Author'; } function get_the_author(){ return 'Preview Author'; } function the_category($sep=', '){ echo esc_html(get_the_category_list($sep)); } function comments_popup_link($zero='',$one='',$more='',$css='',$none=false){return $zero ?: 'Leave a comment';} function edit_post_link($text='',$before='',$after=''){} function has_nav_menu($location){return true;} function get_nav_menu_locations(){return ['primary' => 1];} function wp_get_nav_menu_items($menu){return [];} function get_queried_object(){return (object) ['name' => 'Preview'];} function get_post_type_archive_link($type){return 'services_preview.html';}
 require $themeDir . DIRECTORY_SEPARATOR . 'functions.php';
 ob_start();
 include $themeDir . DIRECTORY_SEPARATOR . $sourceRelative;
@@ -193,7 +200,7 @@ function renderWithPhp(themeDir, sourceRelative, title) {
   const harnessPath = path.join(os.tmpdir(), `theme-preview-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.php`);
   fs.writeFileSync(harnessPath, phpHarness(), 'utf8');
   const siteName = readStyle(themeDir, 'Theme Name') || titleFromSlug(path.basename(themeDir));
-  const siteDescription = readStyle(themeDir, 'Description') || 'Generated WordPress theme preview.';
+  const siteDescription = previewDescription(themeDir);
   const result = runCommand('php', [harnessPath, themeDir, sourceRelative, title, siteName, siteDescription], { cwd: root, echo: false });
   fs.rmSync(harnessPath, { force: true });
   if (result.status !== 0) fail(`PHP preview render failed for ${sourceRelative}: ${result.stderr || result.stdout || result.error}`);
@@ -222,16 +229,17 @@ function writePreviewFile(previewDir, filename, html) {
 function generateRenderedPreview(themeDir, previewDir) {
   copyThemeAssets(themeDir, previewDir);
 
+  const firstExisting = (...candidates) => candidates.find((relative) => fs.existsSync(path.join(themeDir, relative)));
   const renderedPages = [
     { output: 'index.html', source: 'front-page.php', title: 'Home' },
     { output: 'homepage_preview.html', source: 'front-page.php', title: 'Home' },
-    { output: 'about-us_preview.html', source: 'page.php', title: 'About Us' },
-    { output: 'work_preview.html', source: 'page.php', title: 'Work' },
-    { output: 'blog_preview.html', source: 'page.php', title: 'Blog' },
-    { output: 'contact_preview.html', source: 'page.php', title: 'Contact' },
-    { output: 'services_preview.html', source: 'page.php', title: 'Services' },
-    { output: 'policy_preview.html', source: 'page.php', title: 'Privacy Policy' },
-    { output: 'single_services_preview.html', source: 'single.php', title: 'Service' }
+    { output: 'about-us_preview.html', source: firstExisting('page-templates/template-about-us.php', 'page.php'), title: 'About Us' },
+    { output: 'work_preview.html', source: firstExisting('page-templates/template-work.php', 'page.php'), title: 'Work' },
+    { output: 'blog_preview.html', source: firstExisting('page-templates/template-blog.php', 'page-templates/template-blog-landing.php', 'home.php', 'page.php'), title: 'Blog' },
+    { output: 'contact_preview.html', source: firstExisting('page-templates/template-contact.php', 'page.php'), title: 'Contact' },
+    { output: 'services_preview.html', source: firstExisting('page-templates/template-services.php', 'archive-ny_service.php', 'page.php'), title: 'Services' },
+    { output: 'policy_preview.html', source: firstExisting('page-templates/template-policy.php', 'privacy-policy.php', 'page.php'), title: 'Privacy Policy' },
+    { output: 'single_services_preview.html', source: firstExisting('single-ny_service.php', 'page-templates/template-single-service.php', 'page-templates/template-service-detail.php', 'single.php'), title: 'Service' }
   ];
 
   for (const page of renderedPages) {
@@ -284,7 +292,7 @@ function rebuildPreviewGallery() {
   const cards = slugs.map((slug) => {
     const themeDir = path.join(themesRoot, slug);
     const title = readStyle(themeDir, 'Theme Name') || titleFromSlug(slug);
-    const description = readStyle(themeDir, 'Description') || 'Generated WordPress theme preview.';
+    const description = previewDescription(themeDir) || 'Generated WordPress theme preview.';
     const zip = fs.existsSync(path.join(zipRoot, `${slug}.zip`)) ? 'ZIP ready' : 'ZIP missing';
     return `<article class="theme-card"><div class="theme-card__preview"><iframe title="${escapeHtml(title)} preview" src="Preview-Themes-Github/${escapeHtml(slug)}/index.html" loading="lazy"></iframe></div><div class="theme-card__body"><p class="eyebrow">${escapeHtml(slug)}</p><h3>${escapeHtml(title)}</h3><p>${escapeHtml(description)}</p><div class="tag-row"><span>${escapeHtml(zip)}</span></div><div class="status-row"><span class="status-pill is-ok">Published preview</span></div><a class="open-preview" href="Preview-Themes-Github/${escapeHtml(slug)}/homepage_preview.html">Open Preview</a></div></article>`;
   }).join('\n');

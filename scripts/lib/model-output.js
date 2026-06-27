@@ -28,6 +28,72 @@ function unwrapMarkdownFence(content) {
   return match[1];
 }
 
+function unwrapFileContentFence(content, relativePath) {
+  const normalized = String(content || '').replace(/\r\n/g, '\n');
+  const ext = path.posix.extname(String(relativePath || '')).toLowerCase();
+  if (!['.php', '.css', '.scss', '.js', '.mjs', '.cjs', '.json', '.svg', '.html'].includes(ext)) return unwrapMarkdownFence(normalized);
+  const fullFence = normalized.match(/^```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```$/);
+  if (fullFence) return fullFence[1];
+  return normalized
+    .replace(/^```[a-zA-Z0-9_-]*\n/, '')
+    .replace(/\n```$/, '')
+    .replace(/\n---$/, '');
+}
+
+function unwrapLeadingMarkdownFence(content) {
+  const normalized = String(content || '').replace(/\r\n/g, '\n').trimStart();
+  const match = normalized.match(/^```[a-zA-Z0-9_-]*\n([\s\S]*?)\n```/);
+  return match ? match[1] : content;
+}
+
+function singleRequiredFileFromOptions(options) {
+  const required = options.requiredFiles || [];
+  const optional = options.optionalFiles || [];
+  const patterns = options.allowedPatterns || [];
+  if (options.singleRequiredFile) return options.singleRequiredFile;
+  if (required.length === 1 && optional.length === 0 && patterns.length === 0) return required[0];
+  return '';
+}
+
+function parseSingleFileProtocolFallback(raw, themeSlug, options) {
+  const singleRequiredFile = singleRequiredFileFromOptions(options);
+  if (!singleRequiredFile) return null;
+  const normalizedPath = normalizeRelativePath(singleRequiredFile, themeSlug);
+  const stripped = String(raw || '')
+    .replace(/\u001b\[[0-9;?]*[A-Za-z]/g, '')
+    .replace(/\r\n/g, '\n')
+    .trim();
+  if (!stripped || /-{2,}FILE:\s*/i.test(stripped)) return null;
+  const content = unwrapLeadingMarkdownFence(stripped).trim();
+  if (!content) return null;
+  const ext = path.posix.extname(normalizedPath).toLowerCase();
+  if (!['.php', '.css', '.scss', '.js', '.mjs', '.cjs', '.json', '.svg'].includes(ext)) return null;
+  if (ext === '.php' && !content.startsWith('<?php')) return null;
+  if ((ext === '.css' || ext === '.scss') && /<\?php/i.test(content)) return null;
+  return [{
+    relativePath: normalizedPath,
+    content: `${String(content || '').replace(/\n?$/, '\n')}`
+  }];
+}
+
+function looksLikeModelDecline(content) {
+  const trimmed = String(content || '').trim();
+  if (!trimmed) return false;
+  const lowered = trimmed.toLowerCase();
+  if (/---file:\s*/i.test(trimmed)) return false;
+  return [
+    "i'm sorry",
+    'i will not proceed',
+    "i can't assist",
+    'i cannot assist',
+    'cannot comply',
+    'unable to comply',
+    'significant amount of time and resources',
+    'please let me know',
+    'within the scope of ethical and respectful guidelines'
+  ].some((phrase) => lowered.includes(phrase));
+}
+
 function fileHash(file) {
   return fs.existsSync(file) ? sha256(fs.readFileSync(file)) : '';
 }
@@ -65,9 +131,21 @@ function normalizeRelativePath(input, themeSlug) {
 }
 
 function parseExactFileBlocks(raw, themeSlug, options = {}) {
-  const normalized = raw.replace(/\r\n/g, '\n');
-  if (options.allowNoChange && normalized.trim() === '---NO CHANGES---') return [];
-  const blockPattern = /^---FILE: ([^\n]+)---$/gm;
+  const normalizedRaw = raw
+    .replace(/\u001b\[[0-9;?]*[A-Za-z]/g, '')
+    .replace(/^[ \t]*[\u2800-\u28ff](?:[ \t\u2800-\u28ff])*[ \t]*(?:\n|$)/gmu, '')
+    .replace(/\r\n/g, '\n');
+  if (options.allowNoChange) {
+    const trimmed = unwrapMarkdownFence(normalizedRaw).trim();
+    if (trimmed === '---NO CHANGES---' || trimmed.startsWith('---NO CHANGES---')) return [];
+    if (options.allowDeclineAsNoChange && looksLikeModelDecline(trimmed)) return [];
+  }
+  const normalized = normalizedRaw
+    .replace(/^---FILE:\s*([^\n]+?)-{3,}\s*$/gm, '---FILE: $1---')
+    .replace(/^\s*--FILE:\s*([^\n-]+?)(?:--)?\s*$/gm, '---FILE: $1---')
+    .replace(/^```FILE:\s*([^\n]+)$/gm, '---FILE: $1---')
+    .replace(/^```$/gm, '---END FILE---');
+  const blockPattern = /^---FILE:\s*([^\n]+?)(?:---)?$/gm;
   const files = [];
   const matches = [];
   let match;
@@ -81,13 +159,18 @@ function parseExactFileBlocks(raw, themeSlug, options = {}) {
     const explicitEndIndex = normalized.indexOf('\n---END FILE---', current.contentStart);
     if (explicitEndIndex !== -1 && explicitEndIndex < contentEnd) contentEnd = explicitEndIndex;
     let content = normalized.slice(current.contentStart, contentEnd).replace(/^\n+/, '').replace(/\n+$/, '');
-    content = unwrapMarkdownFence(content);
+    const relativePath = normalizeRelativePath(current.relativePath, themeSlug);
+    content = unwrapFileContentFence(content, relativePath);
     files.push({
-      relativePath: normalizeRelativePath(current.relativePath, themeSlug),
+      relativePath,
       content: `${String(content || '').replace(/\n?$/, '\n')}`
     });
   }
-  if (files.length === 0) fail('No documented file blocks were found.');
+  if (files.length === 0) {
+    const fallback = parseSingleFileProtocolFallback(normalizedRaw, themeSlug, options);
+    if (fallback) return fallback;
+    fail('No documented file blocks were found.');
+  }
   return files;
 }
 
@@ -184,9 +267,43 @@ function validateReturnedAssets(candidateDir, changed) {
   return checks;
 }
 
+function validateGeneratedTextContent(candidateDir, changed) {
+  const checks = [];
+  const textLike = changed.filter((file) => /\.(php|css|scss|js|mjs|cjs|json|md|txt|svg|html)$/i.test(file));
+  for (const file of textLike) {
+    const target = path.join(candidateDir, file);
+    const text = fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : '';
+    const lines = text.split(/\r?\n/);
+    const longestLine = lines.reduce((max, line) => Math.max(max, line.length), 0);
+    const isPhp = file.endsWith('.php');
+    checks.push({
+      type: 'no-transport-noise',
+      file,
+      passed: !/[\u001b\u2800-\u28ff]/u.test(text),
+      details: 'Generated source must not contain terminal control codes or Ollama spinner glyphs'
+    });
+    checks.push({
+      type: 'max-line-length',
+      file,
+      passed: longestLine <= (isPhp ? 12000 : 30000),
+      details: `Longest line is ${longestLine} characters`
+    });
+    if (isPhp) {
+      checks.push({
+        type: 'php-size-sanity',
+        file,
+        passed: Buffer.byteLength(text, 'utf8') <= 24000,
+        details: `PHP file is ${Buffer.byteLength(text, 'utf8')} bytes`
+      });
+    }
+  }
+  return checks;
+}
+
 function stageChecks(candidateDir, files, checkTypes = []) {
   const checks = [];
   const changed = files.map((file) => file.relativePath);
+  checks.push(...validateGeneratedTextContent(candidateDir, changed));
   if (checkTypes.includes('php')) {
     const phpFiles = changed.filter((file) => file.endsWith('.php'));
     for (const file of phpFiles) {
@@ -276,6 +393,36 @@ function writeStagedFiles(candidateDir, tempRoot, files) {
   return written;
 }
 
+function applyCheckedFiles(themeDir, tempRoot, files) {
+  const backupRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'theme-stage-backup-'));
+  const restorePlan = [];
+  try {
+    for (const file of files) {
+      const source = path.join(tempRoot, file.relativePath);
+      const target = path.join(themeDir, file.relativePath);
+      const backup = path.join(backupRoot, file.relativePath);
+      const existed = fs.existsSync(target);
+      fs.mkdirSync(path.dirname(backup), { recursive: true });
+      if (existed) fs.copyFileSync(target, backup);
+      restorePlan.push({ target, backup, existed });
+      fs.mkdirSync(path.dirname(target), { recursive: true });
+      fs.copyFileSync(source, target);
+    }
+  } catch (error) {
+    for (const item of restorePlan.reverse()) {
+      if (item.existed && fs.existsSync(item.backup)) {
+        fs.mkdirSync(path.dirname(item.target), { recursive: true });
+        fs.copyFileSync(item.backup, item.target);
+      } else if (!item.existed && fs.existsSync(item.target)) {
+        fs.rmSync(item.target, { force: true });
+      }
+    }
+    throw error;
+  } finally {
+    fs.rmSync(backupRoot, { recursive: true, force: true });
+  }
+}
+
 function applyModelOutput(options) {
   const sourceFile = options.sourceFile;
   const themeDir = path.resolve(options.themeDir);
@@ -288,8 +435,39 @@ function applyModelOutput(options) {
   const allowedPatterns = options.allowedPatterns || [];
   if (requiredFiles.length + optionalFiles.length + allowedPatterns.length === 0) fail('A stage allowlist is required.');
   const raw = fs.readFileSync(sourceFile, 'utf8');
-  const files = parseExactFileBlocks(raw, themeSlug, { allowNoChange: options.allowNoChange });
+  const files = parseExactFileBlocks(raw, themeSlug, {
+    allowNoChange: options.allowNoChange,
+    allowDeclineAsNoChange: options.allowDeclineAsNoChange,
+    requiredFiles,
+    optionalFiles,
+    allowedPatterns
+  });
   assertContract(files, themeDir, { requiredFiles, optionalFiles, allowedPatterns });
+  if (files.length === 0) {
+    const manifest = {
+      stage: options.stage || '',
+      source_file: sourceFile,
+      applied_at: new Date().toISOString(),
+      allowed_files: requiredFiles,
+      optional_files: optionalFiles,
+      allowed_patterns: allowedPatterns,
+      required_files: requiredFiles,
+      returned_files: [],
+      hashes_before: [],
+      files_written: [],
+      stage_checks: [],
+      transaction: {
+        candidate_applied: false,
+        live_theme_changed_after_checks: false,
+        rollback_on_swap_failure: false
+      }
+    };
+    if (options.manifestPath) {
+      fs.mkdirSync(path.dirname(options.manifestPath), { recursive: true });
+      fs.writeFileSync(options.manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+    }
+    return { passed: true, status: 0, manifest };
+  }
   const hashesBefore = files.map((file) => {
     const target = path.join(themeDir, file.relativePath);
     return {
@@ -301,7 +479,6 @@ function applyModelOutput(options) {
   const tempRoot = stageFiles(themeDir, files);
   const parent = path.dirname(themeDir);
   const candidateDir = path.join(parent, `.${themeSlug}.${options.stage || 'stage'}.candidate-${process.pid}-${Date.now()}`);
-  const backupDir = path.join(parent, `.${themeSlug}.${options.stage || 'stage'}.backup-${process.pid}-${Date.now()}`);
   try {
     copyDirectory(themeDir, candidateDir);
     const written = writeStagedFiles(candidateDir, tempRoot, files);
@@ -317,15 +494,7 @@ function applyModelOutput(options) {
       error.checks = checks;
       throw error;
     }
-    fs.renameSync(themeDir, backupDir);
-    try {
-      fs.renameSync(candidateDir, themeDir);
-    } catch (error) {
-      if (fs.existsSync(themeDir)) fs.rmSync(themeDir, { recursive: true, force: true });
-      fs.renameSync(backupDir, themeDir);
-      throw error;
-    }
-    fs.rmSync(backupDir, { recursive: true, force: true });
+    applyCheckedFiles(themeDir, tempRoot, files);
     const manifest = {
       stage: options.stage || '',
       source_file: sourceFile,
@@ -339,7 +508,9 @@ function applyModelOutput(options) {
       files_written: written,
       stage_checks: checks,
       transaction: {
-        candidate_applied: true,
+        candidate_applied: false,
+        candidate_checked: true,
+        file_level_swap: true,
         live_theme_changed_after_checks: true,
         rollback_on_swap_failure: true
       }

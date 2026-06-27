@@ -55,23 +55,48 @@ function hashThemeFiles(themeDir) {
     .sort((a, b) => a.path.localeCompare(b.path));
 }
 
+function shouldNormalizeLineEndings(relativePath) {
+  if (/^(?:node_modules|vendor|\.git)\//.test(relativePath)) return false;
+  return /\.(php|css|scss|sass|js|mjs|cjs|ts|tsx|json|md|txt|yml|yaml|xml|svg|html|htm|config|dist)$/i.test(relativePath) ||
+    /(^|\/)(webpack\.config\.js|package-lock\.json|package\.json|composer\.json|composer\.lock|\.editorconfig|\.gitignore)$/i.test(relativePath);
+}
+
+function normalizePreparedTextFiles(themeDir) {
+  for (const file of walkFiles(themeDir)) {
+    const relative = path.relative(themeDir, file).replace(/\\/g, '/');
+    if (!shouldNormalizeLineEndings(relative)) continue;
+    const buffer = fs.readFileSync(file);
+    if (buffer.includes(0)) continue;
+    const text = buffer.toString('utf8');
+    const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    if (normalized !== text) fs.writeFileSync(file, normalized, 'utf8');
+  }
+}
+
 function prepareTheme(options = {}) {
   const selectedPrompt = options.promptFile || promptFile;
   const selectedTemplate = assertTemplateName(options.templateName || templateName);
   const selectedSlug = options.themeSlug || requestedThemeSlug;
+  const templateSourcePath = options.templateSourcePath || arg(args, 'template-source-path', process.env.THEME_TEMPLATE_SOURCE_PATH || '');
   if (!selectedPrompt) fail('Usage: node scripts/prepare-theme.js --prompt <prompt-file> [--template <template-name>] [--theme-slug <theme-slug>]');
   if (selectedPrompt.includes('..') || selectedTemplate.includes('..')) fail('Unsafe path segment detected.');
 
   const promptPath = path.isAbsolute(selectedPrompt) ? selectedPrompt : path.join(root, selectedPrompt);
   if (!fs.existsSync(promptPath)) fail(`Prompt file not found: ${selectedPrompt}`);
-  const templateDir = path.join(root, 'wordpress-themplate-themes', selectedTemplate);
-  if (!fs.existsSync(templateDir)) fail(`Template not found: wordpress-themplate-themes/${selectedTemplate}`);
+  const templateDir = templateSourcePath
+    ? path.isAbsolute(templateSourcePath)
+      ? templateSourcePath
+      : path.join(root, templateSourcePath)
+    : path.join(root, 'wordpress-themplate-themes', selectedTemplate);
+  if (!fs.existsSync(templateDir)) fail(`Template not found: ${path.relative(root, templateDir).replace(/\\/g, '/')}`);
+  if (!fs.statSync(templateDir).isDirectory()) fail(`Template source is not a directory: ${path.relative(root, templateDir).replace(/\\/g, '/')}`);
 
   const themeSlug = assertThemeSlug(selectedSlug || `${nextThemeNumber()}_nolan_young_theme_${slugifyPromptPath(promptPath)}`);
   const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
   if (fs.existsSync(themeDir)) fail(`Theme already exists: wp-content/themes/${themeSlug}`);
 
   fs.cpSync(templateDir, themeDir, { recursive: true });
+  normalizePreparedTextFiles(themeDir);
 
   const title = themeSlug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
   const stylePath = path.join(themeDir, 'style.css');
@@ -98,7 +123,7 @@ function prepareTheme(options = {}) {
   fs.writeFileSync(path.join(themeDir, '.generation', 'prepared-theme-hashes.json'), `${JSON.stringify({ created_at: new Date().toISOString(), excludes: ['.generation/prepared-theme-hashes.json'], files: hashThemeFiles(themeDir).filter((entry) => entry.path !== '.generation/prepared-theme-hashes.json') }, null, 2)}\n`);
 
   console.log(`Prepared theme folder: wp-content/themes/${themeSlug}`);
-  console.log(`Template source: wordpress-themplate-themes/${selectedTemplate}`);
+  console.log(`Template source: ${path.relative(root, templateDir).replace(/\\/g, '/')}`);
   console.log(`Theme generation must edit only: wp-content/themes/${themeSlug}`);
   return { themeSlug, themeDir, templateName: selectedTemplate };
 }

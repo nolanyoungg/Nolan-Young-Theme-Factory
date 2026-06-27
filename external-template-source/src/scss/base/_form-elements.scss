@@ -1,0 +1,31 @@
+label {
+	display: block;
+	margin-bottom: 0.4rem;
+	color: var(--nytt01-color-navy);
+	font-weight: 700;
+}
+
+input,
+textarea,
+select {
+	width: 100%;
+	min-height: 2.75rem;
+	border: 1px solid var(--nytt01-color-border);
+	border-radius: var(--nytt01-radius-small);
+	padding: 0.72rem 0.85rem;
+	color: var(--nytt01-color-ink);
+	background: var(--nytt01-color-white);
+}
+
+textarea {
+	min-height: 10rem;
+	resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+	border-color: var(--nytt01-color-blue);
+	box-shadow: 0 0 0 3px rgba(23, 105, 224, 0.17);
+	outline: none;
+}

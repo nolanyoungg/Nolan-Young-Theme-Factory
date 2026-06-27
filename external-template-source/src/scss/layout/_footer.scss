@@ -1,0 +1,29 @@
+.nytt01-site-footer {
+	margin-top: 4rem;
+	background: var(--nytt01-color-navy);
+	color: var(--nytt01-color-white);
+}
+
+.nytt01-site-footer a,
+.nytt01-site-footer h2,
+.nytt01-site-footer h3 {
+	color: var(--nytt01-color-white);
+}
+
+.nytt01-site-footer__main {
+	display: grid;
+	gap: 2rem;
+	padding-block: 3.5rem;
+}
+
+.nytt01-footer-widgets {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+	gap: 1.5rem;
+}
+
+.nytt01-site-footer__legal {
+	padding-block: 1rem;
+	border-top: 1px solid rgba(255, 255, 255, 0.2);
+	font-size: 0.875rem;
+}

@@ -1,0 +1,34 @@
+{
+  "name": "nolan-young-theme-template-01",
+  "version": "1.2.1",
+  "private": true,
+  "description": "Development tooling for the Nolan Young WordPress 7.0 classic theme with theme.json.",
+  "license": "GPL-2.0-or-later",
+  "scripts": {
+    "start": "wp-scripts start",
+    "dev": "npm run clean && npm run lint && node build/dev.js",
+    "dev:fast": "npm run start",
+    "clean": "node build/clean.js",
+    "build:assets": "wp-scripts build",
+    "build": "npm run clean && npm run lint && npm run build:assets && npm run validate",
+    "check": "npm run lint && npm run validate",
+    "lint": "npm run lint:js && npm run lint:node && npm run lint:css",
+    "lint:js": "wp-scripts lint-js \"src/js/**/*.js\" webpack.config.js",
+    "lint:node": "node --check build/clean.js && node --check build/dev.js && node --check build/package-theme.js && node --check build/validate.js",
+    "lint:css": "wp-scripts lint-style \"src/scss/**/*.scss\"",
+    "format": "wp-scripts format \"src/js/**/*.js\" \"src/scss/**/*.scss\" webpack.config.js",
+    "validate": "node build/validate.js",
+    "test": "npm run build",
+    "package": "npm run build && node build/package-theme.js"
+  },
+  "engines": {
+    "node": ">=18.12.0",
+    "npm": ">=8.19.2"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "32.4.1",
+    "archiver": "8.0.0",
+    "webpack": "5.107.2",
+    "webpack-remove-empty-scripts": "1.1.1"
+  }
+}

@@ -1,0 +1,55 @@
+.nytt01-button,
+.wp-element-button,
+button,
+input[type="submit"] {
+	display: inline-flex;
+	min-height: 2.75rem;
+	align-items: center;
+	justify-content: center;
+	border: 2px solid var(--nytt01-color-blue);
+	border-radius: var(--nytt01-radius-small);
+	padding: 0.72rem 1.2rem;
+	background: var(--nytt01-color-blue);
+	color: var(--nytt01-color-white);
+	font-weight: 750;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background var(--nytt01-transition), border-color var(--nytt01-transition), transform var(--nytt01-transition);
+}
+
+.nytt01-button:hover,
+.wp-element-button:hover,
+button:hover,
+input[type="submit"]:hover {
+	border-color: var(--nytt01-color-blue-dark);
+	background: var(--nytt01-color-blue-dark);
+	color: var(--nytt01-color-white);
+	transform: translateY(-1px);
+}
+
+.nytt01-button--secondary {
+	background: transparent;
+	color: var(--nytt01-color-blue);
+}
+
+.nytt01-button--light {
+	border-color: var(--nytt01-color-white);
+	background: var(--nytt01-color-white);
+	color: var(--nytt01-color-navy);
+}
+
+.nytt01-button-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+}
+
+.nytt01-text-link {
+	font-weight: 750;
+}
+
+.is-style-nytt01-outline .wp-block-button__link {
+	background: transparent;
+	color: var(--nytt01-color-blue);
+}

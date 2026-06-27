@@ -1,0 +1,11 @@
+.nytt01-portfolio-filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6rem;
+	margin-bottom: 2rem;
+}
+
+.nytt01-portfolio-filter button[aria-pressed="true"] {
+	background: var(--nytt01-color-navy);
+	border-color: var(--nytt01-color-navy);
+}

@@ -1,0 +1,46 @@
+.nytt01-form {
+	display: grid;
+	gap: 1rem;
+	max-width: 48rem;
+}
+
+.nytt01-form__row {
+	display: grid;
+	gap: 1rem;
+}
+
+@media (min-width: 40rem) {
+
+	.nytt01-form__row--two {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.nytt01-form__message {
+	padding: 0.85rem 1rem;
+	border-radius: var(--nytt01-radius-small);
+}
+
+.nytt01-form__message--success {
+	background: #e6f4ed;
+	color: var(--nytt01-color-success);
+}
+
+.nytt01-form__message--error {
+	background: #fdeaea;
+	color: var(--nytt01-color-danger);
+}
+
+.nytt01-form__honeypot {
+	position: absolute;
+	left: -9999px;
+}
+
+.nytt01-search-form {
+	display: flex;
+	gap: 0.6rem;
+}
+
+.nytt01-search-form__field {
+	flex: 1;
+}

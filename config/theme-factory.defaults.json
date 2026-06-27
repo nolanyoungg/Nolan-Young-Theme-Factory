@@ -10,6 +10,7 @@
   },
   "paths": {
     "templates": "wordpress-themplate-themes",
+    "template_source_path": "",
     "themes": "wp-content/themes",
     "zips": "dist/zipped-themes",
     "previews": "docs/Preview-Themes-Github",

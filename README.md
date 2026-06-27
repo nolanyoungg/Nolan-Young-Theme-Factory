@@ -48,13 +48,13 @@ npm run test:scripts
 
 ## Workflow Modes
 
-`ollama-only` runs Ollama generation batches and no Codex pass.
-
-Ollama-only intentionally uses many smaller planned prompts. Smaller local models are more reliable when each stage has a narrow file allowlist and complete current-file context.
+`ollama-only` runs one Ollama pass per planned batch and no Codex pass.
 
 `codex-only` runs one Codex generation pass.
 
 `hybrid` runs an Ollama draft followed by one Codex finish pass.
+
+The prepare step can use the bundled template tree or a custom local template source path passed with `--template-source-path` or `THEME_TEMPLATE_SOURCE_PATH`.
 
 The workflow does not run a validation-triggered cleanup pass and does not substitute a fallback model.
 

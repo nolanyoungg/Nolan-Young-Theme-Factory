@@ -1,0 +1,21 @@
+.nytt01-card-grid,
+.nytt01-service-grid,
+.nytt01-pillar-grid,
+.nytt01-post-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+	gap: 1.5rem;
+}
+
+.nytt01-split-section {
+	display: grid;
+	gap: 2rem;
+	align-items: center;
+}
+
+@media (min-width: 50rem) {
+
+	.nytt01-split-section {
+		grid-template-columns: 1fr 1fr;
+	}
+}

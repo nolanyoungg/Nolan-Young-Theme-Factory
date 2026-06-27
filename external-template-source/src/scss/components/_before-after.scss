@@ -1,0 +1,11 @@
+.nytt01-before-after {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.5rem;
+	overflow: hidden;
+	border-radius: var(--nytt01-radius-medium);
+}
+
+.nytt01-before-after figure {
+	margin: 0;
+}

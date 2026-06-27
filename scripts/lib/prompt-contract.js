@@ -119,6 +119,25 @@ function selectPromptSections(contract, sectionNumbers) {
     .join('\n\n');
 }
 
+function selectPromptRequirements(contract, requirementIds) {
+  const requested = requirementIds || [];
+  const seen = new Set();
+  const exact = new Map();
+  requirementItems(contract).forEach((item) => {
+    exact.set(item.key, item);
+    exact.set(item.id, item);
+  });
+  const out = [];
+  for (const requirementId of requested) {
+    if (seen.has(requirementId)) throw new Error(`Duplicate prompt requirement requested: ${requirementId}`);
+    seen.add(requirementId);
+    const item = exact.get(requirementId);
+    if (!item) throw new Error(`Requested prompt requirement does not exist: ${requirementId}`);
+    out.push(item.text);
+  }
+  return out.join('\n\n');
+}
+
 function expandStageRequirementIds(contract, stage) {
   const explicit = stage.promptRequirements || [];
   const sectionNumbers = stage.promptSections || [];
@@ -225,8 +244,10 @@ function promptSizeManifest(parts, budgetCharacters) {
 module.exports = {
   assertCoverage,
   buildCoverage,
+  expandStageRequirementIds,
   parsePromptContract,
   promptSizeManifest,
   requirementItems,
+  selectPromptRequirements,
   selectPromptSections
 };

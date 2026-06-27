@@ -5,8 +5,8 @@ const { runCommand } = require('../lib/command-runner');
 const { checkOllamaAccess } = require('../lib/model-access');
 const { assertThemeSlug, safeRelativePath } = require('../lib/theme-utils');
 const { applyModelOutput, parseExactFileBlocks } = require('../lib/model-output');
-const { BATCHES, OUTPUT_FORMAT, SHARED_GENERATION_RULES, SHARED_GLOBAL_REQUIREMENTS, validateStagePlan } = require('../lib/ollama-batches');
-const { assertCoverage, buildCoverage, parsePromptContract, promptSizeManifest, selectPromptSections } = require('../lib/prompt-contract');
+const { OUTPUT_FORMAT, TEMPLATE_OWNED_PROMPT_SECTIONS, ollamaStageSequence, resolveOllamaBatchesForDirectory, SHARED_GENERATION_RULES, SHARED_GLOBAL_REQUIREMENTS, validateStagePlan } = require('../lib/ollama-batches');
+const { assertCoverage, buildCoverage, expandStageRequirementIds, parsePromptContract, promptSizeManifest, selectPromptRequirements, selectPromptSections } = require('../lib/prompt-contract');
 
 function fail(message) {
   throw new Error(message);
@@ -47,6 +47,21 @@ function contextEntries(themeDir, files) {
   return files.map((file) => ({ path: file, content: readThemeFile(themeDir, file) }));
 }
 
+function phpFunctionInventory(themeDir, excludedFiles = []) {
+  const excluded = new Set((excludedFiles || []).map((file) => String(file).replace(/\\/g, '/')));
+  const files = directoryFiles(themeDir, '.').filter((file) => file.endsWith('.php') && !excluded.has(file));
+  const out = [];
+  for (const file of files) {
+    const text = readThemeFile(themeDir, file);
+    const names = [];
+    let match;
+    const pattern = /function\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(/g;
+    while ((match = pattern.exec(text)) !== null) names.push(match[1]);
+    if (names.length) out.push({ file, names: [...new Set(names)].sort() });
+  }
+  return out;
+}
+
 function declarationList(items, emptyText) {
   return items.length ? items.map((file) => `- ${file}`).join('\n') : emptyText;
 }
@@ -55,15 +70,16 @@ function stripTransportNoise(text) {
   const normalized = String(text || '').replace(/\u001b\[[0-9;]*[A-Za-z]/g, '');
   const start = normalized.indexOf('---FILE: ');
   if (start === -1) return normalized.trim();
-  let end = normalized.lastIndexOf('\n---END FILE---');
-  if (end === -1) end = normalized.lastIndexOf('---END FILE---');
-  if (end === -1) return normalized.slice(start).trim();
-  const endMarker = normalized.indexOf('---END FILE---', end);
-  return normalized.slice(start, endMarker + '---END FILE---'.length).trim();
+  return normalized.slice(start).trim();
 }
 
 function serializeFileBlocks(files) {
   return files.map((file) => `---FILE: ${file.relativePath}---\n${String(file.content || '').replace(/\n?$/, '\n')}---END FILE---`).join('\n\n');
+}
+
+function writeJson(file, data) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
 }
 
 function batchPromptParts(themeSlug, themeDir, contract, batch) {
@@ -74,14 +90,50 @@ function batchPromptParts(themeSlug, themeDir, contract, batch) {
   const requiredFiles = batch.files || [];
   const optionalFiles = batch.optionalFiles || [];
   const allowedPatterns = batch.allowedPatterns || [];
-  const creativeText = selectPromptSections(contract, batch.promptSections || []);
+  const existingFunctionInventory = phpFunctionInventory(themeDir, [...requiredFiles, ...optionalFiles]);
+  const existingFunctionText = existingFunctionInventory.length
+    ? existingFunctionInventory.map((entry) => `- ${entry.file}: ${entry.names.join(', ')}`).join('\n')
+    : '- No existing PHP functions found outside this stage.';
+  const phpWritableFiles = [...requiredFiles, ...optionalFiles].filter((file) => /\.php$/i.test(file));
+  const creativeText = batch.promptRequirements && batch.promptRequirements.length
+    ? selectPromptRequirements(contract, batch.promptRequirements)
+    : selectPromptSections(contract, batch.promptSections || []);
   const rulesText = `${OUTPUT_FORMAT}\n\nRules:\n${SHARED_GENERATION_RULES.map((rule) => `- ${rule}`).join('\n')}`;
+  const phpStageRules = phpWritableFiles.length ? `## PHP Output Rules
+
+- Do not include Markdown fences inside any FILE block.
+- For user-facing text in PHP, prefer double-quoted strings.
+- Avoid apostrophes inside single-quoted PHP strings. Rewrite the sentence or switch to double quotes.
+- Use brace-style PHP control structures only: if (...) { ... }, foreach (...) { ... }, while (...) { ... }. Do not use colon syntax such as if (...) :, else :, endif, endwhile, or endforeach.
+- Before responding, mentally lint every PHP file for balanced quotes and valid PHP syntax.
+` : '';
+  const requiredCount = requiredFiles.length;
+  const optionalGuidance = optionalFiles.length
+    ? 'Optional files may be returned only when they are complete and directly needed.'
+    : 'No optional writable files are available in this stage.';
+  const patternGuidance = allowedPatterns.length
+    ? 'Pattern-created files may be returned only when they are essential and match a declared pattern exactly.'
+    : 'No pattern-created files are available in this stage.';
+  const requiredReturnGuidance = requiredCount === 1
+    ? optionalFiles.length || allowedPatterns.length
+      ? `Return the required FILE block for ${requiredFiles[0]}. Your response must start with "---FILE: ${requiredFiles[0]}---".`
+      : `Return exactly one FILE block: ${requiredFiles[0]}. Your response must start with "---FILE: ${requiredFiles[0]}---".`
+    : `Return exactly ${requiredCount} required FILE blocks, one for each required writable file.`;
+  const stageGuidance = [
+    'Build the owned files for this stage from the prepared scaffold.',
+    'Replace starter content with production-ready implementation inside the writable allowlist.',
+    requiredReturnGuidance,
+    optionalGuidance,
+    patternGuidance,
+    'Do not return read-only context files or sibling files.',
+    'Do not ask questions or explain your plan.'
+  ].join(' ');
   const finalPrompt = `You are editing a prepared WordPress theme folder.
 
 Target folder:
 wp-content/themes/${themeSlug}/
 
-Stage: ${batch.name}
+Stage: build-${batch.name}
 Purpose: ${batch.focus}
 
 ## Creative Prompt
@@ -90,11 +142,15 @@ ${creativeText}
 
 ${SHARED_GLOBAL_REQUIREMENTS}
 
+## Stage Instructions
+
+${stageGuidance}
+
 ## Required Writable Files
 
 ${declarationList(requiredFiles, 'No exact files are mandatory for this stage.')}
 
-Required files must be returned exactly once.
+These are the primary stage-owned files. Return every file you complete in this pass, using the exact listed paths.
 
 ## Optional Writable Files
 
@@ -108,17 +164,31 @@ ${declarationList(allowedPatterns, 'No pattern-created files are allowed for thi
 
 Pattern-created files may be returned only when needed, and every returned path must match one declared pattern.
 
+## Path Fidelity
+
+- Every FILE header path must match the declared writable lists exactly.
+- Preserve nested directories exactly as shown.
+- Do not collapse paths such as template-parts/content/content-page.php into template-parts/content-page.php.
+
 ## Read-Only Context
 
 These files are provided only for integration context and must not be returned:
 
 ${readonlyFiles.length ? readonlyFiles.map((file) => `- ${file}`).join('\n') : '- No additional read-only files for this stage.'}
 
+## Existing PHP Function Names
+
+Do not redeclare any function listed here. If this stage needs related behavior, call the existing function or choose a distinct stage-owned function name.
+
+${existingFunctionText}
+
 ${fileContext(themeDir, 'Current Required Writable File', requiredFiles)}
 
 ${optionalFiles.length ? fileContext(themeDir, 'Current Optional Writable File', optionalFiles) : ''}
 
 ${readonlyFiles.length ? fileContext(themeDir, 'Read-Only Context File', readonlyFiles) : ''}
+
+${phpStageRules}
 
 ${rulesText}
 `;
@@ -133,6 +203,28 @@ ${rulesText}
   };
 }
 
+function writeStageBanner(stageName) {
+  console.log(`############# Running stage: ${stageName} #############`);
+}
+
+function runOllamaStage({ reportDir, model, timeoutMs, promptPath, promptText, stageName, themeSlug, mode }) {
+  writeStageBanner(stageName);
+  fs.writeFileSync(promptPath, promptText, 'utf8');
+  return runCommand('ollama', ['run', model, '--nowordwrap'], {
+    debugDir: path.join(reportDir, 'debug'),
+    echo: false,
+    echoSummary: true,
+    env: { OLLAMA_NOHISTORY: '1' },
+    input: promptText,
+    mode,
+    model,
+    provider: 'Ollama',
+    stage: stageName,
+    themeSlug,
+    timeoutMs
+  });
+}
+
 async function runOllamaGeneration(options) {
   const themeSlug = assertThemeSlug(options.themeSlug);
   const promptFile = safeRelativePath(options.promptFile, 'prompt file');
@@ -142,10 +234,11 @@ async function runOllamaGeneration(options) {
   const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${themeSlug}`);
   if (!fs.existsSync(path.join(root, promptFile))) fail(`Prompt file missing: ${promptFile}`);
-  validateStagePlan(BATCHES);
+  const batches = resolveOllamaBatchesForDirectory(themeDir);
+  validateStagePlan(batches);
   checkOllamaAccess({ model, live: false, timeoutMs });
   const contract = parsePromptContract(path.join(root, promptFile));
-  const coverage = buildCoverage(contract, BATCHES);
+  const coverage = buildCoverage(contract, batches, expandStageRequirementIds(contract, { name: 'template-owned', promptSections: TEMPLATE_OWNED_PROMPT_SECTIONS }));
   assertCoverage(coverage);
   fs.mkdirSync(reportDir, { recursive: true });
   fs.writeFileSync(path.join(reportDir, 'prompt-coverage.json'), `${JSON.stringify(coverage, null, 2)}\n`, 'utf8');
@@ -154,45 +247,69 @@ async function runOllamaGeneration(options) {
   const generationDir = path.join(reportDir, 'ollama-generation');
   fs.mkdirSync(generationDir, { recursive: true });
   const results = [];
-  for (const batch of BATCHES) {
-    const promptPath = path.join(generationDir, `ollama-${batch.name}-prompt.md`);
-    const rawOutput = path.join(generationDir, `ollama-${batch.name}-raw.md`);
-    const manifestPath = path.join(generationDir, `ollama-${batch.name}-application.json`);
+  const stageNames = ollamaStageSequence(batches);
+  fs.writeFileSync(path.join(generationDir, 'ollama-stage-sequence.json'), `${JSON.stringify({ stages: stageNames }, null, 2)}\n`, 'utf8');
+
+  for (const batch of batches) {
+    const stageName = `ollama-build-${batch.name}`;
     const promptParts = batchPromptParts(themeSlug, themeDir, contract, batch);
     const sizeManifest = promptSizeManifest(promptParts, Number(options.contextBudgetCharacters || 180000));
-    const stageManifestPath = path.join(generationDir, `ollama-${batch.name}-stage-manifest.json`);
-    fs.writeFileSync(stageManifestPath, `${JSON.stringify({ stage: batch.name, prompt_sections: batch.promptSections || [], ...sizeManifest }, null, 2)}\n`, 'utf8');
-    if (!sizeManifest.within_budget) fail(`Ollama stage ${batch.name} exceeds context budget (${sizeManifest.total_prompt_characters} > ${sizeManifest.budget_characters}). Split the stage; requirements and file context were not truncated.`);
-    fs.writeFileSync(promptPath, promptParts.finalPrompt, 'utf8');
-    const result = runCommand('ollama', ['run', model, '--nowordwrap'], {
-      debugDir: path.join(reportDir, 'debug'),
-      echo: false,
-      echoSummary: true,
-      env: { OLLAMA_NOHISTORY: '1' },
-      input: fs.readFileSync(promptPath, 'utf8'),
-      mode: options.mode || 'ollama-only',
+    const stageManifestPath = path.join(generationDir, `${stageName}-stage-manifest.json`);
+    fs.writeFileSync(stageManifestPath, `${JSON.stringify({ stage: stageName, role: 'build', batch: batch.name, prompt_sections: batch.promptSections || [], ...sizeManifest }, null, 2)}\n`, 'utf8');
+    if (!sizeManifest.within_budget) fail(`Ollama stage ${stageName} exceeds context budget (${sizeManifest.total_prompt_characters} > ${sizeManifest.budget_characters}). Split the stage; requirements and file context were not truncated.`);
+    const promptPath = path.join(generationDir, `${stageName}-prompt.md`);
+    const result = runOllamaStage({
+      reportDir,
       model,
-      provider: 'Ollama',
-      stage: `ollama-${batch.name}`,
+      timeoutMs,
+      promptPath,
+      promptText: promptParts.finalPrompt,
+      stageName,
       themeSlug,
-      timeoutMs
+      mode: options.mode || 'ollama-only'
     });
     const originalOutput = `${result.stdout || ''}${result.stderr || ''}`;
-    fs.writeFileSync(path.join(generationDir, `ollama-${batch.name}-raw-original.md`), originalOutput, 'utf8');
-    const files = parseExactFileBlocks(stripTransportNoise(originalOutput), themeSlug);
-    fs.writeFileSync(rawOutput, serializeFileBlocks(files), 'utf8');
-    results.push({ batch: batch.name, status: result.status, raw_output: rawOutput, original_raw_output: path.join(generationDir, `ollama-${batch.name}-raw-original.md`) });
-    if (result.status !== 0) fail(`Ollama batch failed: ${batch.name}`);
-    applyModelOutput({
-      sourceFile: rawOutput,
-      themeDir,
-      stage: batch.name,
-      requiredFiles: batch.files || [],
-      optionalFiles: batch.optionalFiles || [],
-      allowedPatterns: batch.allowedPatterns || [],
-      manifestPath,
-      candidateEvidenceDir: path.join(generationDir, `ollama-${batch.name}-failed-candidate`)
-    });
+    const originalOutputPath = path.join(generationDir, `${stageName}-raw-original.md`);
+    fs.writeFileSync(originalOutputPath, originalOutput, 'utf8');
+    const rawOutput = path.join(generationDir, `${stageName}-raw.md`);
+    const resultEntry = { batch: batch.name, role: 'build', status: result.status, raw_output: rawOutput, original_raw_output: originalOutputPath };
+    results.push(resultEntry);
+    try {
+      const normalizedOutput = stripTransportNoise(originalOutput);
+      const files = parseExactFileBlocks(normalizedOutput, themeSlug, {
+        allowNoChange: false,
+        allowDeclineAsNoChange: false,
+        requiredFiles: batch.files || [],
+        optionalFiles: batch.optionalFiles || [],
+        allowedPatterns: batch.allowedPatterns || []
+      });
+      fs.writeFileSync(rawOutput, serializeFileBlocks(files), 'utf8');
+      applyModelOutput({
+        sourceFile: rawOutput,
+        themeDir,
+        stage: stageName,
+        requiredFiles: batch.files || [],
+        optionalFiles: batch.optionalFiles || [],
+        allowedPatterns: batch.allowedPatterns || [],
+        manifestPath: path.join(generationDir, `${stageName}-application.json`),
+        candidateEvidenceDir: path.join(generationDir, `${stageName}-failed-candidate`)
+      });
+      if (result.status !== 0) {
+        resultEntry.recovered_transport_failure = true;
+        writeJson(path.join(generationDir, `${stageName}-transport-recovery.json`), {
+          stage: stageName,
+          provider: 'ollama',
+          status: result.status,
+          raw_output: rawOutput,
+          original_raw_output: originalOutputPath,
+          recovered_at: new Date().toISOString(),
+          recovery_rule: 'Accepted because complete normalized file blocks passed allowlist and candidate stage checks despite non-zero transport status.'
+        });
+      }
+    } catch (error) {
+      if (result.status !== 0) fail(`Ollama stage failed: ${stageName}. ${error.message}`);
+      throw error;
+    }
   }
   return { passed: true, status: 0, provider: 'ollama', results };
 }

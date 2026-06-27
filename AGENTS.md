@@ -59,6 +59,22 @@ Ollama-only uses multiple planned local-model stages. These stages are declared 
 
 Every Ollama stage must declare its prompt-section ownership. Missing or nonexistent production prompt coverage blocks the run before model invocation.
 
+Ollama file output must be normalized only by the shared model-output parser. The recurring `--FILE:` header typo, overlong trailing dashes in FILE headers, raw fenced code from exact one-file stages, leading code fences inside code FILE blocks, trailing lone delimiter lines inside code FILE blocks, and pure terminal spinner lines are known Ollama transport/envelope variants and must be handled generically before candidate application. Do not manually wrap, patch, or repair a generated theme to compensate for these issues.
+
+Ollama stage contracts must keep required, optional, and pattern-created files separate from prompt construction through candidate application. Optional files are never promoted into required files just because they are listed in the stage contract. A model response that completes all required files and omits optional files is valid unless candidate checks fail.
+
+Prepared asset systems and deterministic support files are not Ollama-owned source. `functions.php`, `style.css`, build scripts/config, package manifests, files under `assets/`, source stylesheets, source scripts, and compiled CSS/JS bundles must stay template/build-owned unless the repository policy is intentionally changed. Ollama stages may own only explicitly declared small leaf files; they must not be asked to rewrite working asset systems, generated bundle files, or mature template PHP scaffolding.
+
+Complex navigation panel scaffolding is template-owned. `inc/navigation.php` and `template-parts/header/mega-menu-*.php` should be improved in the active template, not rewritten during Ollama generation. Ollama may edit the simpler header shell/branding/navigation wrapper files only when they are explicitly stage-owned.
+
+The theme foundation is template-owned. `theme.json`, foundation PHP includes, setup helpers, enqueue helpers, template tags, `functions.php`, `style.css`, README, changelog, and license files must not be exposed as Ollama outputs unless the stage plan is intentionally changed.
+
+Structural wrappers are template-owned unless the stage plan is intentionally changed. `header.php`, `footer.php`, `front-page.php`, `template-parts/header/`, `template-parts/footer/`, and scaffold-critical homepage sections must be improved in the active template instead of regenerated during Ollama runs.
+
+For the current 002 Ollama-only run, the planned local-model writable surface is intentionally minimal. The active template carries the mature WordPress source; Ollama ownership is limited to explicitly declared safe leaf files such as `searchform.php`.
+
+Template preparation must normalize text file line endings deterministically after copying the template. Windows CRLF checkouts must not cause prepared JS, SCSS, config, PHP, JSON, or Markdown files to fail build linting.
+
 There is no automatic model fallback, validation-triggered AI pass, build-triggered AI pass, or second AI cleanup pass.
 
 A planned generation stage is declared before generation begins, owns a defined file allowlist, receives current theme context, and runs regardless of validation state.

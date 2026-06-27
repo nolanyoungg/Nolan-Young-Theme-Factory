@@ -9,9 +9,9 @@ const yauzl = require('yauzl');
 const { root } = require('../lib/repo-root');
 const { runCommand } = require('../lib/command-runner');
 const { existingArtifacts } = require('../lib/theme-utils');
-const { applyModelOutput, validateAssetManifest } = require('../lib/model-output');
-const { BATCHES, SHARED_GLOBAL_REQUIREMENTS, validateStagePlan } = require('../lib/ollama-batches');
-const { assertCoverage, buildCoverage, parsePromptContract, promptSizeManifest, selectPromptSections } = require('../lib/prompt-contract');
+const { applyModelOutput, parseExactFileBlocks, validateAssetManifest } = require('../lib/model-output');
+const { ollamaStageSequence, resolveOllamaBatchesForDirectory, SHARED_GLOBAL_REQUIREMENTS, TEMPLATE_OWNED_PROMPT_SECTIONS, validateStagePlan } = require('../lib/ollama-batches');
+const { assertCoverage, buildCoverage, expandStageRequirementIds, parsePromptContract, promptSizeManifest, selectPromptRequirements, selectPromptSections } = require('../lib/prompt-contract');
 const { codexExecArgs } = require('../lib/model-access');
 const { createBrief, repoSnapshot, snapshotDiff } = require('../providers/codex');
 const { batchPromptParts } = require('../providers/ollama');
@@ -19,7 +19,7 @@ const { verifyFrozenSource } = require('../run-theme-workflow');
 
 const slug = '999_nolan_young_theme_architecture_smoke';
 const prompt = 'prompts/templates/NOLAN-YOUNG-PROMPT-6-19-2026.md';
-const template = 'NOLAN-YOUNG-theme-000';
+const template = 'nolan-young-theme-template-01';
 const removedFolders = [
   'scripts/ai-output/',
   'scripts/briefs/',
@@ -119,6 +119,8 @@ function zipEntries(zipPath) {
 
 async function main() {
   cleanup();
+  const templateDir = path.join(root, 'wordpress-themplate-themes', template);
+  const batches = resolveOllamaBatchesForDirectory(templateDir);
   const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
   const expectedCommands = ['theme:run', 'theme:resume', 'theme:prepare', 'theme:validate', 'theme:build', 'theme:preview', 'theme:preview:index', 'theme:zip', 'theme:delete', 'theme:env', 'theme:model-check', 'test:scripts'];
   for (const command of expectedCommands) {
@@ -153,6 +155,9 @@ async function main() {
   assert(!/validation\.draft|validationPath/.test(runner), 'Hybrid workflow passes draft validation to Codex');
 
   const modelOutputText = fs.readFileSync(path.join(root, 'scripts', 'lib', 'model-output.js'), 'utf8');
+  const ollamaProviderText = fs.readFileSync(path.join(root, 'scripts', 'providers', 'ollama.js'), 'utf8');
+  assert(!/requiredFiles:\s*\[\s*\.\.\.new Set\(\[\s*\.\.\.\(batch\.files/.test(ollamaProviderText), 'Ollama provider promotes optional files into required files');
+  assert(/optionalFiles:\s*batch\.optionalFiles\s*\|\|\s*\[\]/.test(ollamaProviderText), 'Ollama provider does not pass optional files through to applyModelOutput');
   for (const forbidden of [
     /sanitizeRemoteReferences/,
     /sanitizeScaffoldOnlyCopy/,
@@ -166,21 +171,23 @@ async function main() {
   ]) {
     assert(!forbidden.test(modelOutputText), `model-output.js contains prohibited behavior: ${forbidden}`);
   }
-  for (const batch of BATCHES) {
+  for (const batch of batches) {
     assert(Array.isArray(batch.files), `${batch.name} missing writable file allowlist`);
     assert(batch.files.length > 0 || (batch.optionalFiles || []).length > 0 || (batch.allowedPatterns || []).length > 0, `${batch.name} missing writable file allowlist`);
     assert('readonly' in batch || 'readonlyDirectories' in batch, `${batch.name} missing read-only context declaration`);
     assert(Array.isArray(batch.promptSections) && batch.promptSections.length > 0, `${batch.name} missing prompt section ownership`);
   }
-  assert.doesNotThrow(() => validateStagePlan(BATCHES), 'Valid stage plan failed validation');
-  assert(!BATCHES.find((batch) => batch.name === 'page-interaction-javascript').readonly.includes('src/js/main.js'), 'page-interaction-javascript has writable/read-only conflict');
+  assert.doesNotThrow(() => validateStagePlan(batches), 'Valid stage plan failed validation');
+  const interactiveBatch = batches.find((batch) => batch.name === 'interactive-assets');
+  if (interactiveBatch) assert(!interactiveBatch.readonly.some((file) => interactiveBatch.files.includes(file)), 'interactive-assets has writable/read-only conflict');
   assertThrowsMessage(() => validateStagePlan([{ name: 'bad', files: ['a.php'], optionalFiles: ['a.php'], readonly: [] }]), /required file is also optional/, 'Required/optional conflict validation');
   assertThrowsMessage(() => validateStagePlan([{ name: 'bad', files: ['a.php'], readonly: ['a.php'] }]), /required file is also read-only/, 'Writable/read-only conflict validation');
   const productionPrompt = path.join(root, prompt);
   const contract = parsePromptContract(productionPrompt);
   assert.deepStrictEqual(contract.sections.map((section) => section.number), ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15'], 'Production prompt sections 01-15 were not discovered');
   assert(contract.sections.every((section) => section.text.includes(`## ${section.number}.`)), 'Prompt section exact text was trimmed');
-  const coverage = buildCoverage(contract, BATCHES);
+  const templateOwnedRequirements = expandStageRequirementIds(contract, { name: 'template-owned', promptSections: TEMPLATE_OWNED_PROMPT_SECTIONS });
+  const coverage = buildCoverage(contract, batches, templateOwnedRequirements);
   assert(coverage.passed, `Prompt coverage failed: ${JSON.stringify(coverage.uncovered_requirements)}`);
   assertCoverage(coverage);
   assert(coverage.all_features.length > 0, 'Prompt features were not parsed');
@@ -191,12 +198,50 @@ async function main() {
   assert(selected07.startsWith('## 07.'), 'Selected section did not preserve exact section heading');
   assert(!selected07.includes('## 08.'), 'Selected prompt section includes unrelated numbered section');
   assertThrowsMessage(() => selectPromptSections(contract, ['07', '07']), /Duplicate prompt section/, 'Duplicate section selection');
-  assert(BATCHES.findIndex((batch) => batch.name === 'homepage-assembly') > BATCHES.findIndex((batch) => batch.name === 'homepage-content-proof-interaction'), 'Homepage assembly is not after homepage parts');
-  assert(BATCHES.some((batch) => batch.name === 'standard-template-parts' && batch.files.includes('template-parts/content-page.php')), 'Standard template parts have no writable owner');
-  assert(BATCHES.findIndex((batch) => batch.name === 'forms-system') !== BATCHES.findIndex((batch) => batch.name === 'newsletter-system'), 'Forms and newsletter are not separate stages');
-  assert(BATCHES.findIndex((batch) => batch.name === 'blog-contact-policy-templates') > BATCHES.findIndex((batch) => batch.name === 'newsletter-system'), 'Contact templates do not run after newsletter');
-  assert(BATCHES.some((batch) => batch.name === 'theme-documentation' && batch.promptSections.includes('14')), 'Documentation requirements are unassigned');
-  assert(BATCHES.some((batch) => batch.promptSections.includes('13')), 'Image requirements are unassigned');
+  assert(!batches.some((batch) => batch.name === 'front-page-assembly'), 'Homepage assembly should remain template-owned');
+  assert.deepStrictEqual(batches.flatMap((batch) => batch.files).sort(), ['searchform.php'], 'Ollama-only stage plan should only own searchform.php');
+  assert(!batches.some((batch) => /^wordpress-templates(?:-|$)/.test(batch.name)), 'WordPress templates should remain template-owned');
+  assert(!batches.some((batch) => /^page-templates(?:-|$)/.test(batch.name)), 'Page templates should remain template-owned');
+  assert(
+    batches.filter((batch) => /^foundation-core(?:-|$)/.test(batch.name)).every((batch) => batch.files.length <= 1),
+    'Foundation stages were not reduced to the default file cap'
+  );
+  assert(
+    batches.every((batch) => !batch.files.some((file) => file === 'functions.php' || file === 'style.css' || file === 'webpack.config.js' || file.startsWith('build/') || /^package(?:-lock)?\.json$/.test(file))),
+    'Deterministic support/build files should not be AI-owned writable files'
+  );
+  assert(
+    batches.every((batch) => !batch.files.some((file) => /^assets\/css\/[^/]+\.css$/i.test(file))),
+    'Compiled CSS bundle outputs should not be AI-owned writable files'
+  );
+  assert(
+    batches.every((batch) => !batch.files.some((file) => /^assets\//.test(file) || /\.(css|scss|sass|js|mjs|cjs|ts|tsx)$/i.test(file))),
+    'Prepared assets, styles, and scripts should remain template/build-owned'
+  );
+  assert(
+    batches.every((batch) => !/^foundation-core/.test(batch.name)),
+    'Foundation core should remain template-owned'
+  );
+  assert(
+    batches.every((batch) => !batch.files.some((file) => /ny_service|service_category/.test(file) && /^[^/]+\.php$/.test(file))),
+    'Service top-level wrappers should remain template-owned'
+  );
+  assert(!batches.some((batch) => batch.files.some((file) => file.startsWith('template-parts/content/'))), 'Content template parts should remain template-owned');
+  assert(
+    batches.every((batch) => !batch.files.includes('header.php') && !batch.files.includes('footer.php') && !batch.files.includes('front-page.php')),
+    'Header, footer, and front-page wrappers should remain template-owned'
+  );
+  assert(
+    batches.every((batch) => !batch.files.includes('inc/navigation.php') && !batch.files.some((file) => /^template-parts\/header\//.test(file) || /^template-parts\/footer\//.test(file))),
+    'Header/footer/navigation scaffold should remain template-owned, not Ollama-owned'
+  );
+  assert(
+    batches.every((batch) => !batch.files.includes('template-parts/global/content-brand-statement.php') && !batch.files.includes('template-parts/front-page/content-featured-work.php')),
+    'Known structural homepage sections should remain template-owned'
+  );
+  assert(!batches.some((batch) => batch.files.some((file) => file.startsWith('page-templates/'))), 'Page templates should remain template-owned');
+  assert(templateOwnedRequirements.some((requirement) => String(requirement).startsWith('14')), 'Documentation requirements are not template-owned');
+  assert(templateOwnedRequirements.some((requirement) => String(requirement).startsWith('13')), 'Image requirements are not template-owned');
   const oversized = promptSizeManifest({ creativeText: 'x'.repeat(200), sharedText: '', requiredWritableFiles: [], optionalWritableFiles: [], readonlyFiles: [], protocolText: '', finalPrompt: 'x'.repeat(200) }, 100);
   assert.strictEqual(oversized.within_budget, false, 'Oversized prompt budget did not fail preflight calculation');
   const promptText = fs.readFileSync(productionPrompt, 'utf8');
@@ -208,12 +253,12 @@ async function main() {
   for (const mode of ['ollama-only', 'codex-only', 'hybrid']) {
     const parsed = mustRunJson('node', [path.join(root, 'scripts', 'run-theme-workflow.js'), '--mode', mode, '--prompt', prompt, '--template', template, '--theme-slug', slug, '--dry-run', '--ollama-model', 'qwen2.5-coder:14b', '--codex-model', 'gpt-5.5', '--codex-reasoning', 'high']);
     const aiStages = parsed.stages.filter((stage) => stage.owner === 'ollama' || stage.owner === 'codex').map((stage) => stage.stage);
-    const ollamaStages = BATCHES.map((batch) => `ollama-${batch.name}`);
+    const ollamaStages = ollamaStageSequence(batches).map((stage) => `ollama-${stage}`);
     if (mode === 'ollama-only') assert.deepStrictEqual(aiStages, ollamaStages);
     if (mode === 'codex-only') assert.deepStrictEqual(aiStages, ['codex-generation']);
     if (mode === 'hybrid') assert.deepStrictEqual(aiStages, [...ollamaStages, 'codex-finish']);
     if (mode === 'ollama-only') {
-      assert.strictEqual(parsed.expected_invocations.ollama_provider_invocations, BATCHES.length);
+      assert.strictEqual(parsed.expected_invocations.ollama_provider_invocations, ollamaStages.length);
       assert.strictEqual(parsed.expected_invocations.codex_provider_invocations, 0);
     }
     if (mode === 'codex-only') {
@@ -221,7 +266,7 @@ async function main() {
       assert.strictEqual(parsed.expected_invocations.codex_provider_invocations, 1);
     }
     if (mode === 'hybrid') {
-      assert.strictEqual(parsed.expected_invocations.ollama_provider_invocations, BATCHES.length);
+      assert.strictEqual(parsed.expected_invocations.ollama_provider_invocations, ollamaStages.length);
       assert.strictEqual(parsed.expected_invocations.codex_provider_invocations, 1);
     }
     assert(!('total_ai_passes' in parsed.expected_invocations), 'Dry run reports ambiguous total_ai_passes');
@@ -246,7 +291,11 @@ async function main() {
   const themeDir = path.join(root, 'wp-content', 'themes', slug);
   const preparedHeader = fs.readFileSync(path.join(themeDir, 'header.php'), 'utf8');
   const templateHeader = fs.readFileSync(path.join(root, 'wordpress-themplate-themes', template, 'header.php'), 'utf8');
-  assert.strictEqual(preparedHeader, templateHeader, 'Preparation rewrote header content');
+  assert.strictEqual(preparedHeader, templateHeader.replace(/\r\n/g, '\n').replace(/\r/g, '\n'), 'Preparation rewrote header content beyond line-ending normalization');
+  const preparedJsFiles = walk(path.join(themeDir, 'src', 'js')).filter((file) => file.endsWith('.js'));
+  for (const file of [...preparedJsFiles, path.join(themeDir, 'webpack.config.js')].filter((item) => fs.existsSync(item))) {
+    assert(!fs.readFileSync(file, 'utf8').includes('\r\n'), `${path.relative(themeDir, file).replace(/\\/g, '/')} kept CRLF after preparation`);
+  }
   const preparedHashes = JSON.parse(fs.readFileSync(path.join(themeDir, '.generation', 'prepared-theme-hashes.json'), 'utf8'));
   assert(preparedHashes.files.some((entry) => entry.path === '.theme-template-source'), 'Prepared hashes omit final metadata');
   assert(preparedHashes.files.every((entry) => entry.path !== '.generation/prepared-theme-hashes.json'), 'Prepared hashes are self-referential');
@@ -258,18 +307,25 @@ async function main() {
   assert(codexBrief.includes('Keep the prepared front-page section inventory intact.'), 'Codex brief does not enforce front-page scaffold preservation');
   assert(codexBrief.includes('## Required Scaffold To Preserve'), 'Codex brief does not enumerate preserved scaffold requirements');
   assert(codexBrief.includes('## Scaffold Reference Files'), 'Codex brief does not include scaffold reference file context');
-  const headerBatch = BATCHES.find((batch) => batch.name === 'header-markup');
-  const headerPromptParts = batchPromptParts(slug, themeDir, contract, headerBatch);
-  assert(headerPromptParts.finalPrompt.includes(selectPromptSections(contract, ['07'])), 'Assigned stage did not receive exact selected section text');
-  assert(!headerPromptParts.finalPrompt.includes('## 08. Footer'), 'Ollama stage prompt contains unrelated numbered section');
-  assert(headerPromptParts.finalPrompt.includes(SHARED_GLOBAL_REQUIREMENTS), 'Shared global requirements are not included explicitly');
-  assert(headerPromptParts.finalPrompt.includes('## Required Writable Files'), 'Required writable files section missing');
-  assert(headerPromptParts.finalPrompt.includes('## Optional Writable Files'), 'Optional writable files section missing');
-  assert(headerPromptParts.finalPrompt.includes('## Allowed New-File Patterns'), 'Allowed patterns section missing');
-  const assetPromptParts = batchPromptParts(slug, themeDir, contract, BATCHES.find((batch) => batch.name === 'brand-local-assets'));
-  assert(assetPromptParts.finalPrompt.includes('No exact files are mandatory for this stage.'), 'Zero-required stage prompt does not say no exact files are mandatory');
-  const assetManifestForPrompt = promptSizeManifest(assetPromptParts, 999999);
-  assert.strictEqual(assetManifestForPrompt.total_prompt_characters, assetPromptParts.finalPrompt.length, 'Stage-size manifest does not match actual prompt length');
+  const headerBatch = batches.find((batch) => /^navigation-header(?:-|$)/.test(batch.name));
+  assert(!headerBatch, 'Header scaffold should not have an Ollama writable owner');
+  const promptProbeBatch = batches.find((batch) => batch.files.some((file) => file.endsWith('.php')));
+  assert(promptProbeBatch, 'No PHP-owned batch available for prompt generation checks');
+  const phpPromptParts = batchPromptParts(slug, themeDir, contract, promptProbeBatch);
+  assert(phpPromptParts.finalPrompt.includes(selectPromptRequirements(contract, promptProbeBatch.promptRequirements)), 'Assigned stage did not receive exact selected requirement text');
+  assert(phpPromptParts.finalPrompt.includes(SHARED_GLOBAL_REQUIREMENTS), 'Shared global requirements are not included explicitly');
+  assert(phpPromptParts.finalPrompt.includes('## Required Writable Files'), 'Required writable files section missing');
+  assert(phpPromptParts.finalPrompt.includes('## Optional Writable Files'), 'Optional writable files section missing');
+  assert(phpPromptParts.finalPrompt.includes('## Allowed New-File Patterns'), 'Allowed patterns section missing');
+  assert(phpPromptParts.finalPrompt.includes('## Existing PHP Function Names'), 'Existing function inventory is missing from Ollama stage prompt');
+  assert(phpPromptParts.finalPrompt.includes('Use brace-style PHP control structures only'), 'PHP brace-style control rule is missing from Ollama stage prompt');
+  const documentationBatch = batches.find((batch) => batch.name === 'theme-documentation' || /^theme-documentation-/.test(batch.name));
+  assert(!documentationBatch, 'Theme documentation should remain template-owned');
+  const foundationFunctionBatch = batches.find((batch) => batch.files.includes('functions.php'));
+  assert(!foundationFunctionBatch, 'functions.php should remain deterministic template source, not an AI-owned stage');
+  const foundationPromptBatch = batches.find((batch) => /^foundation-core(?:-|$)/.test(batch.name));
+  assert(!foundationPromptBatch, 'Foundation stage should remain template-owned');
+  assert(!/planner|review-|fix-/.test(JSON.stringify(ollamaStageSequence(batches))), 'Ollama stage sequence still includes removed multi-pass stages');
   fs.writeFileSync(path.join(themeDir, 'extra-smoke-file.txt'), 'extra files are allowed\n', 'utf8');
 
   const rawDir = path.join(root, 'reports', 'runs', slug, 'model-output-tests');
@@ -286,6 +342,7 @@ async function main() {
   fs.writeFileSync(optionalRaw, '---FILE: OPTIONAL.md---\nOptional content\n---END FILE---\n', 'utf8');
   applyModelOutput({ sourceFile: optionalRaw, themeDir, stage: 'optional-test', requiredFiles: [], optionalFiles: ['OPTIONAL.md'] });
   assert.strictEqual(fs.readFileSync(path.join(themeDir, 'OPTIONAL.md'), 'utf8'), 'Optional content\n');
+  assert.deepStrictEqual(parseExactFileBlocks('---FILE: OPTIONAL2.md\nHello\n---END FILE---\n', slug), [{ relativePath: 'OPTIONAL2.md', content: 'Hello\n' }], 'Parser did not accept Ollama header variant without trailing dashes');
   const patternRaw = path.join(rawDir, 'pattern.md');
   fs.writeFileSync(patternRaw, '---FILE: assets/icons/pattern-icon.svg---\n<svg xmlns="http://www.w3.org/2000/svg"></svg>\n---END FILE---\n', 'utf8');
   applyModelOutput({ sourceFile: patternRaw, themeDir, stage: 'pattern-test', requiredFiles: [], optionalFiles: [], allowedPatterns: ['^assets/icons/[a-z0-9-]+\\.svg$'] });
@@ -294,6 +351,53 @@ async function main() {
   fs.writeFileSync(noChangeRaw, '---NO CHANGES---\n', 'utf8');
   assertThrowsMessage(() => applyModelOutput({ sourceFile: noChangeRaw, themeDir, stage: 'no-change-disallowed', requiredFiles: [], optionalFiles: ['OPTIONAL2.md'] }), /No documented file blocks|outside documented file blocks/, 'No-change result without explicit support');
   applyModelOutput({ sourceFile: noChangeRaw, themeDir, stage: 'no-change-allowed', requiredFiles: [], optionalFiles: ['OPTIONAL2.md'], allowNoChange: true });
+  assert.deepStrictEqual(parseExactFileBlocks('---NO CHANGES---\n\u001b[?25lnoise', slug, { allowNoChange: true }), [], 'No-change parser did not ignore transport noise');
+  assert.deepStrictEqual(parseExactFileBlocks('```text\n---NO CHANGES---\n```\n', slug, { allowNoChange: true }), [], 'No-change parser did not unwrap fenced no-change output');
+  assert.deepStrictEqual(
+    parseExactFileBlocks("I will not proceed with that request.\nPlease let me know if you need anything else.\n", slug, { allowNoChange: true, allowDeclineAsNoChange: true }),
+    [],
+    'Review/fix decline output was not treated as a no-op'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks('```FILE: OPTIONAL3.md\nHello from fenced file block\n```\n', slug),
+    [{ relativePath: 'OPTIONAL3.md', content: 'Hello from fenced file block\n' }],
+    'Parser did not accept fenced FILE blocks'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks('--FILE: README.md--\nTwo hyphen header variant\n---END FILE---\n', slug),
+    [{ relativePath: 'README.md', content: 'Two hyphen header variant\n' }],
+    'Parser did not accept recurring Ollama two-hyphen FILE header variant'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks("---FILE: template-parts/header/mobile-navigation.php------\n<?php\n---END FILE---\n", slug),
+    [{ relativePath: 'template-parts/header/mobile-navigation.php', content: "<?php\n" }],
+    'Parser did not normalize overlong trailing FILE header delimiter'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks("---FILE: spinner.php---\n<?php\nget_header();\n⠙ ⠹ ⠸\n---END FILE---\n", slug),
+    [{ relativePath: 'spinner.php', content: "<?php\nget_header();\n" }],
+    'Parser did not strip pure Ollama spinner lines before applying file content'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks("---FILE: build/clean.js---\n```javascript\n'use strict';\nconsole.log(`Removed ${relativePath}`);\n---END FILE---\n", slug),
+    [{ relativePath: 'build/clean.js', content: "'use strict';\nconsole.log(`Removed ${relativePath}`);\n" }],
+    'Parser did not strip an unclosed leading code fence inside a code FILE block'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks("---FILE: single.php---\n<?php\nget_footer();\n---\n---END FILE---\n", slug),
+    [{ relativePath: 'single.php', content: "<?php\nget_footer();\n" }],
+    'Parser did not strip trailing lone delimiter from code FILE block content'
+  );
+  assert.deepStrictEqual(
+    parseExactFileBlocks("```php\n<?php\nget_header();\nget_footer();\n```\n", slug, { requiredFiles: ['privacy-policy.php'], optionalFiles: [], allowedPatterns: [] }),
+    [{ relativePath: 'privacy-policy.php', content: "<?php\nget_header();\nget_footer();\n" }],
+    'Parser did not neutralize fenced raw PHP for an exact one-file Ollama stage'
+  );
+  assertThrowsMessage(
+    () => parseExactFileBlocks("```php\n<?php\nget_header();\n```\n", slug, { requiredFiles: ['one.php', 'two.php'], optionalFiles: [], allowedPatterns: [] }),
+    /No documented file blocks/,
+    'Fenced raw PHP must not be accepted for ambiguous multi-file stages'
+  );
   const badPartial = path.join(rawDir, 'partial.md');
   fs.writeFileSync(badPartial, '---FILE: README.md---\nPartial\n---END FILE---\n---FILE: unassigned.php---\n<?php\n---END FILE---\n', 'utf8');
   const beforeUnassignedFailure = snapshot(themeDir);
@@ -309,6 +413,9 @@ async function main() {
   assertThrowsMessage(() => applyModelOutput({ sourceFile: badPhp, themeDir, stage: 'php-check-test', allowedFiles: ['broken.php'], requiredFiles: ['broken.php'], candidateEvidenceDir: path.join(rawDir, 'bad-php-evidence') }), /Stage checks failed/, 'Stage check failure');
   assertSameSnapshot(beforeBadPhp, snapshot(themeDir), 'Stage-check failed output');
   assert(fs.existsSync(path.join(rawDir, 'bad-php-evidence', 'stage-checks.json')), 'Failed candidate checks were not preserved');
+  const noisyPhp = path.join(rawDir, 'noisy-php.md');
+  fs.writeFileSync(noisyPhp, '---FILE: noisy.php---\n<?php\n// Ollama spinner leak ⠙\n---END FILE---\n', 'utf8');
+  assertThrowsMessage(() => applyModelOutput({ sourceFile: noisyPhp, themeDir, stage: 'noisy-php-test', requiredFiles: ['noisy.php'] }), /no-transport-noise/, 'Transport noise inside generated source was not rejected');
   fs.appendFileSync(path.join(themeDir, 'functions.php'), "\nfunction smoke_duplicate_guard() { return 'one'; }\n", 'utf8');
   const duplicatePhp = path.join(rawDir, 'duplicate-php.md');
   fs.writeFileSync(duplicatePhp, "---FILE: inc/duplicate.php---\n<?php function smoke_duplicate_guard() { return 'two'; }\n---END FILE---\n", 'utf8');
@@ -331,6 +438,8 @@ async function main() {
   const invalidAssetChecks = validateAssetManifest(themeDir);
   assert(invalidAssetChecks.some((check) => check.type === 'asset-path-safe' && check.passed === false), 'Invalid asset path did not fail');
   assert(invalidAssetChecks.some((check) => check.type === 'asset-third-party-provenance' && check.passed === false), 'Incomplete third-party provenance did not fail');
+  const originalIllustrationPath = path.join(themeDir, 'assets/images/hero/brand-illustration.svg');
+  fs.writeFileSync(originalIllustrationPath, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"></svg>', 'utf8');
   fs.writeFileSync(manifestPath, JSON.stringify({ manifest_version: 1, assets: [{ file: 'hero/brand-illustration.svg', kind: 'original-illustration', source_url: null, creator: 'Generated specifically for this theme', license: 'Project asset', approved_uses: ['hero'] }] }), 'utf8');
   assert(validateAssetManifest(themeDir).every((check) => check.passed), 'Original illustration incorrectly requires external provenance');
   fs.writeFileSync(manifestPath, manifestBackup, 'utf8');
@@ -385,11 +494,11 @@ async function main() {
   fs.writeFileSync(functionsPath, `${functionsBefore}\n// forbidden drift\n`, 'utf8');
   assertThrowsMessage(() => verifyFrozenSource(slug, path.join(root, 'reports', 'runs', slug)), /Frozen generated source drift/, 'Forbidden PHP drift');
   fs.writeFileSync(functionsPath, functionsBefore, 'utf8');
-  const scssPath = path.join(themeDir, 'src/scss/main.scss');
-  const scssBefore = fs.readFileSync(scssPath, 'utf8');
-  fs.writeFileSync(scssPath, `${scssBefore}\n// forbidden drift\n`, 'utf8');
-  assertThrowsMessage(() => verifyFrozenSource(slug, path.join(root, 'reports', 'runs', slug)), /Frozen generated source drift/, 'Forbidden SCSS drift');
-  fs.writeFileSync(scssPath, scssBefore, 'utf8');
+  const templatePartPath = path.join(themeDir, 'template-parts', 'global', 'content-hero.php');
+  const templatePartBefore = fs.readFileSync(templatePartPath, 'utf8');
+  fs.writeFileSync(templatePartPath, `${templatePartBefore}\n<!-- forbidden drift -->\n`, 'utf8');
+  assertThrowsMessage(() => verifyFrozenSource(slug, path.join(root, 'reports', 'runs', slug)), /Frozen generated source drift/, 'Forbidden template-part drift');
+  fs.writeFileSync(templatePartPath, templatePartBefore, 'utf8');
   const readmePath = path.join(themeDir, 'README.md');
   const readmeBefore = fs.readFileSync(readmePath, 'utf8');
   fs.rmSync(readmePath);

@@ -16,7 +16,7 @@ const ZIP_EXCLUDED_FILE_PATTERN = /\.(log|map)$/i;
 const REQUIRED_ROOT_FILES = ['style.css', 'functions.php', 'index.php', 'header.php', 'footer.php'];
 const REQUIRED_BUNDLES = ['assets/css/bundle.css', 'assets/js/bundle.js'];
 
-const PLACEHOLDER_PATTERN = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder|Project Title\s*\d+|Service Title\s*\d+|Process Step Icon\s*\d+|Pillar Icon\s*\d+|Blog Post Image\s*\d+|Description of the project|Highlight Service Title|Service Image|Service Icon\s*\d+|We provide comprehensive Service\s*\d+/i;
+const PLACEHOLDER_PATTERN = /Lorem ipsum|TODO|FIXME|Add [A-Za-z0-9 _/-]+ here|add [A-Za-z0-9 _/-]+ here|Generation should replace|Static preview generated from|prepared WordPress theme folder|Project Title\s*\d+|Service Title\s*\d+|Process Step Icon\s*\d+|Pillar Icon\s*\d+|Blog Post Image\s*\d+|Description of the project|Highlight Service Title|Service Image|Service Icon\s*\d+|We provide comprehensive Service\s*\d+|Publish posts to populate this section|Publish service (?:entries|entry) to replace this starter content|starter content\.|Preview fixture|Generated theme preview\./i;
 const INLINE_STYLE_BLOCK_PATTERN = /<style\b/i;
 const ABSOLUTE_LOCAL_ASSET_PATTERN = /\b(?:src|href)=["']\/assets\//i;
 const PREVIEW_RUNTIME_WARNING_PATTERN = /(?:Warning|Notice|Deprecated|Fatal error|Parse error):|Undefined array key|undefined function/i;

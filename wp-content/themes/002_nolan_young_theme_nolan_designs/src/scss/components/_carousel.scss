@@ -1,0 +1,16 @@
+.nytt01-carousel {
+	position: relative;
+	overflow: hidden;
+}
+
+.nytt01-carousel__track {
+	display: flex;
+	gap: 1rem;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+}
+
+.nytt01-carousel__slide {
+	min-width: min(85%, 28rem);
+	scroll-snap-align: start;
+}

@@ -1,0 +1,35 @@
+.nytt01-site-main {
+	min-height: 50vh;
+}
+
+.nytt01-section {
+	padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+.nytt01-section--compact {
+	padding-block: 2.5rem;
+}
+
+.nytt01-section--muted {
+	background: var(--nytt01-color-mist);
+}
+
+.nytt01-section--dark {
+	background: var(--nytt01-color-navy);
+	color: var(--nytt01-color-white);
+}
+
+.nytt01-section--dark h2,
+.nytt01-section--dark h3,
+.nytt01-section--dark a {
+	color: var(--nytt01-color-white);
+}
+
+.nytt01-section-header {
+	max-width: 46rem;
+	margin-bottom: 2rem;
+}
+
+.nytt01-page-header {
+	padding-block: 3rem 2rem;
+}

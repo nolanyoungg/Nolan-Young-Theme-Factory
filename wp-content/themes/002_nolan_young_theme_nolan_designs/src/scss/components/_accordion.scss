@@ -1,0 +1,22 @@
+.nytt01-accordion {
+	border-top: 1px solid var(--nytt01-color-border);
+}
+
+.nytt01-accordion__item {
+	border-bottom: 1px solid var(--nytt01-color-border);
+}
+
+.nytt01-accordion__button {
+	width: 100%;
+	justify-content: space-between;
+	border: 0;
+	border-radius: 0;
+	padding-inline: 0;
+	background: transparent;
+	color: var(--nytt01-color-navy);
+	text-align: left;
+}
+
+.nytt01-accordion__panel[hidden] {
+	display: none;
+}

@@ -43,11 +43,13 @@ scripts/
 
 ## Workflow Modes
 
-`ollama-only`: prepare the template, run the full predefined Ollama stage sequence, then build, validate, preview, package, and report. The Ollama sequence uses multiple planned prompts because smaller local models need narrower scope and complete current-file context.
+`ollama-only`: prepare the template, run one Ollama generation pass per planned batch, then build, validate, preview, package, and report.
 
 `codex-only`: prepare the template, run one Codex generation pass, then build, validate, preview, package, and report.
 
-`hybrid`: prepare the template, run the full predefined Ollama stage sequence, run one planned Codex creative finish pass, then build, validate, preview, package, and report.
+`hybrid`: prepare the template, run one Ollama batch pass, run one planned Codex creative finish pass, then build, validate, preview, package, and report.
+
+`prepare-theme` can use the bundled starter tree or a custom local template source via `--template-source-path` / `THEME_TEMPLATE_SOURCE_PATH`.
 
 There is no automatic fallback provider and no automatic model-driven cleanup after validation.
 
@@ -113,4 +115,4 @@ Preview generation renders actual generated PHP templates through a read-only ha
 
 Add a provider only when it owns a real AI invocation boundary. Keep deterministic work in the top-level command files or `lib/`.
 
-For a new mode, make the sequence obvious in `run-theme-workflow.js`, add dry-run coverage, and do not introduce a generic stage engine for a small fixed set of modes.
+For a new mode, make the sequence obvious in `run-theme-workflow.js`, add dry-run coverage, and keep the orchestration explicit. Do not introduce a generic stage engine for a small fixed set of modes.

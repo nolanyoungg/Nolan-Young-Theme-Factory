@@ -14,9 +14,8 @@ const { previewTheme } = require('./preview-theme');
 const { packageTheme } = require('./package-theme');
 const { runOllamaGeneration } = require('./providers/ollama');
 const { runCodexGeneration, runCodexFinish } = require('./providers/codex');
-const { BATCHES } = require('./lib/ollama-batches');
-const { validateStagePlan } = require('./lib/ollama-batches');
-const { buildCoverage, parsePromptContract } = require('./lib/prompt-contract');
+const { TEMPLATE_OWNED_PROMPT_SECTIONS, ollamaStageSequence, resolveOllamaBatchesForDirectory, validateStagePlan } = require('./lib/ollama-batches');
+const { buildCoverage, expandStageRequirementIds, parsePromptContract } = require('./lib/prompt-contract');
 
 const defaults = JSON.parse(fs.readFileSync(path.join(root, 'config', 'theme-factory.defaults.json'), 'utf8'));
 const args = parseArgs(process.argv.slice(2));
@@ -39,23 +38,25 @@ function positiveInteger(value, label) {
   return number;
 }
 
-function modePlan(mode) {
+function modePlan(mode, batches) {
+  const ollamaStages = ollamaStageSequence(batches).map((stage) => `ollama-${stage}`);
   switch (mode) {
     case 'ollama-only':
-      return BATCHES.map((batch) => `ollama-${batch.name}`);
+      return ollamaStages;
     case 'codex-only':
       return ['codex-generation'];
     case 'hybrid':
-      return [...BATCHES.map((batch) => `ollama-${batch.name}`), 'codex-finish'];
+      return [...ollamaStages, 'codex-finish'];
     default:
       fail(`Unsupported mode: ${mode}`);
   }
 }
 
-function expectedInvocations(mode) {
+function expectedInvocations(mode, batches) {
+  const ollamaInvocationCount = ollamaStageSequence(batches).length;
   return {
     planned_generation_operations: mode === 'hybrid' ? 2 : 1,
-    ollama_provider_invocations: mode === 'ollama-only' || mode === 'hybrid' ? BATCHES.length : 0,
+    ollama_provider_invocations: mode === 'ollama-only' || mode === 'hybrid' ? ollamaInvocationCount : 0,
     codex_provider_invocations: mode === 'codex-only' || mode === 'hybrid' ? 1 : 0
   };
 }
@@ -157,6 +158,7 @@ async function runWorkflow() {
   const mode = arg(args, 'mode', defaults.default_mode);
   const promptFile = arg(args, 'prompt') ? safeRelativePath(arg(args, 'prompt'), 'prompt file') : '';
   const templateName = assertTemplateName(arg(args, 'template', defaults.default_template));
+  const templateSourcePath = arg(args, 'template-source-path', defaults.paths.template_source_path || '');
   const ollamaModel = arg(args, 'ollama-model', defaults.ollama.model);
   const codexModel = arg(args, 'codex-model', defaults.codex.model);
   const codexReasoningInput = arg(args, 'codex-reasoning', defaults.codex.reasoning);
@@ -171,10 +173,17 @@ async function runWorkflow() {
     command_timeout_ms: positiveInteger(arg(args, 'command-timeout-ms', defaults.validation.command_timeout_ms || 120000), '--command-timeout-ms')
   };
 
-  const plan = modePlan(mode);
   if (!promptFile) fail('Missing --prompt');
   if (!fs.existsSync(path.join(root, promptFile))) fail(`Prompt file not found: ${promptFile}`);
-  if (!fs.existsSync(path.join(root, defaults.paths.templates, templateName))) fail(`Template not found: ${templateName}`);
+  const templateDir = templateSourcePath
+    ? path.isAbsolute(templateSourcePath)
+      ? templateSourcePath
+      : path.join(root, templateSourcePath)
+    : path.join(root, defaults.paths.templates, templateName);
+  if (!fs.existsSync(templateDir)) fail(`Template not found: ${path.relative(root, templateDir).replace(/\\/g, '/')}`);
+  const batches = resolveOllamaBatchesForDirectory(templateDir);
+  validateStagePlan(batches);
+  const plan = modePlan(mode, batches);
   const usesOllama = plan.some((stage) => stage.startsWith('ollama-'));
   if (usesOllama) validateOllamaModel(ollamaModel);
   const codexCombination = plan.some((stage) => stage.startsWith('codex'))
@@ -185,15 +194,14 @@ async function runWorkflow() {
   const reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
   const foundExistingArtifacts = existingArtifacts(themeSlug, defaults.paths);
   const promptContract = parsePromptContract(path.join(root, promptFile));
-  const promptCoverage = buildCoverage(promptContract, BATCHES);
-  validateStagePlan(BATCHES);
+  const promptCoverage = buildCoverage(promptContract, batches, expandStageRequirementIds(promptContract, { name: 'template-owned', promptSections: TEMPLATE_OWNED_PROMPT_SECTIONS }));
 
   if (dryRun) {
     console.log(JSON.stringify({
       theme_slug: themeSlug,
       report_dir: path.relative(root, reportDir).replace(/\\/g, '/'),
       theme_dir: `${defaults.paths.themes}/${themeSlug}`,
-      requested: { mode, prompt: promptFile, template: templateName, ollama_model: usesOllama ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '', timeouts },
+      requested: { mode, prompt: promptFile, template: templateName, template_source_path: templateSourcePath, ollama_model: usesOllama ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '', timeouts },
       prompt_contract: {
         sections: promptContract.sections.map((section) => section.number),
         section_count: promptContract.sections.length,
@@ -212,7 +220,7 @@ async function runWorkflow() {
         { stage: 'validate_theme_artifacts', owner: 'script' },
         { stage: 'write_run_summary', owner: 'script' }
       ],
-      expected_invocations: expectedInvocations(mode),
+      expected_invocations: expectedInvocations(mode, batches),
       replacement: { requested: replaceExistingTheme, existing_artifacts: foundExistingArtifacts }
     }, null, 2));
     return 0;
@@ -228,6 +236,7 @@ async function runWorkflow() {
     status: 'preflight',
     theme_slug: themeSlug,
     template_name: templateName,
+    template_source_path: templateSourcePath,
     prompt_file: promptFile,
     report_dir: reportDir,
     live_model_check: liveModelCheck,
@@ -246,7 +255,7 @@ async function runWorkflow() {
   }, { blocking: true, state: 'preflight' });
   if (state.status === 'blocked') return 2;
 
-  await runSafe(state, 'prepare-theme', () => prepareTheme({ promptFile, templateName, themeSlug }), { blocking: true, state: 'prepared' });
+  await runSafe(state, 'prepare-theme', () => prepareTheme({ promptFile, templateName, themeSlug, templateSourcePath }), { blocking: true, state: 'prepared' });
   if (state.status === 'blocked') return 2;
 
   state.status = 'generating';
@@ -284,6 +293,7 @@ if (args.resume) {
   (async () => {
     const themeSlug = assertThemeSlug(arg(args, 'theme-slug', ''));
     const templateName = arg(args, 'template', '');
+    const templateSourcePath = arg(args, 'template-source-path', defaults.paths.template_source_path || '');
     const reportDir = path.join(root, defaults.paths.run_reports, themeSlug);
     const commandTimeoutMs = positiveInteger(arg(args, 'command-timeout-ms', defaults.validation.command_timeout_ms || 120000), '--command-timeout-ms');
     const state = {

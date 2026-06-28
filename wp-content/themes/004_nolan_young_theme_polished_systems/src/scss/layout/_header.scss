@@ -1,0 +1,221 @@
+.nytt01-site-header {
+	position: sticky;
+	z-index: 1000;
+	top: 0;
+	border-bottom: 1px solid rgba(212, 220, 231, 0.8);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.92));
+	backdrop-filter: blur(16px);
+	box-shadow: 0 10px 30px rgba(11, 40, 71, 0.06);
+}
+
+.nytt01-site-header__bar {
+	background: var(--nytt01-color-navy);
+	color: rgba(255, 255, 255, 0.84);
+	font-size: 0.78rem;
+	letter-spacing: 0.02em;
+}
+
+.nytt01-site-header__bar-inner {
+	display: flex;
+	min-height: 2.15rem;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 1rem;
+}
+
+.nytt01-site-header__bar-inner span {
+	margin-right: auto;
+	color: var(--nytt01-color-white);
+	font-weight: 750;
+}
+
+.nytt01-site-header__bar-inner a {
+	color: rgba(255, 255, 255, 0.82);
+	text-decoration: none;
+}
+
+.nytt01-site-header__inner {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	min-height: 5rem;
+	align-items: center;
+	gap: 1.5rem;
+}
+
+.nytt01-site-branding {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.nytt01-site-title {
+	margin: 0;
+	font-size: 1.2rem;
+	font-weight: 800;
+}
+
+.nytt01-site-title a {
+	color: var(--nytt01-color-navy);
+	text-decoration: none;
+}
+
+.nytt01-site-description {
+	margin: 0;
+	font-size: 0.84rem;
+}
+
+.nytt01-primary-navigation {
+	min-width: 0;
+}
+
+.nytt01-menu {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.4rem 1.25rem;
+	align-items: center;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#primary-menu {
+	justify-content: center;
+}
+
+.nytt01-menu > li {
+	margin: 0;
+}
+
+.nytt01-menu a {
+	color: var(--nytt01-color-navy);
+	font-weight: 700;
+	text-decoration: none;
+}
+
+.nytt01-menu > li > a {
+	display: inline-flex;
+	min-height: 2.75rem;
+	align-items: center;
+	border-radius: 999px;
+	padding-inline: 0.78rem;
+	transition: background var(--nytt01-transition), color var(--nytt01-transition), transform var(--nytt01-transition);
+}
+
+.nytt01-site-header__bar-inner a:hover,
+.nytt01-site-header__bar-inner a:focus-visible {
+	color: var(--nytt01-color-white);
+}
+
+.nytt01-menu .current-menu-item > a,
+.nytt01-menu a[aria-current="page"],
+.nytt01-menu > li > a:hover,
+.nytt01-menu > li > a:focus-visible {
+	background: rgba(23, 105, 224, 0.08);
+	color: var(--nytt01-color-blue);
+}
+
+@media (hover: hover) and (pointer: fine) {
+
+	.nytt01-menu > li > a:hover {
+		transform: translateY(-1px);
+	}
+}
+
+.nytt01-site-header__cta {
+	white-space: nowrap;
+}
+
+.nytt01-menu-toggle {
+	display: none;
+	align-items: center;
+	gap: 0.6rem;
+	border: 1px solid var(--nytt01-color-border);
+	border-radius: var(--nytt01-radius-small);
+	padding: 0.65rem 0.8rem;
+	background: var(--nytt01-color-white);
+	color: var(--nytt01-color-navy);
+}
+
+.nytt01-menu-toggle:hover,
+.nytt01-menu-toggle:focus-visible {
+	border-color: var(--nytt01-color-blue);
+	background: var(--nytt01-color-white);
+	color: var(--nytt01-color-blue);
+	transform: none;
+}
+
+.nytt01-menu-toggle__icon,
+.nytt01-menu-toggle__icon::before,
+.nytt01-menu-toggle__icon::after {
+	display: block;
+	width: 1.25rem;
+	height: 2px;
+	background: currentcolor;
+	content: "";
+	transition: transform var(--nytt01-transition);
+}
+
+.nytt01-menu-toggle__icon::before {
+	transform: translateY(-0.38rem);
+}
+
+.nytt01-menu-toggle__icon::after {
+	transform: translateY(0.25rem);
+}
+
+@media (max-width: 50rem) {
+
+	.nytt01-site-header__inner {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+
+	.nytt01-site-header__cta {
+		display: none;
+	}
+
+	.nytt01-primary-navigation .nytt01-menu {
+		display: grid;
+		justify-content: stretch;
+		gap: 0.25rem;
+	}
+
+	.nytt01-menu > li,
+	.nytt01-menu > li > a {
+		width: 100%;
+	}
+
+	.nytt01-menu > li > a {
+		padding: 0.65rem 0.25rem;
+	}
+
+	.nytt01-js .nytt01-menu-toggle {
+		display: inline-flex;
+	}
+
+	.nytt01-js .nytt01-primary-navigation {
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		display: none;
+		max-height: calc(100vh - 5rem);
+		overflow-y: auto;
+		padding: 1rem;
+		border-bottom: 1px solid var(--nytt01-color-border);
+		background: linear-gradient(180deg, var(--nytt01-color-white), var(--nytt01-color-mist));
+		box-shadow: var(--nytt01-shadow-soft);
+	}
+
+	.nytt01-js .nytt01-primary-navigation.is-open {
+		display: block;
+	}
+
+	.nytt01-site-header__bar-inner {
+		justify-content: center;
+	}
+
+	.nytt01-site-header__bar-inner span {
+		display: none;
+	}
+}

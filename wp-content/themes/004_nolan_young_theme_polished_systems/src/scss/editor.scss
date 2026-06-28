@@ -1,0 +1,19 @@
+@use "abstracts/variables";
+@use "base/typography";
+@use "base/form-elements";
+@use "components/buttons";
+@use "components/cards";
+
+.editor-styles-wrapper {
+	color: var(--nytt01-color-ink);
+	font-family: var(--nytt01-font-sans);
+	line-height: 1.65;
+}
+
+.editor-styles-wrapper .wp-block {
+	max-width: 760px;
+}
+
+.editor-styles-wrapper .wp-block[data-align="wide"] {
+	max-width: 1240px;
+}

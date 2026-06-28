@@ -66,6 +66,118 @@ function writeJson(file, value) {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
 
+function formatDuration(milliseconds) {
+  const totalSeconds = Math.max(0, Math.round(Number(milliseconds || 0) / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${seconds}s`;
+}
+
+function providerForStep(state, name) {
+  if (/^ollama/.test(name)) {
+    return {
+      provider: 'ollama',
+      model: state.resolved?.ollama_model || state.requested?.ollama_model || '',
+      reasoning: ''
+    };
+  }
+  if (/^codex/.test(name)) {
+    return {
+      provider: 'codex',
+      model: state.resolved?.codex_model || state.requested?.codex_model || '',
+      reasoning: state.resolved?.codex_reasoning || state.requested?.codex_reasoning || ''
+    };
+  }
+  return { provider: 'script', model: '', reasoning: '' };
+}
+
+function buildTimingSummary(state, now = new Date()) {
+  const startedAt = state.started_at || state.steps?.[0]?.started_at || now.toISOString();
+  const endedAt = state.ended_at || now.toISOString();
+  const totalDurationMs = Math.max(0, Date.parse(endedAt) - Date.parse(startedAt));
+  return {
+    schema_version: 'run-timing/v1',
+    theme_slug: state.theme_slug || '',
+    mode: state.mode || '',
+    status: state.status || '',
+    template_name: state.template_name || '',
+    template_source_path: state.template_source_path || '',
+    prompt_file: state.prompt_file || '',
+    started_at: startedAt,
+    ended_at: state.ended_at || '',
+    total_duration_ms: totalDurationMs,
+    total_duration: formatDuration(totalDurationMs),
+    live_model_check: Boolean(state.live_model_check),
+    requested: {
+      ollama_model: state.requested?.ollama_model || '',
+      codex_model: state.requested?.codex_model || '',
+      codex_reasoning: state.requested?.codex_reasoning || ''
+    },
+    resolved: {
+      ollama_model: state.resolved?.ollama_model || '',
+      codex_model: state.resolved?.codex_model || '',
+      codex_reasoning: state.resolved?.codex_reasoning || ''
+    },
+    steps: (state.steps || []).map((step) => ({
+      name: step.name,
+      provider: step.provider || providerForStep(state, step.name).provider,
+      model: step.model || providerForStep(state, step.name).model,
+      reasoning: step.reasoning || providerForStep(state, step.name).reasoning,
+      status: step.status,
+      started_at: step.started_at || '',
+      ended_at: step.ended_at || '',
+      duration_ms: Number(step.duration_ms || 0),
+      duration: formatDuration(step.duration_ms || 0),
+      details: step.details || ''
+    }))
+  };
+}
+
+function timingMarkdown(summary) {
+  const modelLines = [
+    `- Mode: \`${summary.mode}\``,
+    `- Status: \`${summary.status}\``,
+    `- Theme: \`${summary.theme_slug}\``,
+    `- Prompt: \`${summary.prompt_file}\``,
+    `- Template: \`${summary.template_name}\`${summary.template_source_path ? ` from \`${summary.template_source_path}\`` : ''}`,
+    `- Ollama model: \`${summary.resolved.ollama_model || 'not used'}\``,
+    `- Codex model: \`${summary.resolved.codex_model || 'not used'}\``,
+    `- Codex reasoning: \`${summary.resolved.codex_reasoning || 'not used'}\``,
+    `- Total duration: \`${summary.total_duration}\` (${summary.total_duration_ms} ms)`
+  ];
+  const rows = summary.steps.map((step) => `| ${step.name} | ${step.provider} | ${step.model || '-'} | ${step.reasoning || '-'} | ${step.status} | ${step.duration} | ${step.duration_ms} |`);
+  return [
+    `# Run Timing: ${summary.theme_slug}`,
+    '',
+    ...modelLines,
+    '',
+    '| Step | Provider | Model | Reasoning | Status | Duration | Duration ms |',
+    '| --- | --- | --- | --- | --- | --- | ---: |',
+    ...rows,
+    ''
+  ].join('\n');
+}
+
+function writeTimingReports(state) {
+  if (!state.report_dir) return;
+  const summary = buildTimingSummary(state);
+  const prefix = state.workflow_state_file === 'workflow.resume.state.json' || state.mode === 'resume-finalization' ? 'resume-timing' : 'run-timing';
+  writeJson(path.join(state.report_dir, `${prefix}.json`), summary);
+  fs.writeFileSync(path.join(state.report_dir, `${prefix}.md`), timingMarkdown(summary), 'utf8');
+}
+
+function writeWorkflowState(state, filename = '') {
+  const stateFile = filename || state.workflow_state_file || 'workflow.state.json';
+  writeJson(path.join(state.report_dir, stateFile), state);
+  writeTimingReports(state);
+}
+
+function finishWorkflow(state, filename = '') {
+  state.ended_at = new Date().toISOString();
+  writeWorkflowState(state, filename);
+  writeJson(path.join(state.report_dir, 'workflow.summary.json'), state);
+}
+
 function walkFiles(dir, out = []) {
   if (!fs.existsSync(dir)) return out;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -86,7 +198,13 @@ function themeHashes(themeSlug) {
 }
 
 const RESUME_ALLOWED_MUTABLE_OUTPUTS = new Set([
+  'assets/css/bundle-rtl.css',
+  'assets/css/bundle.asset.php',
   'assets/css/bundle.css',
+  'assets/css/editor-rtl.css',
+  'assets/css/editor.asset.php',
+  'assets/css/editor.css',
+  'assets/js/bundle.asset.php',
   'assets/js/bundle.js',
   'package-lock.json'
 ]);
@@ -124,27 +242,44 @@ function resultFailed(result) {
   return false;
 }
 
-function recordStep(state, name, status, details = '') {
-  state.steps.push({ name, status, details, ended_at: new Date().toISOString() });
-  state.status = status === 'failed' && state.status !== 'blocked' ? 'completed-with-failures' : state.status;
-  writeJson(path.join(state.report_dir, 'workflow.state.json'), state);
+function recordStep(state, name, status, details = '', timing = {}) {
+  const provider = providerForStep(state, name);
+  state.steps.push({
+    name,
+    status,
+    provider: provider.provider,
+    model: provider.model,
+    reasoning: provider.reasoning,
+    details,
+    started_at: timing.startedAt || '',
+    ended_at: timing.endedAt || new Date().toISOString(),
+    duration_ms: Number(timing.durationMs || 0)
+  });
+  delete state.current_step;
+  writeWorkflowState(state);
 }
 
 async function runSafe(state, name, fn, options = {}) {
   state.status = options.state || state.status;
-  writeJson(path.join(state.report_dir, 'workflow.state.json'), state);
+  const startedAt = new Date().toISOString();
+  const startedMs = Date.now();
+  state.current_step = { name, started_at: startedAt };
+  writeWorkflowState(state);
   try {
     const result = await fn();
+    const timing = { startedAt, endedAt: new Date().toISOString(), durationMs: Date.now() - startedMs };
     if (resultFailed(result)) {
-      recordStep(state, name, 'failed', JSON.stringify(result));
       if (options.blocking) state.status = 'blocked';
+      else state.status = 'completed-with-failures';
+      recordStep(state, name, 'failed', JSON.stringify(result), timing);
       return { ok: false, result };
     }
-    recordStep(state, name, 'passed');
+    recordStep(state, name, 'passed', '', timing);
     return { ok: true, result };
   } catch (error) {
-    recordStep(state, name, 'failed', error.message);
     if (options.blocking) state.status = 'blocked';
+    else state.status = 'completed-with-failures';
+    recordStep(state, name, 'failed', error.message, { startedAt, endedAt: new Date().toISOString(), durationMs: Date.now() - startedMs });
     return { ok: false, error };
   }
 }
@@ -243,9 +378,11 @@ async function runWorkflow() {
     requested: { ollama_model: ollamaModel, codex_model: codexModel, codex_reasoning: codexReasoningInput },
     resolved: { ollama_model: usesOllama ? ollamaModel : '', codex_model: codexCombination ? codexModel : '', codex_reasoning: codexCombination ? codexReasoning : '' },
     timeouts,
+    started_at: new Date().toISOString(),
+    ended_at: '',
     steps: []
   };
-  writeJson(path.join(reportDir, 'workflow.state.json'), state);
+  writeWorkflowState(state);
   writeJson(path.join(reportDir, 'run.config.json'), state);
   writeJson(path.join(reportDir, 'prompt-coverage.json'), promptCoverage);
 
@@ -253,10 +390,16 @@ async function runWorkflow() {
     if (usesOllama) checkOllamaAccess({ model: ollamaModel, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
     if (codexCombination) checkCodexAccess({ model: codexModel, reasoning: codexReasoning, live: liveModelCheck, timeoutMs: timeouts.model_check_timeout_ms });
   }, { blocking: true, state: 'preflight' });
-  if (state.status === 'blocked') return 2;
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
 
   await runSafe(state, 'prepare-theme', () => prepareTheme({ promptFile, templateName, themeSlug, templateSourcePath }), { blocking: true, state: 'prepared' });
-  if (state.status === 'blocked') return 2;
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
 
   state.status = 'generating';
   if (mode === 'ollama-only') {
@@ -269,22 +412,48 @@ async function runWorkflow() {
       await runSafe(state, 'codex-finish', () => runCodexFinish({ mode, themeSlug, promptFile, templateName, model: codexModel, reasoning: codexReasoning, timeoutMs: timeouts.codex_timeout_ms, reportDir }), { blocking: true });
     }
   }
-  if (state.status === 'blocked') return 2;
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
 
   writeJson(path.join(reportDir, 'generated-theme-hashes.json'), { created_at: new Date().toISOString(), files: themeHashes(themeSlug) });
   writeJson(path.join(reportDir, 'generated-theme-manifest.json'), { theme_slug: themeSlug, files: themeHashes(themeSlug).map((entry) => entry.path) });
 
   state.status = 'building';
-  await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: timeouts.command_timeout_ms, reportPath: path.join(reportDir, 'build.report.json') }));
+  await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: timeouts.command_timeout_ms, reportPath: path.join(reportDir, 'build.report.json') }), { blocking: true });
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
   state.status = 'finalizing';
-  await runSafe(state, 'validate-theme-source', () => validateTheme({ themeSlug, template: templateName, phase: 'source', output: path.join(reportDir, 'validation.source.json') }));
-  await runSafe(state, 'preview-theme', () => previewTheme({ themeSlug, rebuildIndex: true }));
-  await runSafe(state, 'package-theme', () => packageTheme({ themeSlug }));
-  await runSafe(state, 'validate-theme-artifacts', () => validateTheme({ themeSlug, template: templateName, phase: 'artifacts', output: path.join(reportDir, 'validation.artifacts.json') }));
-  await runSafe(state, 'validate-theme-final', () => validateTheme({ themeSlug, template: templateName, phase: 'final', output: path.join(reportDir, 'validation.final.json') }));
+  await runSafe(state, 'validate-theme-source', () => validateTheme({ themeSlug, template: templateName, phase: 'source', output: path.join(reportDir, 'validation.source.json') }), { blocking: true });
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
+  await runSafe(state, 'preview-theme', () => previewTheme({ themeSlug, rebuildIndex: true }), { blocking: true });
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
+  await runSafe(state, 'package-theme', () => packageTheme({ themeSlug }), { blocking: true });
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
+  await runSafe(state, 'validate-theme-artifacts', () => validateTheme({ themeSlug, template: templateName, phase: 'artifacts', output: path.join(reportDir, 'validation.artifacts.json') }), { blocking: true });
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
+  await runSafe(state, 'validate-theme-final', () => validateTheme({ themeSlug, template: templateName, phase: 'final', output: path.join(reportDir, 'validation.final.json') }), { blocking: true });
+  if (state.status === 'blocked') {
+    finishWorkflow(state);
+    return 2;
+  }
   state.status = state.steps.some((step) => step.status === 'failed') ? 'completed-with-failures' : 'completed';
-  writeJson(path.join(reportDir, 'workflow.state.json'), state);
-  writeJson(path.join(reportDir, 'workflow.summary.json'), state);
+  finishWorkflow(state);
   console.log(`Workflow ${state.status} for ${themeSlug}`);
   return state.status === 'completed' ? 0 : 1;
 }
@@ -301,10 +470,15 @@ if (args.resume) {
       status: 'finalizing',
       theme_slug: themeSlug,
       report_dir: reportDir,
+      workflow_state_file: 'workflow.resume.state.json',
       ai_invocations: { ollama_provider_invocations: 0, codex_provider_invocations: 0 },
+      requested: { ollama_model: '', codex_model: '', codex_reasoning: '' },
+      resolved: { ollama_model: '', codex_model: '', codex_reasoning: '' },
+      started_at: new Date().toISOString(),
+      ended_at: '',
       steps: []
     };
-    writeJson(path.join(reportDir, 'workflow.resume.state.json'), state);
+    writeWorkflowState(state, 'workflow.resume.state.json');
     await runSafe(state, 'verify-frozen-source', () => verifyFrozenSource(themeSlug, reportDir), { blocking: true });
     if (state.status === 'blocked') process.exit(2);
     await runSafe(state, 'build-theme', () => buildTheme({ themeSlug, timeoutMs: commandTimeoutMs, reportPath: path.join(reportDir, 'build.resume.report.json') }));
@@ -314,7 +488,9 @@ if (args.resume) {
     await runSafe(state, 'validate-theme-artifacts', () => validateTheme({ themeSlug, template: templateName, phase: 'artifacts', output: path.join(reportDir, 'validation.artifacts.json') }));
     await runSafe(state, 'validate-theme-final', () => validateTheme({ themeSlug, template: templateName, phase: 'final', output: path.join(reportDir, 'validation.final.json') }));
     state.status = state.steps.some((step) => step.status === 'failed') ? 'completed-with-failures' : 'completed';
+    state.ended_at = new Date().toISOString();
     writeJson(path.join(reportDir, 'workflow.resume.state.json'), state);
+    writeTimingReports(state);
     console.log(`Resume ${state.status} for ${themeSlug}`);
     process.exit(state.status === 'completed' ? 0 : 1);
   })().catch((error) => fail(error.message));
@@ -322,4 +498,4 @@ if (args.resume) {
   runWorkflow().then((code) => process.exit(code)).catch((error) => fail(error.message));
 }
 
-module.exports = { modePlan, runWorkflow, verifyFrozenSource };
+module.exports = { buildTimingSummary, formatDuration, modePlan, runWorkflow, timingMarkdown, verifyFrozenSource };

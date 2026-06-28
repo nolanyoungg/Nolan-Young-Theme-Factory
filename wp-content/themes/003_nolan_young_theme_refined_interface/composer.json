@@ -1,0 +1,23 @@
+{
+  "name": "nolan-young/nolan-young-theme-template-01",
+  "description": "Development standards configuration for the Nolan Young WordPress 7.0 theme.",
+  "type": "wordpress-theme",
+  "license": "GPL-2.0-or-later",
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "phpcompatibility/phpcompatibility-wp": "^2.1",
+    "wp-coding-standards/wpcs": "^3.2",
+    "phpunit/phpunit": "^9.6"
+  },
+  "scripts": {
+    "lint:php": "phpcs",
+    "fix:php": "phpcbf",
+    "test:php": "phpunit"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  }
+}

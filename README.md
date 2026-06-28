@@ -98,6 +98,6 @@ Static previews live in `docs/Preview-Themes-Github/`, and the gallery lives at 
 
 ZIP files live in `dist/zipped-themes/`.
 
-Run reports live in `reports/runs/{theme_slug}/`.
+Run reports live in `reports/runs/{theme_slug}/`. Each workflow writes `run-timing.json` and `run-timing.md` with mode, requested and resolved model names, reasoning level when applicable, total duration, and per-step duration. Ollama runs also write `ollama-generation/ollama-stage-timing.json` with each local-model invocation duration.
 
 Future ZIPs and run reports are ignored by default. Existing generated themes and public previews are preserved.

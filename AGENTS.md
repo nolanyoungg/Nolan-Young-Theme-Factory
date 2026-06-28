@@ -12,6 +12,8 @@ GitHub Pages previews belong only in `docs/Preview-Themes-Github/NNN_nolan_young
 
 Run reports belong only in `reports/runs/{theme_slug}/`.
 
+Every completed or blocked workflow must write timing artifacts under `reports/runs/{theme_slug}/`: `run-timing.json` for machine-readable timing and `run-timing.md` for human review. These reports must include mode, requested and resolved model names, reasoning level when applicable, total duration, and per-step durations. Ollama provider stages must also write per-model-invocation timing under the run report.
+
 The folder name `wordpress-themplate-themes` is intentionally spelled this way.
 
 ## Active Template
@@ -71,7 +73,7 @@ The theme foundation is template-owned. `theme.json`, foundation PHP includes, s
 
 Structural wrappers are template-owned unless the stage plan is intentionally changed. `header.php`, `footer.php`, `front-page.php`, `template-parts/header/`, `template-parts/footer/`, and scaffold-critical homepage sections must be improved in the active template instead of regenerated during Ollama runs.
 
-For the current 002 Ollama-only run, the planned local-model writable surface is intentionally minimal. The active template carries the mature WordPress source; Ollama ownership is limited to explicitly declared safe leaf files such as `searchform.php`.
+For current Ollama-only runs, the planned local-model writable surface is intentionally minimal. The active template carries the mature WordPress source; Ollama ownership is limited to explicitly declared safe leaf files such as `searchform.php`.
 
 Template preparation must normalize text file line endings deterministically after copying the template. Windows CRLF checkouts must not cause prepared JS, SCSS, config, PHP, JSON, or Markdown files to fail build linting.
 

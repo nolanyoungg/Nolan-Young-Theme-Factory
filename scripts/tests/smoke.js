@@ -15,7 +15,7 @@ const { assertCoverage, buildCoverage, expandStageRequirementIds, parsePromptCon
 const { codexExecArgs } = require('../lib/model-access');
 const { createBrief, repoSnapshot, snapshotDiff } = require('../providers/codex');
 const { batchPromptParts } = require('../providers/ollama');
-const { verifyFrozenSource } = require('../run-theme-workflow');
+const { buildTimingSummary, formatDuration, verifyFrozenSource } = require('../run-theme-workflow');
 
 const slug = '999_nolan_young_theme_architecture_smoke';
 const prompt = 'prompts/templates/NOLAN-YOUNG-PROMPT-6-19-2026.md';
@@ -150,12 +150,36 @@ async function main() {
     assert(!/codex-repair-pending|repair-pending|targeted_repairs/.test(text), `${rel} references repair state`);
   }
   const runner = fs.readFileSync(path.join(root, 'scripts', 'run-theme-workflow.js'), 'utf8');
+  const prepareText = fs.readFileSync(path.join(root, 'scripts', 'prepare-theme.js'), 'utf8');
+  const previewText = fs.readFileSync(path.join(root, 'scripts', 'preview-theme.js'), 'utf8');
   assert(!/npm['"],\s*\['run',\s*'dev'/.test(runner), 'Workflow starts npm run dev');
   assert(!/package\.json[\s\S]{0,120}writeFileSync/.test(runner), 'Workflow rewrites generated package.json');
   assert(!/validation\.draft|validationPath/.test(runner), 'Hybrid workflow passes draft validation to Codex');
+  assert(prepareText.includes('WALK_IGNORED_DIRECTORIES') && /fs\.cpSync[\s\S]+filter/.test(prepareText), 'Template preparation does not filter ignored directories during copy');
+  assert(previewText.includes('retryPreviewFs') && previewText.includes('EPERM'), 'Preview replacement lacks Windows-safe retry handling');
+  assert(runner.includes("'run-timing'") && runner.includes('`${prefix}.json`'), 'Workflow does not write reusable run timing JSON');
+  assert(runner.includes('`${prefix}.md`'), 'Workflow does not write readable run timing log');
+  assert(runner.includes("'resume-timing'"), 'Resume timing output is not separated from generation timing');
+  assert.strictEqual(formatDuration(184000), '3m 4s', 'Duration formatter produced an unexpected label');
+  const timingProbe = buildTimingSummary({
+    mode: 'ollama-only',
+    status: 'completed',
+    theme_slug: slug,
+    template_name: template,
+    template_source_path: '',
+    prompt_file: prompt,
+    started_at: '2026-06-27T07:04:59.000Z',
+    ended_at: '2026-06-27T07:08:03.000Z',
+    requested: { ollama_model: 'qwen2.5-coder:14b', codex_model: 'gpt-5.4', codex_reasoning: 'medium' },
+    resolved: { ollama_model: 'qwen2.5-coder:14b', codex_model: '', codex_reasoning: '' },
+    steps: [{ name: 'ollama-generation', status: 'passed', started_at: '2026-06-27T07:05:02.000Z', ended_at: '2026-06-27T07:05:30.000Z', duration_ms: 28000 }]
+  });
+  assert.strictEqual(timingProbe.total_duration, '3m 4s', 'Run timing summary total duration is wrong');
+  assert.strictEqual(timingProbe.steps[0].model, 'qwen2.5-coder:14b', 'Run timing summary does not carry the Ollama model onto generation steps');
 
   const modelOutputText = fs.readFileSync(path.join(root, 'scripts', 'lib', 'model-output.js'), 'utf8');
   const ollamaProviderText = fs.readFileSync(path.join(root, 'scripts', 'providers', 'ollama.js'), 'utf8');
+  assert(ollamaProviderText.includes('ollama-stage-timing.json'), 'Ollama provider does not write per-stage timing output');
   assert(!/requiredFiles:\s*\[\s*\.\.\.new Set\(\[\s*\.\.\.\(batch\.files/.test(ollamaProviderText), 'Ollama provider promotes optional files into required files');
   assert(/optionalFiles:\s*batch\.optionalFiles\s*\|\|\s*\[\]/.test(ollamaProviderText), 'Ollama provider does not pass optional files through to applyModelOutput');
   for (const forbidden of [

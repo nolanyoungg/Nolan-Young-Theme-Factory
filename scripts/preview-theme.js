@@ -45,6 +45,36 @@ function copyIfExists(source, target) {
   return true;
 }
 
+function sleepSync(milliseconds) {
+  const shared = new SharedArrayBuffer(4);
+  const array = new Int32Array(shared);
+  Atomics.wait(array, 0, 0, milliseconds);
+}
+
+function retryPreviewFs(label, fn) {
+  const retryCodes = new Set(['EPERM', 'EBUSY', 'ENOTEMPTY']);
+  let lastError = null;
+  for (let attempt = 1; attempt <= 8; attempt += 1) {
+    try {
+      return fn();
+    } catch (error) {
+      lastError = error;
+      if (!retryCodes.has(error.code) || attempt === 8) break;
+      sleepSync(75 * attempt);
+    }
+  }
+  throw new Error(`${label} failed after retries: ${lastError.message}`);
+}
+
+function renamePreviewPath(source, target) {
+  return retryPreviewFs(`Rename ${path.basename(source)} to ${path.basename(target)}`, () => fs.renameSync(source, target));
+}
+
+function removePreviewPath(target) {
+  if (!fs.existsSync(target)) return;
+  retryPreviewFs(`Remove ${path.basename(target)}`, () => fs.rmSync(target, { recursive: true, force: true }));
+}
+
 function copyTemplateBundle(sourceDir, targetDir) {
   fs.cpSync(sourceDir, targetDir, { recursive: true });
 }
@@ -162,8 +192,21 @@ function get_template_part($slug,$name='',$args=array()){ $base=$GLOBALS['previe
 function locate_template($templates=[]){foreach((array)$templates as $t){$f=$GLOBALS['preview_theme_dir'].DIRECTORY_SEPARATOR.ltrim($t,'/'); if(file_exists($f)) return $f;} return '';}
 function have_posts(){static $done=false; if($done) return false; $done=true; return true;} function the_post(){}
 function the_title($before='',$after=''){echo $before . esc_html(get_the_title()) . $after;}
-function get_the_title($post=null){ $resolved = preview_resolve_post($post); global $fixtureTitle; return $resolved && !empty($resolved->title) ? $resolved->title : $fixtureTitle; } function the_content(){echo '<p>Preview fixture content rendered through the generated template.</p>';}
-function get_the_content(){return 'Preview fixture content rendered through the generated template.';} function get_the_excerpt($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->excerpt) ? $resolved->excerpt : 'Preview fixture excerpt.'; } function the_excerpt(){echo esc_html(get_the_excerpt());}
+function preview_fixture_content(){
+  global $fixtureTitle;
+  $map = array(
+    'About Us' => 'Nolan Young Design Systems combines strategy, interface design, and WordPress engineering for service teams that need a site they can keep improving after launch.',
+    'Services' => 'Explore focused services for planning, designing, building, validating, and maintaining a production-ready WordPress presence.',
+    'Work' => 'Review selected thinking and project notes that show how structure, accessibility, and release discipline improve the final site.',
+    'Blog' => 'Read practical notes on WordPress delivery, design systems, accessibility, performance, and maintainable content operations.',
+    'Contact' => 'Share your project goals, constraints, timeline, and current site context so the next step can be scoped clearly.',
+    'Privacy Policy' => 'This preview policy page demonstrates the theme typography, spacing, and long-form content treatment for trust and compliance pages.',
+    'Service' => 'This service preview shows how individual capabilities can be presented with clear outcomes, delivery details, and next-step calls to action.',
+  );
+  return $map[$fixtureTitle] ?? 'A focused preview page with real layout content for evaluating hierarchy, spacing, and template behavior.';
+}
+function get_the_title($post=null){ $resolved = preview_resolve_post($post); global $fixtureTitle; return $resolved && !empty($resolved->title) ? $resolved->title : $fixtureTitle; } function the_content(){echo wpautop(get_the_content());}
+function get_the_content(){return preview_fixture_content();} function get_the_excerpt($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->excerpt) ? $resolved->excerpt : 'Preview fixture excerpt.'; } function the_excerpt(){echo esc_html(get_the_excerpt());}
 function wp_trim_words($t,$n=55){return implode(' ', array_slice(preg_split('/\\s+/', trim((string)$t)),0,$n));}
 function the_permalink(){echo esc_url(get_permalink());} function get_permalink($post=null){ $resolved = preview_resolve_post($post); return $resolved && !empty($resolved->permalink) ? $resolved->permalink : 'homepage_preview.html';}
 function post_class($c=''){echo 'class="'.esc_attr($c).'"';} function get_the_date($format='Y-m-d'){return date((string)$format);} function get_the_modified_date($format='Y-m-d'){return date((string)$format);}
@@ -261,18 +304,18 @@ function generatePreview(options = {}) {
   const candidateDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.candidate-${process.pid}-${Date.now()}`);
   const backupDir = path.join(root, 'docs', 'Preview-Themes-Github', `.${slug}.backup-${process.pid}-${Date.now()}`);
   if (!fs.existsSync(themeDir)) fail(`Theme folder missing: wp-content/themes/${slug}`);
-  if (fs.existsSync(candidateDir)) fs.rmSync(candidateDir, { recursive: true, force: true });
+  removePreviewPath(candidateDir);
   fs.mkdirSync(candidateDir, { recursive: true });
   generateRenderedPreview(themeDir, candidateDir);
-  if (fs.existsSync(previewDir)) fs.renameSync(previewDir, backupDir);
+  if (fs.existsSync(previewDir)) renamePreviewPath(previewDir, backupDir);
   try {
-    fs.renameSync(candidateDir, previewDir);
+    renamePreviewPath(candidateDir, previewDir);
   } catch (error) {
-    if (fs.existsSync(previewDir)) fs.rmSync(previewDir, { recursive: true, force: true });
-    if (fs.existsSync(backupDir)) fs.renameSync(backupDir, previewDir);
+    removePreviewPath(previewDir);
+    if (fs.existsSync(backupDir)) renamePreviewPath(backupDir, previewDir);
     throw error;
   }
-  fs.rmSync(backupDir, { recursive: true, force: true });
+  removePreviewPath(backupDir);
   console.log(`Generated docs/Preview-Themes-Github/${slug}`);
   return { passed: true, status: 0, preview_dir: previewDir, transactional: true };
 }

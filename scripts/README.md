@@ -107,6 +107,8 @@ Run reports: `reports/runs/{theme_slug}/`
 
 Future run reports and ZIPs are ignored by default, with README placeholders allowed.
 
+Every workflow writes `run-timing.json` and `run-timing.md` into the run report directory. These files record mode, model names, Codex reasoning when used, total elapsed time, and workflow step durations. Ollama generation additionally writes `ollama-generation/ollama-stage-timing.json` for per-stage local-model invocation timing.
+
 Preview generation renders actual generated PHP templates through a read-only harness into a temporary sibling directory. It fails when rendering fails instead of writing generic substitute pages and replaces an existing preview only after the candidate is complete.
 
 `theme:resume` is deterministic finalization only. It can rerun build, source validation, preview, package, artifact validation, and final validation. It never invokes AI.

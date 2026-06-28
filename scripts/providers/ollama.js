@@ -82,6 +82,39 @@ function writeJson(file, data) {
   fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
 }
 
+function formatDuration(milliseconds) {
+  const totalSeconds = Math.max(0, Math.round(Number(milliseconds || 0) / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}m ${seconds}s`;
+}
+
+function writeOllamaStageTiming(generationDir, themeSlug, mode, model, results) {
+  const stages = results.map((entry) => ({
+    stage: `ollama-build-${entry.batch}`,
+    provider: 'ollama',
+    model,
+    mode,
+    status: entry.status,
+    started_at: entry.started_at || '',
+    ended_at: entry.ended_at || '',
+    duration_ms: Number(entry.duration_ms || 0),
+    duration: formatDuration(entry.duration_ms || 0),
+    recovered_transport_failure: Boolean(entry.recovered_transport_failure)
+  }));
+  const totalDurationMs = stages.reduce((total, stage) => total + stage.duration_ms, 0);
+  const report = {
+    schema_version: 'ollama-stage-timing/v1',
+    theme_slug: themeSlug,
+    mode,
+    model,
+    total_duration_ms: totalDurationMs,
+    total_duration: formatDuration(totalDurationMs),
+    stages
+  };
+  writeJson(path.join(generationDir, 'ollama-stage-timing.json'), report);
+}
+
 function batchPromptParts(themeSlug, themeDir, contract, batch) {
   const readonlyFiles = [
     ...(batch.readonly || []),
@@ -272,7 +305,17 @@ async function runOllamaGeneration(options) {
     const originalOutputPath = path.join(generationDir, `${stageName}-raw-original.md`);
     fs.writeFileSync(originalOutputPath, originalOutput, 'utf8');
     const rawOutput = path.join(generationDir, `${stageName}-raw.md`);
-    const resultEntry = { batch: batch.name, role: 'build', status: result.status, raw_output: rawOutput, original_raw_output: originalOutputPath };
+    const resultEntry = {
+      batch: batch.name,
+      role: 'build',
+      status: result.status,
+      started_at: result.startedAt,
+      ended_at: result.endedAt,
+      duration_ms: result.durationMs,
+      duration: formatDuration(result.durationMs),
+      raw_output: rawOutput,
+      original_raw_output: originalOutputPath
+    };
     results.push(resultEntry);
     try {
       const normalizedOutput = stripTransportNoise(originalOutput);
@@ -309,8 +352,11 @@ async function runOllamaGeneration(options) {
     } catch (error) {
       if (result.status !== 0) fail(`Ollama stage failed: ${stageName}. ${error.message}`);
       throw error;
+    } finally {
+      writeOllamaStageTiming(generationDir, themeSlug, options.mode || 'ollama-only', model, results);
     }
   }
+  writeOllamaStageTiming(generationDir, themeSlug, options.mode || 'ollama-only', model, results);
   return { passed: true, status: 0, provider: 'ollama', results };
 }
 

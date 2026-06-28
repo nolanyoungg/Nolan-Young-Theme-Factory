@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const path = require('path');
 const { root } = require('./lib/repo-root');
 const { parseArgs, arg } = require('./lib/args');
+const { WALK_IGNORED_DIRECTORIES } = require('./lib/constants');
 const {
   assertTemplateName,
   assertThemeSlug,
@@ -73,6 +74,13 @@ function normalizePreparedTextFiles(themeDir) {
   }
 }
 
+function shouldCopyTemplateEntry(templateDir, source) {
+  const relative = path.relative(templateDir, source).replace(/\\/g, '/');
+  if (!relative) return true;
+  const segments = relative.split('/');
+  return !segments.some((segment) => WALK_IGNORED_DIRECTORIES.includes(segment));
+}
+
 function prepareTheme(options = {}) {
   const selectedPrompt = options.promptFile || promptFile;
   const selectedTemplate = assertTemplateName(options.templateName || templateName);
@@ -95,7 +103,10 @@ function prepareTheme(options = {}) {
   const themeDir = path.join(root, 'wp-content', 'themes', themeSlug);
   if (fs.existsSync(themeDir)) fail(`Theme already exists: wp-content/themes/${themeSlug}`);
 
-  fs.cpSync(templateDir, themeDir, { recursive: true });
+  fs.cpSync(templateDir, themeDir, {
+    recursive: true,
+    filter: (source) => shouldCopyTemplateEntry(templateDir, source)
+  });
   normalizePreparedTextFiles(themeDir);
 
   const title = themeSlug.replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());

@@ -1,0 +1,20 @@
+.nytt01-container {
+	width: min(calc(100% - 2rem), var(--nytt01-wide-width));
+	margin-inline: auto;
+}
+
+.nytt01-content-area {
+	width: min(calc(100% - 2rem), var(--nytt01-content-width));
+	margin-inline: auto;
+}
+
+.alignwide {
+	width: min(calc(100% - 2rem), var(--nytt01-wide-width));
+	max-width: var(--nytt01-wide-width);
+	margin-inline: auto;
+}
+
+.alignfull {
+	width: 100%;
+	max-width: none;
+}

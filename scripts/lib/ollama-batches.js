@@ -128,6 +128,72 @@ function deriveSiblingPatterns(files) {
 
 function isolatedFileStageOverrides(file, stage) {
   const normalized = normalize(file);
+  if (normalized === 'front-page.php') {
+    return {
+      promptSections: ['01', '04', '05', '06', '11', '12', '13', '15'],
+      promptRequirements: [
+        '01-business-identity',
+        '04-color-system',
+        '05-visual-design-direction',
+        '06-typography-direction',
+        '11-template-parts-to-fill-in-build-out',
+        '12-front-page-php',
+        '15-definition-of-done'
+      ],
+      readonly: ['functions.php', 'header.php', 'footer.php'],
+      readonlyDirectories: ['template-parts/front-page', 'template-parts/global'],
+      focus: 'Implement only front-page.php as the complete homepage assembly. Preserve the prepared template-part inventory and order, but make the homepage feel substantially different from the starting template through richer section framing, page rhythm, mobile-first landmarks, and conversion-focused composition. Return front-page.php only.'
+    };
+  }
+  if (normalized.startsWith('template-parts/front-page/') || normalized.startsWith('template-parts/global/')) {
+    return {
+      promptSections: ['01', '04', '05', '06', '11', '12', '13', '15'],
+      promptRequirements: [
+        '01-business-identity',
+        '04-color-system',
+        '05-visual-design-direction',
+        '06-typography-direction',
+        '11-template-parts-to-fill-in-build-out',
+        '12-front-page-php',
+        '13-images',
+        '15-definition-of-done'
+      ],
+      readonly: ['functions.php', 'header.php', 'footer.php', 'front-page.php'],
+      readonlyDirectories: [],
+      focus: `Implement only ${normalized} as a polished homepage/global section fragment. Make the section visually distinct from the template, content-rich, accessible, and mobile-first. Do not call get_header() or get_footer(), do not create sibling files, and return that exact file only.`
+    };
+  }
+  if (normalized.startsWith('page-templates/')) {
+    const templateRequirementByFile = {
+      'page-templates/template-about-us.php': '12-template-about-us-php',
+      'page-templates/template-services.php': '12-template-services-php',
+      'page-templates/template-single-service.php': '12-template-single-service-php',
+      'page-templates/template-service-detail.php': '12-template-single-service-php',
+      'page-templates/template-work.php': '12-template-work-php',
+      'page-templates/template-blog.php': '12-template-blog-php',
+      'page-templates/template-blog-landing.php': '12-template-blog-php',
+      'page-templates/template-contact.php': '12-template-contact-php'
+    };
+    const pageRequirement = templateRequirementByFile[normalized] || '12-page-templates-to-fill-in-build-out';
+    return {
+      promptSections: ['01', '04', '05', '06', '09', '10', '11', '12', '13', '15'],
+      promptRequirements: [
+        '01-business-identity',
+        '04-color-system',
+        '05-visual-design-direction',
+        '06-typography-direction',
+        '09-forms',
+        '10-newsletter',
+        '11-template-parts-to-fill-in-build-out',
+        pageRequirement,
+        '13-images',
+        '15-definition-of-done'
+      ],
+      readonly: ['functions.php', 'header.php', 'footer.php', 'front-page.php'],
+      readonlyDirectories: ['template-parts', 'assets/images'],
+      focus: `Implement only ${normalized} as a complete, production-ready page template. It must be substantially different from the starting template, content-rich, accessible, and intentionally responsive on mobile. Preserve a valid WordPress Template Name header when the file uses one. Return that exact file only.`
+    };
+  }
   if (normalized === 'functions.php') {
     return {
       readonly: [],
@@ -204,17 +270,6 @@ function isolatedFileStageOverrides(file, stage) {
     };
   }
   return null;
-}
-
-function isTemplateOwnedStructuralFile(file) {
-  const normalized = normalize(file);
-  return normalized === 'header.php' ||
-    normalized === 'footer.php' ||
-    normalized === 'front-page.php' ||
-    normalized.startsWith('template-parts/header/') ||
-    normalized.startsWith('template-parts/footer/') ||
-    normalized === 'template-parts/global/content-brand-statement.php' ||
-    normalized === 'template-parts/front-page/content-featured-work.php';
 }
 
 function chunk(array, size) {
@@ -368,10 +423,10 @@ function resolveOllamaBatchesForDirectory(targetDir) {
   const navigationInc = remainingInc.filter((file) => /navigation/i.test(path.posix.basename(file)));
   remainingInc = remainingInc.filter((file) => !navigationInc.includes(file));
 
-  const headerTopLevel = [];
+  const headerTopLevel = remainingTopLevelPhp.filter((file) => file === 'header.php');
   remainingTopLevelPhp = remainingTopLevelPhp.filter((file) => file !== 'header.php');
-  const brandingHeaderParts = [];
-  const menuHeaderParts = [];
+  const brandingHeaderParts = headerParts.filter((file) => /(?:^|\/)site-branding\.php$/i.test(file));
+  const menuHeaderParts = headerParts.filter((file) => /(?:^|\/)(primary-navigation|mobile-navigation|mega-menu-[a-z0-9-]+)\.php$/i.test(file));
   const menuShellHeaderParts = menuHeaderParts.filter((file) => /(?:^|\/)(primary-navigation|mobile-navigation)\.php$/i.test(file));
   const megaMenuHeaderParts = menuHeaderParts.filter((file) => !menuShellHeaderParts.includes(file));
   addStage(stages, 'navigation-header', [...headerTopLevel, ...brandingHeaderParts], {
@@ -425,9 +480,9 @@ function resolveOllamaBatchesForDirectory(targetDir) {
     focus: 'Build the prepared mega-menu logic and panel content for navigation without replacing the scaffold with simpler generic markup.'
   });
 
-  const footerTopLevel = remainingTopLevelPhp.filter((file) => file === 'searchform.php');
+  const footerTopLevel = remainingTopLevelPhp.filter((file) => file === 'footer.php' || file === 'searchform.php');
   remainingTopLevelPhp = remainingTopLevelPhp.filter((file) => file !== 'footer.php' && !footerTopLevel.includes(file));
-  addStage(stages, 'footer-global', [...footerTopLevel], {
+  addStage(stages, 'footer-global', [...footerTopLevel, ...footerParts], {
     readonly: ['functions.php', 'theme.json', 'style.css'],
     promptSections: SECTION_OWNERSHIP['footer-global'],
     promptRequirements: [
@@ -444,9 +499,9 @@ function resolveOllamaBatchesForDirectory(targetDir) {
     focus: 'Build the prepared footer system, search form, footer widget areas, and global closing sections.'
   });
 
-  const frontPageAssembly = [];
+  const frontPageAssembly = remainingTopLevelPhp.filter((file) => file === 'front-page.php');
   remainingTopLevelPhp = remainingTopLevelPhp.filter((file) => file !== 'front-page.php');
-  addStage(stages, 'front-page-sections', [], {
+  addStage(stages, 'front-page-sections', [...globalParts, ...frontPageParts], {
     readonly: ['front-page.php', 'functions.php', 'style.css'],
     promptSections: SECTION_OWNERSHIP['front-page-sections'],
     focus: 'Create rich homepage sections and global promotional sections using the prepared scaffold.'
@@ -473,7 +528,17 @@ function resolveOllamaBatchesForDirectory(targetDir) {
   });
   remainingTopLevelPhp = remainingTopLevelPhp.filter((file) => !serviceTopLevel.includes(file));
 
-  addStage(stages, 'page-templates', [], {
+  const visiblePageTemplates = pageTemplateFiles.filter((file) => [
+    'template-about-us.php',
+    'template-services.php',
+    'template-single-service.php',
+    'template-service-detail.php',
+    'template-work.php',
+    'template-blog.php',
+    'template-blog-landing.php',
+    'template-contact.php'
+  ].includes(path.posix.basename(file)));
+  addStage(stages, 'page-templates', visiblePageTemplates, {
     readonly: ['functions.php', 'header.php', 'footer.php', 'template-parts/global/content-brand-statement.php', 'template-parts/global/content-cta-banner.php', 'template-parts/front-page/content-process.php', 'template-parts/front-page/content-testimonials.php', 'template-parts/front-page/content-blog-preview.php'],
     promptSections: SECTION_OWNERSHIP['page-templates'],
     promptRequirements: [

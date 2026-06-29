@@ -222,10 +222,40 @@ async function main() {
   assert(selected07.startsWith('## 07.'), 'Selected section did not preserve exact section heading');
   assert(!selected07.includes('## 08.'), 'Selected prompt section includes unrelated numbered section');
   assertThrowsMessage(() => selectPromptSections(contract, ['07', '07']), /Duplicate prompt section/, 'Duplicate section selection');
-  assert(!batches.some((batch) => batch.name === 'front-page-assembly'), 'Homepage assembly should remain template-owned');
-  assert.deepStrictEqual(batches.flatMap((batch) => batch.files).sort(), ['searchform.php'], 'Ollama-only stage plan should only own searchform.php');
+  const ollamaWritableFiles = batches.flatMap((batch) => batch.files).sort();
+  const expectedVisibleOllamaFiles = [
+    'footer.php',
+    'front-page.php',
+    'header.php',
+    'page-templates/template-about-us.php',
+    'page-templates/template-blog-landing.php',
+    'page-templates/template-blog.php',
+    'page-templates/template-contact.php',
+    'page-templates/template-service-detail.php',
+    'page-templates/template-services.php',
+    'page-templates/template-single-service.php',
+    'page-templates/template-work.php',
+    'searchform.php',
+    'template-parts/footer/footer-widgets.php',
+    'template-parts/front-page/content-all-services.php',
+    'template-parts/front-page/content-blog-preview.php',
+    'template-parts/front-page/content-featured-work.php',
+    'template-parts/front-page/content-process.php',
+    'template-parts/front-page/content-service-highlight.php',
+    'template-parts/front-page/content-single-service-highlight.php',
+    'template-parts/front-page/content-style-pillars.php',
+    'template-parts/front-page/content-testimonials.php',
+    'template-parts/global/content-brand-statement.php',
+    'template-parts/global/content-cta-banner.php',
+    'template-parts/global/content-hero.php',
+    'template-parts/header/mobile-navigation.php',
+    'template-parts/header/primary-navigation.php',
+    'template-parts/header/site-branding.php'
+  ].sort();
+  assert(batches.some((batch) => batch.name === 'front-page-assembly' && batch.files.includes('front-page.php')), 'Homepage assembly must be Ollama-owned');
+  assert.deepStrictEqual(ollamaWritableFiles, expectedVisibleOllamaFiles, 'Ollama-only stage plan must own the visible theme surface');
   assert(!batches.some((batch) => /^wordpress-templates(?:-|$)/.test(batch.name)), 'WordPress templates should remain template-owned');
-  assert(!batches.some((batch) => /^page-templates(?:-|$)/.test(batch.name)), 'Page templates should remain template-owned');
+  assert(batches.some((batch) => /^page-templates(?:-|$)/.test(batch.name)), 'Page templates should be Ollama-owned');
   assert(
     batches.filter((batch) => /^foundation-core(?:-|$)/.test(batch.name)).every((batch) => batch.files.length <= 1),
     'Foundation stages were not reduced to the default file cap'
@@ -252,18 +282,21 @@ async function main() {
   );
   assert(!batches.some((batch) => batch.files.some((file) => file.startsWith('template-parts/content/'))), 'Content template parts should remain template-owned');
   assert(
-    batches.every((batch) => !batch.files.includes('header.php') && !batch.files.includes('footer.php') && !batch.files.includes('front-page.php')),
-    'Header, footer, and front-page wrappers should remain template-owned'
+    ['header.php', 'footer.php', 'front-page.php'].every((file) => ollamaWritableFiles.includes(file)),
+    'Header, footer, and front-page wrappers should be Ollama-owned'
   );
   assert(
-    batches.every((batch) => !batch.files.includes('inc/navigation.php') && !batch.files.some((file) => /^template-parts\/header\//.test(file) || /^template-parts\/footer\//.test(file))),
-    'Header/footer/navigation scaffold should remain template-owned, not Ollama-owned'
+    batches.every((batch) => !batch.files.includes('inc/navigation.php') && !batch.files.some((file) => /^template-parts\/header\/mega-menu-/.test(file))),
+    'Complex navigation scaffold should remain template-owned, not Ollama-owned'
   );
   assert(
-    batches.every((batch) => !batch.files.includes('template-parts/global/content-brand-statement.php') && !batch.files.includes('template-parts/front-page/content-featured-work.php')),
-    'Known structural homepage sections should remain template-owned'
+    ['template-parts/global/content-brand-statement.php', 'template-parts/front-page/content-featured-work.php'].every((file) => ollamaWritableFiles.includes(file)),
+    'Known structural homepage sections should be Ollama-owned'
   );
-  assert(!batches.some((batch) => batch.files.some((file) => file.startsWith('page-templates/'))), 'Page templates should remain template-owned');
+  assert(
+    expectedVisibleOllamaFiles.filter((file) => file.startsWith('page-templates/')).every((file) => ollamaWritableFiles.includes(file)),
+    'Required visible page templates should be Ollama-owned'
+  );
   assert(templateOwnedRequirements.some((requirement) => String(requirement).startsWith('14')), 'Documentation requirements are not template-owned');
   assert(templateOwnedRequirements.some((requirement) => String(requirement).startsWith('13')), 'Image requirements are not template-owned');
   const oversized = promptSizeManifest({ creativeText: 'x'.repeat(200), sharedText: '', requiredWritableFiles: [], optionalWritableFiles: [], readonlyFiles: [], protocolText: '', finalPrompt: 'x'.repeat(200) }, 100);
@@ -332,7 +365,8 @@ async function main() {
   assert(codexBrief.includes('## Required Scaffold To Preserve'), 'Codex brief does not enumerate preserved scaffold requirements');
   assert(codexBrief.includes('## Scaffold Reference Files'), 'Codex brief does not include scaffold reference file context');
   const headerBatch = batches.find((batch) => /^navigation-header(?:-|$)/.test(batch.name));
-  assert(!headerBatch, 'Header scaffold should not have an Ollama writable owner');
+  assert(headerBatch && headerBatch.files.includes('header.php'), 'Header shell should have an Ollama writable owner');
+  assert(!batches.some((batch) => batch.files.includes('inc/navigation.php')), 'Navigation logic should remain template-owned');
   const promptProbeBatch = batches.find((batch) => batch.files.some((file) => file.endsWith('.php')));
   assert(promptProbeBatch, 'No PHP-owned batch available for prompt generation checks');
   const phpPromptParts = batchPromptParts(slug, themeDir, contract, promptProbeBatch);

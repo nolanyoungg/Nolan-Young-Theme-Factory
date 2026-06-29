@@ -24,6 +24,17 @@ The active template at this point in time is only:
 
 Do not prepare, generate, validate, preview, or package new themes from `NOLAN-YOUNG-theme-000` unless the user explicitly changes that decision later.
 
+## Recommended Skills
+
+When available, use `$ollama-wordpress-theme-generation` before changing or running Ollama-only theme workflows. That skill exists to prevent duplicate-template runs and to keep local-model stage ownership visible and testable.
+
+When available, use `$mobile-wordpress-theme-review` before accepting a generated theme preview. That skill exists to review mobile header/footer behavior, page-template completeness, touch targets, content density, and preview evidence.
+
+Skill source repositories:
+
+- `https://github.com/nolanyoungg/ollama-wordpress-theme-generation`
+- `https://github.com/nolanyoungg/mobile-wordpress-theme-review`
+
 ## Generation Rules
 
 The prep script copies the selected template into `wp-content/themes/{slug}` before AI generation starts.
@@ -65,15 +76,17 @@ Ollama file output must be normalized only by the shared model-output parser. Th
 
 Ollama stage contracts must keep required, optional, and pattern-created files separate from prompt construction through candidate application. Optional files are never promoted into required files just because they are listed in the stage contract. A model response that completes all required files and omits optional files is valid unless candidate checks fail.
 
-Prepared asset systems and deterministic support files are not Ollama-owned source. `functions.php`, `style.css`, build scripts/config, package manifests, files under `assets/`, source stylesheets, source scripts, and compiled CSS/JS bundles must stay template/build-owned unless the repository policy is intentionally changed. Ollama stages may own only explicitly declared small leaf files; they must not be asked to rewrite working asset systems, generated bundle files, or mature template PHP scaffolding.
+Prepared asset systems and deterministic support files are not Ollama-owned source. `functions.php`, `style.css`, build scripts/config, package manifests, files under `assets/`, source stylesheets, source scripts, and compiled CSS/JS bundles must stay template/build-owned unless the repository policy is intentionally changed. Ollama stages must own explicitly declared visible PHP surfaces, not hidden one-file no-op surfaces.
 
 Complex navigation panel scaffolding is template-owned. `inc/navigation.php` and `template-parts/header/mega-menu-*.php` should be improved in the active template, not rewritten during Ollama generation. Ollama may edit the simpler header shell/branding/navigation wrapper files only when they are explicitly stage-owned.
 
 The theme foundation is template-owned. `theme.json`, foundation PHP includes, setup helpers, enqueue helpers, template tags, `functions.php`, `style.css`, README, changelog, and license files must not be exposed as Ollama outputs unless the stage plan is intentionally changed.
 
-Structural wrappers are template-owned unless the stage plan is intentionally changed. `header.php`, `footer.php`, `front-page.php`, `template-parts/header/`, `template-parts/footer/`, and scaffold-critical homepage sections must be improved in the active template instead of regenerated during Ollama runs.
+The current Ollama-only writable surface must include visible page composition files: `header.php`, `footer.php`, `front-page.php`, the simpler header/footer template parts, homepage/global section template parts, and the About, Services, Work, Blog, Contact, and service-detail page template files declared in `scripts/lib/ollama-batches.js`.
 
-For current Ollama-only runs, the planned local-model writable surface is intentionally minimal. The active template carries the mature WordPress source; Ollama ownership is limited to explicitly declared safe leaf files such as `searchform.php`.
+Future Ollama-only runs must produce visible variation from the active template. A run that only changes metadata, package files, `style.css` headers, or `searchform.php` is not a successful creative theme generation run.
+
+Mobile design detail is part of the generation contract. Ollama-owned visible PHP stages must preserve responsive landmarks, mobile navigation controls, touch-friendly CTAs, sensible heading order, compact section density on narrow screens, and accessible form/search/navigation behavior.
 
 Template preparation must normalize text file line endings deterministically after copying the template. Windows CRLF checkouts must not cause prepared JS, SCSS, config, PHP, JSON, or Markdown files to fail build linting.
 

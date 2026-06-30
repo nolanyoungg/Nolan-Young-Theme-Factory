@@ -70,6 +70,10 @@ Leaving placeholder text, mixed branding, incomplete styling, or starter templat
 
 Ollama-only uses multiple planned local-model stages. These stages are declared before generation starts and always run as part of the mode. Prompt count is not repair.
 
+Ollama-only should stay within 5 to 10 planned generation stages. A plan above 10 stages is blocked unless the user explicitly approves the larger run before generation starts.
+
+Each planned Ollama stage should stay at four or fewer required files. If a visible surface plan needs more files, split the planned ownership into smaller reusable stages and combine lighter page surfaces elsewhere so the total run still stays within the 5 to 10 stage target. Do not hand the local model oversized six-file required batches; that has repeatedly produced omitted FILE blocks.
+
 Every Ollama stage must declare its prompt-section ownership. Missing or nonexistent production prompt coverage blocks the run before model invocation.
 
 Ollama file output must be normalized only by the shared model-output parser. The recurring `--FILE:` header typo, overlong trailing dashes in FILE headers, raw fenced code from exact one-file stages, leading code fences inside code FILE blocks, trailing lone delimiter lines inside code FILE blocks, and pure terminal spinner lines are known Ollama transport/envelope variants and must be handled generically before candidate application. Do not manually wrap, patch, or repair a generated theme to compensate for these issues.
@@ -82,7 +86,13 @@ Complex navigation panel scaffolding is template-owned. `inc/navigation.php` and
 
 The theme foundation is template-owned. `theme.json`, foundation PHP includes, setup helpers, enqueue helpers, template tags, `functions.php`, `style.css`, README, changelog, and license files must not be exposed as Ollama outputs unless the stage plan is intentionally changed.
 
-The current Ollama-only writable surface must include visible page composition files: `header.php`, `footer.php`, `front-page.php`, the simpler header/footer template parts, homepage/global section template parts, and the About, Services, Work, Blog, Contact, and service-detail page template files declared in `scripts/lib/ollama-batches.js`.
+The current Ollama-only writable surface must include visible page composition files: `footer.php`, `front-page.php`, the rendered simpler header/footer template parts, homepage/global section template parts, and the About, Services, Work, Blog, Contact, and service-detail page template files declared in `scripts/lib/ollama-batches.js`.
+
+`header.php` is template-owned scaffold unless the stage planner is intentionally redesigned. Keep header shell behavior, `wp_head()`, `wp_body_open()`, skip link, menu toggle attributes, and the site-branding/primary-navigation `get_template_part()` calls stable in the active template. Let Ollama change visible header content through simpler header template parts, not by rewriting the shell.
+
+`template-parts/header/mobile-navigation.php` is currently an unused reserved extension point in the active template. Keep it template-owned unless `header.php` is redesigned to render it. Mobile header behavior should be improved through the rendered header shell, primary navigation fragment, JavaScript, and template CSS.
+
+Legacy page-template alias wrappers such as `page-templates/template-blog.php` and `page-templates/template-single-service.php` are template-owned support files. Do not spend Ollama stages on those wrappers; generate the detailed target templates that the aliases include.
 
 Future Ollama-only runs must produce visible variation from the active template. A run that only changes metadata, package files, `style.css` headers, or `searchform.php` is not a successful creative theme generation run.
 

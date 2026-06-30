@@ -66,6 +66,46 @@ function declarationList(items, emptyText) {
   return items.length ? items.map((file) => `- ${file}`).join('\n') : emptyText;
 }
 
+function getTemplatePartCallForFile(file) {
+  const withoutExt = String(file || '').replace(/\\/g, '/').replace(/\.php$/i, '');
+  const dir = path.posix.dirname(withoutExt);
+  const basename = path.posix.basename(withoutExt);
+  const splitAt = basename.indexOf('-');
+  if (splitAt === -1) return `get_template_part( '${withoutExt}' )`;
+  const base = `${dir}/${basename.slice(0, splitAt)}`;
+  const slug = basename.slice(splitAt + 1);
+  return `get_template_part( '${base}', '${slug}' )`;
+}
+
+function requiredTemplatePartGuidance(requiredTemplateParts) {
+  if (!requiredTemplateParts.length) return '';
+  return `## Required Existing Template Part Calls
+
+The returned files for this stage must contain get_template_part() calls resolving to every file below. Use these exact call shapes unless the current scaffold already uses an equivalent resolving call:
+
+${requiredTemplateParts.map((file) => `- ${file} -> ${getTemplatePartCallForFile(file)}`).join('\n')}
+`;
+}
+
+function templatePartReferenceGuidance(themeDir, phpWritableFiles, requiredTemplateParts = []) {
+  if (!phpWritableFiles.length) return '';
+  const templateParts = directoryFiles(themeDir, 'template-parts').filter((file) => file.endsWith('.php'));
+  if (!templateParts.length) return '';
+  return `## Template Part Reference Rules
+
+- Every get_template_part() call must resolve to one of the existing files listed below.
+- Never include a .php extension inside get_template_part() arguments. For example, do not call get_template_part( 'template-parts/front-page/content-all-services.php' ).
+- Use the two-argument WordPress form for nested content files. Example: template-parts/global/content-cta-banner.php is referenced as get_template_part( 'template-parts/global/content', 'cta-banner' ).
+- Do not invent flattened paths such as get_template_part( 'template-parts/content-cta-banner' ) or get_template_part( 'template-parts/content', 'cta-banner' ) unless that exact resolved file exists.
+- Do not omit required composition calls from wrapper files such as header.php and front-page.php.
+
+${requiredTemplatePartGuidance(requiredTemplateParts)}
+
+Existing template part files:
+${templateParts.map((file) => `- ${file} -> ${getTemplatePartCallForFile(file)}`).join('\n')}
+`;
+}
+
 function stripTransportNoise(text) {
   const normalized = String(text || '').replace(/\u001b\[[0-9;]*[A-Za-z]/g, '');
   const start = normalized.indexOf('---FILE: ');
@@ -128,9 +168,10 @@ function batchPromptParts(themeSlug, themeDir, contract, batch) {
     ? existingFunctionInventory.map((entry) => `- ${entry.file}: ${entry.names.join(', ')}`).join('\n')
     : '- No existing PHP functions found outside this stage.';
   const phpWritableFiles = [...requiredFiles, ...optionalFiles].filter((file) => /\.php$/i.test(file));
-  const creativeText = batch.promptRequirements && batch.promptRequirements.length
+  const requiredTemplateParts = batch.requiredTemplateParts || [];
+  const creativeText = batch.creativePrompt || (batch.promptRequirements && batch.promptRequirements.length
     ? selectPromptRequirements(contract, batch.promptRequirements)
-    : selectPromptSections(contract, batch.promptSections || []);
+    : selectPromptSections(contract, batch.promptSections || []));
   const rulesText = `${OUTPUT_FORMAT}\n\nRules:\n${SHARED_GENERATION_RULES.map((rule) => `- ${rule}`).join('\n')}`;
   const phpStageRules = phpWritableFiles.length ? `## PHP Output Rules
 
@@ -140,6 +181,7 @@ function batchPromptParts(themeSlug, themeDir, contract, batch) {
 - Use brace-style PHP control structures only: if (...) { ... }, foreach (...) { ... }, while (...) { ... }. Do not use colon syntax such as if (...) :, else :, endif, endwhile, or endforeach.
 - Before responding, mentally lint every PHP file for balanced quotes and valid PHP syntax.
 ` : '';
+  const templatePartRules = templatePartReferenceGuidance(themeDir, phpWritableFiles, requiredTemplateParts);
   const requiredCount = requiredFiles.length;
   const optionalGuidance = optionalFiles.length
     ? 'Optional files may be returned only when they are complete and directly needed.'
@@ -214,6 +256,8 @@ ${readonlyFiles.length ? readonlyFiles.map((file) => `- ${file}`).join('\n') : '
 Do not redeclare any function listed here. If this stage needs related behavior, call the existing function or choose a distinct stage-owned function name.
 
 ${existingFunctionText}
+
+${templatePartRules}
 
 ${fileContext(themeDir, 'Current Required Writable File', requiredFiles)}
 
@@ -334,6 +378,7 @@ async function runOllamaGeneration(options) {
         requiredFiles: batch.files || [],
         optionalFiles: batch.optionalFiles || [],
         allowedPatterns: batch.allowedPatterns || [],
+        requiredTemplateParts: batch.requiredTemplateParts || [],
         manifestPath: path.join(generationDir, `${stageName}-application.json`),
         candidateEvidenceDir: path.join(generationDir, `${stageName}-failed-candidate`)
       });

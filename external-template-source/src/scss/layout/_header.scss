@@ -170,7 +170,21 @@
 		grid-template-columns: minmax(0, 1fr) auto;
 	}
 
-	.nytt01-site-header__cta {
+	.nytt01-site-branding,
+	.nytt01-site-branding__text {
+		min-width: 0;
+	}
+
+	.nytt01-site-title {
+		font-size: clamp(1rem, 5vw, 1.2rem);
+		overflow-wrap: anywhere;
+	}
+
+	.nytt01-site-description {
+		display: none;
+	}
+
+	.nytt01-site-header__inner .nytt01-site-header__cta {
 		display: none;
 	}
 
@@ -191,6 +205,7 @@
 
 	.nytt01-js .nytt01-menu-toggle {
 		display: inline-flex;
+		flex: 0 0 auto;
 	}
 
 	.nytt01-js .nytt01-primary-navigation {

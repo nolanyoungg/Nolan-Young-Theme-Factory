@@ -6,6 +6,9 @@ It is organized around one rule: source generation, preview generation, packagin
 
 ## What Lives Where
 
+- `.agents/` holds agent-related local configuration and metadata.
+- `.github/` holds repository automation and GitHub-specific configuration.
+- `config/` holds repo-level configuration defaults used by workflow scripts.
 - `prompts/` holds the production prompt contract and prompt templates.
 - `wordpress-themplate-themes/` holds the starter templates that get copied before generation.
 - `wp-content/themes/{theme_slug}/` holds the generated theme source for an active run.
@@ -40,17 +43,17 @@ Generated themes are not patched in place to hide failures. If a run is bad, the
 Use the npm script layer for all normal work:
 
 ```sh
-npm run theme:run -- --mode ollama-only --prompt prompts/templates/NOLAN-YOUNG-PROMPT-6-19-2026.md --template nolan-young-theme-template-01 --template-source-path external-template-source --theme-slug 005_nolan_young_theme_mobile_detail --ollama-model qwen2.5-coder:14b
-npm run theme:resume -- --theme-slug 005_nolan_young_theme_mobile_detail
-npm run theme:prepare -- --prompt prompts/templates/NOLAN-YOUNG-PROMPT-6-19-2026.md --template nolan-young-theme-template-01
-npm run theme:validate -- --theme-slug 005_nolan_young_theme_mobile_detail
-npm run theme:build -- --theme-slug 005_nolan_young_theme_mobile_detail
-npm run theme:preview -- --theme-slug 005_nolan_young_theme_mobile_detail
+npm run theme:run -- --mode <ollama-only|codex-only|hybrid> --prompt <prompt-file> --template <template-name> --template-source-path <path> --theme-slug <theme-slug> --ollama-model <model>
+npm run theme:resume -- --theme-slug <theme-slug>
+npm run theme:prepare -- --prompt <prompt-file> --template <template-name>
+npm run theme:validate -- --theme-slug <theme-slug>
+npm run theme:build -- --theme-slug <theme-slug>
+npm run theme:preview -- --theme-slug <theme-slug>
 npm run theme:preview:index
-npm run theme:zip -- --theme-slug 005_nolan_young_theme_mobile_detail
-npm run theme:delete -- --theme-slug 005_nolan_young_theme_mobile_detail --yes
+npm run theme:zip -- --theme-slug <theme-slug>
+npm run theme:delete -- --theme-slug <theme-slug> --yes
 npm run theme:env
-npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
+npm run theme:model-check -- --provider <ollama|codex> --ollama-model <model>
 npm run test:scripts
 ```
 
@@ -95,3 +98,4 @@ Required preview pages:
 - See `scripts/README.md` for the workflow and script-layer contract.
 - Keep workflow changes reusable and deterministic.
 - Keep generated themes, previews, ZIPs, and reports separated by path.
+- Update the repo map whenever top-level folders are added, removed, or repurposed.

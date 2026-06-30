@@ -10,6 +10,9 @@ This document explains the current layout of the Nolan Young Theme Factory repo 
 
 ## Top-Level Map
 
+- `.agents/` stores agent configuration and metadata used by local automation.
+- `.github/` stores GitHub workflow and repository automation configuration.
+- `config/` stores repo-level defaults consumed by workflow code.
 - `prompts/` holds the prompt contract and prompt templates used for generation.
 - `wordpress-themplate-themes/` holds the source templates that get copied before generation.
 - `external-template-source/` is the active external template source for the current Ollama-only workflow.
@@ -19,6 +22,7 @@ This document explains the current layout of the Nolan Young Theme Factory repo 
 - `dist/zipped-themes/` holds packaged ZIP archives.
 - `reports/runs/` holds run reports, timing files, validation output, and evidence artifacts.
 - `scripts/` holds workflow code, validation code, preview code, packaging code, and tests.
+- `reports/` holds run reports and other generated evidence artifacts.
 
 ## Artifact Boundaries
 
@@ -37,6 +41,8 @@ This document explains the current layout of the Nolan Young Theme Factory repo 
 - `scripts/package-theme.js` creates the ZIP archive.
 - `scripts/delete-theme.js` removes a generated theme and its disposable artifacts.
 - `scripts/tests/smoke.js` guards the workflow contract with repo-level smoke coverage.
+
+The public npm commands are the supported interface; examples should use placeholders instead of pinning a single theme slug in repo docs.
 
 ## Policy Files
 

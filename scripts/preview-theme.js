@@ -109,7 +109,7 @@ $GLOBALS['preview_theme_dir'] = $themeDir;
 function esc_html($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
 function esc_attr($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
 function esc_url($v){return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');}
-function esc_html__($t){return esc_html($t);} function esc_attr__($t){return esc_attr($t);} function esc_html_x($t){return esc_html($t);}
+function esc_html__($t){return esc_html($t);} function esc_attr__($t){return esc_attr($t);} function esc_html_x($t){return esc_html($t);} function esc_attr_x($t){return esc_attr($t);}
 function esc_html_e($t){echo esc_html($t);} function esc_attr_e($t){echo esc_attr($t);}
 function __($t){return $t;} function _e($t){echo $t;}
 function wp_kses_post($v){return (string)$v;} function wp_json_encode($v){return json_encode($v);}
@@ -124,6 +124,7 @@ function sanitize_email($v){return trim((string)$v);} function sanitize_textarea
 function sanitize_key($v){return strtolower(preg_replace('/[^a-z0-9_\\-]/','',(string)$v));}
 function sanitize_title_with_dashes($v){return trim(preg_replace('/[^a-z0-9]+/','-',strtolower((string)$v)),'-');}
 function wp_unslash($v){return $v;} function absint($v){return abs((int)$v);}
+function wp_unique_id($prefix=''){static $id_counter=0; return (string)$prefix . ++$id_counter;}
 function home_url($p=''){return route_preview($p);} function site_url($p=''){return route_preview($p);}
 function admin_url($p=''){return ltrim((string)$p,'/');}
 function route_preview($p=''){ $r=ltrim((string)$p,'/'); if(str_starts_with($r,'services'))return 'services_preview.html'; if(str_starts_with($r,'about'))return 'about-us_preview.html'; if(str_starts_with($r,'contact'))return 'contact_preview.html'; if(str_starts_with($r,'work'))return 'work_preview.html'; if(str_starts_with($r,'blog'))return 'blog_preview.html'; return 'homepage_preview.html';}
@@ -242,8 +243,8 @@ function renderWithPhp(themeDir, sourceRelative, title) {
   if (!fs.existsSync(path.join(themeDir, sourceRelative))) fail(`Preview source missing: ${sourceRelative}`);
   const harnessPath = path.join(os.tmpdir(), `theme-preview-${process.pid}-${Date.now()}-${Math.random().toString(16).slice(2)}.php`);
   fs.writeFileSync(harnessPath, phpHarness(), 'utf8');
-  const siteName = readStyle(themeDir, 'Theme Name') || titleFromSlug(path.basename(themeDir));
-  const siteDescription = previewDescription(themeDir);
+  const siteName = 'Nolan Young Designs';
+  const siteDescription = previewDescription(themeDir) || 'Independent WordPress design engineering.';
   const result = runCommand('php', [harnessPath, themeDir, sourceRelative, title, siteName, siteDescription], { cwd: root, echo: false });
   fs.rmSync(harnessPath, { force: true });
   if (result.status !== 0) fail(`PHP preview render failed for ${sourceRelative}: ${result.stderr || result.stdout || result.error}`);
@@ -282,7 +283,7 @@ function generateRenderedPreview(themeDir, previewDir) {
     { output: 'contact_preview.html', source: firstExisting('page-templates/template-contact.php', 'page.php'), title: 'Contact' },
     { output: 'services_preview.html', source: firstExisting('page-templates/template-services.php', 'archive-ny_service.php', 'page.php'), title: 'Services' },
     { output: 'policy_preview.html', source: firstExisting('page-templates/template-policy.php', 'privacy-policy.php', 'page.php'), title: 'Privacy Policy' },
-    { output: 'single_services_preview.html', source: firstExisting('single-ny_service.php', 'page-templates/template-single-service.php', 'page-templates/template-service-detail.php', 'single.php'), title: 'Service' }
+    { output: 'single_services_preview.html', source: firstExisting('page-templates/template-service-detail.php', 'page-templates/template-single-service.php', 'single-ny_service.php', 'single.php'), title: 'Service' }
   ];
 
   for (const page of renderedPages) {

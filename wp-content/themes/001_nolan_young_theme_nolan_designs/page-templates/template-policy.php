@@ -1,1 +1,0 @@
-<?php /** Template Name: Policy Template Post Type: page */ defined( 'ABSPATH' ) || exit; get_header(); ?><main id="primary" class="nytt01-site-main"><section class="nytt01-section"><div class="nytt01-container"><?php while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content/content', 'policy' ); endwhile; ?></div></section></main><?php get_footer();

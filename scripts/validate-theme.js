@@ -4,7 +4,15 @@ const path = require('path');
 const yauzl = require('yauzl');
 const { root } = require('./lib/repo-root');
 const { parseArgs, arg } = require('./lib/args');
-const { PLACEHOLDER_PATTERN, PREVIEW_RUNTIME_WARNING_PATTERN, REMOTE_RUNTIME_PATTERN, WALK_IGNORED_DIRECTORIES } = require('./lib/constants');
+const {
+  PLACEHOLDER_PATTERN,
+  PREVIEW_RUNTIME_WARNING_PATTERN,
+  REMOTE_RUNTIME_PATTERN,
+  UNSUPPORTED_PREVIEW_PHP_CALLS,
+  WALK_IGNORED_DIRECTORIES
+} = require('./lib/constants');
+const { localAssetReferenceFailures } = require('./lib/local-assets');
+const { pageTemplateDetailFailures, phpLiteralTemplatePartReferences } = require('./lib/page-template-validation');
 const { assertThemeSlug, assertTemplateName, walkFiles } = require('./lib/theme-utils');
 
 const args = parseArgs(process.argv.slice(2));
@@ -54,30 +62,6 @@ function scssImportCandidates(baseDir, specifier) {
   const direct = path.resolve(baseDir, specifier);
   const underscored = path.resolve(baseDir, parsed.dir, `_${parsed.base}`);
   return [direct, `${direct}.scss`, `${direct}.sass`, underscored, `${underscored}.scss`, `${underscored}.sass`, path.resolve(baseDir, specifier, 'index.scss'), path.resolve(baseDir, specifier, '_index.scss')];
-}
-
-function localAssetReferences(text) {
-  return [...text.matchAll(/\b(?:src|href)=["']([^"']+)["']|url\(["']?([^"')]+)["']?\)/g)]
-    .map((match) => match[1] || match[2])
-    .filter((value) => value && !/^(?:https?:|data:|mailto:|tel:|#)/i.test(value));
-}
-
-function phpLiteralTemplatePartReferences(text) {
-  const references = [];
-  const patterns = [
-    /get_template_part\(\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]*)['"]\s*\)/g,
-    /get_template_part\(\s*['"]([^'"]+)['"]\s*\)/g
-  ];
-  let match;
-  for (const pattern of patterns) {
-    while ((match = pattern.exec(text)) !== null) {
-      const base = match[1];
-      const slug = typeof match[2] === 'string' ? match[2] : '';
-      const file = slug ? `${base}-${slug}.php` : `${base}.php`;
-      references.push(file.replace(/\\/g, '/'));
-    }
-  }
-  return references;
 }
 
 function literalDataAttributes(text) {
@@ -179,6 +163,27 @@ async function validateTheme(options = {}) {
       .filter(Boolean);
     add(checks, 'placeholder_content', placeholderHits.length === 0, placeholderHits.join(', '));
 
+    const thinPageTemplates = pageTemplateDetailFailures(themeDir);
+    add(checks, 'page_template_detail', thinPageTemplates.length === 0, thinPageTemplates.join(', '));
+
+    const localAssetFailures = localAssetReferenceFailures(
+      themeDir,
+      themeFiles.filter((file) => /\.(php|html|css|scss|sass|js|json|svg)$/i.test(file)),
+      (file) => rel(file, themeDir)
+    );
+    add(checks, 'local_asset_references_resolve', localAssetFailures.length === 0, localAssetFailures.join(', '));
+
+    const unsupportedPreviewPhpCalls = themeFiles
+      .filter((file) => file.endsWith('.php'))
+      .flatMap((file) => {
+        const relative = rel(file, themeDir);
+        const text = fs.readFileSync(file, 'utf8');
+        return UNSUPPORTED_PREVIEW_PHP_CALLS
+          .filter((call) => call.pattern.test(text))
+          .map((call) => `${relative} -> ${call.name}`);
+      });
+    add(checks, 'unsupported_preview_php_calls', unsupportedPreviewPhpCalls.length === 0, unsupportedPreviewPhpCalls.join(', '));
+
     const unchangedCritical = renderCriticalFiles(themeDir)
       .filter((file) => fs.existsSync(path.join(templateRoot, file)))
       .filter((file) => {
@@ -207,6 +212,7 @@ async function validateTheme(options = {}) {
 
     const templateHeaderText = fs.existsSync(path.join(templateRoot, 'header.php')) ? fs.readFileSync(path.join(templateRoot, 'header.php'), 'utf8') : '';
     const themeHeaderText = fs.existsSync(path.join(themeDir, 'header.php')) ? fs.readFileSync(path.join(themeDir, 'header.php'), 'utf8') : '';
+    add(checks, 'header_no_inline_navigation', !/\bwp_nav_menu\s*\(/.test(themeHeaderText), 'header.php must delegate primary navigation to the prepared header template part.');
     const requiredHeaderDataAttrs = [...new Set(literalDataAttributes(templateHeaderText))];
     const themeHeaderDataAttrs = new Set(literalDataAttributes(themeHeaderText));
     const missingHeaderDataAttrs = requiredHeaderDataAttrs.filter((attribute) => !themeHeaderDataAttrs.has(attribute));
@@ -258,6 +264,12 @@ async function validateTheme(options = {}) {
       add(checks, 'preview_expected_pages', ['index.html', 'homepage_preview.html'].every((file) => fs.existsSync(path.join(previewDir, file))), 'index.html and homepage_preview.html must exist.');
       const html = htmlFiles.map((file) => fs.readFileSync(path.join(previewDir, file), 'utf8')).join('\n');
       add(checks, 'preview_quality', !PREVIEW_RUNTIME_WARNING_PATTERN.test(html) && !REMOTE_RUNTIME_PATTERN.test(html), 'No runtime warnings or remote dependencies.');
+      const previewAssetFailures = localAssetReferenceFailures(
+        previewDir,
+        walkFiles(previewDir).filter((file) => /\.(html|css|js|svg)$/i.test(file)),
+        (file) => rel(file, previewDir)
+      );
+      add(checks, 'preview_local_asset_references_resolve', previewAssetFailures.length === 0, previewAssetFailures.join(', '));
     }
     const docsIndex = path.join(root, 'docs', 'index.html');
     add(checks, 'preview_gallery_entry', fs.existsSync(docsIndex) && fs.readFileSync(docsIndex, 'utf8').includes(selectedSlug), 'docs/index.html contains theme slug.');

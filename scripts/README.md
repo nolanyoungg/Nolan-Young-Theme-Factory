@@ -2,6 +2,12 @@
 
 This directory contains the small Node.js build tool for the Nolan Young Theme Factory.
 
+## Start Here
+
+- [../README.md](../README.md) gives the repo overview and the main entry points.
+- [../AGENTS.md](../AGENTS.md) is the repo policy and boundary contract.
+- [../docs/REPO-STRUCTURE.md](../docs/REPO-STRUCTURE.md) maps the directory layout and artifact ownership.
+
 ## Public Commands
 
 ```text

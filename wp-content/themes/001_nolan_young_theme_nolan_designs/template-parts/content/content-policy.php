@@ -1,1 +1,0 @@
-<?php defined( 'ABSPATH' ) || exit; ?><article <?php post_class( 'nytt01-content-policy' ); ?>><header class="nytt01-section-header"><div><p class="nytt01-eyebrow"><?php esc_html_e( 'Policy', 'nolan-young-theme-template-01' ); ?></p><h1><?php the_title(); ?></h1></div></header><div class="entry-content"><?php the_content(); ?></div></article>

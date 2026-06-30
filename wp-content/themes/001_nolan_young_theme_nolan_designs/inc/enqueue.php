@@ -1,6 +1,0 @@
-<?php
-/** Frontend asset loading. */
-defined( 'ABSPATH' ) || exit;
-function nytt01_asset_meta( $metadata_path, $asset_path ) { $metadata = file_exists( get_theme_file_path( $metadata_path ) ) ? require get_theme_file_path( $metadata_path ) : array(); return array( 'dependencies' => ! empty( $metadata['dependencies'] ) && is_array( $metadata['dependencies'] ) ? $metadata['dependencies'] : array(), 'version' => ! empty( $metadata['version'] ) ? (string) $metadata['version'] : ( file_exists( get_theme_file_path( $asset_path ) ) ? (string) filemtime( get_theme_file_path( $asset_path ) ) : wp_get_theme()->get( 'Version' ) ) ); }
-function nytt01_enqueue_assets() { $css = nytt01_asset_meta( '/assets/css/bundle.asset.php', '/assets/css/bundle.css' ); $js = nytt01_asset_meta( '/assets/js/bundle.asset.php', '/assets/js/bundle.js' ); wp_enqueue_style( 'nytt01-bundle', get_theme_file_uri( '/assets/css/bundle.css' ), $css['dependencies'], $css['version'] ); wp_style_add_data( 'nytt01-bundle', 'rtl', 'replace' ); wp_enqueue_script( 'nytt01-bundle', get_theme_file_uri( '/assets/js/bundle.js' ), $js['dependencies'], $js['version'], array( 'in_footer' => true, 'strategy' => 'defer' ) ); if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) wp_enqueue_script( 'comment-reply' ); }
-add_action( 'wp_enqueue_scripts', 'nytt01_enqueue_assets' );

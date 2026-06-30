@@ -2,52 +2,32 @@
 
 ### Business Name
 
-For this theme, use `Nolan Designs`.
+For this theme, use `!!! TO BE FILLED IN...`.
 
 ### Business Logo
 
-When no logo is supplied, create an original text-based wordmark and a simple supporting mark that can be implemented as a local, accessible SVG.
-
-The logo must remain clear in the header, footer, mobile navigation, favicon, and compact interface placements.
-
-The logo must not copy or imitate an existing company, agency, product, or trademarked visual identity.
+!!! TO BE FILLED IN...
 
 ### Business Slogan
 
-Use a concise slogan that fits a website development company, such as "Websites that help businesses grow."
+!!! TO BE FILLED IN...
 
 ### Business Field
 
-Must support a professional service-based business.
-
-The business is a website development company focused on modern WordPress design, build, and support services.
-
-The generated content should present the company’s services, process, experience, work, resources, contact options, and calls to action in a coherent and adaptable way.
-
-Must work for both consumer-facing and business-to-business services without making the site feel divided or inconsistent.
+!!! TO BE FILLED IN...
 
 ## 02. Style / CSS Requirements
 
-Organize the theme like a serious, modern WordPress product think heavy SaaS build with mordern frameworks. The codebase must use predictable folders, reusable template parts, consistent SCSS architecture, shared design tokens, and component-level styling.
+Work entirely within the existing theme structure and SCSS framework. The theme skeleton, folder organization, design tokens, reusable components, page partials, and build system are already established and must be used as provided.
 
-Do not scatter one-off CSS rules across PHP templates. Do not place large style blocks directly inside template files. Do not use inline styles unless a value must be generated dynamically and cannot be represented through a class or CSS custom property.
+Add all styling to the appropriate existing SCSS files. For example, homepage-specific styling belongs in _homepage.scss, while reusable elements should be styled within their corresponding component partials.
 
-There should be no inline style blocks within .php files, all styles should be in there respective .scss folder. for example, home page should be in __homepage.scss etc etc.
+Do not place <style> blocks inside PHP files. Do not scatter CSS declarations throughout templates. Do not use inline styles unless a value must be generated dynamically and cannot reasonably be handled through the existing classes or CSS custom properties.
 
-
+Do not create a new styling architecture, reorganize the existing SCSS structure, or manually modify compiled CSS files. Fill in and extend the existing stylesheets while preserving the established framework.
 
 
 ### Theme ID
-
-Preserve the prepared theme identity values assigned by the factory during preparation:
-
-- Theme Name
-- Description
-- Text Domain
-- generated theme slug
-- package name
-
-Do not hardcode replacement values for those prepared fields. The model may preserve and complete the remaining valid WordPress metadata:
 
 ```text
 /*
@@ -64,19 +44,9 @@ Tags: custom-logo, custom-menu, featured-images, threaded-comments, translation-
 
 ```
 
-The selected starter template already contains the standard build scaffold. Preparation supplies valid build paths and package metadata. Preserve required build paths. Update source code and dependency declarations only when technically required by generated source. The factory never starts `npm run dev`; that command remains available for a human developer. The factory runs `npm run build` once after generation.
 
+  
 ### CSS Architecture
-
-Use `src/scss/main.scss` as the single SCSS entry point. 
-
-Build out the /src/scss folders and be sure to put the styles where they belong.
-
-The architecture must separate global settings, reusable tools, foundational styles, components, layout systems, and page-specific styles.
-
-`src/scss/main.scss` must load the required partials in a deliberate dependency order so variables, mixins, and functions are available before dependent styles are compiled.
-
-Use CSS custom properties for global colors, spacing, typography, border radii, shadows, content widths, header heights, and transition values.
 
 Use mobile-first responsive styles or add styles specifcally for mobile to optimze the look. 
 
@@ -127,7 +97,7 @@ The Webpack configuration is at this exact path:
 build/webpack.config.js
 ```
 
-The Webpack configuration must compile:
+The Webpack configuration compiles:
 
 ```text
 src/js/main.js
@@ -139,7 +109,7 @@ into:
 assets/js/bundle.js
 ```
 
-The Webpack configuration must compile:
+The Webpack configuration compiles:
 
 ```text
 src/scss/main.scss

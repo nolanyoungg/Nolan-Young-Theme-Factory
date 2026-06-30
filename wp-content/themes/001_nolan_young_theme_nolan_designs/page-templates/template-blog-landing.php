@@ -1,1 +1,0 @@
-<?php /** Template Name: Blog Landing Template Post Type: page */ defined( 'ABSPATH' ) || exit; get_header(); ?><main id="primary" class="nytt01-site-main"><?php get_template_part( 'template-parts/front-page/content', 'blog-preview' ); ?></main><?php get_footer();

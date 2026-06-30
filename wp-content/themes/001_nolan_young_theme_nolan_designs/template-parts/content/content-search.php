@@ -1,1 +1,0 @@
-<?php defined( 'ABSPATH' ) || exit; ?><article <?php post_class( 'nytt01-card' ); ?>><p class="nytt01-eyebrow"><?php echo esc_html( get_post_type_object( get_post_type() )->labels->singular_name ); ?></p><h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2><p><?php echo esc_html( wp_trim_words( get_the_excerpt(), 24 ) ); ?></p></article>

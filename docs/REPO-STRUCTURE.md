@@ -43,7 +43,6 @@ This document explains the current layout of the Nolan Young Theme Factory repo 
 - `scripts/tests/smoke.js` guards the workflow contract with repo-level smoke coverage.
 
 The public npm commands are the supported interface; examples should use placeholders instead of pinning a single theme slug in repo docs.
-
 ## Policy Files
 
 - `AGENTS.md` is the canonical agent policy for generation boundaries, mode rules, and artifact rules.
@@ -52,4 +51,3 @@ The public npm commands are the supported interface; examples should use placeho
 ## Maintenance Rule
 
 If a future change creates a new top-level directory or changes where an artifact lives, update this file at the same time so the repo map stays accurate.
-

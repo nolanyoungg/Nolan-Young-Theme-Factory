@@ -1,10 +1,3 @@
 node_modules/
-*.log
-*.tmp
-.DS_Store
-Thumbs.db
-wp-content/themes/*/.generation/
-reports/runs/
-!reports/runs/README.md
 dist/zipped-themes/*.zip
 !dist/zipped-themes/README.md

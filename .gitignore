@@ -1,3 +1,2 @@
 node_modules/
-dist/zipped-themes/*.zip
 !dist/zipped-themes/README.md

@@ -1,82 +1,105 @@
 # Nolan Young Theme Factory
 
-This repo is a template-first WordPress theme factory.
+This repo is a template-first WordPress theme factory. It prepares a copied theme, runs exactly one selected generation mode, then performs deterministic build, validation, preview, packaging, and reporting work.
 
-It is organized around one rule: source generation, preview generation, packaging, and evaluation are separate jobs and should not blur together.
+## Core Rule
+
+Generation and evaluation are separate jobs.
+
+AI generation may edit only the prepared theme directory:
+
+```text
+wp-content/themes/NNN_nolan_young_theme_[description]/
+```
+
+The workflow owns template copying, build commands, validation, preview generation, ZIP packaging, cleanup, and reports.
+
+## Modes
+
+There are only two generation modes:
+
+- `codex-only`: one Codex generation pass from the prepared theme directory.
+- `ollama-only`: planned Ollama stages with declared prompt-section ownership and per-stage file allowlists.
+
+There is no `hybrid` mode, model fallback, validation-triggered AI pass, build-triggered AI pass, or repair pass.
 
 ## What Lives Where
 
-- `.agents/` holds agent-related local configuration and metadata.
-- `.github/` holds repository automation and GitHub-specific configuration.
-- `config/` holds repo-level configuration defaults used by workflow scripts.
-- `prompts/` holds the production prompt contract and prompt templates.
-- `wordpress-themplate-themes/` holds the starter templates that get copied before generation.
-- `wp-content/themes/{theme_slug}/` holds the generated theme source for an active run.
-- `docs/Preview-Themes-Github/{theme_slug}/` holds the static GitHub Pages preview for that theme.
-- `docs/index.html` is the preview gallery that links all published previews.
-- `dist/zipped-themes/{theme_slug}.zip` holds packaged theme archives.
-- `reports/runs/{theme_slug}/` holds run logs, validation output, timing data, and other evidence.
-- `scripts/` holds the workflow, validation, preview, packaging, and test code.
-- `external-template-source/` is the active external template source used for the current Ollama-only workflow.
+- `AGENTS.md` holds the repository agent policy.
+- `prompts/pending/` holds creative briefs waiting to be generated.
+- `prompts/completed/` holds prior creative briefs retained for reference.
+- `wp-content/themes/000_nolan_young_theme_master_template_prompt_filler_template_1/` is the current checked-in starter theme source.
+- `wp-content/themes/NNN_nolan_young_theme_[description]/` holds prepared and generated theme source.
+- `wordpress-themplate-themes/` keeps the intentionally spelled template artifact area.
+- `dist/zipped-theme-templates/` holds template ZIPs.
+- `dist/zipped-themes/` holds generated theme ZIP packages.
+- `docs/Preview-Themes-Github/NNN_nolan_young_theme_[description]/` holds rendered static previews.
+- `docs/index.html` is the preview gallery.
+- `reports/runs/{theme_slug}/` holds run reports and validation evidence.
+- `scripts/` holds the npm command implementation.
 
-The folder name `wordpress-themplate-themes` is intentionally spelled that way.
+## Public Commands
 
-## Current Workflow
+Use npm scripts from the repository root:
 
-The current generation flow is:
+```sh
+npm run theme:run
+npm run theme:resume
+npm run theme:prepare
+npm run theme:validate
+npm run theme:build
+npm run theme:preview
+npm run theme:preview:index
+npm run theme:zip
+npm run theme:delete
+npm run theme:env
+npm run theme:model-check
+npm run test:scripts
+```
+
+## Run Examples
+
+Codex:
+
+```sh
+npm run theme:run -- --mode codex-only --prompt prompts/pending/000-testing.md
+```
+
+Ollama:
+
+```sh
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model llama3.1:8b
+```
+
+The runner prompts interactively for missing values when used from a TTY. Non-interactive runs must pass required options.
+
+## Deterministic Steps
+
+`theme:run` performs:
 
 ```text
 copy template
 -> run selected AI generation mode
--> build assets
+-> npm run build inside the copied theme
 -> source validate
 -> generate preview
+-> rebuild preview index
 -> package ZIP
 -> artifact validate
 -> write run report
 ```
 
-Generated themes are not patched in place to hide failures. If a run is bad, the bad artifacts should be removed and the pipeline or template should be improved.
-
-## Public Commands
-
-Use the npm script layer for all normal work:
-
-```sh
-npm run theme:run -- --mode <ollama-only|codex-only|hybrid> --prompt <prompt-file> --template <template-name> --template-source-path <path> --theme-slug <theme-slug> --ollama-model <model>
-npm run theme:resume -- --theme-slug <theme-slug>
-npm run theme:prepare -- --prompt <prompt-file> --template <template-name>
-npm run theme:validate -- --theme-slug <theme-slug>
-npm run theme:build -- --theme-slug <theme-slug>
-npm run theme:preview -- --theme-slug <theme-slug>
-npm run theme:preview:index
-npm run theme:zip -- --theme-slug <theme-slug>
-npm run theme:delete -- --theme-slug <theme-slug> --yes
-npm run theme:env
-npm run theme:model-check -- --provider <ollama|codex> --ollama-model <model>
-npm run test:scripts
-```
-
-## Workflow Modes
-
-- `ollama-only` runs the planned Ollama stages only.
-- `codex-only` runs one Codex generation pass.
-- `hybrid` runs an Ollama draft followed by one Codex finish pass.
-
-Ollama-only runs should stay within the repo policy limits for stage count and file ownership. The stage planner and validation code are the source of truth for those limits.
+`theme:resume` re-runs only the deterministic post-generation steps for an existing theme.
 
 ## Validation And Evidence
 
-Validation is observational.
+Validation is observational. Failed generated output is preserved as evidence. Do not patch a generated theme in place just to make checks pass. Improve the future prompt, template, validator, or deterministic workflow, then start a fresh run.
 
-- Source validation runs before preview generation.
-- Artifact validation runs after preview generation and packaging.
-- Run reports record timing, model selection, and per-step durations.
-- Failed candidates are evidence, not something to repair in place.
+Source validation runs before preview and ZIP creation. Artifact validation runs after preview and packaging.
 
 ## Preview Expectations
 
-The preview should reflect the generated theme source as rendered by the preview harness.
+Preview generation renders theme PHP templates through a lightweight read-only harness and writes static pages under `docs/Preview-Themes-Github/`.
 
 Required preview pages:
 
@@ -89,13 +112,3 @@ Required preview pages:
 - `contact_preview.html`
 - `policy_preview.html`
 - `single_services_preview.html`
-
-## Repo Maintenance Notes
-
-- Keep the top-level docs concrete and current.
-- Keep repo policy in `AGENTS.md`.
-- See `docs/REPO-STRUCTURE.md` for the directory and artifact map.
-- See `scripts/README.md` for the workflow and script-layer contract.
-- Keep workflow changes reusable and deterministic.
-- Keep generated themes, previews, ZIPs, and reports separated by path.
-- Update the repo map whenever top-level folders are added, removed, or repurposed.

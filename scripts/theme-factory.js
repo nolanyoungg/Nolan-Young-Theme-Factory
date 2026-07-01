@@ -560,7 +560,6 @@ function runCodexGeneration(themeDir, options, reportDir) {
     'exec',
     '--cd', themeDir,
     '--sandbox', 'workspace-write',
-    '--ask-for-approval', 'never',
     '--ephemeral'
   ];
   if (options.codexModel) {
@@ -579,6 +578,10 @@ function runCodexGeneration(themeDir, options, reportDir) {
     encoding: 'utf8',
     maxBuffer: 1024 * 1024 * 100
   });
+  const afterCodex = statusPaths();
+  assertOnlyAllowedStatusChanges(before, afterCodex, [
+    relative(themeDir)
+  ]);
   fs.writeFileSync(path.join(reportDir, 'codex.log'), [
     `$ ${(options.codexExecutable || 'codex')} ${command.join(' ')}`,
     '',
@@ -586,10 +589,6 @@ function runCodexGeneration(themeDir, options, reportDir) {
     result.stderr || ''
   ].join('\n'));
   assertStatus(result, 'codex generation');
-  assertOnlyAllowedStatusChanges(before, statusPaths(), [
-    relative(themeDir),
-    relative(reportDir)
-  ]);
 }
 
 function buildCodexPrompt(promptPath, themeSlug) {

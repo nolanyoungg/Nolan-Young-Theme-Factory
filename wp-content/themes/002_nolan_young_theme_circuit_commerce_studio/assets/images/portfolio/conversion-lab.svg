@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-label="original illustration for conversion testing and product analytics">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(287 42% 10%)"/>
+      <stop offset=".52" stop-color="hsl(325 72% 36%)"/>
+      <stop offset="1" stop-color="hsl(19 88% 58%)"/>
+    </linearGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0v56" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1400" height="900" rx="56" fill="url(#g)"/>
+  <rect width="1400" height="900" fill="url(#grid)" opacity=".55"/>
+  <path d="M180 610C320 450 422 690 558 492s252-78 356-230 194-22 318-96" fill="none" stroke="hsl(95 80% 62%)" stroke-width="30" stroke-linecap="round"/>
+  <g fill="rgba(255,255,255,.88)">
+    <rect x="164" y="160" width="340" height="186" rx="26"/>
+    <rect x="548" y="238" width="292" height="128" rx="24" opacity=".72"/>
+    <rect x="882" y="138" width="354" height="232" rx="30" opacity=".82"/>
+    <rect x="222" y="512" width="256" height="152" rx="24" opacity=".7"/>
+    <rect x="568" y="544" width="520" height="118" rx="26" opacity=".8"/>
+  </g>
+  <text x="168" y="758" fill="white" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800">original illustration for conversion testing and product analytics</text>
+</svg>

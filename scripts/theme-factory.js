@@ -5,6 +5,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const readline = require('node:readline/promises');
+const zlib = require('node:zlib');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -16,6 +17,7 @@ const PROMPTS_DIR = path.join(ROOT, 'prompts', 'pending');
 const DEFAULT_TEMPLATE_DIR = path.join(THEMES_DIR, '000_nolan_young_theme_master_template_prompt_filler_template_1');
 const MODE_VALUES = new Set(['codex-only', 'ollama-only']);
 const SLUG_RE = /^\d{3}_nolan_young_theme_[a-z0-9]+(?:_[a-z0-9]+)*$/;
+const SEEDED_ASSET_MANIFEST = path.join('assets', 'images', 'asset-manifest.json');
 
 const REQUIRED_THEME_FILES = [
   'style.css',
@@ -186,13 +188,14 @@ async function run(args) {
   });
 
   let prepared = false;
-  if (!themeExists(options.themeSlug)) {
+  if (options.force || !themeExists(options.themeSlug)) {
     prepareTheme(options);
     prepared = true;
   }
 
   const themeDir = getThemeDir(options.themeSlug);
   if (options.mode === 'codex-only') {
+    seedGeneratedAssets(themeDir, options);
     runCodexGeneration(themeDir, options, reportDir);
   } else {
     runOllamaGeneration(themeDir, options, reportDir);
@@ -554,8 +557,224 @@ function upsertCssHeader(content, field, value) {
   return content.replace(/^\/\*\s*\n/, `/*\n${field}: ${value}\n`);
 }
 
+function seedGeneratedAssets(themeDir, options) {
+  const themeSlug = path.basename(themeDir);
+  const brand = titleFromSlug(themeSlug).replace(/^\d{3}\s+Nolan Young Theme\s+/, '');
+  const assets = [
+    {
+      path: 'assets/images/hero/platform-command-center.png',
+      kind: 'generated-bitmap',
+      role: 'hero visual for a WordPress and Shopify delivery command center',
+      alt: `${brand} platform delivery command center interface`
+    },
+    {
+      path: 'assets/images/portfolio/commerce-migration-dashboard.png',
+      kind: 'generated-bitmap',
+      role: 'case-study visual for Shopify migration planning',
+      alt: `${brand} Shopify migration dashboard concept`
+    },
+    {
+      path: 'assets/images/portfolio/wordpress-performance-map.png',
+      kind: 'generated-bitmap',
+      role: 'case-study visual for WordPress performance engineering',
+      alt: `${brand} WordPress performance map concept`
+    },
+    {
+      path: 'assets/images/texture/interface-grid.png',
+      kind: 'generated-bitmap',
+      role: 'subtle interface-grid texture',
+      alt: ''
+    },
+    {
+      path: 'assets/images/hero/automation-architecture.svg',
+      kind: 'generated-svg',
+      role: 'original hero illustration for automation architecture',
+      alt: `${brand} automation architecture illustration`
+    },
+    {
+      path: 'assets/images/portfolio/conversion-lab.svg',
+      kind: 'generated-svg',
+      role: 'original illustration for conversion testing and product analytics',
+      alt: `${brand} conversion lab illustration`
+    },
+    {
+      path: 'assets/icons/platform-mark.svg',
+      kind: 'generated-svg',
+      role: 'original local brand/interface mark',
+      alt: `${brand} platform mark`
+    },
+    {
+      path: 'assets/icons/icon1.svg',
+      kind: 'generated-svg',
+      role: 'original local fallback icon matching this run brand',
+      alt: `${brand} fallback mark`
+    }
+  ];
+
+  const palette = paletteForSlug(themeSlug);
+  for (const asset of assets) {
+    const target = path.join(themeDir, asset.path);
+    ensureDir(path.dirname(target));
+    if (asset.path.endsWith('.png')) {
+      fs.writeFileSync(target, createPlaceholderPng(asset.role, palette));
+    } else {
+      fs.writeFileSync(target, createPlaceholderSvg(asset.role, palette));
+    }
+  }
+
+  const manifest = {
+    generatedAt: new Date().toISOString(),
+    themeSlug,
+    source: 'Deterministic local placeholder generation by the Nolan Young Theme Factory before Codex generation.',
+    license: 'Original generated placeholder assets for this local theme run; no third-party photo or logo provenance is claimed.',
+    usageRule: 'Codex may use, style, crop, and reference these files only within this prepared theme.',
+    assets
+  };
+  writeJson(path.join(themeDir, SEEDED_ASSET_MANIFEST), manifest);
+}
+
+function readSeededAssetInventory(themeDir) {
+  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
+  if (!fs.existsSync(manifestPath)) {
+    return '';
+  }
+  const manifest = readJson(manifestPath);
+  return [
+    `Manifest: ${SEEDED_ASSET_MANIFEST}`,
+    ...manifest.assets.map((asset) => `- ${asset.path} (${asset.kind}): ${asset.role}; alt="${asset.alt}"`)
+  ].join('\n');
+}
+
+function paletteForSlug(slug) {
+  const seed = [...slug].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const hue = seed % 360;
+  return {
+    dark: hsl(hue, 42, 10),
+    mid: hsl((hue + 38) % 360, 72, 36),
+    bright: hsl((hue + 92) % 360, 88, 58),
+    accent: hsl((hue + 168) % 360, 80, 62),
+    pale: hsl((hue + 210) % 360, 82, 86)
+  };
+}
+
+function hsl(h, s, l) {
+  return `hsl(${h} ${s}% ${l}%)`;
+}
+
+function createPlaceholderSvg(label, palette) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-label="${escapeHtml(label)}">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${palette.dark}"/>
+      <stop offset=".52" stop-color="${palette.mid}"/>
+      <stop offset="1" stop-color="${palette.bright}"/>
+    </linearGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0v56" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1400" height="900" rx="56" fill="url(#g)"/>
+  <rect width="1400" height="900" fill="url(#grid)" opacity=".55"/>
+  <path d="M180 610C320 450 422 690 558 492s252-78 356-230 194-22 318-96" fill="none" stroke="${palette.accent}" stroke-width="30" stroke-linecap="round"/>
+  <g fill="rgba(255,255,255,.88)">
+    <rect x="164" y="160" width="340" height="186" rx="26"/>
+    <rect x="548" y="238" width="292" height="128" rx="24" opacity=".72"/>
+    <rect x="882" y="138" width="354" height="232" rx="30" opacity=".82"/>
+    <rect x="222" y="512" width="256" height="152" rx="24" opacity=".7"/>
+    <rect x="568" y="544" width="520" height="118" rx="26" opacity=".8"/>
+  </g>
+  <text x="168" y="758" fill="white" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800">${escapeHtml(label)}</text>
+</svg>
+`;
+}
+
+function createPlaceholderPng(label, palette) {
+  const width = 960;
+  const height = 640;
+  const raw = Buffer.alloc((width * 4 + 1) * height);
+  const colors = [cssHslToRgb(palette.dark), cssHslToRgb(palette.mid), cssHslToRgb(palette.bright), cssHslToRgb(palette.accent)];
+  for (let y = 0; y < height; y += 1) {
+    const row = y * (width * 4 + 1);
+    raw[row] = 0;
+    for (let x = 0; x < width; x += 1) {
+      const t = x / width;
+      const u = y / height;
+      const wave = (Math.sin((x + y) / 42) + 1) / 2;
+      const c1 = mixRgb(colors[0], colors[1], t);
+      const c2 = mixRgb(colors[2], colors[3], u);
+      const rgb = mixRgb(c1, c2, Math.min(.9, Math.max(.1, wave * .7 + u * .2)));
+      const line = (x % 96 < 3 || y % 96 < 3) ? 32 : 0;
+      const offset = row + 1 + x * 4;
+      raw[offset] = Math.min(255, rgb[0] + line);
+      raw[offset + 1] = Math.min(255, rgb[1] + line);
+      raw[offset + 2] = Math.min(255, rgb[2] + line);
+      raw[offset + 3] = 255;
+    }
+  }
+  return encodePng(width, height, raw, label);
+}
+
+function cssHslToRgb(value) {
+  const match = value.match(/hsl\((\d+)\s+(\d+)%\s+(\d+)%\)/);
+  const h = Number(match[1]) / 360;
+  const s = Number(match[2]) / 100;
+  const l = Number(match[3]) / 100;
+  const hue = (p, q, t) => {
+    if (t < 0) t += 1;
+    if (t > 1) t -= 1;
+    if (t < 1 / 6) return p + (q - p) * 6 * t;
+    if (t < 1 / 2) return q;
+    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+    return p;
+  };
+  const q = l < .5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return [hue(p, q, h + 1 / 3), hue(p, q, h), hue(p, q, h - 1 / 3)].map((n) => Math.round(n * 255));
+}
+
+function mixRgb(a, b, t) {
+  return a.map((value, index) => Math.round(value + (b[index] - value) * t));
+}
+
+function encodePng(width, height, raw) {
+  const chunks = [];
+  const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
+  ihdr[8] = 8;
+  ihdr[9] = 6;
+  ihdr[10] = 0;
+  ihdr[11] = 0;
+  ihdr[12] = 0;
+  chunks.push(pngChunk('IHDR', ihdr));
+  chunks.push(pngChunk('IDAT', zlib.deflateSync(raw)));
+  chunks.push(pngChunk('IEND', Buffer.alloc(0)));
+  return Buffer.concat([signature, ...chunks]);
+}
+
+function pngChunk(type, data) {
+  const typeBuffer = Buffer.from(type);
+  const length = Buffer.alloc(4);
+  length.writeUInt32BE(data.length, 0);
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(Buffer.concat([typeBuffer, data])), 0);
+  return Buffer.concat([length, typeBuffer, data, crc]);
+}
+
+function crc32(buffer) {
+  let crc = 0xffffffff;
+  for (const byte of buffer) {
+    crc ^= byte;
+    for (let i = 0; i < 8; i += 1) {
+      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+    }
+  }
+  return (crc ^ 0xffffffff) >>> 0;
+}
+
 function runCodexGeneration(themeDir, options, reportDir) {
-  const prompt = buildCodexPrompt(options.promptPath, path.basename(themeDir));
+  const prompt = buildCodexPrompt(options.promptPath, path.basename(themeDir), themeDir);
   const command = [
     'exec',
     '--cd', themeDir,
@@ -591,8 +810,9 @@ function runCodexGeneration(themeDir, options, reportDir) {
   assertStatus(result, 'codex generation');
 }
 
-function buildCodexPrompt(promptPath, themeSlug) {
+function buildCodexPrompt(promptPath, themeSlug, themeDir) {
   const userPrompt = fs.readFileSync(promptPath, 'utf8');
+  const assetInventory = readSeededAssetInventory(themeDir);
   return [
     'You are generating exactly one WordPress theme pass for the Nolan Young Theme Factory.',
     '',
@@ -607,6 +827,17 @@ function buildCodexPrompt(promptPath, themeSlug) {
     '- Keep build commands in package.json and preserve npm run build.',
     '- Keep generated runtime assets local to this theme.',
     '- Preserve prepared Theme Name, Description, Text Domain, slug, and package name unless the prepared fields are missing.',
+    '- This must be a major visual transformation of the copied template, not a light content swap.',
+    '- Redesign the header architecture, homepage rhythm, page compositions, motion system, and visual language so the preview is clearly distinct from prior numbered themes.',
+    '- Use the seeded local image assets listed below in visible hero, service, work, process, and texture treatments.',
+    '- Add accessible animation and interaction through src/js/main.js and SCSS, respecting reduced-motion preferences.',
+    '- Replace every old copied-theme business name, including Northstar Websites, Nolan Designs, and any prior numbered-theme identity in PHP, markdown, SVG, alt text, form email subjects, and page copy.',
+    '- Do not leave old copied-theme content in unused template parts, fallback pages, docs, icon READMEs, forms, or accessibility docs.',
+    '- Before finishing, inspect the entire current theme for stale copied identity strings and remove them from every source/documentation file inside this theme.',
+    '- The generated theme will fail validation if any stale copied identity string remains.',
+    '',
+    'Seeded local asset inventory:',
+    assetInventory || '- No seeded asset inventory was found; create original local SVG visuals inside the allowed asset folders.',
     '',
     'User creative brief:',
     userPrompt
@@ -797,10 +1028,79 @@ function validateSource(themeSlug, options = {}) {
     }
   }
 
+  errors.push(...validateStaleBrandResidue(themeDir));
+  warnings.push(...validateDesignDifferentiation(themeDir));
+
   if (writeReport) {
     writeValidation(themeSlug, 'source', errors, warnings);
   }
   return { errors, warnings };
+}
+
+function validateStaleBrandResidue(themeDir) {
+  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
+  if (!fs.existsSync(manifestPath)) {
+    return [];
+  }
+  const forbidden = ['Northstar Websites', 'Nolan Designs', 'Northstar Codeworks'];
+  const errors = [];
+  for (const file of walk(themeDir)) {
+    const rel = relativeTo(themeDir, file);
+    if (rel.startsWith('node_modules/') || /\.(png|jpg|jpeg|webp|gif|zip|lock)$/i.test(rel)) {
+      continue;
+    }
+    const content = fs.readFileSync(file, 'utf8');
+    for (const phrase of forbidden) {
+      if (content.includes(phrase)) {
+        errors.push(`Stale copied-theme identity "${phrase}" found in ${rel}.`);
+      }
+    }
+  }
+  return errors;
+}
+
+function validateDesignDifferentiation(themeDir) {
+  const warnings = [];
+  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
+  if (!fs.existsSync(manifestPath)) {
+    return warnings;
+  }
+
+  const manifest = readJson(manifestPath);
+  const relevantFiles = walk(themeDir)
+    .filter((file) => /\.(php|scss|css|js|md)$/i.test(file))
+    .filter((file) => !relativeTo(themeDir, file).startsWith('node_modules/'));
+  const joined = relevantFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
+  const referenced = manifest.assets.filter((asset) => joined.includes(asset.path) || joined.includes(path.basename(asset.path)));
+  if (referenced.length < Math.min(4, manifest.assets.length)) {
+    warnings.push(`Seeded assets appear underused: ${referenced.length}/${manifest.assets.length} referenced in generated source.`);
+  }
+
+  const headerPath = path.join(themeDir, 'header.php');
+  const defaultHeaderPath = path.join(DEFAULT_TEMPLATE_DIR, 'header.php');
+  if (fs.existsSync(headerPath) && fs.existsSync(defaultHeaderPath)) {
+    const current = normalizeForComparison(fs.readFileSync(headerPath, 'utf8'));
+    const base = normalizeForComparison(fs.readFileSync(defaultHeaderPath, 'utf8'));
+    if (current === base) {
+      warnings.push('Header appears unchanged from the default template.');
+    }
+  }
+
+  const motionFiles = ['src/js/main.js', 'src/scss/main.scss', 'assets/js/bundle.js', 'assets/css/bundle.css']
+    .map((file) => path.join(themeDir, file))
+    .filter((file) => fs.existsSync(file))
+    .map((file) => fs.readFileSync(file, 'utf8'))
+    .join('\n');
+  if (!/(IntersectionObserver|requestAnimationFrame|data-animate|prefers-reduced-motion|@keyframes|transition|transform)/i.test(motionFiles)) {
+    warnings.push('No strong animation or interaction signal found in JS/CSS.');
+  }
+  return warnings;
+}
+
+function normalizeForComparison(value) {
+  return value.replace(/\s+/g, ' ')
+    .replace(/nolan[-_\s]+young[-_\s]+theme[-_\s]+[a-z0-9_-]+/gi, 'nolan-young-theme')
+    .trim();
 }
 
 function validateArtifacts(themeSlug) {

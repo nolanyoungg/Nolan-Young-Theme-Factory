@@ -1,0 +1,3 @@
+License
+
+This generated WordPress theme is provided for use within the Stackforge Commerce Labs workflow. Third-party assets, if added later, must retain their own documented license terms.

@@ -1,0 +1,1 @@
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'section policy-content' ); ?>><div class="container narrow entry-content"><?php while ( have_posts() ) : the_post(); the_content(); endwhile; ?></div></article>

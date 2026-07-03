@@ -1,0 +1,57 @@
+{
+  "generatedAt": "2026-07-03T01:57:16.053Z",
+  "themeSlug": "002_nolan_young_theme_circuit_commerce_studio",
+  "source": "Deterministic local placeholder generation by the Nolan Young Theme Factory before Codex generation.",
+  "license": "Original generated placeholder assets for this local theme run; no third-party photo or logo provenance is claimed.",
+  "usageRule": "Codex may use, style, crop, and reference these files only within this prepared theme.",
+  "assets": [
+    {
+      "path": "assets/images/hero/platform-command-center.png",
+      "kind": "generated-bitmap",
+      "role": "hero visual for a WordPress and Shopify delivery command center",
+      "alt": "Circuit Commerce Studio platform delivery command center interface"
+    },
+    {
+      "path": "assets/images/portfolio/commerce-migration-dashboard.png",
+      "kind": "generated-bitmap",
+      "role": "case-study visual for Shopify migration planning",
+      "alt": "Circuit Commerce Studio Shopify migration dashboard concept"
+    },
+    {
+      "path": "assets/images/portfolio/wordpress-performance-map.png",
+      "kind": "generated-bitmap",
+      "role": "case-study visual for WordPress performance engineering",
+      "alt": "Circuit Commerce Studio WordPress performance map concept"
+    },
+    {
+      "path": "assets/images/texture/interface-grid.png",
+      "kind": "generated-bitmap",
+      "role": "subtle interface-grid texture",
+      "alt": ""
+    },
+    {
+      "path": "assets/images/hero/automation-architecture.svg",
+      "kind": "generated-svg",
+      "role": "original hero illustration for automation architecture",
+      "alt": "Circuit Commerce Studio automation architecture illustration"
+    },
+    {
+      "path": "assets/images/portfolio/conversion-lab.svg",
+      "kind": "generated-svg",
+      "role": "original illustration for conversion testing and product analytics",
+      "alt": "Circuit Commerce Studio conversion lab illustration"
+    },
+    {
+      "path": "assets/icons/platform-mark.svg",
+      "kind": "generated-svg",
+      "role": "original local brand/interface mark",
+      "alt": "Circuit Commerce Studio platform mark"
+    },
+    {
+      "path": "assets/icons/icon1.svg",
+      "kind": "generated-svg",
+      "role": "original local fallback icon matching this run brand",
+      "alt": "Circuit Commerce Studio fallback mark"
+    }
+  ]
+}

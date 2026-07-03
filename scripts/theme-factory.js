@@ -5,7 +5,6 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const readline = require('node:readline/promises');
-const zlib = require('node:zlib');
 const { spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -562,50 +561,62 @@ function seedGeneratedAssets(themeDir, options) {
   const brand = titleFromSlug(themeSlug).replace(/^\d{3}\s+Nolan Young Theme\s+/, '');
   const assets = [
     {
-      path: 'assets/images/hero/platform-command-center.png',
-      kind: 'generated-bitmap',
-      role: 'hero visual for a WordPress and Shopify delivery command center',
-      alt: `${brand} platform delivery command center interface`
+      path: 'assets/images/hero/agency-workspace.jpg',
+      kind: 'stock-photo',
+      role: 'homepage hero photo for a premium WordPress and Shopify agency workspace',
+      alt: `${brand} strategy workspace with laptops and planning material`,
+      sourceUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1497366754035-f200968a6e72'
     },
     {
-      path: 'assets/images/portfolio/commerce-migration-dashboard.png',
-      kind: 'generated-bitmap',
-      role: 'case-study visual for Shopify migration planning',
-      alt: `${brand} Shopify migration dashboard concept`
+      path: 'assets/images/hero/developer-screens.jpg',
+      kind: 'stock-photo',
+      role: 'header dropdown and services photo for software development screens',
+      alt: `${brand} developer screens and code workspace`,
+      sourceUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1498050108023-c5249f4df085'
     },
     {
-      path: 'assets/images/portfolio/wordpress-performance-map.png',
-      kind: 'generated-bitmap',
-      role: 'case-study visual for WordPress performance engineering',
-      alt: `${brand} WordPress performance map concept`
+      path: 'assets/images/portfolio/ecommerce-planning.jpg',
+      kind: 'stock-photo',
+      role: 'Shopify and ecommerce planning case-study photo',
+      alt: `${brand} ecommerce planning and analytics workspace`,
+      sourceUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1460925895917-afdab827c52f'
     },
     {
-      path: 'assets/images/texture/interface-grid.png',
-      kind: 'generated-bitmap',
-      role: 'subtle interface-grid texture',
-      alt: ''
+      path: 'assets/images/portfolio/team-collaboration.jpg',
+      kind: 'stock-photo',
+      role: 'about and process photo for collaborative agency work',
+      alt: `${brand} team collaboration around a digital project`,
+      sourceUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1522071820081-009f0129c71c'
     },
     {
-      path: 'assets/images/hero/automation-architecture.svg',
-      kind: 'generated-svg',
-      role: 'original hero illustration for automation architecture',
-      alt: `${brand} automation architecture illustration`
+      path: 'assets/images/portfolio/performance-review.jpg',
+      kind: 'stock-photo',
+      role: 'WordPress performance and analytics case-study photo',
+      alt: `${brand} performance review and analytics dashboard`,
+      sourceUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1551288049-bebda4e38f71'
     },
     {
-      path: 'assets/images/portfolio/conversion-lab.svg',
-      kind: 'generated-svg',
-      role: 'original illustration for conversion testing and product analytics',
-      alt: `${brand} conversion lab illustration`
+      path: 'assets/images/texture/studio-detail.jpg',
+      kind: 'stock-photo',
+      role: 'subtle editorial texture photo for background crops',
+      alt: '',
+      sourceUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80',
+      pageUrl: 'https://unsplash.com/photos/photo-1516321318423-f06f85e504b3'
     },
     {
       path: 'assets/icons/platform-mark.svg',
-      kind: 'generated-svg',
+      kind: 'local-svg-icon',
       role: 'original local brand/interface mark',
       alt: `${brand} platform mark`
     },
     {
       path: 'assets/icons/icon1.svg',
-      kind: 'generated-svg',
+      kind: 'local-svg-icon',
       role: 'original local fallback icon matching this run brand',
       alt: `${brand} fallback mark`
     }
@@ -615,22 +626,37 @@ function seedGeneratedAssets(themeDir, options) {
   for (const asset of assets) {
     const target = path.join(themeDir, asset.path);
     ensureDir(path.dirname(target));
-    if (asset.path.endsWith('.png')) {
-      fs.writeFileSync(target, createPlaceholderPng(asset.role, palette));
+    if (asset.kind === 'stock-photo') {
+      downloadStockPhoto(asset.sourceUrl, target);
     } else {
-      fs.writeFileSync(target, createPlaceholderSvg(asset.role, palette));
+      fs.writeFileSync(target, createIconSvg(asset.role, palette));
     }
   }
 
   const manifest = {
     generatedAt: new Date().toISOString(),
     themeSlug,
-    source: 'Deterministic local placeholder generation by the Nolan Young Theme Factory before Codex generation.',
-    license: 'Original generated placeholder assets for this local theme run; no third-party photo or logo provenance is claimed.',
-    usageRule: 'Codex may use, style, crop, and reference these files only within this prepared theme.',
+    source: 'Separate pre-generation stock-photo seeding by the Nolan Young Theme Factory before Codex generation.',
+    license: 'Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.',
+    usageRule: 'Codex must use stock photos for photographic/hero/portfolio/menu imagery and SVG only for interface marks, icons, and small UI details.',
     assets
   };
   writeJson(path.join(themeDir, SEEDED_ASSET_MANIFEST), manifest);
+}
+
+function downloadStockPhoto(sourceUrl, target) {
+  if (fs.existsSync(target) && fs.statSync(target).size > 1024) {
+    return;
+  }
+  const result = spawnSync('curl', ['-L', '--silent', '--show-error', '--fail', sourceUrl, '-o', target], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 20
+  });
+  assertStatus(result, `download stock photo ${sourceUrl}`);
+  if (!fs.existsSync(target) || fs.statSync(target).size < 1024) {
+    throw new Error(`Downloaded stock photo is unexpectedly small: ${relative(target)}`);
+  }
 }
 
 function readSeededAssetInventory(themeDir) {
@@ -661,116 +687,21 @@ function hsl(h, s, l) {
   return `hsl(${h} ${s}% ${l}%)`;
 }
 
-function createPlaceholderSvg(label, palette) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900" role="img" aria-label="${escapeHtml(label)}">
+function createIconSvg(label, palette) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="${escapeHtml(label)}">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${palette.dark}"/>
       <stop offset=".52" stop-color="${palette.mid}"/>
       <stop offset="1" stop-color="${palette.bright}"/>
     </linearGradient>
-    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
-      <path d="M56 0H0v56" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1"/>
-    </pattern>
   </defs>
-  <rect width="1400" height="900" rx="56" fill="url(#g)"/>
-  <rect width="1400" height="900" fill="url(#grid)" opacity=".55"/>
-  <path d="M180 610C320 450 422 690 558 492s252-78 356-230 194-22 318-96" fill="none" stroke="${palette.accent}" stroke-width="30" stroke-linecap="round"/>
-  <g fill="rgba(255,255,255,.88)">
-    <rect x="164" y="160" width="340" height="186" rx="26"/>
-    <rect x="548" y="238" width="292" height="128" rx="24" opacity=".72"/>
-    <rect x="882" y="138" width="354" height="232" rx="30" opacity=".82"/>
-    <rect x="222" y="512" width="256" height="152" rx="24" opacity=".7"/>
-    <rect x="568" y="544" width="520" height="118" rx="26" opacity=".8"/>
-  </g>
-  <text x="168" y="758" fill="white" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="800">${escapeHtml(label)}</text>
+  <rect width="96" height="96" rx="24" fill="url(#g)"/>
+  <path d="M24 56 42 28l12 19 9-13 13 22" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="30" r="7" fill="${palette.accent}"/>
+  <path d="M21 70h54" stroke="rgba(255,255,255,.72)" stroke-width="6" stroke-linecap="round"/>
 </svg>
 `;
-}
-
-function createPlaceholderPng(label, palette) {
-  const width = 960;
-  const height = 640;
-  const raw = Buffer.alloc((width * 4 + 1) * height);
-  const colors = [cssHslToRgb(palette.dark), cssHslToRgb(palette.mid), cssHslToRgb(palette.bright), cssHslToRgb(palette.accent)];
-  for (let y = 0; y < height; y += 1) {
-    const row = y * (width * 4 + 1);
-    raw[row] = 0;
-    for (let x = 0; x < width; x += 1) {
-      const t = x / width;
-      const u = y / height;
-      const wave = (Math.sin((x + y) / 42) + 1) / 2;
-      const c1 = mixRgb(colors[0], colors[1], t);
-      const c2 = mixRgb(colors[2], colors[3], u);
-      const rgb = mixRgb(c1, c2, Math.min(.9, Math.max(.1, wave * .7 + u * .2)));
-      const line = (x % 96 < 3 || y % 96 < 3) ? 32 : 0;
-      const offset = row + 1 + x * 4;
-      raw[offset] = Math.min(255, rgb[0] + line);
-      raw[offset + 1] = Math.min(255, rgb[1] + line);
-      raw[offset + 2] = Math.min(255, rgb[2] + line);
-      raw[offset + 3] = 255;
-    }
-  }
-  return encodePng(width, height, raw, label);
-}
-
-function cssHslToRgb(value) {
-  const match = value.match(/hsl\((\d+)\s+(\d+)%\s+(\d+)%\)/);
-  const h = Number(match[1]) / 360;
-  const s = Number(match[2]) / 100;
-  const l = Number(match[3]) / 100;
-  const hue = (p, q, t) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-  const q = l < .5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
-  return [hue(p, q, h + 1 / 3), hue(p, q, h), hue(p, q, h - 1 / 3)].map((n) => Math.round(n * 255));
-}
-
-function mixRgb(a, b, t) {
-  return a.map((value, index) => Math.round(value + (b[index] - value) * t));
-}
-
-function encodePng(width, height, raw) {
-  const chunks = [];
-  const signature = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(width, 0);
-  ihdr.writeUInt32BE(height, 4);
-  ihdr[8] = 8;
-  ihdr[9] = 6;
-  ihdr[10] = 0;
-  ihdr[11] = 0;
-  ihdr[12] = 0;
-  chunks.push(pngChunk('IHDR', ihdr));
-  chunks.push(pngChunk('IDAT', zlib.deflateSync(raw)));
-  chunks.push(pngChunk('IEND', Buffer.alloc(0)));
-  return Buffer.concat([signature, ...chunks]);
-}
-
-function pngChunk(type, data) {
-  const typeBuffer = Buffer.from(type);
-  const length = Buffer.alloc(4);
-  length.writeUInt32BE(data.length, 0);
-  const crc = Buffer.alloc(4);
-  crc.writeUInt32BE(crc32(Buffer.concat([typeBuffer, data])), 0);
-  return Buffer.concat([length, typeBuffer, data, crc]);
-}
-
-function crc32(buffer) {
-  let crc = 0xffffffff;
-  for (const byte of buffer) {
-    crc ^= byte;
-    for (let i = 0; i < 8; i += 1) {
-      crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
-    }
-  }
-  return (crc ^ 0xffffffff) >>> 0;
 }
 
 function runCodexGeneration(themeDir, options, reportDir) {
@@ -829,15 +760,21 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- Preserve prepared Theme Name, Description, Text Domain, slug, and package name unless the prepared fields are missing.',
     '- This must be a major visual transformation of the copied template, not a light content swap.',
     '- Redesign the header architecture, homepage rhythm, page compositions, motion system, and visual language so the preview is clearly distinct from prior numbered themes.',
-    '- Use the seeded local image assets listed below in visible hero, service, work, process, and texture treatments.',
+    '- Treat the homepage as a complete design pass: every homepage template part must be edited, reordered or redesigned so the sections flow as one polished agency website.',
+    '- The homepage first viewport must look professionally composed at desktop and mobile widths: no cropped hero text, no oversized headline that pushes the primary image or calls to action out of view, and no large empty dead zones.',
+    '- Keep hero display type controlled and readable. Do not use extreme viewport-scaled headline sizing; the full H1, supporting copy, CTAs, and a meaningful stock-photo crop should fit coherently in the opening viewport.',
+    '- Fully personalize and redesign the footer; do not leave generic copied footer widgets, newsletter copy, service links, legal rows, or brand paragraphs.',
+    '- Use the seeded stock photos listed below for visible hero, service, work, process, about, and header-dropdown imagery. These are real stock photos, not filler generated graphics.',
+    '- Use SVG only for interface marks, hamburger/menu icons, small UI icons, decorative marks, and lightweight diagrams; do not use SVG as the primary hero/portfolio placeholder imagery.',
+    '- Make header dropdown panel content, right-side dropdown copy, dropdown images, and mobile drawer content match the business and services described in the user prompt.',
     '- Add accessible animation and interaction through src/js/main.js and SCSS, respecting reduced-motion preferences.',
     '- Replace every old copied-theme business name, including Northstar Websites, Nolan Designs, and any prior numbered-theme identity in PHP, markdown, SVG, alt text, form email subjects, and page copy.',
     '- Do not leave old copied-theme content in unused template parts, fallback pages, docs, icon READMEs, forms, or accessibility docs.',
     '- Before finishing, inspect the entire current theme for stale copied identity strings and remove them from every source/documentation file inside this theme.',
     '- The generated theme will fail validation if any stale copied identity string remains.',
     '',
-    'Seeded local asset inventory:',
-    assetInventory || '- No seeded asset inventory was found; create original local SVG visuals inside the allowed asset folders.',
+    'Seeded local stock-photo and icon inventory:',
+    assetInventory || '- No seeded asset inventory was found; create original local SVG icons only and avoid fake photo provenance.',
     '',
     'User creative brief:',
     userPrompt
@@ -1029,6 +966,7 @@ function validateSource(themeSlug, options = {}) {
   }
 
   errors.push(...validateStaleBrandResidue(themeDir));
+  errors.push(...validateSeededAssetContract(themeDir));
   warnings.push(...validateDesignDifferentiation(themeDir));
 
   if (writeReport) {
@@ -1095,6 +1033,39 @@ function validateDesignDifferentiation(themeDir) {
     warnings.push('No strong animation or interaction signal found in JS/CSS.');
   }
   return warnings;
+}
+
+function validateSeededAssetContract(themeDir) {
+  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
+  if (!fs.existsSync(manifestPath)) {
+    return [];
+  }
+  const manifest = readJson(manifestPath);
+  const errors = [];
+  const stockAssets = manifest.assets.filter((asset) => asset.kind === 'stock-photo');
+  const generatedBitmaps = manifest.assets.filter((asset) => /generated-bitmap|placeholder/i.test(asset.kind || asset.role || ''));
+  if (generatedBitmaps.length) {
+    errors.push(`Generated bitmap placeholders are not allowed for photo roles: ${generatedBitmaps.map((asset) => asset.path).join(', ')}`);
+  }
+  for (const asset of stockAssets) {
+    const file = path.join(themeDir, asset.path);
+    if (!fs.existsSync(file) || fs.statSync(file).size < 1024) {
+      errors.push(`Missing or invalid seeded stock photo: ${asset.path}`);
+    }
+    if (!asset.sourceUrl || !asset.pageUrl || !/Unsplash/i.test(manifest.license || '')) {
+      errors.push(`Seeded stock photo lacks Unsplash provenance: ${asset.path}`);
+    }
+  }
+  const relevantText = walk(themeDir)
+    .filter((file) => /\.(php|scss|css|js|md|json)$/i.test(file))
+    .filter((file) => !relativeTo(themeDir, file).startsWith('node_modules/'))
+    .map((file) => fs.readFileSync(file, 'utf8'))
+    .join('\n');
+  const referencedStock = stockAssets.filter((asset) => relevantText.includes(asset.path) || relevantText.includes(path.basename(asset.path)));
+  if (stockAssets.length && referencedStock.length < Math.min(4, stockAssets.length)) {
+    errors.push(`Seeded stock photos are underused: ${referencedStock.length}/${stockAssets.length} referenced in generated source.`);
+  }
+  return errors;
 }
 
 function normalizeForComparison(value) {

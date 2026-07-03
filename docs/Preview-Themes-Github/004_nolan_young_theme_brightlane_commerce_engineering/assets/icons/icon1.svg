@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Brightlane Commerce Engineering route cursor mark">
+  <rect width="96" height="96" rx="20" fill="#101827"/>
+  <path d="M22 66c14 0 18-12 26-12s11 12 26 12" fill="none" stroke="#14b8a6" stroke-width="7" stroke-linecap="round"/>
+  <path d="M22 48c15 0 19-16 29-16 7 0 11 7 16 11" fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round"/>
+  <path d="m64 31 12 12-12 12" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31 25v46" stroke="#f97316" stroke-width="5" stroke-linecap="round"/>
+</svg>

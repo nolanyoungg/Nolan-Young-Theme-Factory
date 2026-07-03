@@ -1,0 +1,6 @@
+<section class="section proof-section">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow"><?php esc_html_e( 'Proof without invented testimonials', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></p><h2><?php esc_html_e( 'Credibility comes from process, structure, and visible quality.', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></h2></div>
+		<div class="proof-grid"><div><strong><?php esc_html_e( 'Accessible', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></strong><p><?php esc_html_e( 'Keyboard states, semantic sections, and reduced-motion handling are built into the theme.', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></p></div><div><strong><?php esc_html_e( 'Maintainable', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></strong><p><?php esc_html_e( 'Template parts, SCSS source files, and local assets keep the site easier to inspect.', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></p></div><div><strong><?php esc_html_e( 'Portable', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></strong><p><?php esc_html_e( 'No runtime CDN assets or machine-specific paths are required for the public theme.', '004-nolan-young-theme-brightlane-commerce-engineering' ); ?></p></div></div>
+	</div>
+</section>

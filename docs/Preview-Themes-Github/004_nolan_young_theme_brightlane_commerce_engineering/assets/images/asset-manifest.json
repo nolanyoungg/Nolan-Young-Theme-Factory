@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-07-03T21:18:52.068Z",
+  "themeSlug": "004_nolan_young_theme_brightlane_commerce_engineering",
+  "source": "Separate pre-generation stock-photo seeding by the Nolan Young Theme Factory before Codex generation.",
+  "license": "Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.",
+  "usageRule": "Codex must use stock photos for photographic/hero/portfolio/menu imagery and SVG only for interface marks, icons, and small UI details.",
+  "assets": [
+    {
+      "path": "assets/images/hero/agency-workspace.jpg",
+      "kind": "stock-photo",
+      "role": "homepage hero photo for a premium WordPress and Shopify agency workspace",
+      "alt": "Brightlane Commerce Engineering strategy workspace with laptops and planning material",
+      "sourceUrl": "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1497366754035-f200968a6e72"
+    },
+    {
+      "path": "assets/images/hero/developer-screens.jpg",
+      "kind": "stock-photo",
+      "role": "header dropdown and services photo for software development screens",
+      "alt": "Brightlane Commerce Engineering developer screens and code workspace",
+      "sourceUrl": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1498050108023-c5249f4df085"
+    },
+    {
+      "path": "assets/images/portfolio/ecommerce-planning.jpg",
+      "kind": "stock-photo",
+      "role": "Shopify and ecommerce planning case-study photo",
+      "alt": "Brightlane Commerce Engineering ecommerce planning and analytics workspace",
+      "sourceUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1460925895917-afdab827c52f"
+    },
+    {
+      "path": "assets/images/portfolio/team-collaboration.jpg",
+      "kind": "stock-photo",
+      "role": "about and process photo for collaborative agency work",
+      "alt": "Brightlane Commerce Engineering team collaboration around a digital project",
+      "sourceUrl": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1522071820081-009f0129c71c"
+    },
+    {
+      "path": "assets/images/portfolio/performance-review.jpg",
+      "kind": "stock-photo",
+      "role": "WordPress performance and analytics case-study photo",
+      "alt": "Brightlane Commerce Engineering performance review and analytics dashboard",
+      "sourceUrl": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1551288049-bebda4e38f71"
+    },
+    {
+      "path": "assets/images/texture/studio-detail.jpg",
+      "kind": "stock-photo",
+      "role": "subtle editorial texture photo for background crops",
+      "alt": "",
+      "sourceUrl": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80",
+      "pageUrl": "https://unsplash.com/photos/photo-1516321318423-f06f85e504b3"
+    },
+    {
+      "path": "assets/icons/platform-mark.svg",
+      "kind": "local-svg-icon",
+      "role": "original local brand/interface mark",
+      "alt": "Brightlane Commerce Engineering platform mark"
+    },
+    {
+      "path": "assets/icons/icon1.svg",
+      "kind": "local-svg-icon",
+      "role": "original local fallback icon matching this run brand",
+      "alt": "Brightlane Commerce Engineering fallback mark"
+    }
+  ]
+}

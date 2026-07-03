@@ -1,0 +1,56 @@
+body { font-size: 16px; line-height: 1.65; }
+h1, h2, h3, h4 { line-height: 1.08; margin: 0 0 1rem; letter-spacing: 0; }
+h1 { font-size: clamp(2.15rem, 4.8vw, 4.65rem); max-width: 980px; }
+h2 { font-size: clamp(2rem, 4vw, 3.65rem); }
+h3 { font-size: clamp(1.25rem, 2vw, 1.65rem); }
+p { margin: 0 0 1rem; color: var(--color-muted); }
+.eyebrow { color: var(--color-primary); font-size: .78rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.section-dark .eyebrow, .site-footer .eyebrow { color: #93c5fd; }
+.section-dark, .section-dark p, .section-dark a { color: #fff; }
+body {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 .75rem;
+  color: inherit;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+h1 {
+  font-size: clamp(2.15rem, 4.8vw, 4.65rem);
+  max-width: 980px;
+}
+
+h2 {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+}
+
+p {
+  margin: 0 0 1rem;
+  color: var(--color-muted);
+}
+
+ul,
+ol {
+  padding-left: 1.2rem;
+}
+
+.site-main a:not(.btn):focus-visible,
+.site-footer a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}

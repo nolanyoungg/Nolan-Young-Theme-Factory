@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "evergreen",
+          "color": "#2f6b3f",
+          "name": "Evergreen"
+        },
+        {
+          "slug": "deep-evergreen",
+          "color": "#14251b",
+          "name": "Deep Evergreen"
+        },
+        {
+          "slug": "moss",
+          "color": "#6f8f3d",
+          "name": "Moss"
+        },
+        {
+          "slug": "seasonal-gold",
+          "color": "#d99a2b",
+          "name": "Seasonal Gold"
+        },
+        {
+          "slug": "warm-surface",
+          "color": "#f5f1e8",
+          "name": "Warm Surface"
+        },
+        {
+          "slug": "soft-outdoor",
+          "color": "#eef6e8",
+          "name": "Soft Outdoor"
+        },
+        {
+          "slug": "yard-text",
+          "color": "#172119",
+          "name": "Yard Text"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1180px"
+    }
+  }
+}

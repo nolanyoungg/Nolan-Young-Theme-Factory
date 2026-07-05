@@ -1,0 +1,69 @@
+{
+  "generatedAt": "2026-07-05T02:49:45.563Z",
+  "themeSlug": "005_nolan_young_theme_evergreen_yardworks",
+  "source": "Separate pre-generation stock-photo seeding by the Nolan Young Theme Factory before Codex generation.",
+  "license": "Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.",
+  "usageRule": "Codex must use stock photos for photographic/hero/portfolio/menu imagery and SVG only for interface marks, icons, and small UI details.",
+  "assets": [
+    {
+      "path": "assets/images/hero/curb-appeal-lawn.jpg",
+      "kind": "stock-photo",
+      "role": "homepage hero photo for a professionally maintained residential lawn and landscape",
+      "alt": "Evergreen Yardworks freshly maintained residential lawn and planting beds",
+      "sourceUrl": "https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=1800&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1558904541-efa843a96f01"
+    },
+    {
+      "path": "assets/images/hero/garden-crew-hands.jpg",
+      "kind": "stock-photo",
+      "role": "header dropdown and process photo for hands-on planting and garden care",
+      "alt": "Evergreen Yardworks landscape crew hands planting and improving garden beds",
+      "sourceUrl": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1416879595882-3373a0480b5b"
+    },
+    {
+      "path": "assets/images/portfolio/landscape-install.jpg",
+      "kind": "stock-photo",
+      "role": "portfolio photo for landscape installation, lawn renovation, and outdoor living upgrades",
+      "alt": "Evergreen Yardworks landscape installation with healthy planting and outdoor detail",
+      "sourceUrl": "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1625246333195-78d9c38ad449"
+    },
+    {
+      "path": "assets/images/portfolio/lawn-maintenance.jpg",
+      "kind": "stock-photo",
+      "role": "services photo for recurring mowing, edging, trimming, and seasonal lawn maintenance",
+      "alt": "Evergreen Yardworks lawn maintenance crew work and fresh turf detail",
+      "sourceUrl": "https://images.unsplash.com/photo-1598902108854-10e335adac99?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1598902108854-10e335adac99"
+    },
+    {
+      "path": "assets/images/portfolio/seasonal-planting.jpg",
+      "kind": "stock-photo",
+      "role": "seasonal color, garden bed refresh, mulching, pruning, and planting services photo",
+      "alt": "Evergreen Yardworks seasonal planting and garden bed care",
+      "sourceUrl": "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/photo-1591857177580-dc82b9ac4e1e"
+    },
+    {
+      "path": "assets/images/texture/meadow-texture.jpg",
+      "kind": "stock-photo",
+      "role": "subtle grass and meadow texture photo for background crops and service bands",
+      "alt": "",
+      "sourceUrl": "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80",
+      "pageUrl": "https://unsplash.com/photos/photo-1500382017468-9049fed747ef"
+    },
+    {
+      "path": "assets/icons/platform-mark.svg",
+      "kind": "local-svg-icon",
+      "role": "original local leaf, path, and service-route interface mark",
+      "alt": "Evergreen Yardworks leaf and landscape route mark"
+    },
+    {
+      "path": "assets/icons/icon1.svg",
+      "kind": "local-svg-icon",
+      "role": "original local fallback icon matching this landscaping brand",
+      "alt": "Evergreen Yardworks fallback service mark"
+    }
+  ]
+}

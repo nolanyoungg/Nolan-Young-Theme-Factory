@@ -559,7 +559,147 @@ function upsertCssHeader(content, field, value) {
 function seedGeneratedAssets(themeDir, options) {
   const themeSlug = path.basename(themeDir);
   const brand = titleFromSlug(themeSlug).replace(/^\d{3}\s+Nolan Young Theme\s+/, '');
-  const assets = [
+  const assets = seededAssetCatalog(themeSlug, brand);
+  const isLandscaping = isLandscapingTheme(themeSlug);
+
+  const palette = isLandscaping ? landscapingPalette() : paletteForSlug(themeSlug);
+  if (isLandscaping) {
+    pruneCopiedIllustrationSvgs(themeDir);
+    seedLandscapingThemeJson(themeDir);
+  }
+  for (const asset of assets) {
+    const target = path.join(themeDir, asset.path);
+    ensureDir(path.dirname(target));
+    if (asset.kind === 'stock-photo') {
+      downloadStockPhoto(asset.sourceUrl, target);
+    } else {
+      fs.writeFileSync(target, isLandscaping ? createLandscapingIconSvg(asset.role, palette) : createIconSvg(asset.role, palette));
+    }
+  }
+
+  const manifest = {
+    generatedAt: new Date().toISOString(),
+    themeSlug,
+    source: 'Separate pre-generation stock-photo seeding by the Nolan Young Theme Factory before Codex generation.',
+    license: 'Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.',
+    usageRule: 'Codex must use stock photos for photographic/hero/portfolio/menu imagery and SVG only for interface marks, icons, and small UI details.',
+    assets
+  };
+  writeJson(path.join(themeDir, SEEDED_ASSET_MANIFEST), manifest);
+}
+
+function pruneCopiedIllustrationSvgs(themeDir) {
+  for (const relDir of ['assets/images/hero', 'assets/images/portfolio', 'assets/images/texture']) {
+    const dir = path.join(themeDir, relDir);
+    if (!fs.existsSync(dir)) {
+      continue;
+    }
+    for (const entry of fs.readdirSync(dir)) {
+      if (entry.endsWith('.svg')) {
+        fs.rmSync(path.join(dir, entry), { force: true });
+      }
+    }
+  }
+}
+
+function seedLandscapingThemeJson(themeDir) {
+  const themeJsonPath = path.join(themeDir, 'theme.json');
+  if (!fs.existsSync(themeJsonPath)) {
+    return;
+  }
+  const themeJson = readJson(themeJsonPath);
+  themeJson.settings = themeJson.settings || {};
+  themeJson.settings.color = themeJson.settings.color || {};
+  themeJson.settings.color.palette = [
+    { slug: 'evergreen', color: '#2f6b3f', name: 'Evergreen' },
+    { slug: 'deep-evergreen', color: '#14251b', name: 'Deep Evergreen' },
+    { slug: 'moss', color: '#6f8f3d', name: 'Moss' },
+    { slug: 'seasonal-gold', color: '#d99a2b', name: 'Seasonal Gold' },
+    { slug: 'warm-surface', color: '#f5f1e8', name: 'Warm Surface' },
+    { slug: 'soft-outdoor', color: '#eef6e8', name: 'Soft Outdoor' },
+    { slug: 'yard-text', color: '#172119', name: 'Yard Text' }
+  ];
+  writeJson(themeJsonPath, themeJson);
+}
+
+function seededAssetCatalog(themeSlug, brand) {
+  if (isLandscapingTheme(themeSlug)) {
+    return landscapingStockAssets(brand);
+  }
+  return softwareAgencyStockAssets(brand);
+}
+
+function isLandscapingTheme(themeSlug) {
+  return /(lawn|landscap|garden|yard|grounds|turf)/i.test(themeSlug);
+}
+
+function landscapingStockAssets(brand) {
+  return [
+    {
+      path: 'assets/images/hero/curb-appeal-lawn.jpg',
+      kind: 'stock-photo',
+      role: 'homepage hero photo for a professionally maintained residential lawn and landscape',
+      alt: `${brand} freshly maintained residential lawn and planting beds`,
+      sourceUrl: 'https://images.unsplash.com/photo-1558904541-efa843a96f01?auto=format&fit=crop&w=1800&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1558904541-efa843a96f01'
+    },
+    {
+      path: 'assets/images/hero/garden-crew-hands.jpg',
+      kind: 'stock-photo',
+      role: 'header dropdown and process photo for hands-on planting and garden care',
+      alt: `${brand} landscape crew hands planting and improving garden beds`,
+      sourceUrl: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1416879595882-3373a0480b5b'
+    },
+    {
+      path: 'assets/images/portfolio/landscape-install.jpg',
+      kind: 'stock-photo',
+      role: 'portfolio photo for landscape installation, lawn renovation, and outdoor living upgrades',
+      alt: `${brand} landscape installation with healthy planting and outdoor detail`,
+      sourceUrl: 'https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1625246333195-78d9c38ad449'
+    },
+    {
+      path: 'assets/images/portfolio/lawn-maintenance.jpg',
+      kind: 'stock-photo',
+      role: 'services photo for recurring mowing, edging, trimming, and seasonal lawn maintenance',
+      alt: `${brand} lawn maintenance crew work and fresh turf detail`,
+      sourceUrl: 'https://images.unsplash.com/photo-1598902108854-10e335adac99?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1598902108854-10e335adac99'
+    },
+    {
+      path: 'assets/images/portfolio/seasonal-planting.jpg',
+      kind: 'stock-photo',
+      role: 'seasonal color, garden bed refresh, mulching, pruning, and planting services photo',
+      alt: `${brand} seasonal planting and garden bed care`,
+      sourceUrl: 'https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?auto=format&fit=crop&w=1600&q=82',
+      pageUrl: 'https://unsplash.com/photos/photo-1591857177580-dc82b9ac4e1e'
+    },
+    {
+      path: 'assets/images/texture/meadow-texture.jpg',
+      kind: 'stock-photo',
+      role: 'subtle grass and meadow texture photo for background crops and service bands',
+      alt: '',
+      sourceUrl: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80',
+      pageUrl: 'https://unsplash.com/photos/photo-1500382017468-9049fed747ef'
+    },
+    {
+      path: 'assets/icons/platform-mark.svg',
+      kind: 'local-svg-icon',
+      role: 'original local leaf, path, and service-route interface mark',
+      alt: `${brand} leaf and landscape route mark`
+    },
+    {
+      path: 'assets/icons/icon1.svg',
+      kind: 'local-svg-icon',
+      role: 'original local fallback icon matching this landscaping brand',
+      alt: `${brand} fallback service mark`
+    }
+  ];
+}
+
+function softwareAgencyStockAssets(brand) {
+  return [
     {
       path: 'assets/images/hero/agency-workspace.jpg',
       kind: 'stock-photo',
@@ -621,27 +761,6 @@ function seedGeneratedAssets(themeDir, options) {
       alt: `${brand} fallback mark`
     }
   ];
-
-  const palette = paletteForSlug(themeSlug);
-  for (const asset of assets) {
-    const target = path.join(themeDir, asset.path);
-    ensureDir(path.dirname(target));
-    if (asset.kind === 'stock-photo') {
-      downloadStockPhoto(asset.sourceUrl, target);
-    } else {
-      fs.writeFileSync(target, createIconSvg(asset.role, palette));
-    }
-  }
-
-  const manifest = {
-    generatedAt: new Date().toISOString(),
-    themeSlug,
-    source: 'Separate pre-generation stock-photo seeding by the Nolan Young Theme Factory before Codex generation.',
-    license: 'Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.',
-    usageRule: 'Codex must use stock photos for photographic/hero/portfolio/menu imagery and SVG only for interface marks, icons, and small UI details.',
-    assets
-  };
-  writeJson(path.join(themeDir, SEEDED_ASSET_MANIFEST), manifest);
 }
 
 function downloadStockPhoto(sourceUrl, target) {
@@ -683,6 +802,16 @@ function paletteForSlug(slug) {
   };
 }
 
+function landscapingPalette() {
+  return {
+    dark: '#14251b',
+    mid: '#2f6b3f',
+    bright: '#6f8f3d',
+    accent: '#d99a2b',
+    pale: '#eef6e8'
+  };
+}
+
 function hsl(h, s, l) {
   return `hsl(${h} ${s}% ${l}%)`;
 }
@@ -700,6 +829,18 @@ function createIconSvg(label, palette) {
   <path d="M24 56 42 28l12 19 9-13 13 22" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="32" cy="30" r="7" fill="${palette.accent}"/>
   <path d="M21 70h54" stroke="rgba(255,255,255,.72)" stroke-width="6" stroke-linecap="round"/>
+</svg>
+`;
+}
+
+function createLandscapingIconSvg(label, palette) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="${escapeHtml(label)}">
+  <rect width="96" height="96" rx="22" fill="${palette.dark}"/>
+  <path d="M23 68c20-1 35-8 49-28" fill="none" stroke="${palette.pale}" stroke-width="7" stroke-linecap="round"/>
+  <path d="M28 58c-1-20 13-34 34-34 3 20-8 37-29 40-3 0-5-2-5-6Z" fill="${palette.bright}"/>
+  <path d="M33 57c8-10 18-18 29-25" fill="none" stroke="${palette.dark}" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+  <path d="M21 74h54" stroke="${palette.accent}" stroke-width="6" stroke-linecap="round"/>
+  <path d="M25 42h13M21 51h14M58 70h17" stroke="${palette.pale}" stroke-width="5" stroke-linecap="round" opacity=".82"/>
 </svg>
 `;
 }
@@ -763,7 +904,10 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- Treat the homepage as a complete design pass: every homepage template part must be edited, reordered or redesigned so the sections flow as one polished agency website.',
     '- The homepage first viewport must look professionally composed at desktop and mobile widths: no cropped hero text, no oversized headline that pushes the primary image or calls to action out of view, and no large empty dead zones.',
     '- Keep hero display type controlled and readable. Do not use extreme viewport-scaled headline sizing; the full H1, supporting copy, CTAs, and a meaningful stock-photo crop should fit coherently in the opening viewport.',
+    '- At 390px mobile width there must be no horizontal overflow: the header status strip, logo row, H1, supporting copy, CTAs, chips, notes, and hero image must fit within the viewport. Use constrained mobile font clamps, max-width: 100%, min-width: 0, wrapping, stacked buttons, and overflow-wrap where needed.',
+    '- For mobile hero CSS, explicitly override desktop sizing. Do not leave h1 max-width, vw font sizes, flex rows, or white-space behavior that can push text or controls off the right edge.',
     '- Fully personalize and redesign the footer; do not leave generic copied footer widgets, newsletter copy, service links, legal rows, or brand paragraphs.',
+    '- At 390px mobile width the footer must also fit inside the viewport. Stack footer widgets to one column, remove mobile grid-column spans, wrap email/contact links, and avoid nowrap or min-width values that make footer nav/contact columns overflow.',
     '- Use the seeded stock photos listed below for visible hero, service, work, process, about, and header-dropdown imagery. These are real stock photos, not filler generated graphics.',
     '- Use SVG only for interface marks, hamburger/menu icons, small UI icons, decorative marks, and lightweight diagrams; do not use SVG as the primary hero/portfolio placeholder imagery.',
     '- Make header dropdown panel content, right-side dropdown copy, dropdown images, and mobile drawer content match the business and services described in the user prompt.',
@@ -772,6 +916,11 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- Do not leave old copied-theme content in unused template parts, fallback pages, docs, icon READMEs, forms, or accessibility docs.',
     '- Before finishing, inspect the entire current theme for stale copied identity strings and remove them from every source/documentation file inside this theme.',
     '- The generated theme will fail validation if any stale copied identity string remains.',
+    '- Complete the conversion across the whole theme source, not just the visible homepage. Update fallback pages, README, CHANGELOG, accessibility docs, icon docs, customization docs, footer widgets, form email subjects, helpers, page templates, template parts, SCSS variables, and compiled CSS so they all match the new business.',
+    '- Do not leave old default-template color tokens such as #2563eb, #1d4ed8, #14b8a6, or #f97316 in SCSS, CSS, SVG, or inline styles when the brief provides a different palette.',
+    '- Run npm run build after editing SCSS or JS so assets/css/bundle.css and assets/js/bundle.js reflect the generated source.',
+    '- Reference the seeded photo inventory broadly in source templates and helper data; using only one seeded asset is insufficient for a complete theme transformation.',
+    '- As a final self-audit before exiting, search the current theme directory for stale brand names, old software-agency phrases, old default palette colors, and unused copied SVG illustration names. Fix any matches inside this prepared theme directory.',
     '',
     'Seeded local stock-photo and icon inventory:',
     assetInventory || '- No seeded asset inventory was found; create original local SVG icons only and avoid fake photo provenance.',
@@ -967,6 +1116,7 @@ function validateSource(themeSlug, options = {}) {
 
   errors.push(...validateStaleBrandResidue(themeDir));
   errors.push(...validateSeededAssetContract(themeDir));
+  errors.push(...validateDomainAssetResidue(themeDir));
   warnings.push(...validateDesignDifferentiation(themeDir));
 
   if (writeReport) {
@@ -975,12 +1125,57 @@ function validateSource(themeSlug, options = {}) {
   return { errors, warnings };
 }
 
+function validateDomainAssetResidue(themeDir) {
+  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
+  if (!fs.existsSync(manifestPath)) {
+    return [];
+  }
+  const manifest = readJson(manifestPath);
+  if (!isLandscapingTheme(manifest.themeSlug || path.basename(themeDir))) {
+    return [];
+  }
+  const errors = [];
+  const forbidden = [
+    '#2563eb',
+    '#1d4ed8',
+    '#14b8a6',
+    '#f97316',
+    'Northstar Websites',
+    'Nolan Designs',
+    'Northstar Codeworks',
+    'Brightlane Commerce Engineering',
+    'Circuit Commerce Studio',
+    'Stackforge Commerce Labs'
+  ];
+  for (const file of walk(themeDir)) {
+    const rel = relativeTo(themeDir, file);
+    if (rel.startsWith('node_modules/') || /\.(png|jpg|jpeg|webp|gif|zip|lock)$/i.test(rel)) {
+      continue;
+    }
+    const content = fs.readFileSync(file, 'utf8');
+    for (const phrase of forbidden) {
+      if (content.includes(phrase)) {
+        errors.push(`Landscaping theme contains copied software-theme residue "${phrase}" in ${rel}.`);
+      }
+    }
+  }
+  return errors;
+}
+
 function validateStaleBrandResidue(themeDir) {
   const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
   if (!fs.existsSync(manifestPath)) {
     return [];
   }
-  const forbidden = ['Northstar Websites', 'Nolan Designs', 'Northstar Codeworks'];
+  const currentBrand = String(readJson(manifestPath).assets?.find((asset) => asset.alt)?.alt || '');
+  const forbidden = [
+    'Northstar Websites',
+    'Nolan Designs',
+    'Northstar Codeworks',
+    'Circuit Commerce Studio',
+    'Stackforge Commerce Labs',
+    'Brightlane Commerce Engineering'
+  ].filter((phrase) => !currentBrand.includes(phrase));
   const errors = [];
   for (const file of walk(themeDir)) {
     const rel = relativeTo(themeDir, file);
@@ -1096,6 +1291,10 @@ function validateArtifacts(themeSlug) {
     errors.push(`docs/index.html does not link to ${themeSlug}.`);
   }
 
+  const mobileProbe = probeMobilePreviewLayout(path.join(previewDir, 'homepage_preview.html'));
+  errors.push(...mobileProbe.errors);
+  warnings.push(...mobileProbe.warnings);
+
   if (!fs.existsSync(zipPath)) {
     errors.push(`Missing ZIP: ${relative(zipPath)}`);
   } else {
@@ -1109,6 +1308,191 @@ function validateArtifacts(themeSlug) {
 
   writeValidation(themeSlug, 'artifact', errors, warnings);
   return { errors, warnings };
+}
+
+function probeMobilePreviewLayout(previewPath) {
+  const errors = [];
+  const warnings = [];
+  if (!fs.existsSync(previewPath)) {
+    return { errors, warnings };
+  }
+
+  const chromePath = findChromeExecutable();
+  if (!chromePath) {
+    warnings.push('Skipped mobile preview layout probe because Chrome was not found.');
+    return { errors, warnings };
+  }
+
+  const probeScript = `
+const { spawn } = require('child_process');
+const http = require('http');
+const chromePath = process.env.CHROME_PATH;
+const previewUrl = process.env.PREVIEW_URL;
+const port = Number(process.env.CDP_PORT || 0);
+const chrome = spawn(chromePath, [
+  '--headless=new',
+  '--disable-gpu',
+  '--remote-debugging-port=' + port,
+  '--user-data-dir=' + process.env.USER_DATA_DIR,
+  'about:blank'
+], { stdio: 'ignore' });
+function getJson(pathname) {
+  return new Promise((resolve, reject) => {
+    http.get({ host: '127.0.0.1', port, path: pathname }, (res) => {
+      let data = '';
+      res.on('data', (chunk) => { data += chunk; });
+      res.on('end', () => {
+        try { resolve(JSON.parse(data)); } catch (error) { reject(error); }
+      });
+    }).on('error', reject);
+  });
+}
+function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
+(async () => {
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    try {
+      const page = (await getJson('/json')).find((entry) => entry.type === 'page');
+      if (page) {
+        const ws = new WebSocket(page.webSocketDebuggerUrl);
+        let id = 0;
+        const pending = new Map();
+        ws.onmessage = (event) => {
+          const message = JSON.parse(event.data);
+          if (message.id && pending.has(message.id)) {
+            pending.get(message.id)(message);
+            pending.delete(message.id);
+          }
+        };
+        await new Promise((resolve) => { ws.onopen = resolve; });
+        const send = (method, params = {}) => new Promise((resolve) => {
+          const messageId = ++id;
+          pending.set(messageId, resolve);
+          ws.send(JSON.stringify({ id: messageId, method, params }));
+        });
+        await send('Page.enable');
+        await send('Runtime.enable');
+        await send('Emulation.setDeviceMetricsOverride', {
+          width: 390,
+          height: 844,
+          deviceScaleFactor: 1,
+          mobile: true
+        });
+        await send('Page.navigate', { url: previewUrl });
+        await wait(1600);
+        const expression = String.raw\`(() => {
+          const targetWidth = 390;
+          const hidden = (el) => el.closest('.form-honeypot,.honeypot,.visually-hidden-field,.screen-reader-text,[hidden]');
+          const overflowNodes = [...document.body.querySelectorAll('*')]
+            .filter((el) => !hidden(el))
+            .map((el) => {
+              const rect = el.getBoundingClientRect();
+              return {
+                tag: el.tagName,
+                className: String(el.className || ''),
+                text: (el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 90),
+                left: rect.left,
+                right: rect.right,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height
+              };
+            })
+            .filter((item) => item.width > 1 && item.height > 1 && (item.left < -1 || item.right > targetWidth + 1))
+            .sort((a, b) => b.right - a.right)
+            .slice(0, 8);
+          const h1 = document.querySelector('.hero h1');
+          const image = document.querySelector('.hero img');
+          const buttons = [...document.querySelectorAll('.hero .btn')].map((el) => {
+            const rect = el.getBoundingClientRect();
+            return { text: el.textContent.trim(), left: rect.left, right: rect.right };
+          });
+          return {
+            targetWidth,
+            documentScrollWidth: document.documentElement.scrollWidth,
+            bodyScrollWidth: document.body.scrollWidth,
+            overflowNodes,
+            h1: h1 ? h1.getBoundingClientRect().toJSON() : null,
+            heroImageTop: image ? image.getBoundingClientRect().top : null,
+            buttons
+          };
+        })()\`;
+        const result = await send('Runtime.evaluate', { expression, returnByValue: true });
+        console.log(JSON.stringify(result.result.result.value));
+        ws.close();
+        chrome.kill('SIGTERM');
+        return;
+      }
+    } catch (error) {}
+    await wait(250);
+  }
+  throw new Error('Could not connect to Chrome DevTools.');
+})().catch((error) => {
+  console.error(error.stack || String(error));
+  chrome.kill('SIGTERM');
+  process.exit(1);
+});
+`;
+
+  const port = 9400 + Math.floor(Math.random() * 300);
+  const result = spawnSync(process.execPath, ['-e', probeScript], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 10,
+    env: {
+      ...process.env,
+      CHROME_PATH: chromePath,
+      PREVIEW_URL: pathToFileUrl(previewPath),
+      CDP_PORT: String(port),
+      USER_DATA_DIR: path.join(os.tmpdir(), `theme-mobile-probe-${process.pid}-${Date.now()}`)
+    }
+  });
+
+  if (result.status !== 0) {
+    warnings.push(`Skipped mobile preview layout probe because Chrome execution failed: ${(result.stderr || result.stdout).trim().split('\n').pop() || 'unknown error'}`);
+    return { errors, warnings };
+  }
+
+  let probe;
+  try {
+    probe = JSON.parse((result.stdout || '').trim().split('\n').pop());
+  } catch (error) {
+    warnings.push('Skipped mobile preview layout probe because Chrome returned unreadable output.');
+    return { errors, warnings };
+  }
+
+  if (probe.overflowNodes && probe.overflowNodes.length) {
+    const offenders = probe.overflowNodes.map((item) => `${item.tag}${item.className ? `.${item.className}` : ''} "${item.text}"`).join('; ');
+    errors.push(`Mobile preview has horizontal overflow at 390px: ${offenders}`);
+  }
+  if (!probe.h1 || probe.h1.left < -1 || probe.h1.right > 391) {
+    errors.push('Mobile preview hero H1 is clipped or outside the 390px viewport.');
+  }
+  const badButtons = (probe.buttons || []).filter((button) => button.left < -1 || button.right > 391);
+  if (badButtons.length) {
+    errors.push(`Mobile preview hero CTA is clipped at 390px: ${badButtons.map((button) => button.text).join(', ')}`);
+  }
+  if (typeof probe.heroImageTop === 'number' && probe.heroImageTop > 844) {
+    errors.push('Mobile preview hero image does not begin within the first 390x844 viewport.');
+  }
+
+  return { errors, warnings };
+}
+
+function findChromeExecutable() {
+  const candidates = [
+    process.env.CHROME_PATH,
+    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+    '/Applications/Chromium.app/Contents/MacOS/Chromium',
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser'
+  ].filter(Boolean);
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+function pathToFileUrl(filePath) {
+  return `file://${path.resolve(filePath).split(path.sep).map(encodeURIComponent).join('/')}`;
 }
 
 function validateSourceOrThrow(themeSlug, options = {}) {

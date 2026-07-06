@@ -1,0 +1,84 @@
+body {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 .75rem;
+  color: inherit;
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  max-width: 920px;
+  font-size: clamp(2.25rem, 9vw, 4.85rem);
+}
+
+h2 {
+  font-size: clamp(1.85rem, 5vw, 3.35rem);
+}
+
+h3 {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+}
+
+p {
+  margin: 0 0 1rem;
+  color: var(--color-muted);
+}
+
+ul,
+ol {
+  padding-left: 1.2rem;
+}
+
+.eyebrow {
+  margin: 0 0 .7rem;
+  color: var(--color-secondary);
+  font-size: .76rem;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.section-dark,
+.section-dark p,
+.section-dark a {
+  color: #fff;
+}
+
+.section-dark .eyebrow,
+.site-footer .eyebrow {
+  color: #c4b5fd;
+}
+
+.site-main a:not(.btn):focus-visible,
+.site-footer a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 520px) {
+  h1 {
+    max-width: 100%;
+    font-size: clamp(2rem, 8.5vw, 2.8rem);
+  }
+
+  h2 {
+    font-size: clamp(1.65rem, 7vw, 2.25rem);
+  }
+
+  .eyebrow {
+    overflow-wrap: anywhere;
+  }
+}

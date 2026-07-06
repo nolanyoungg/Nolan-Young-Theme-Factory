@@ -1,0 +1,34 @@
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.filter-controls button {
+  min-height: 42px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text);
+  padding: .62rem .9rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.filter-controls button:hover,
+.filter-controls button.is-active {
+  border-color: var(--color-secondary);
+  background: rgba(124, 58, 237, .12);
+  color: var(--color-primary);
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+}
+
+.portfolio-card[hidden] {
+  display: none !important;
+}

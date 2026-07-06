@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "006_nolan_young_theme_forgecart_studio",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome was not found."
+  ],
+  "checkedAt": "2026-07-06T14:09:13.159Z"
+}

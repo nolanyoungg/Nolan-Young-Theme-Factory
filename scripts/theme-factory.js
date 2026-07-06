@@ -17,6 +17,7 @@ const DEFAULT_TEMPLATE_DIR = path.join(THEMES_DIR, '000_nolan_young_theme_master
 const MODE_VALUES = new Set(['codex-only', 'ollama-only']);
 const SLUG_RE = /^\d{3}_nolan_young_theme_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const SEEDED_ASSET_MANIFEST = path.join('assets', 'images', 'asset-manifest.json');
+const PACKAGE_EXCLUDED_DIRS = new Set(['node_modules', '.git', '.agents', '.codex', '.svn', '.hg']);
 
 const REQUIRED_THEME_FILES = [
   'style.css',
@@ -1298,11 +1299,15 @@ function validateArtifacts(themeSlug) {
   if (!fs.existsSync(zipPath)) {
     errors.push(`Missing ZIP: ${relative(zipPath)}`);
   } else {
-    const list = spawnSync('unzip', ['-l', zipPath], { cwd: ROOT, encoding: 'utf8' });
-    if (list.status !== 0) {
-      errors.push(`Could not inspect ZIP: ${relative(zipPath)}`);
-    } else if (!list.stdout.includes(`${themeSlug}/style.css`)) {
+    const entries = listZipEntries(zipPath);
+    if (!entries.length) {
+      errors.push(`Could not inspect ZIP or ZIP is empty: ${relative(zipPath)}`);
+    } else if (!entries.includes(`${themeSlug}/style.css`)) {
       errors.push(`ZIP does not contain ${themeSlug}/style.css.`);
+    }
+    const forbiddenEntries = entries.filter((entry) => zipEntryHasExcludedDir(entry));
+    if (forbiddenEntries.length) {
+      errors.push(`ZIP contains non-production directories: ${[...new Set(forbiddenEntries.map((entry) => entry.split('/').slice(0, 2).join('/')))].join(', ')}`);
     }
   }
 
@@ -1747,6 +1752,23 @@ ${cards || '    <p>No generated previews found.</p>'}
   console.log('Preview index generated: docs/index.html');
 }
 
+function createZipArchive(zipPath, themeSlug, cwd) {
+  const zip = spawnSync('zip', ['-qr', zipPath, themeSlug], {
+    cwd,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 100
+  });
+  if (!zip.error) {
+    return zip;
+  }
+  const tarExecutable = process.platform === 'win32' ? 'tar.exe' : 'tar';
+  return spawnSync(tarExecutable, ['-a', '-c', '-f', zipPath, '-C', cwd, themeSlug], {
+    cwd,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 100
+  });
+}
+
 function packageTheme(themeSlug) {
   const themeDir = existingThemeDir(themeSlug);
   ensureDir(ZIPS_DIR);
@@ -1755,16 +1777,94 @@ function packageTheme(themeSlug) {
   const tempZip = path.join(tempParent, `${themeSlug}.zip`);
   fs.cpSync(themeDir, tempTheme, {
     recursive: true,
-    filter: (src) => !path.basename(src).match(/^node_modules$/)
+    filter: (src) => !PACKAGE_EXCLUDED_DIRS.has(path.basename(src))
   });
   try {
-    const result = spawnSync('zip', ['-qr', tempZip, themeSlug], { cwd: tempParent, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 });
+    const result = createZipArchive(tempZip, themeSlug, tempParent);
     assertStatus(result, `zip ${themeSlug}`);
     fs.copyFileSync(tempZip, path.join(ZIPS_DIR, `${themeSlug}.zip`));
   } finally {
     removeIfExists(tempParent);
   }
   console.log(`ZIP packaged: dist/zipped-themes/${themeSlug}.zip`);
+}
+
+function listZipEntries(zipPath) {
+  const parsedEntries = readZipCentralDirectoryEntries(zipPath);
+  if (parsedEntries.length) {
+    return parsedEntries;
+  }
+
+  const unzip = spawnSync('unzip', ['-Z1', zipPath], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 100
+  });
+  if (unzip.status === 0 && unzip.stdout.trim()) {
+    return normalizeZipEntryList(unzip.stdout);
+  }
+
+  const tarExecutable = process.platform === 'win32' ? 'tar.exe' : 'tar';
+  const tar = spawnSync(tarExecutable, ['-tf', zipPath], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    maxBuffer: 1024 * 1024 * 100
+  });
+  if (tar.status === 0 && tar.stdout.trim()) {
+    return normalizeZipEntryList(tar.stdout);
+  }
+
+  return [];
+}
+
+function readZipCentralDirectoryEntries(zipPath) {
+  const buffer = fs.readFileSync(zipPath);
+  const minEocdSize = 22;
+  if (buffer.length < minEocdSize) {
+    return [];
+  }
+  const searchStart = Math.max(0, buffer.length - 0xffff - minEocdSize);
+  let eocdOffset = -1;
+  for (let offset = buffer.length - minEocdSize; offset >= searchStart; offset -= 1) {
+    if (buffer.readUInt32LE(offset) === 0x06054b50) {
+      eocdOffset = offset;
+      break;
+    }
+  }
+  if (eocdOffset === -1) {
+    return [];
+  }
+
+  const entryCount = buffer.readUInt16LE(eocdOffset + 10);
+  let cursor = buffer.readUInt32LE(eocdOffset + 16);
+  const entries = [];
+  for (let index = 0; index < entryCount; index += 1) {
+    if (cursor + 46 > buffer.length || buffer.readUInt32LE(cursor) !== 0x02014b50) {
+      return [];
+    }
+    const nameLength = buffer.readUInt16LE(cursor + 28);
+    const extraLength = buffer.readUInt16LE(cursor + 30);
+    const commentLength = buffer.readUInt16LE(cursor + 32);
+    const nameStart = cursor + 46;
+    const nameEnd = nameStart + nameLength;
+    if (nameEnd > buffer.length) {
+      return [];
+    }
+    entries.push(buffer.toString('utf8', nameStart, nameEnd).replace(/\\/g, '/'));
+    cursor = nameEnd + extraLength + commentLength;
+  }
+  return entries.filter(Boolean);
+}
+
+function normalizeZipEntryList(output) {
+  return output
+    .split(/\r?\n/)
+    .map((entry) => entry.trim().replace(/\\/g, '/'))
+    .filter(Boolean);
+}
+
+function zipEntryHasExcludedDir(entry) {
+  return entry.split('/').some((part) => PACKAGE_EXCLUDED_DIRS.has(part));
 }
 
 function modelCheck(provider, args) {
@@ -1996,7 +2096,7 @@ function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name === 'node_modules' || entry.name === '.git') {
+      if (PACKAGE_EXCLUDED_DIRS.has(entry.name)) {
         continue;
       }
       result.push(...walk(full));

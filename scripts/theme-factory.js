@@ -204,8 +204,8 @@ async function run(args) {
   buildTheme(options.themeSlug);
   validateSourceOrThrow(options.themeSlug);
   generatePreview(options.themeSlug);
-  generatePreviewIndex();
   packageTheme(options.themeSlug);
+  generatePreviewIndex();
   validateArtifactsOrThrow(options.themeSlug);
 
   writeJson(path.join(reportDir, 'run.result.json'), {
@@ -224,8 +224,8 @@ async function resume(args) {
   buildTheme(themeSlug);
   validateSourceOrThrow(themeSlug);
   generatePreview(themeSlug);
-  generatePreviewIndex();
   packageTheme(themeSlug);
+  generatePreviewIndex();
   validateArtifactsOrThrow(themeSlug);
   console.log(`Theme deterministic resume completed: ${themeSlug}`);
 }

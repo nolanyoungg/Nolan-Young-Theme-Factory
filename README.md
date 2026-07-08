@@ -16,10 +16,11 @@ The workflow owns template copying, build commands, validation, preview generati
 
 ## Modes
 
-There are only two generation modes:
+There are only three generation modes:
 
 - `codex-only`: one Codex generation pass from the prepared theme directory.
 - `ollama-only`: planned Ollama stages with declared prompt-section ownership and per-stage file allowlists.
+- `lmstudio-only`: planned local-model stages sent to a running LM Studio OpenAI-compatible local API.
 
 There is no `hybrid` mode, model fallback, validation-triggered AI pass, build-triggered AI pass, or repair pass.
 
@@ -70,6 +71,14 @@ Ollama:
 ```sh
 npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model llama3.1:8b
 ```
+
+LM Studio:
+
+```sh
+npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
+```
+
+LM Studio mode expects the LM Studio desktop app or `lms`/`llmster` server to already be running. The default base URL is `http://127.0.0.1:1234/v1`; override it with `--lmstudio-base-url` or `LMSTUDIO_BASE_URL`.
 
 The runner prompts interactively for missing values when used from a TTY. Non-interactive runs must pass required options.
 

@@ -2,7 +2,7 @@
   "name": "nolan-young-theme-factory",
   "version": "1.0.0",
   "private": true,
-  "description": "Template-first WordPress theme factory with Codex-only and Ollama-only generation modes.",
+  "description": "Template-first WordPress theme factory with Codex-only, Ollama-only, and LM Studio-only generation modes.",
   "scripts": {
     "theme:run": "node scripts/theme-factory.js run",
     "theme:resume": "node scripts/theme-factory.js resume",

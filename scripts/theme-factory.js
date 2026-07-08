@@ -14,7 +14,8 @@ const ZIPS_DIR = path.join(ROOT, 'dist', 'zipped-themes');
 const REPORTS_DIR = path.join(ROOT, 'reports', 'runs');
 const PROMPTS_DIR = path.join(ROOT, 'prompts', 'pending');
 const DEFAULT_TEMPLATE_DIR = path.join(THEMES_DIR, '000_nolan_young_theme_master_template_prompt_filler_template_1');
-const MODE_VALUES = new Set(['codex-only', 'ollama-only']);
+const MODE_VALUES = new Set(['codex-only', 'ollama-only', 'lmstudio-only']);
+const DEFAULT_LMSTUDIO_BASE_URL = 'http://127.0.0.1:1234/v1';
 const SLUG_RE = /^\d{3}_nolan_young_theme_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const SEEDED_ASSET_MANIFEST = path.join('assets', 'images', 'asset-manifest.json');
 const PACKAGE_EXCLUDED_DIRS = new Set(['node_modules', '.git', '.agents', '.codex', '.svn', '.hg']);
@@ -54,7 +55,7 @@ const PREVIEW_PAGES = [
   ['single_services_preview.html', 'page-templates/template-single-service.php']
 ];
 
-const OLLAMA_STAGES = [
+const LOCAL_MODEL_STAGES = [
   {
     id: 'identity-content',
     promptSections: ['Business Identity', 'Content Requirements', 'Pages to Build', 'Header and Navigation'],
@@ -171,10 +172,10 @@ async function dispatch(command, args) {
 
 async function run(args) {
   const options = await collectRunOptions(args);
-  const ollamaPlan = options.mode === 'ollama-only'
-    ? validateOllamaPlan(collectMarkdownHeadings(fs.readFileSync(options.promptPath, 'utf8')))
+  const localModelPlan = isPlannedLocalModelMode(options.mode)
+    ? validateLocalModelPlan(collectMarkdownHeadings(fs.readFileSync(options.promptPath, 'utf8')), localModelProviderLabel(options.mode))
     : [];
-  modelCheck(options.mode === 'codex-only' ? 'codex' : 'ollama', options);
+  await modelCheck(providerForMode(options.mode), options);
 
   const reportDir = ensureReportDir(options.themeSlug);
 
@@ -184,7 +185,7 @@ async function run(args) {
     templateSource: relative(options.templateSourcePath),
     themeSlug: options.themeSlug,
     createdAt: new Date().toISOString(),
-    ollamaStages: ollamaPlan
+    localModelStages: localModelPlan
   });
 
   let prepared = false;
@@ -197,8 +198,10 @@ async function run(args) {
   if (options.mode === 'codex-only') {
     seedGeneratedAssets(themeDir, options);
     runCodexGeneration(themeDir, options, reportDir);
-  } else {
+  } else if (options.mode === 'ollama-only') {
     runOllamaGeneration(themeDir, options, reportDir);
+  } else {
+    await runLmStudioGeneration(themeDir, options, reportDir);
   }
 
   buildTheme(options.themeSlug);
@@ -322,11 +325,12 @@ async function envCommand() {
     console.log(`${ok ? 'ok' : 'missing'} ${cmd}${firstLine ? ` - ${firstLine}` : ''}`);
   }
   console.log(`default template: ${fs.existsSync(DEFAULT_TEMPLATE_DIR) ? relative(DEFAULT_TEMPLATE_DIR) : 'missing'}`);
-  console.log('modes: codex-only, ollama-only');
+  console.log('modes: codex-only, ollama-only, lmstudio-only');
+  console.log(`lmstudio default base URL: ${DEFAULT_LMSTUDIO_BASE_URL}`);
 }
 
 async function modelCheckCommand(args) {
-  modelCheck(args.provider, args);
+  await modelCheck(args.provider, args);
 }
 
 async function selfTest() {
@@ -356,8 +360,8 @@ async function selfTest() {
   checks.push(runCheck('validate current source', () => {
     validateSourceOrThrow('000_nolan_young_theme_master_template_prompt_filler_template_1', { writeReport: false });
   }));
-  checks.push(runCheck('codex model check', () => {
-    modelCheck('codex', {});
+  checks.push(await runCheckAsync('codex model check', async () => {
+    await modelCheck('codex', {});
   }));
 
   const failed = checks.filter((check) => !check.ok);
@@ -378,6 +382,47 @@ function runCheck(name, fn) {
   }
 }
 
+function isPlannedLocalModelMode(mode) {
+  return mode === 'ollama-only' || mode === 'lmstudio-only';
+}
+
+function localModelProviderLabel(mode) {
+  if (mode === 'ollama-only') {
+    return 'Ollama';
+  }
+  if (mode === 'lmstudio-only') {
+    return 'LM Studio';
+  }
+  return 'Local model';
+}
+
+function providerForMode(mode) {
+  if (mode === 'codex-only') {
+    return 'codex';
+  }
+  if (mode === 'ollama-only') {
+    return 'ollama';
+  }
+  if (mode === 'lmstudio-only') {
+    return 'lmstudio';
+  }
+  throw new Error(`Unsupported mode: ${mode}`);
+}
+
+function normalizeLmStudioBaseUrl(value) {
+  const raw = String(value || DEFAULT_LMSTUDIO_BASE_URL).trim().replace(/\/+$/, '');
+  return raw.endsWith('/v1') ? raw : `${raw}/v1`;
+}
+
+async function runCheckAsync(name, fn) {
+  try {
+    await fn();
+    return { name, ok: true };
+  } catch (error) {
+    return { name, ok: false, error: error.message };
+  }
+}
+
 async function collectRunOptions(args) {
   let options = {
     mode: args.mode,
@@ -390,6 +435,10 @@ async function collectRunOptions(args) {
     codexExtraArgs: splitExtraArgs(args.codexExtraArgs || args['codex-extra-args'] || ''),
     ollamaExecutable: args.ollamaExecutable || args['ollama-executable'] || 'ollama',
     ollamaModel: args.ollamaModel || args['ollama-model'] || '',
+    lmstudioBaseUrl: normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL),
+    lmstudioModel: args.lmstudioModel || args['lmstudio-model'] || '',
+    lmstudioApiKey: args.lmstudioApiKey || args['lmstudio-api-key'] || process.env.LMSTUDIO_API_KEY || 'lm-studio',
+    lmstudioTemperature: args.lmstudioTemperature || args['lmstudio-temperature'] || '0.2',
     force: Boolean(args.force)
   };
 
@@ -399,7 +448,7 @@ async function collectRunOptions(args) {
   }
 
   if (!MODE_VALUES.has(options.mode)) {
-    throw new Error(`Choose --mode codex-only or --mode ollama-only. Received: ${options.mode || '(missing)'}`);
+    throw new Error(`Choose --mode codex-only, ollama-only, or lmstudio-only. Received: ${options.mode || '(missing)'}`);
   }
   if (!options.promptPath) {
     throw new Error('Missing --prompt.');
@@ -414,6 +463,9 @@ async function collectRunOptions(args) {
   if (options.mode === 'ollama-only' && !options.ollamaModel) {
     throw new Error('Missing --ollama-model for ollama-only mode.');
   }
+  if (options.mode === 'lmstudio-only' && !options.lmstudioModel) {
+    throw new Error('Missing --lmstudio-model for lmstudio-only mode.');
+  }
   return options;
 }
 
@@ -421,7 +473,7 @@ async function askRunOptions(options) {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   try {
     if (!options.mode) {
-      options.mode = await askWithDefault(rl, 'Mode (codex-only or ollama-only)', 'codex-only');
+      options.mode = await askWithDefault(rl, 'Mode (codex-only, ollama-only, or lmstudio-only)', 'codex-only');
     }
     if (!options.promptPath) {
       const firstPrompt = firstPromptPath();
@@ -438,9 +490,13 @@ async function askRunOptions(options) {
       options.codexModel = await askWithDefault(rl, 'Codex model (blank uses Codex config)', options.codexModel);
       options.codexReasoning = await askWithDefault(rl, 'Codex reasoning (blank uses Codex config)', options.codexReasoning);
       options.codexExtraArgs = splitExtraArgs(await askWithDefault(rl, 'Codex extra args', options.codexExtraArgs.join(' ')));
-    } else {
+    } else if (options.mode === 'ollama-only') {
       options.ollamaExecutable = await askWithDefault(rl, 'Ollama executable', options.ollamaExecutable);
       options.ollamaModel = await askWithDefault(rl, 'Ollama model', options.ollamaModel || 'llama3.1:8b');
+    } else {
+      options.lmstudioBaseUrl = normalizeLmStudioBaseUrl(await askWithDefault(rl, 'LM Studio base URL', options.lmstudioBaseUrl));
+      options.lmstudioModel = await askWithDefault(rl, 'LM Studio model identifier', options.lmstudioModel);
+      options.lmstudioTemperature = await askWithDefault(rl, 'LM Studio temperature', options.lmstudioTemperature);
     }
     const confirmation = await askWithDefault(rl, 'Type continue to start generation', '');
     if (confirmation !== 'continue') {
@@ -934,11 +990,11 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
 function runOllamaGeneration(themeDir, options, reportDir) {
   const prompt = fs.readFileSync(options.promptPath, 'utf8');
   const promptHeadings = collectMarkdownHeadings(prompt);
-  const plan = validateOllamaPlan(promptHeadings);
+  const plan = validateLocalModelPlan(promptHeadings, 'Ollama');
   writeJson(path.join(reportDir, 'ollama-stage-plan.json'), plan);
 
-  for (const stage of OLLAMA_STAGES) {
-    const stagePrompt = buildOllamaStagePrompt(prompt, themeDir, stage);
+  for (const stage of LOCAL_MODEL_STAGES) {
+    const stagePrompt = buildLocalModelStagePrompt(prompt, themeDir, stage, 'Ollama');
     const result = spawnSync(options.ollamaExecutable || 'ollama', ['run', options.ollamaModel], {
       cwd: themeDir,
       input: stagePrompt,
@@ -952,14 +1008,134 @@ function runOllamaGeneration(themeDir, options, reportDir) {
       result.stderr || ''
     ].join('\n'));
     assertStatus(result, `ollama stage ${stage.id}`);
-    applyFileBlocks(themeDir, result.stdout || '', stage.allow, stage.id);
+    applyFileBlocks(themeDir, result.stdout || '', stage.allow, stage.id, 'Ollama');
   }
 }
 
-function buildOllamaStagePrompt(prompt, themeDir, stage) {
+async function runLmStudioGeneration(themeDir, options, reportDir) {
+  const prompt = fs.readFileSync(options.promptPath, 'utf8');
+  const promptHeadings = collectMarkdownHeadings(prompt);
+  const plan = validateLocalModelPlan(promptHeadings, 'LM Studio');
+  writeJson(path.join(reportDir, 'lmstudio-stage-plan.json'), plan);
+
+  for (const stage of LOCAL_MODEL_STAGES) {
+    const stagePrompt = buildLocalModelStagePrompt(prompt, themeDir, stage, 'LM Studio');
+    const startedAt = new Date().toISOString();
+    console.log(`[${startedAt}] LM Studio stage ${stage.id} starting with model ${options.lmstudioModel}`);
+    const response = await withProgressHeartbeat(`LM Studio stage ${stage.id}`, () => lmStudioChatCompletion(options, [
+      {
+        role: 'system',
+        content: 'You are a local code generation model. Return only the requested complete file blocks.'
+      },
+      {
+        role: 'user',
+        content: stagePrompt
+      }
+    ]));
+    const content = extractLmStudioMessageContent(response);
+    fs.writeFileSync(path.join(reportDir, `lmstudio-${stage.id}.json`), JSON.stringify({
+      request: {
+        baseUrl: options.lmstudioBaseUrl,
+        model: options.lmstudioModel,
+        stage: stage.id,
+        startedAt
+      },
+      response
+    }, null, 2));
+    fs.writeFileSync(path.join(reportDir, `lmstudio-${stage.id}.log`), content);
+    applyFileBlocks(themeDir, content, stage.allow, stage.id, 'LM Studio');
+    console.log(`[${new Date().toISOString()}] LM Studio stage ${stage.id} completed`);
+  }
+}
+
+async function withProgressHeartbeat(label, work) {
+  const startedAt = Date.now();
+  const timer = setInterval(() => {
+    const elapsedMinutes = Math.floor((Date.now() - startedAt) / 60000);
+    console.log(`[${new Date().toISOString()}] ${label} still running (${elapsedMinutes} minutes elapsed)`);
+  }, 15 * 60 * 1000);
+  timer.unref();
+  try {
+    return await work();
+  } finally {
+    clearInterval(timer);
+  }
+}
+
+async function lmStudioChatCompletion(options, messages) {
+  return requestJson(`${options.lmstudioBaseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${options.lmstudioApiKey || 'lm-studio'}`
+    },
+    body: JSON.stringify({
+      model: options.lmstudioModel,
+      messages,
+      temperature: Number.isFinite(Number(options.lmstudioTemperature)) ? Number(options.lmstudioTemperature) : 0.2,
+      stream: false
+    })
+  }, 'LM Studio chat completion');
+}
+
+async function requestJson(url, options, label) {
+  let response;
+  try {
+    response = await fetch(url, {
+      ...options,
+      signal: AbortSignal.timeout(1000 * 60 * 30)
+    });
+  } catch (error) {
+    throw new Error(`${label} failed to reach ${url}: ${error.message}`);
+  }
+
+  const text = await response.text();
+  let json = null;
+  if (text) {
+    try {
+      json = JSON.parse(text);
+    } catch (error) {
+      throw new Error(`${label} returned non-JSON response from ${url}: ${text.slice(0, 500)}`);
+    }
+  }
+
+  if (!response.ok) {
+    const detail = json && (json.error && (json.error.message || json.error) || json.message) || text || response.statusText;
+    throw new Error(`${label} failed with HTTP ${response.status}: ${detail}`);
+  }
+  return json;
+}
+
+function extractLmStudioMessageContent(response) {
+  const content = response
+    && response.choices
+    && response.choices[0]
+    && response.choices[0].message
+    && response.choices[0].message.content;
+  if (Array.isArray(content)) {
+    return content.map((part) => typeof part === 'string' ? part : part.text || '').join('');
+  }
+  if (typeof content !== 'string' || !content.trim()) {
+    throw new Error('LM Studio response did not contain assistant message content.');
+  }
+  return content;
+}
+
+async function listLmStudioModels(args) {
+  const baseUrl = normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL);
+  const apiKey = args.lmstudioApiKey || args['lmstudio-api-key'] || process.env.LMSTUDIO_API_KEY || 'lm-studio';
+  return requestJson(`${baseUrl}/models`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${apiKey}`
+    }
+  }, 'LM Studio model check');
+}
+
+function buildLocalModelStagePrompt(prompt, themeDir, stage, providerLabel) {
   const context = listThemeContext(themeDir);
   return [
-    `You are running planned Ollama stage "${stage.id}" for a prepared WordPress theme.`,
+    `You are running planned ${providerLabel} stage "${stage.id}" for a prepared WordPress theme.`,
     '',
     `Prompt-section ownership: ${stage.promptSections.join(', ')}`,
     '',
@@ -984,15 +1160,15 @@ function buildOllamaStagePrompt(prompt, themeDir, stage) {
   ].join('\n');
 }
 
-function validateOllamaPlan(promptHeadings) {
+function validateLocalModelPlan(promptHeadings, providerLabel) {
   const normalizedHeadings = promptHeadings.map(normalizeHeading);
-  return OLLAMA_STAGES.map((stage) => {
+  return LOCAL_MODEL_STAGES.map((stage) => {
     const matchedSections = stage.promptSections.filter((section) => {
       const normalized = normalizeHeading(section);
       return normalizedHeadings.some((heading) => heading.includes(normalized) || normalized.includes(heading));
     });
     if (!matchedSections.length) {
-      throw new Error(`Ollama stage "${stage.id}" has no matching production prompt coverage. Expected one of: ${stage.promptSections.join(', ')}`);
+      throw new Error(`${providerLabel} stage "${stage.id}" has no matching production prompt coverage. Expected one of: ${stage.promptSections.join(', ')}`);
     }
     return {
       id: stage.id,
@@ -1003,10 +1179,10 @@ function validateOllamaPlan(promptHeadings) {
   });
 }
 
-function applyFileBlocks(themeDir, output, allow, stageId) {
+function applyFileBlocks(themeDir, output, allow, stageId, providerLabel = 'Local model') {
   const blocks = parseFileBlocks(output);
   if (!blocks.length) {
-    throw new Error(`Ollama stage "${stageId}" returned no valid file blocks.`);
+    throw new Error(`${providerLabel} stage "${stageId}" returned no valid file blocks.`);
   }
   const candidateDir = fs.mkdtempSync(path.join(os.tmpdir(), `theme-stage-${stageId}-`));
   fs.cpSync(themeDir, candidateDir, { recursive: true });
@@ -1015,7 +1191,7 @@ function applyFileBlocks(themeDir, output, allow, stageId) {
     for (const block of blocks) {
       const relPath = normalizeRelativeFile(block.path);
       if (!matchesAllowList(relPath, allow)) {
-        throw new Error(`Ollama stage "${stageId}" attempted to write disallowed file: ${relPath}`);
+        throw new Error(`${providerLabel} stage "${stageId}" attempted to write disallowed file: ${relPath}`);
       }
       const target = path.join(candidateDir, relPath);
       ensureInside(candidateDir, target);
@@ -1867,9 +2043,9 @@ function zipEntryHasExcludedDir(entry) {
   return entry.split('/').some((part) => PACKAGE_EXCLUDED_DIRS.has(part));
 }
 
-function modelCheck(provider, args) {
+async function modelCheck(provider, args) {
   if (!provider) {
-    throw new Error('Missing --provider codex or --provider ollama.');
+    throw new Error('Missing --provider codex, ollama, or lmstudio.');
   }
   if (provider === 'codex') {
     const executable = args.codexExecutable || args['codex-executable'] || 'codex';
@@ -1890,6 +2066,17 @@ function modelCheck(provider, args) {
       }
     }
     console.log('PASS model-check ollama');
+    return;
+  }
+  if (provider === 'lmstudio') {
+    const model = args.lmstudioModel || args['lmstudio-model'];
+    const baseUrl = normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL);
+    const models = await listLmStudioModels({ ...args, lmstudioBaseUrl: baseUrl });
+    const modelIds = Array.isArray(models && models.data) ? models.data.map((entry) => entry.id).filter(Boolean) : [];
+    if (model && !modelIds.includes(model)) {
+      throw new Error(`LM Studio model not visible at ${baseUrl}: ${model}`);
+    }
+    console.log(`PASS model-check lmstudio${modelIds.length ? ` (${modelIds.join(', ')})` : ''}`);
     return;
   }
   throw new Error(`Unsupported provider: ${provider}`);
@@ -2250,12 +2437,13 @@ Commands:
   zip            Package a theme zip
   delete         Delete generated artifacts for a theme
   env            Print local tool availability
-  model-check    Check codex or ollama availability
+  model-check    Check codex, ollama, or LM Studio availability
   self-test      Run script-layer tests
 
 Generation modes:
   codex-only
   ollama-only
+  lmstudio-only
 `);
 }
 

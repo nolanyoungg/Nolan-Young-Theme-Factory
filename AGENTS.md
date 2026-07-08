@@ -46,13 +46,15 @@ Hard rule: if generated theme preview fails because of missing generated source 
 
 `ollama-only` means Ollama generation only.
 
-Ollama-only uses planned local-model stages. These stages are declared before generation starts and always run as part of the mode; prompt count is not repair.
+`lmstudio-only` means LM Studio generation only through a running LM Studio OpenAI-compatible local API.
 
-Every Ollama stage must declare its prompt-section ownership. Missing production prompt coverage blocks the run before model invocation.
+Ollama-only and LM Studio-only use planned local-model stages. These stages are declared before generation starts and always run as part of the mode; prompt count is not repair.
+
+Every local-model stage must declare its prompt-section ownership. Missing production prompt coverage blocks the run before model invocation.
 
 `codex-only` means one Codex generation pass.
 
-There are only two generation modes: `ollama-only` and `codex-only`.
+There are only three generation modes: `ollama-only`, `lmstudio-only`, and `codex-only`.
 
 There is no hybrid mode, automatic model fallback, validation-triggered AI pass, build-triggered AI pass, or second AI cleanup pass.
 

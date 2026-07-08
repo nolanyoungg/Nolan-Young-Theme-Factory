@@ -97,6 +97,22 @@ Validation is observational. Failed generated output is preserved as evidence. D
 
 Source validation runs before preview and ZIP creation. Artifact validation runs after preview and packaging.
 
+A generated theme is successful only when the generated source itself passes source validation, build, preview rendering, ZIP packaging, artifact validation, and visual preview inspection without repository-agent repairs.
+
+Do not change the preview harness, validators, packaging, or generated theme source to hide a broken generation result. If generated PHP, helpers, data providers, files, assets, or naming contracts are missing or inconsistent, mark the generation failed and keep the evidence.
+
+Reports should separate infrastructure success, generation success, validation success, preview publication success, and visual quality. A published preview is not proof that the generated theme succeeded if the preview required fallback code to render.
+
+## Image Assets
+
+Image acquisition happens before theme generation as a standalone workflow. Approved images must be local, copyright-safe, and recorded in an asset manifest before the model is called.
+
+During generation, the model may use only images already present in the prepared theme or explicitly listed in the approved asset manifest. It must not search for images, invent image URLs, invent licensing, or hotlink third-party files.
+
+Prefer existing approved local assets first, then reusable copyright-safe stock, then newly acquired permissive stock. Use generated original images only when stock is unavailable or unsuitable.
+
+Every approved image needs source, license, creator, acquisition date, allowed use, destination file, theme slug, alt text, and notes recorded in the manifest. If a prompt requires photography or image-backed design and no approved manifest exists, generation should stop before model invocation.
+
 ## Preview Expectations
 
 Preview generation renders theme PHP templates through a lightweight read-only harness and writes static pages under `docs/Preview-Themes-Github/`.

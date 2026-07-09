@@ -840,6 +840,10 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- Preserve prepared Theme Name, Description, Text Domain, slug, and package name unless the prepared fields are missing.',
     '- This must be a major visual transformation of the copied template, not a light content swap.',
     '- Redesign the header architecture, homepage rhythm, page compositions, motion system, and visual language so the preview is clearly distinct from prior numbered themes.',
+    '- A run that only swaps copy, brand names, colors, or images while keeping the starter layout and section system is failed model output.',
+    '- Redesign source SCSS substantially enough that assets/css/bundle.css is materially different from the starter template after npm run build.',
+    '- Rework section geometry, spacing, card systems, header/menu presentation, footer architecture, responsive rhythm, and content modules instead of preserving the starter composition.',
+    '- Source validation will compare critical generated layout/style files against the starter template and fail when front-page.php, header.php, footer.php, homepage sections, layout SCSS, or compiled CSS remain too similar.',
     '- Treat the homepage as a complete design pass: every homepage template part must be edited, reordered or redesigned so the sections flow as one polished agency website.',
     '- The homepage first viewport must look professionally composed at desktop and mobile widths: no cropped hero text, no oversized headline that pushes the primary image or calls to action out of view, and no large empty dead zones.',
     '- Keep hero display type controlled and readable. Do not use extreme viewport-scaled headline sizing; the full H1, supporting copy, CTAs, and a meaningful stock-photo crop should fit coherently in the opening viewport.',
@@ -891,8 +895,10 @@ function buildTheme(themeSlug) {
   }
 
   const hasNodeModules = fs.existsSync(path.join(themeDir, 'node_modules'));
+  const webpackBin = path.join(themeDir, 'node_modules', '.bin', process.platform === 'win32' ? 'webpack.cmd' : 'webpack');
+  const hasWebpackBin = fs.existsSync(webpackBin);
   const installCommand = fs.existsSync(path.join(themeDir, 'package-lock.json')) ? ['ci'] : ['install'];
-  if (!hasNodeModules) {
+  if (!hasNodeModules || !hasWebpackBin) {
     console.log(`Installing theme dependencies in ${relative(themeDir)}...`);
     assertStatus(spawnSync('npm', installCommand, { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), `npm ${installCommand.join(' ')}`);
   }

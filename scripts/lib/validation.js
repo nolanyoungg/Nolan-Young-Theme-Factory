@@ -88,7 +88,9 @@ function createValidation(deps) {
     errors.push(...validateStaleBrandResidue(themeDir));
     errors.push(...validateSeededAssetContract(themeDir));
     errors.push(...validateDomainAssetResidue(themeDir));
-    warnings.push(...validateDesignDifferentiation(themeDir));
+    const designDifferentiation = validateDesignDifferentiation(themeDir);
+    errors.push(...designDifferentiation.errors);
+    warnings.push(...designDifferentiation.warnings);
   
     if (writeReport) {
       writeValidation(themeSlug, 'source', errors, warnings);
@@ -164,20 +166,24 @@ function createValidation(deps) {
   }
   
   function validateDesignDifferentiation(themeDir) {
+    const errors = [];
     const warnings = [];
-    const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
-    if (!fs.existsSync(manifestPath)) {
-      return warnings;
+    if (path.resolve(themeDir) === path.resolve(DEFAULT_TEMPLATE_DIR)) {
+      return { errors, warnings };
     }
-  
-    const manifest = readJson(manifestPath);
+
+    const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
     const relevantFiles = walk(themeDir)
       .filter((file) => /\.(php|scss|css|js|md)$/i.test(file))
       .filter((file) => !relativeTo(themeDir, file).startsWith('node_modules/'));
     const joined = relevantFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
-    const referenced = manifest.assets.filter((asset) => joined.includes(asset.path) || joined.includes(path.basename(asset.path)));
-    if (referenced.length < Math.min(4, manifest.assets.length)) {
-      warnings.push(`Seeded assets appear underused: ${referenced.length}/${manifest.assets.length} referenced in generated source.`);
+  
+    if (fs.existsSync(manifestPath)) {
+      const manifest = readJson(manifestPath);
+      const referenced = manifest.assets.filter((asset) => joined.includes(asset.path) || joined.includes(path.basename(asset.path)));
+      if (referenced.length < Math.min(4, manifest.assets.length)) {
+        errors.push(`Seeded assets appear underused: ${referenced.length}/${manifest.assets.length} referenced in generated source.`);
+      }
     }
   
     const headerPath = path.join(themeDir, 'header.php');
@@ -186,9 +192,11 @@ function createValidation(deps) {
       const current = normalizeForComparison(fs.readFileSync(headerPath, 'utf8'));
       const base = normalizeForComparison(fs.readFileSync(defaultHeaderPath, 'utf8'));
       if (current === base) {
-        warnings.push('Header appears unchanged from the default template.');
+        errors.push('Header appears unchanged from the default template.');
       }
     }
+
+    errors.push(...validateTemplateTransformation(themeDir));
   
     const motionFiles = ['src/js/main.js', 'src/scss/main.scss', 'assets/js/bundle.js', 'assets/css/bundle.css']
       .map((file) => path.join(themeDir, file))
@@ -196,9 +204,89 @@ function createValidation(deps) {
       .map((file) => fs.readFileSync(file, 'utf8'))
       .join('\n');
     if (!/(IntersectionObserver|requestAnimationFrame|data-animate|prefers-reduced-motion|@keyframes|transition|transform)/i.test(motionFiles)) {
-      warnings.push('No strong animation or interaction signal found in JS/CSS.');
+      errors.push('No strong animation or interaction signal found in JS/CSS.');
     }
-    return warnings;
+    return { errors, warnings };
+  }
+
+  function validateTemplateTransformation(themeDir) {
+    if (path.resolve(themeDir) === path.resolve(DEFAULT_TEMPLATE_DIR) || !fs.existsSync(DEFAULT_TEMPLATE_DIR)) {
+      return [];
+    }
+
+    const errors = [];
+    const criticalFiles = [
+      'front-page.php',
+      'header.php',
+      'footer.php',
+      'template-parts/content-hero.php',
+      'src/scss/layout/_header.scss',
+      'src/scss/layout/_sections.scss',
+      'src/scss/layout/_footer.scss',
+      'src/scss/pages/_homepage.scss',
+      'assets/css/bundle.css'
+    ];
+    const similarFiles = [];
+
+    for (const relPath of criticalFiles) {
+      const generatedPath = path.join(themeDir, relPath);
+      const templatePath = path.join(DEFAULT_TEMPLATE_DIR, relPath);
+      if (!fs.existsSync(generatedPath) || !fs.existsSync(templatePath)) {
+        continue;
+      }
+      const generated = fs.readFileSync(generatedPath, 'utf8');
+      const template = fs.readFileSync(templatePath, 'utf8');
+      const similarity = contentSimilarity(generated, template);
+      if (similarity >= 0.72) {
+        similarFiles.push(`${relPath} (${Math.round(similarity * 100)}% similar)`);
+      }
+    }
+
+    if (similarFiles.length >= 4) {
+      errors.push(`Generated theme is still too similar to the starter template in critical layout/style files: ${similarFiles.join(', ')}.`);
+    }
+
+    const generatedCss = path.join(themeDir, 'assets/css/bundle.css');
+    const templateCss = path.join(DEFAULT_TEMPLATE_DIR, 'assets/css/bundle.css');
+    if (fs.existsSync(generatedCss) && fs.existsSync(templateCss)) {
+      const generatedCssSize = fs.statSync(generatedCss).size;
+      const templateCssSize = fs.statSync(templateCss).size;
+      const sizeDelta = Math.abs(generatedCssSize - templateCssSize);
+      const cssSimilarity = contentSimilarity(fs.readFileSync(generatedCss, 'utf8'), fs.readFileSync(templateCss, 'utf8'));
+      if (sizeDelta < 3000 && cssSimilarity >= 0.6) {
+        errors.push(`Compiled CSS is too close to the starter template for a major visual redesign: size delta ${sizeDelta} bytes, ${Math.round(cssSimilarity * 100)}% content similarity.`);
+      }
+    }
+
+    return errors;
+  }
+
+  function contentSimilarity(a, b) {
+    const aTokens = comparisonTokens(a);
+    const bTokens = comparisonTokens(b);
+    if (!aTokens.size || !bTokens.size) {
+      return aTokens.size === bTokens.size ? 1 : 0;
+    }
+    let intersection = 0;
+    for (const token of aTokens) {
+      if (bTokens.has(token)) {
+        intersection += 1;
+      }
+    }
+    return intersection / Math.max(aTokens.size, bTokens.size);
+  }
+
+  function comparisonTokens(value) {
+    const normalized = normalizeForComparison(value)
+      .replace(/#[0-9a-f]{3,8}\b/gi, '#color')
+      .replace(/\b\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw|s|ms)?\b/gi, '#num')
+      .toLowerCase();
+    const words = normalized.match(/[a-z0-9_-]{3,}/g) || [];
+    const tokens = new Set(words);
+    for (let index = 0; index < words.length - 2; index += 1) {
+      tokens.add(`${words[index]} ${words[index + 1]} ${words[index + 2]}`);
+    }
+    return tokens;
   }
   
   function validateSeededAssetContract(themeDir) {

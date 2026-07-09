@@ -561,6 +561,23 @@ The site must feel complete at every breakpoint. Mobile layouts must be intentio
 
 Every page must use a consistent relationship between visual media, headings, supporting text, metadata, and CTAs.
 
+### Mandatory Visual Transformation
+
+This generation must not preserve the starter theme's page rhythm, section order, card pattern, header treatment, footer layout, or compiled CSS profile. Treat the copied template as raw materials, not as a design to re-skin.
+
+Create a visibly new Atlasframe Digital system with a distinct composition strategy:
+
+- Use an asymmetric split hero with an editorial proof rail, real approved imagery, compact CTAs, and a technical status/detail panel.
+- Rebuild the homepage flow around a planning-to-launch narrative: strategy intake, system architecture, custom build, integration, launch QA, and care.
+- Replace generic grid/card repetition with mixed section types such as narrow proof bands, framed media strips, process timelines, comparison rows, service matrices, and dark technical detail sections.
+- Redesign the header dropdowns so they look like Atlasframe service navigation, not the copied starter menu.
+- Redesign the footer as a functional project-start and site-map area with Atlasframe-specific service paths, contact context, and maintenance proof.
+- Change the responsive behavior deliberately. Mobile should stack into concise editorial sections with short proof rows and visible imagery, not compressed desktop grids.
+
+You must update the source styling system enough that the compiled CSS is materially different from the starter template. Make substantive changes across SCSS variables, layout primitives, header styles, homepage sections, cards/buttons/forms, footer styles, responsive rules, and interaction states. A copy-and-color swap is failed output.
+
+Before finishing, compare your own generated work mentally against the original starter template. If the homepage, header, footer, and compiled CSS would still look familiar to someone who saw the starter, keep redesigning inside this single generation pass.
+
 ## 06. Typography Direction
 
 ### Heading Style

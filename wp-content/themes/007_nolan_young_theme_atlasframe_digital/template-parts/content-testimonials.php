@@ -1,0 +1,6 @@
+<section class="section proof-section">
+	<div class="container">
+		<div class="section-heading"><p class="eyebrow"><?php esc_html_e( 'Proof without invented testimonials', '007-nolan-young-theme-atlasframe-digital' ); ?></p><h2><?php esc_html_e( 'Credibility comes from visible structure, maintainable code, and practical handoff.', '007-nolan-young-theme-atlasframe-digital' ); ?></h2></div>
+		<div class="proof-grid"><div><strong><?php esc_html_e( 'Custom theme architecture', '007-nolan-young-theme-atlasframe-digital' ); ?></strong><p><?php esc_html_e( 'The theme favors real WordPress templates, reusable parts, SCSS source, accessible JavaScript, and documented build outputs.', '007-nolan-young-theme-atlasframe-digital' ); ?></p></div><div><strong><?php esc_html_e( 'Clear service taxonomy', '007-nolan-young-theme-atlasframe-digital' ); ?></strong><p><?php esc_html_e( 'Navigation, service cards, forms, and content paths are planned before decorative choices carry the page.', '007-nolan-young-theme-atlasframe-digital' ); ?></p></div><div><strong><?php esc_html_e( 'Care after launch', '007-nolan-young-theme-atlasframe-digital' ); ?></strong><p><?php esc_html_e( 'Support options, documentation, admin workflows, and improvement backlogs keep the website manageable.', '007-nolan-young-theme-atlasframe-digital' ); ?></p></div></div>
+	</div>
+</section>

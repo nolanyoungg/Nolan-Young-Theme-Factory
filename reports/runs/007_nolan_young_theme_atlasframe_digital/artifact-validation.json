@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "007_nolan_young_theme_atlasframe_digital",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome execution failed:     at [eval]:103:11"
+  ],
+  "checkedAt": "2026-07-09T00:41:43.384Z"
+}

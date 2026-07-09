@@ -1,0 +1,67 @@
+.atlasframe-form,
+.newsletter-form,
+.search-form {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.search-form {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+label {
+  display: grid;
+  gap: .4rem;
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--color-text);
+  padding: .82rem .9rem;
+}
+
+textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.form-note,
+.field-error {
+  font-size: .9rem;
+}
+
+.field-error,
+.form-status--error {
+  color: #9a3412;
+  font-weight: 800;
+}
+
+.form-status--success {
+  color: #0f766e;
+  font-weight: 800;
+}
+
+.form-honeypot,
+.honeypot,
+.visually-hidden-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+@media (max-width: 520px) {
+  .search-form {
+    grid-template-columns: 1fr;
+  }
+}

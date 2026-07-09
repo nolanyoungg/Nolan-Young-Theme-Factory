@@ -1,0 +1,8 @@
+.card-grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); }
+.card-grid--three { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+.service-card, .blog-card, .portfolio-card, .info-card, .featured-strip article, .comparison-grid article, .contact-panel, .featured-article { border: 1px solid var(--color-border); border-radius: var(--radius); background: #fff; padding: 1.1rem; box-shadow: 0 1px 0 rgba(11,17,32,.04); }
+.service-card img, .blog-card img, .portfolio-card img, .featured-strip img, .media-frame { width: 100%; border-radius: var(--radius); margin-bottom: 1rem; background: var(--color-bg-soft); }
+.service-card a, .blog-card a, .portfolio-card a { text-decoration: none; }
+.service-card:hover, .blog-card:hover, .portfolio-card:hover { border-color: var(--color-border-strong); box-shadow: var(--shadow); }
+.featured-article { display: grid; gap: 1.25rem; margin-bottom: 1.5rem; }
+@media (min-width: 760px) { .featured-article { grid-template-columns: 1fr 1.2fr; } }

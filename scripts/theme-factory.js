@@ -986,8 +986,28 @@ function update_post_meta(){ return true; }
 function wp_generate_password(){ return 'preview-token'; }
 function wp_nonce_url($url){ return $url; }
 function check_admin_referer(){ return true; }
+function get_post($post = null){
+  return (object) array(
+    'ID' => 1,
+    'post_name' => 'website-service',
+    'post_title' => 'Website Service',
+    'post_excerpt' => 'Preview excerpt rendered by the factory harness.',
+    'post_content' => '<p>Preview content rendered by the factory harness.</p>',
+    'post_type' => 'page'
+  );
+}
 function get_posts(){ return array(); }
 function get_post_meta(){ return ''; }
+function get_post_field($field = '', $post = null, $context = 'display'){
+  $values = array(
+    'post_name' => 'website-service',
+    'post_title' => 'Website Service',
+    'post_excerpt' => 'Preview excerpt rendered by the factory harness.',
+    'post_content' => '<p>Preview content rendered by the factory harness.</p>',
+    'post_type' => 'page'
+  );
+  return isset($values[$field]) ? $values[$field] : '';
+}
 function get_the_date(){ return date('Y-m-d'); }
 function get_option($name, $default = false){ return $name === 'admin_email' ? 'preview@example.test' : $default; }
 function current_user_can(){ return true; }

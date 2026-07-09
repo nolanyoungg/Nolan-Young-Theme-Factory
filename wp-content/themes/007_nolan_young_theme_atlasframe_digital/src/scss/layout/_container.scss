@@ -1,8 +1,0 @@
-.container, .template-container { width: min(100% - 2rem, var(--container)); margin-inline: auto; }
-.narrow { width: min(100% - 2rem, var(--container-narrow)); }
-.section, .template-section { padding: clamp(4rem, 8vw, 7rem) 0; }
-.section-dark { background: var(--color-dark); }
-.center { text-align: center; }
-.center h2, .center p { margin-inline: auto; }
-.split { display: grid; gap: clamp(2rem, 5vw, 5rem); align-items: center; }
-@media (min-width: 820px) { .split { grid-template-columns: 1fr 1fr; } }

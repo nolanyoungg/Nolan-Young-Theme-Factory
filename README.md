@@ -72,13 +72,31 @@ Ollama:
 npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model llama3.1:8b
 ```
 
+Qwen 2.5 Coder 14B through Ollama:
+
+```sh
+ollama pull qwen2.5-coder:14b
+npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model qwen2.5-coder:14b
+```
+
 LM Studio:
 
 ```sh
 npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
 ```
 
-LM Studio mode expects the LM Studio desktop app or `lms`/`llmster` server to already be running. The default base URL is `http://127.0.0.1:1234/v1`; override it with `--lmstudio-base-url` or `LMSTUDIO_BASE_URL`.
+LM Studio mode expects the LM Studio desktop app or `lms`/`llmster` server to already be running with the OpenAI-compatible API enabled. The default base URL is `http://127.0.0.1:1234/v1`; override it with `--lmstudio-base-url` or `LMSTUDIO_BASE_URL`.
+
+Qwen 2.5 Coder 14B through LM Studio:
+
+```sh
+npm run theme:model-check -- --provider lmstudio
+npm run theme:model-check -- --provider lmstudio --lmstudio-model qwen/qwen2.5-coder-14b
+npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
+```
+
+Use the exact model id reported by `theme:model-check`; LM Studio model ids can differ by download source and quantization. If the server is not running, the model is not loaded, the endpoint is not OpenAI-compatible, or the model id is wrong, `theme:model-check` fails before generation.
 
 The runner prompts interactively for missing values when used from a TTY. Non-interactive runs must pass required options.
 

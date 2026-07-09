@@ -27,6 +27,35 @@ There are only three modes: `codex-only`, `ollama-only`, and `lmstudio-only`.
 
 LM Studio mode uses the OpenAI-compatible server exposed by the LM Studio desktop app, `lms`, or `llmster`. The default base URL is `http://127.0.0.1:1234/v1`; override it with `--lmstudio-base-url` or `LMSTUDIO_BASE_URL`.
 
+## Implementation Layout
+
+- `scripts/theme-factory.js` is the public command entrypoint and deterministic workflow coordinator.
+- `scripts/lib/cli/options.js` owns argument parsing, mode mapping, and interactive run prompts.
+- `scripts/lib/providers/ollama.js` owns Ollama CLI checks and stage execution.
+- `scripts/lib/providers/lmstudio.js` owns LM Studio OpenAI-compatible HTTP checks and stage execution.
+- `scripts/lib/local-model/stages.js` owns local-model stage plans, prompt construction, and file-block application.
+- `scripts/lib/validation.js` owns source and artifact validation checks.
+
+## Local Model Setup
+
+Ollama with Qwen 2.5 Coder 14B:
+
+```sh
+ollama pull qwen2.5-coder:14b
+npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model qwen2.5-coder:14b
+```
+
+LM Studio with Qwen 2.5 Coder 14B:
+
+```sh
+npm run theme:model-check -- --provider lmstudio
+npm run theme:model-check -- --provider lmstudio --lmstudio-model qwen/qwen2.5-coder-14b
+npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
+```
+
+Use the exact model id reported by LM Studio. The id may vary by source or quantization, so check the server first and then pass the visible id to `--lmstudio-model`.
+
 ## File-Block Protocol For Local Models
 
 Ollama and LM Studio stages must return complete files using this exact protocol:

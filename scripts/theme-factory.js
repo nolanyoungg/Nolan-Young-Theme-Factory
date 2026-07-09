@@ -4,8 +4,24 @@
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
-const readline = require('node:readline/promises');
 const { spawnSync } = require('node:child_process');
+const {
+  collectRunOptions,
+  isPlannedLocalModelMode,
+  localModelProviderLabel,
+  parseArgs,
+  providerForMode
+} = require('./lib/cli/options');
+const {
+  DEFAULT_LMSTUDIO_BASE_URL,
+  checkLmStudioProvider
+} = require('./lib/providers/lmstudio');
+const { checkOllamaProvider } = require('./lib/providers/ollama');
+const {
+  runLocalModelGeneration,
+  validateLocalModelPlan
+} = require('./lib/local-model/stages');
+const { createValidation } = require('./lib/validation');
 
 const ROOT = path.resolve(__dirname, '..');
 const THEMES_DIR = path.join(ROOT, 'wp-content', 'themes');
@@ -15,7 +31,6 @@ const REPORTS_DIR = path.join(ROOT, 'reports', 'runs');
 const PROMPTS_DIR = path.join(ROOT, 'prompts', 'pending');
 const DEFAULT_TEMPLATE_DIR = path.join(THEMES_DIR, '000_nolan_young_theme_master_template_prompt_filler_template_1');
 const MODE_VALUES = new Set(['codex-only', 'ollama-only', 'lmstudio-only']);
-const DEFAULT_LMSTUDIO_BASE_URL = 'http://127.0.0.1:1234/v1';
 const SLUG_RE = /^\d{3}_nolan_young_theme_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const SEEDED_ASSET_MANIFEST = path.join('assets', 'images', 'asset-manifest.json');
 const PACKAGE_EXCLUDED_DIRS = new Set(['node_modules', '.git', '.agents', '.codex', '.svn', '.hg']);
@@ -55,78 +70,13 @@ const PREVIEW_PAGES = [
   ['single_services_preview.html', 'page-templates/template-single-service.php']
 ];
 
-const LOCAL_MODEL_STAGES = [
-  {
-    id: 'identity-content',
-    promptSections: ['Business Identity', 'Content Requirements', 'Pages to Build', 'Header and Navigation'],
-    allow: [
-      'style.css',
-      'README.md',
-      'header.php',
-      'footer.php',
-      'front-page.php',
-      'index.php',
-      'page.php',
-      'single.php',
-      'search.php',
-      '404.php',
-      '403.php',
-      'searchform.php',
-      'page-templates/**',
-      'template-parts/**',
-      'inc/helpers.php',
-      'theme.json'
-    ]
-  },
-  {
-    id: 'wordpress-structure',
-    promptSections: ['Functionality', 'Core WordPress Theme Requirements', 'WordPress Asset Enqueue Requirements', 'Pages to Build', 'Header and Navigation'],
-    allow: [
-      'functions.php',
-      'inc/**',
-      'header.php',
-      'footer.php',
-      'front-page.php',
-      'index.php',
-      'page.php',
-      'single.php',
-      'search.php',
-      '404.php',
-      '403.php',
-      'searchform.php',
-      'page-templates/**',
-      'template-parts/**',
-      'theme.json'
-    ]
-  },
-  {
-    id: 'visual-system',
-    promptSections: ['Style / CSS Requirements', 'CSS Architecture', 'Visual Design Direction', 'Color System', 'Typography Direction'],
-    allow: [
-      'style.css',
-      'theme.json',
-      'src/scss/**',
-      'assets/css/**',
-      'assets/icons/**',
-      'assets/images/**',
-      'screenshot.png'
-    ]
-  },
-  {
-    id: 'interaction-build',
-    promptSections: ['Functionality', 'Header Behavior', 'Accessibility and Motion', 'Accessibility', 'Header and Navigation', 'Webpack Build Requirements'],
-    allow: [
-      'src/js/**',
-      'assets/js/**',
-      'build/**',
-      'package.json',
-      'package-lock.json',
-      'header.php',
-      'footer.php',
-      'inc/enqueue.php'
-    ]
-  }
-];
+const {
+  printValidation,
+  validateArtifacts,
+  validateArtifactsOrThrow,
+  validateSource,
+  validateSourceOrThrow
+} = createValidation(validationDeps());
 
 function main() {
   const [command = 'help', ...rawArgs] = process.argv.slice(2);
@@ -171,9 +121,9 @@ async function dispatch(command, args) {
 }
 
 async function run(args) {
-  const options = await collectRunOptions(args);
+  const options = await collectRunOptions(args, cliOptionDeps());
   const localModelPlan = isPlannedLocalModelMode(options.mode)
-    ? validateLocalModelPlan(collectMarkdownHeadings(fs.readFileSync(options.promptPath, 'utf8')), localModelProviderLabel(options.mode))
+    ? validateLocalModelPlan(collectMarkdownHeadings(fs.readFileSync(options.promptPath, 'utf8')), localModelProviderLabel(options.mode), localModelDeps())
     : [];
   await modelCheck(providerForMode(options.mode), options);
 
@@ -198,10 +148,8 @@ async function run(args) {
   if (options.mode === 'codex-only') {
     seedGeneratedAssets(themeDir, options);
     runCodexGeneration(themeDir, options, reportDir);
-  } else if (options.mode === 'ollama-only') {
-    runOllamaGeneration(themeDir, options, reportDir);
   } else {
-    await runLmStudioGeneration(themeDir, options, reportDir);
+    await runLocalModelGeneration(providerForMode(options.mode), themeDir, options, reportDir, localModelDeps());
   }
 
   buildTheme(options.themeSlug);
@@ -382,36 +330,61 @@ function runCheck(name, fn) {
   }
 }
 
-function isPlannedLocalModelMode(mode) {
-  return mode === 'ollama-only' || mode === 'lmstudio-only';
+function localModelDeps() {
+  return {
+    ROOT,
+    assertStatus,
+    collectMarkdownHeadings,
+    ensureDir,
+    ensureInside,
+    fs,
+    listThemeContext,
+    matchesAllowList,
+    normalizeHeading,
+    normalizeRelativeFile,
+    path,
+    removeIfExists,
+    withProgressHeartbeat,
+    writeJson
+  };
 }
 
-function localModelProviderLabel(mode) {
-  if (mode === 'ollama-only') {
-    return 'Ollama';
-  }
-  if (mode === 'lmstudio-only') {
-    return 'LM Studio';
-  }
-  return 'Local model';
+function cliOptionDeps() {
+  return {
+    DEFAULT_TEMPLATE_DIR,
+    MODE_VALUES,
+    firstPromptPath,
+    makeNextSlug,
+    relative,
+    requireSlug,
+    resolvePath,
+    resolvePromptPath,
+    resolveTemplateSource
+  };
 }
 
-function providerForMode(mode) {
-  if (mode === 'codex-only') {
-    return 'codex';
-  }
-  if (mode === 'ollama-only') {
-    return 'ollama';
-  }
-  if (mode === 'lmstudio-only') {
-    return 'lmstudio';
-  }
-  throw new Error(`Unsupported mode: ${mode}`);
-}
-
-function normalizeLmStudioBaseUrl(value) {
-  const raw = String(value || DEFAULT_LMSTUDIO_BASE_URL).trim().replace(/\/+$/, '');
-  return raw.endsWith('/v1') ? raw : `${raw}/v1`;
+function validationDeps() {
+  return {
+    DEFAULT_TEMPLATE_DIR,
+    PREVIEW_PAGES,
+    PREVIEWS_DIR,
+    REQUIRED_THEME_FILES,
+    ROOT,
+    SEEDED_ASSET_MANIFEST,
+    ZIPS_DIR,
+    ensureReportDir,
+    escapeRegExp,
+    existingThemeDir,
+    fs,
+    isLandscapingTheme,
+    listZipEntries,
+    readJson,
+    relative,
+    relativeTo,
+    walk,
+    writeJson,
+    zipEntryHasExcludedDir
+  };
 }
 
 async function runCheckAsync(name, fn) {
@@ -421,97 +394,6 @@ async function runCheckAsync(name, fn) {
   } catch (error) {
     return { name, ok: false, error: error.message };
   }
-}
-
-async function collectRunOptions(args) {
-  let options = {
-    mode: args.mode,
-    promptPath: args.prompt ? resolvePromptPath(args.prompt) : null,
-    templateSourcePath: args.templateSourcePath || args['template-source-path'] ? resolveTemplateSource(args) : null,
-    themeSlug: args.themeSlug || args['theme-slug'] || null,
-    codexExecutable: args.codexExecutable || args['codex-executable'] || 'codex',
-    codexModel: args.codexModel || args['codex-model'] || '',
-    codexReasoning: args.codexReasoning || args['codex-reasoning'] || '',
-    codexExtraArgs: splitExtraArgs(args.codexExtraArgs || args['codex-extra-args'] || ''),
-    ollamaExecutable: args.ollamaExecutable || args['ollama-executable'] || 'ollama',
-    ollamaModel: args.ollamaModel || args['ollama-model'] || '',
-    lmstudioBaseUrl: normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL),
-    lmstudioModel: args.lmstudioModel || args['lmstudio-model'] || '',
-    lmstudioApiKey: args.lmstudioApiKey || args['lmstudio-api-key'] || process.env.LMSTUDIO_API_KEY || 'lm-studio',
-    lmstudioTemperature: args.lmstudioTemperature || args['lmstudio-temperature'] || '0.2',
-    force: Boolean(args.force)
-  };
-
-  const interactive = process.stdin.isTTY && process.stdout.isTTY && (!options.mode || !options.promptPath || !options.themeSlug);
-  if (interactive) {
-    options = await askRunOptions(options);
-  }
-
-  if (!MODE_VALUES.has(options.mode)) {
-    throw new Error(`Choose --mode codex-only, ollama-only, or lmstudio-only. Received: ${options.mode || '(missing)'}`);
-  }
-  if (!options.promptPath) {
-    throw new Error('Missing --prompt.');
-  }
-  if (!options.templateSourcePath) {
-    options.templateSourcePath = resolveTemplateSource({});
-  }
-  if (!options.themeSlug) {
-    options.themeSlug = makeNextSlug(options.promptPath);
-  }
-  requireSlug(options.themeSlug);
-  if (options.mode === 'ollama-only' && !options.ollamaModel) {
-    throw new Error('Missing --ollama-model for ollama-only mode.');
-  }
-  if (options.mode === 'lmstudio-only' && !options.lmstudioModel) {
-    throw new Error('Missing --lmstudio-model for lmstudio-only mode.');
-  }
-  return options;
-}
-
-async function askRunOptions(options) {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  try {
-    if (!options.mode) {
-      options.mode = await askWithDefault(rl, 'Mode (codex-only, ollama-only, or lmstudio-only)', 'codex-only');
-    }
-    if (!options.promptPath) {
-      const firstPrompt = firstPromptPath();
-      options.promptPath = resolvePromptPath(await askWithDefault(rl, 'Prompt file', relative(firstPrompt)));
-    }
-    if (!options.templateSourcePath) {
-      options.templateSourcePath = resolvePath(await askWithDefault(rl, 'Template source path', relative(DEFAULT_TEMPLATE_DIR)));
-    }
-    if (!options.themeSlug) {
-      options.themeSlug = await askWithDefault(rl, 'Theme slug', makeNextSlug(options.promptPath));
-    }
-    if (options.mode === 'codex-only') {
-      options.codexExecutable = await askWithDefault(rl, 'Codex executable', options.codexExecutable);
-      options.codexModel = await askWithDefault(rl, 'Codex model (blank uses Codex config)', options.codexModel);
-      options.codexReasoning = await askWithDefault(rl, 'Codex reasoning (blank uses Codex config)', options.codexReasoning);
-      options.codexExtraArgs = splitExtraArgs(await askWithDefault(rl, 'Codex extra args', options.codexExtraArgs.join(' ')));
-    } else if (options.mode === 'ollama-only') {
-      options.ollamaExecutable = await askWithDefault(rl, 'Ollama executable', options.ollamaExecutable);
-      options.ollamaModel = await askWithDefault(rl, 'Ollama model', options.ollamaModel || 'llama3.1:8b');
-    } else {
-      options.lmstudioBaseUrl = normalizeLmStudioBaseUrl(await askWithDefault(rl, 'LM Studio base URL', options.lmstudioBaseUrl));
-      options.lmstudioModel = await askWithDefault(rl, 'LM Studio model identifier', options.lmstudioModel);
-      options.lmstudioTemperature = await askWithDefault(rl, 'LM Studio temperature', options.lmstudioTemperature);
-    }
-    const confirmation = await askWithDefault(rl, 'Type continue to start generation', '');
-    if (confirmation !== 'continue') {
-      throw new Error('Generation cancelled.');
-    }
-  } finally {
-    rl.close();
-  }
-  return options;
-}
-
-async function askWithDefault(rl, label, defaultValue) {
-  const suffix = defaultValue ? ` [${defaultValue}]` : '';
-  const answer = await rl.question(`${label}${suffix}: `);
-  return answer.trim() || defaultValue;
 }
 
 function prepareTheme(options) {
@@ -987,67 +869,6 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
   ].join('\n');
 }
 
-function runOllamaGeneration(themeDir, options, reportDir) {
-  const prompt = fs.readFileSync(options.promptPath, 'utf8');
-  const promptHeadings = collectMarkdownHeadings(prompt);
-  const plan = validateLocalModelPlan(promptHeadings, 'Ollama');
-  writeJson(path.join(reportDir, 'ollama-stage-plan.json'), plan);
-
-  for (const stage of LOCAL_MODEL_STAGES) {
-    const stagePrompt = buildLocalModelStagePrompt(prompt, themeDir, stage, 'Ollama');
-    const result = spawnSync(options.ollamaExecutable || 'ollama', ['run', options.ollamaModel], {
-      cwd: themeDir,
-      input: stagePrompt,
-      encoding: 'utf8',
-      maxBuffer: 1024 * 1024 * 100
-    });
-    fs.writeFileSync(path.join(reportDir, `ollama-${stage.id}.log`), [
-      `$ ${(options.ollamaExecutable || 'ollama')} run ${options.ollamaModel}`,
-      '',
-      result.stdout || '',
-      result.stderr || ''
-    ].join('\n'));
-    assertStatus(result, `ollama stage ${stage.id}`);
-    applyFileBlocks(themeDir, result.stdout || '', stage.allow, stage.id, 'Ollama');
-  }
-}
-
-async function runLmStudioGeneration(themeDir, options, reportDir) {
-  const prompt = fs.readFileSync(options.promptPath, 'utf8');
-  const promptHeadings = collectMarkdownHeadings(prompt);
-  const plan = validateLocalModelPlan(promptHeadings, 'LM Studio');
-  writeJson(path.join(reportDir, 'lmstudio-stage-plan.json'), plan);
-
-  for (const stage of LOCAL_MODEL_STAGES) {
-    const stagePrompt = buildLocalModelStagePrompt(prompt, themeDir, stage, 'LM Studio');
-    const startedAt = new Date().toISOString();
-    console.log(`[${startedAt}] LM Studio stage ${stage.id} starting with model ${options.lmstudioModel}`);
-    const response = await withProgressHeartbeat(`LM Studio stage ${stage.id}`, () => lmStudioChatCompletion(options, [
-      {
-        role: 'system',
-        content: 'You are a local code generation model. Return only the requested complete file blocks.'
-      },
-      {
-        role: 'user',
-        content: stagePrompt
-      }
-    ]));
-    const content = extractLmStudioMessageContent(response);
-    fs.writeFileSync(path.join(reportDir, `lmstudio-${stage.id}.json`), JSON.stringify({
-      request: {
-        baseUrl: options.lmstudioBaseUrl,
-        model: options.lmstudioModel,
-        stage: stage.id,
-        startedAt
-      },
-      response
-    }, null, 2));
-    fs.writeFileSync(path.join(reportDir, `lmstudio-${stage.id}.log`), content);
-    applyFileBlocks(themeDir, content, stage.allow, stage.id, 'LM Studio');
-    console.log(`[${new Date().toISOString()}] LM Studio stage ${stage.id} completed`);
-  }
-}
-
 async function withProgressHeartbeat(label, work) {
   const startedAt = Date.now();
   const timer = setInterval(() => {
@@ -1060,159 +881,6 @@ async function withProgressHeartbeat(label, work) {
   } finally {
     clearInterval(timer);
   }
-}
-
-async function lmStudioChatCompletion(options, messages) {
-  return requestJson(`${options.lmstudioBaseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${options.lmstudioApiKey || 'lm-studio'}`
-    },
-    body: JSON.stringify({
-      model: options.lmstudioModel,
-      messages,
-      temperature: Number.isFinite(Number(options.lmstudioTemperature)) ? Number(options.lmstudioTemperature) : 0.2,
-      stream: false
-    })
-  }, 'LM Studio chat completion');
-}
-
-async function requestJson(url, options, label) {
-  let response;
-  try {
-    response = await fetch(url, {
-      ...options,
-      signal: AbortSignal.timeout(1000 * 60 * 30)
-    });
-  } catch (error) {
-    throw new Error(`${label} failed to reach ${url}: ${error.message}`);
-  }
-
-  const text = await response.text();
-  let json = null;
-  if (text) {
-    try {
-      json = JSON.parse(text);
-    } catch (error) {
-      throw new Error(`${label} returned non-JSON response from ${url}: ${text.slice(0, 500)}`);
-    }
-  }
-
-  if (!response.ok) {
-    const detail = json && (json.error && (json.error.message || json.error) || json.message) || text || response.statusText;
-    throw new Error(`${label} failed with HTTP ${response.status}: ${detail}`);
-  }
-  return json;
-}
-
-function extractLmStudioMessageContent(response) {
-  const content = response
-    && response.choices
-    && response.choices[0]
-    && response.choices[0].message
-    && response.choices[0].message.content;
-  if (Array.isArray(content)) {
-    return content.map((part) => typeof part === 'string' ? part : part.text || '').join('');
-  }
-  if (typeof content !== 'string' || !content.trim()) {
-    throw new Error('LM Studio response did not contain assistant message content.');
-  }
-  return content;
-}
-
-async function listLmStudioModels(args) {
-  const baseUrl = normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL);
-  const apiKey = args.lmstudioApiKey || args['lmstudio-api-key'] || process.env.LMSTUDIO_API_KEY || 'lm-studio';
-  return requestJson(`${baseUrl}/models`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${apiKey}`
-    }
-  }, 'LM Studio model check');
-}
-
-function buildLocalModelStagePrompt(prompt, themeDir, stage, providerLabel) {
-  const context = listThemeContext(themeDir);
-  return [
-    `You are running planned ${providerLabel} stage "${stage.id}" for a prepared WordPress theme.`,
-    '',
-    `Prompt-section ownership: ${stage.promptSections.join(', ')}`,
-    '',
-    'Allowed file paths for this stage:',
-    ...stage.allow.map((item) => `- ${item}`),
-    '',
-    'Return only complete file blocks using this exact protocol:',
-    '---FILE: relative/path/from/theme/root.php---',
-    'complete file content',
-    '---END FILE---',
-    '',
-    'Do not describe changes outside file blocks.',
-    'Do not emit partial files.',
-    'Do not write outside the allowed path list.',
-    'Do not create previews, ZIPs, reports, scripts, docs, or repo files.',
-    '',
-    'Current theme file inventory:',
-    context,
-    '',
-    'Production prompt:',
-    prompt
-  ].join('\n');
-}
-
-function validateLocalModelPlan(promptHeadings, providerLabel) {
-  const normalizedHeadings = promptHeadings.map(normalizeHeading);
-  return LOCAL_MODEL_STAGES.map((stage) => {
-    const matchedSections = stage.promptSections.filter((section) => {
-      const normalized = normalizeHeading(section);
-      return normalizedHeadings.some((heading) => heading.includes(normalized) || normalized.includes(heading));
-    });
-    if (!matchedSections.length) {
-      throw new Error(`${providerLabel} stage "${stage.id}" has no matching production prompt coverage. Expected one of: ${stage.promptSections.join(', ')}`);
-    }
-    return {
-      id: stage.id,
-      promptSections: stage.promptSections,
-      matchedSections,
-      allow: stage.allow
-    };
-  });
-}
-
-function applyFileBlocks(themeDir, output, allow, stageId, providerLabel = 'Local model') {
-  const blocks = parseFileBlocks(output);
-  if (!blocks.length) {
-    throw new Error(`${providerLabel} stage "${stageId}" returned no valid file blocks.`);
-  }
-  const candidateDir = fs.mkdtempSync(path.join(os.tmpdir(), `theme-stage-${stageId}-`));
-  fs.cpSync(themeDir, candidateDir, { recursive: true });
-
-  try {
-    for (const block of blocks) {
-      const relPath = normalizeRelativeFile(block.path);
-      if (!matchesAllowList(relPath, allow)) {
-        throw new Error(`${providerLabel} stage "${stageId}" attempted to write disallowed file: ${relPath}`);
-      }
-      const target = path.join(candidateDir, relPath);
-      ensureInside(candidateDir, target);
-      ensureDir(path.dirname(target));
-      fs.writeFileSync(target, block.content.replace(/\r\n/g, '\n'));
-    }
-    removeIfExists(themeDir);
-    fs.cpSync(candidateDir, themeDir, { recursive: true });
-  } finally {
-    removeIfExists(candidateDir);
-  }
-}
-
-function parseFileBlocks(output) {
-  const blocks = [];
-  const re = /^---FILE:\s*(.+?)\s*---\s*\r?\n([\s\S]*?)\r?\n---END FILE---/gm;
-  let match;
-  while ((match = re.exec(output)) !== null) {
-    blocks.push({ path: match[1].trim(), content: match[2] });
-  }
-  return blocks;
 }
 
 function buildTheme(themeSlug) {
@@ -1231,486 +899,6 @@ function buildTheme(themeSlug) {
 
   console.log(`Building theme ${themeSlug}...`);
   assertStatus(spawnSync('npm', ['run', 'build'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm run build');
-}
-
-function validateSource(themeSlug, options = {}) {
-  const writeReport = options.writeReport !== false;
-  const themeDir = existingThemeDir(themeSlug);
-  const errors = [];
-  const warnings = [];
-
-  for (const relPath of REQUIRED_THEME_FILES) {
-    const file = path.join(themeDir, relPath);
-    if (!fs.existsSync(file)) {
-      errors.push(`Missing required file: ${relPath}`);
-    } else if (fs.statSync(file).isFile() && fs.statSync(file).size === 0) {
-      errors.push(`Required file is empty: ${relPath}`);
-    }
-  }
-
-  const phpFiles = walk(themeDir).filter((file) => file.endsWith('.php'));
-  for (const file of phpFiles) {
-    const result = spawnSync('php', ['-l', file], { cwd: ROOT, encoding: 'utf8' });
-    if (result.status !== 0) {
-      errors.push(`PHP lint failed for ${relative(file)}: ${(result.stderr || result.stdout || '').trim()}`);
-    }
-  }
-
-  for (const file of phpFiles) {
-    const content = fs.readFileSync(file, 'utf8');
-    if (/<style[\s>]/i.test(content)) {
-      errors.push(`Inline <style> block found in PHP template: ${relativeTo(themeDir, file)}`);
-    }
-    if (/\bupload_mimes\b|image\/svg\+xml|\bsvg\s*=>|svg upload/i.test(content)) {
-      errors.push(`Potential global SVG upload enablement found in PHP: ${relativeTo(themeDir, file)}`);
-    }
-  }
-
-  const packagePath = path.join(themeDir, 'package.json');
-  if (fs.existsSync(packagePath)) {
-    try {
-      const pkg = readJson(packagePath);
-      if (!pkg.scripts || !pkg.scripts.build) {
-        errors.push('Theme package.json is missing scripts.build.');
-      }
-      if (!pkg.scripts || !pkg.scripts.dev) {
-        warnings.push('Theme package.json is missing scripts.dev.');
-      }
-    } catch (error) {
-      errors.push(`Theme package.json is invalid: ${error.message}`);
-    }
-  }
-
-  const style = path.join(themeDir, 'style.css');
-  if (fs.existsSync(style)) {
-    const styleContent = fs.readFileSync(style, 'utf8');
-    for (const field of ['Theme Name', 'Description', 'Text Domain']) {
-      if (!new RegExp(`^${escapeRegExp(field)}:\\s*\\S`, 'm').test(styleContent)) {
-        errors.push(`style.css missing ${field}.`);
-      }
-    }
-  }
-
-  errors.push(...validateStaleBrandResidue(themeDir));
-  errors.push(...validateSeededAssetContract(themeDir));
-  errors.push(...validateDomainAssetResidue(themeDir));
-  warnings.push(...validateDesignDifferentiation(themeDir));
-
-  if (writeReport) {
-    writeValidation(themeSlug, 'source', errors, warnings);
-  }
-  return { errors, warnings };
-}
-
-function validateDomainAssetResidue(themeDir) {
-  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
-  if (!fs.existsSync(manifestPath)) {
-    return [];
-  }
-  const manifest = readJson(manifestPath);
-  if (!isLandscapingTheme(manifest.themeSlug || path.basename(themeDir))) {
-    return [];
-  }
-  const errors = [];
-  const forbidden = [
-    '#2563eb',
-    '#1d4ed8',
-    '#14b8a6',
-    '#f97316',
-    'Northstar Websites',
-    'Nolan Designs',
-    'Northstar Codeworks',
-    'Brightlane Commerce Engineering',
-    'Circuit Commerce Studio',
-    'Stackforge Commerce Labs'
-  ];
-  for (const file of walk(themeDir)) {
-    const rel = relativeTo(themeDir, file);
-    if (rel.startsWith('node_modules/') || /\.(png|jpg|jpeg|webp|gif|zip|lock)$/i.test(rel)) {
-      continue;
-    }
-    const content = fs.readFileSync(file, 'utf8');
-    for (const phrase of forbidden) {
-      if (content.includes(phrase)) {
-        errors.push(`Landscaping theme contains copied software-theme residue "${phrase}" in ${rel}.`);
-      }
-    }
-  }
-  return errors;
-}
-
-function validateStaleBrandResidue(themeDir) {
-  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
-  if (!fs.existsSync(manifestPath)) {
-    return [];
-  }
-  const currentBrand = String(readJson(manifestPath).assets?.find((asset) => asset.alt)?.alt || '');
-  const forbidden = [
-    'Northstar Websites',
-    'Nolan Designs',
-    'Northstar Codeworks',
-    'Circuit Commerce Studio',
-    'Stackforge Commerce Labs',
-    'Brightlane Commerce Engineering'
-  ].filter((phrase) => !currentBrand.includes(phrase));
-  const errors = [];
-  for (const file of walk(themeDir)) {
-    const rel = relativeTo(themeDir, file);
-    if (rel.startsWith('node_modules/') || /\.(png|jpg|jpeg|webp|gif|zip|lock)$/i.test(rel)) {
-      continue;
-    }
-    const content = fs.readFileSync(file, 'utf8');
-    for (const phrase of forbidden) {
-      if (content.includes(phrase)) {
-        errors.push(`Stale copied-theme identity "${phrase}" found in ${rel}.`);
-      }
-    }
-  }
-  return errors;
-}
-
-function validateDesignDifferentiation(themeDir) {
-  const warnings = [];
-  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
-  if (!fs.existsSync(manifestPath)) {
-    return warnings;
-  }
-
-  const manifest = readJson(manifestPath);
-  const relevantFiles = walk(themeDir)
-    .filter((file) => /\.(php|scss|css|js|md)$/i.test(file))
-    .filter((file) => !relativeTo(themeDir, file).startsWith('node_modules/'));
-  const joined = relevantFiles.map((file) => fs.readFileSync(file, 'utf8')).join('\n');
-  const referenced = manifest.assets.filter((asset) => joined.includes(asset.path) || joined.includes(path.basename(asset.path)));
-  if (referenced.length < Math.min(4, manifest.assets.length)) {
-    warnings.push(`Seeded assets appear underused: ${referenced.length}/${manifest.assets.length} referenced in generated source.`);
-  }
-
-  const headerPath = path.join(themeDir, 'header.php');
-  const defaultHeaderPath = path.join(DEFAULT_TEMPLATE_DIR, 'header.php');
-  if (fs.existsSync(headerPath) && fs.existsSync(defaultHeaderPath)) {
-    const current = normalizeForComparison(fs.readFileSync(headerPath, 'utf8'));
-    const base = normalizeForComparison(fs.readFileSync(defaultHeaderPath, 'utf8'));
-    if (current === base) {
-      warnings.push('Header appears unchanged from the default template.');
-    }
-  }
-
-  const motionFiles = ['src/js/main.js', 'src/scss/main.scss', 'assets/js/bundle.js', 'assets/css/bundle.css']
-    .map((file) => path.join(themeDir, file))
-    .filter((file) => fs.existsSync(file))
-    .map((file) => fs.readFileSync(file, 'utf8'))
-    .join('\n');
-  if (!/(IntersectionObserver|requestAnimationFrame|data-animate|prefers-reduced-motion|@keyframes|transition|transform)/i.test(motionFiles)) {
-    warnings.push('No strong animation or interaction signal found in JS/CSS.');
-  }
-  return warnings;
-}
-
-function validateSeededAssetContract(themeDir) {
-  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
-  if (!fs.existsSync(manifestPath)) {
-    return [];
-  }
-  const manifest = readJson(manifestPath);
-  const errors = [];
-  const stockAssets = manifest.assets.filter((asset) => asset.kind === 'stock-photo');
-  const generatedBitmaps = manifest.assets.filter((asset) => /generated-bitmap|placeholder/i.test(asset.kind || asset.role || ''));
-  if (generatedBitmaps.length) {
-    errors.push(`Generated bitmap placeholders are not allowed for photo roles: ${generatedBitmaps.map((asset) => asset.path).join(', ')}`);
-  }
-  for (const asset of stockAssets) {
-    const file = path.join(themeDir, asset.path);
-    if (!fs.existsSync(file) || fs.statSync(file).size < 1024) {
-      errors.push(`Missing or invalid seeded stock photo: ${asset.path}`);
-    }
-    if (!asset.sourceUrl || !asset.pageUrl || !/Unsplash/i.test(manifest.license || '')) {
-      errors.push(`Seeded stock photo lacks Unsplash provenance: ${asset.path}`);
-    }
-  }
-  const relevantText = walk(themeDir)
-    .filter((file) => /\.(php|scss|css|js|md|json)$/i.test(file))
-    .filter((file) => !relativeTo(themeDir, file).startsWith('node_modules/'))
-    .map((file) => fs.readFileSync(file, 'utf8'))
-    .join('\n');
-  const referencedStock = stockAssets.filter((asset) => relevantText.includes(asset.path) || relevantText.includes(path.basename(asset.path)));
-  if (stockAssets.length && referencedStock.length < Math.min(4, stockAssets.length)) {
-    errors.push(`Seeded stock photos are underused: ${referencedStock.length}/${stockAssets.length} referenced in generated source.`);
-  }
-  return errors;
-}
-
-function normalizeForComparison(value) {
-  return value.replace(/\s+/g, ' ')
-    .replace(/nolan[-_\s]+young[-_\s]+theme[-_\s]+[a-z0-9_-]+/gi, 'nolan-young-theme')
-    .trim();
-}
-
-function validateArtifacts(themeSlug) {
-  const errors = [];
-  const warnings = [];
-  const previewDir = path.join(PREVIEWS_DIR, themeSlug);
-  const zipPath = path.join(ZIPS_DIR, `${themeSlug}.zip`);
-
-  for (const [htmlName] of PREVIEW_PAGES) {
-    const file = path.join(previewDir, htmlName);
-    if (!fs.existsSync(file)) {
-      errors.push(`Missing preview page: ${relative(file)}`);
-    } else if (fs.statSync(file).size === 0) {
-      errors.push(`Preview page is empty: ${relative(file)}`);
-    }
-  }
-
-  const galleryPath = path.join(ROOT, 'docs', 'index.html');
-  if (!fs.existsSync(galleryPath)) {
-    errors.push('Missing docs/index.html.');
-  } else if (!fs.readFileSync(galleryPath, 'utf8').includes(`Preview-Themes-Github/${themeSlug}/`)) {
-    errors.push(`docs/index.html does not link to ${themeSlug}.`);
-  }
-
-  const mobileProbe = probeMobilePreviewLayout(path.join(previewDir, 'homepage_preview.html'));
-  errors.push(...mobileProbe.errors);
-  warnings.push(...mobileProbe.warnings);
-
-  if (!fs.existsSync(zipPath)) {
-    errors.push(`Missing ZIP: ${relative(zipPath)}`);
-  } else {
-    const entries = listZipEntries(zipPath);
-    if (!entries.length) {
-      errors.push(`Could not inspect ZIP or ZIP is empty: ${relative(zipPath)}`);
-    } else if (!entries.includes(`${themeSlug}/style.css`)) {
-      errors.push(`ZIP does not contain ${themeSlug}/style.css.`);
-    }
-    const forbiddenEntries = entries.filter((entry) => zipEntryHasExcludedDir(entry));
-    if (forbiddenEntries.length) {
-      errors.push(`ZIP contains non-production directories: ${[...new Set(forbiddenEntries.map((entry) => entry.split('/').slice(0, 2).join('/')))].join(', ')}`);
-    }
-  }
-
-  writeValidation(themeSlug, 'artifact', errors, warnings);
-  return { errors, warnings };
-}
-
-function probeMobilePreviewLayout(previewPath) {
-  const errors = [];
-  const warnings = [];
-  if (!fs.existsSync(previewPath)) {
-    return { errors, warnings };
-  }
-
-  const chromePath = findChromeExecutable();
-  if (!chromePath) {
-    warnings.push('Skipped mobile preview layout probe because Chrome was not found.');
-    return { errors, warnings };
-  }
-
-  const probeScript = `
-const { spawn } = require('child_process');
-const http = require('http');
-const chromePath = process.env.CHROME_PATH;
-const previewUrl = process.env.PREVIEW_URL;
-const port = Number(process.env.CDP_PORT || 0);
-const chrome = spawn(chromePath, [
-  '--headless=new',
-  '--disable-gpu',
-  '--remote-debugging-port=' + port,
-  '--user-data-dir=' + process.env.USER_DATA_DIR,
-  'about:blank'
-], { stdio: 'ignore' });
-function getJson(pathname) {
-  return new Promise((resolve, reject) => {
-    http.get({ host: '127.0.0.1', port, path: pathname }, (res) => {
-      let data = '';
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); } catch (error) { reject(error); }
-      });
-    }).on('error', reject);
-  });
-}
-function wait(ms) { return new Promise((resolve) => setTimeout(resolve, ms)); }
-(async () => {
-  for (let attempt = 0; attempt < 40; attempt += 1) {
-    try {
-      const page = (await getJson('/json')).find((entry) => entry.type === 'page');
-      if (page) {
-        const ws = new WebSocket(page.webSocketDebuggerUrl);
-        let id = 0;
-        const pending = new Map();
-        ws.onmessage = (event) => {
-          const message = JSON.parse(event.data);
-          if (message.id && pending.has(message.id)) {
-            pending.get(message.id)(message);
-            pending.delete(message.id);
-          }
-        };
-        await new Promise((resolve) => { ws.onopen = resolve; });
-        const send = (method, params = {}) => new Promise((resolve) => {
-          const messageId = ++id;
-          pending.set(messageId, resolve);
-          ws.send(JSON.stringify({ id: messageId, method, params }));
-        });
-        await send('Page.enable');
-        await send('Runtime.enable');
-        await send('Emulation.setDeviceMetricsOverride', {
-          width: 390,
-          height: 844,
-          deviceScaleFactor: 1,
-          mobile: true
-        });
-        await send('Page.navigate', { url: previewUrl });
-        await wait(1600);
-        const expression = String.raw\`(() => {
-          const targetWidth = 390;
-          const hidden = (el) => el.closest('.form-honeypot,.honeypot,.visually-hidden-field,.screen-reader-text,[hidden]');
-          const overflowNodes = [...document.body.querySelectorAll('*')]
-            .filter((el) => !hidden(el))
-            .map((el) => {
-              const rect = el.getBoundingClientRect();
-              return {
-                tag: el.tagName,
-                className: String(el.className || ''),
-                text: (el.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 90),
-                left: rect.left,
-                right: rect.right,
-                top: rect.top,
-                width: rect.width,
-                height: rect.height
-              };
-            })
-            .filter((item) => item.width > 1 && item.height > 1 && (item.left < -1 || item.right > targetWidth + 1))
-            .sort((a, b) => b.right - a.right)
-            .slice(0, 8);
-          const h1 = document.querySelector('.hero h1');
-          const image = document.querySelector('.hero img');
-          const buttons = [...document.querySelectorAll('.hero .btn')].map((el) => {
-            const rect = el.getBoundingClientRect();
-            return { text: el.textContent.trim(), left: rect.left, right: rect.right };
-          });
-          return {
-            targetWidth,
-            documentScrollWidth: document.documentElement.scrollWidth,
-            bodyScrollWidth: document.body.scrollWidth,
-            overflowNodes,
-            h1: h1 ? h1.getBoundingClientRect().toJSON() : null,
-            heroImageTop: image ? image.getBoundingClientRect().top : null,
-            buttons
-          };
-        })()\`;
-        const result = await send('Runtime.evaluate', { expression, returnByValue: true });
-        console.log(JSON.stringify(result.result.result.value));
-        ws.close();
-        chrome.kill('SIGTERM');
-        return;
-      }
-    } catch (error) {}
-    await wait(250);
-  }
-  throw new Error('Could not connect to Chrome DevTools.');
-})().catch((error) => {
-  console.error(error.stack || String(error));
-  chrome.kill('SIGTERM');
-  process.exit(1);
-});
-`;
-
-  const port = 9400 + Math.floor(Math.random() * 300);
-  const result = spawnSync(process.execPath, ['-e', probeScript], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    maxBuffer: 1024 * 1024 * 10,
-    env: {
-      ...process.env,
-      CHROME_PATH: chromePath,
-      PREVIEW_URL: pathToFileUrl(previewPath),
-      CDP_PORT: String(port),
-      USER_DATA_DIR: path.join(os.tmpdir(), `theme-mobile-probe-${process.pid}-${Date.now()}`)
-    }
-  });
-
-  if (result.status !== 0) {
-    warnings.push(`Skipped mobile preview layout probe because Chrome execution failed: ${(result.stderr || result.stdout).trim().split('\n').pop() || 'unknown error'}`);
-    return { errors, warnings };
-  }
-
-  let probe;
-  try {
-    probe = JSON.parse((result.stdout || '').trim().split('\n').pop());
-  } catch (error) {
-    warnings.push('Skipped mobile preview layout probe because Chrome returned unreadable output.');
-    return { errors, warnings };
-  }
-
-  if (probe.overflowNodes && probe.overflowNodes.length) {
-    const offenders = probe.overflowNodes.map((item) => `${item.tag}${item.className ? `.${item.className}` : ''} "${item.text}"`).join('; ');
-    errors.push(`Mobile preview has horizontal overflow at 390px: ${offenders}`);
-  }
-  if (!probe.h1 || probe.h1.left < -1 || probe.h1.right > 391) {
-    errors.push('Mobile preview hero H1 is clipped or outside the 390px viewport.');
-  }
-  const badButtons = (probe.buttons || []).filter((button) => button.left < -1 || button.right > 391);
-  if (badButtons.length) {
-    errors.push(`Mobile preview hero CTA is clipped at 390px: ${badButtons.map((button) => button.text).join(', ')}`);
-  }
-  if (typeof probe.heroImageTop === 'number' && probe.heroImageTop > 844) {
-    errors.push('Mobile preview hero image does not begin within the first 390x844 viewport.');
-  }
-
-  return { errors, warnings };
-}
-
-function findChromeExecutable() {
-  const candidates = [
-    process.env.CHROME_PATH,
-    '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    '/Applications/Chromium.app/Contents/MacOS/Chromium',
-    '/usr/bin/google-chrome',
-    '/usr/bin/google-chrome-stable',
-    '/usr/bin/chromium',
-    '/usr/bin/chromium-browser'
-  ].filter(Boolean);
-  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
-}
-
-function pathToFileUrl(filePath) {
-  return `file://${path.resolve(filePath).split(path.sep).map(encodeURIComponent).join('/')}`;
-}
-
-function validateSourceOrThrow(themeSlug, options = {}) {
-  const result = validateSource(themeSlug, options);
-  if (result.errors.length) {
-    throw new Error(`Source validation failed:\n${result.errors.map((item) => `- ${item}`).join('\n')}`);
-  }
-}
-
-function validateArtifactsOrThrow(themeSlug) {
-  const result = validateArtifacts(themeSlug);
-  if (result.errors.length) {
-    throw new Error(`Artifact validation failed:\n${result.errors.map((item) => `- ${item}`).join('\n')}`);
-  }
-}
-
-function writeValidation(themeSlug, phase, errors, warnings) {
-  const reportDir = ensureReportDir(themeSlug);
-  writeJson(path.join(reportDir, `${phase}-validation.json`), {
-    phase,
-    themeSlug,
-    errors,
-    warnings,
-    checkedAt: new Date().toISOString()
-  });
-}
-
-function printValidation(label, result) {
-  for (const warning of result.warnings) {
-    console.log(`WARN ${label}: ${warning}`);
-  }
-  for (const error of result.errors) {
-    console.log(`FAIL ${label}: ${error}`);
-  }
-  if (!result.errors.length) {
-    console.log(`PASS ${label}`);
-  }
 }
 
 function generatePreview(themeSlug) {
@@ -2054,67 +1242,16 @@ async function modelCheck(provider, args) {
     return;
   }
   if (provider === 'ollama') {
-    const executable = args.ollamaExecutable || args['ollama-executable'] || 'ollama';
-    const version = spawnSync(executable, ['--version'], { cwd: ROOT, encoding: 'utf8' });
-    assertStatus(version, `${executable} --version`);
-    const model = args.ollamaModel || args['ollama-model'];
-    if (model) {
-      const list = spawnSync(executable, ['list'], { cwd: ROOT, encoding: 'utf8' });
-      assertStatus(list, `${executable} list`);
-      if (!list.stdout.includes(model)) {
-        throw new Error(`Ollama model not found locally: ${model}`);
-      }
-    }
+    checkOllamaProvider(args, localModelDeps());
     console.log('PASS model-check ollama');
     return;
   }
   if (provider === 'lmstudio') {
-    const model = args.lmstudioModel || args['lmstudio-model'];
-    const baseUrl = normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL);
-    const models = await listLmStudioModels({ ...args, lmstudioBaseUrl: baseUrl });
-    const modelIds = Array.isArray(models && models.data) ? models.data.map((entry) => entry.id).filter(Boolean) : [];
-    if (model && !modelIds.includes(model)) {
-      throw new Error(`LM Studio model not visible at ${baseUrl}: ${model}`);
-    }
+    const modelIds = await checkLmStudioProvider(args);
     console.log(`PASS model-check lmstudio${modelIds.length ? ` (${modelIds.join(', ')})` : ''}`);
     return;
   }
   throw new Error(`Unsupported provider: ${provider}`);
-}
-
-function parseArgs(rawArgs) {
-  const args = {};
-  for (let i = 0; i < rawArgs.length; i += 1) {
-    const token = rawArgs[i];
-    if (!token.startsWith('--')) {
-      args._ = args._ || [];
-      args._.push(token);
-      continue;
-    }
-    const without = token.slice(2);
-    const eq = without.indexOf('=');
-    if (eq !== -1) {
-      args[toCamel(without.slice(0, eq))] = without.slice(eq + 1);
-      args[without.slice(0, eq)] = without.slice(eq + 1);
-      continue;
-    }
-    const key = toCamel(without);
-    const originalKey = without;
-    const next = rawArgs[i + 1];
-    if (!next || next.startsWith('--')) {
-      args[key] = true;
-      args[originalKey] = true;
-    } else {
-      args[key] = next;
-      args[originalKey] = next;
-      i += 1;
-    }
-  }
-  return args;
-}
-
-function toCamel(value) {
-  return value.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
 function resolveTemplateSource(args) {
@@ -2320,6 +1457,9 @@ function relativeTo(parent, file) {
 
 function assertStatus(result, label) {
   if (result.error) {
+    if (result.error.code === 'ENOENT') {
+      throw new Error(`${label} failed: command not found. Install the tool or pass the matching executable option.`);
+    }
     throw new Error(`${label} failed: ${result.error.message}`);
   }
   if (result.status !== 0) {
@@ -2387,13 +1527,6 @@ function assertOnlyAllowedStatusChanges(before, after, allowedPrefixes) {
   if (illegal.length) {
     throw new Error(`Generation touched paths outside the prepared theme/report scope:\n${illegal.map((item) => `- ${item}`).join('\n')}`);
   }
-}
-
-function splitExtraArgs(value) {
-  if (!value) {
-    return [];
-  }
-  return String(value).match(/(?:[^\s"]+|"[^"]*")+/g)?.map((item) => item.replace(/^"|"$/g, '')) || [];
 }
 
 function readStyleHeader(stylePath, field) {

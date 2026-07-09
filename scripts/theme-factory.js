@@ -885,6 +885,7 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- The homepage first viewport must look professionally composed at desktop and mobile widths: no cropped hero text, no oversized headline that pushes the primary image or calls to action out of view, and no large empty dead zones.',
     '- Keep hero display type controlled and readable. Do not use extreme viewport-scaled headline sizing; the full H1, supporting copy, CTAs, and a meaningful stock-photo crop should fit coherently in the opening viewport.',
     '- At 390px mobile width there must be no horizontal overflow: the header status strip, logo row, H1, supporting copy, CTAs, chips, notes, and hero image must fit within the viewport. Use constrained mobile font clamps, max-width: 100%, min-width: 0, wrapping, stacked buttons, and overflow-wrap where needed.',
+    '- At mobile widths the header must be logo plus hamburger only. Hide or move the desktop Contact Us CTA into the drawer; never leave a desktop CTA clipped off the right edge.',
     '- For mobile hero CSS, explicitly override desktop sizing. Do not leave h1 max-width, vw font sizes, flex rows, or white-space behavior that can push text or controls off the right edge.',
     '- Fully personalize and redesign the footer; do not leave generic copied footer widgets, newsletter copy, service links, legal rows, or brand paragraphs.',
     '- At 390px mobile width the footer must also fit inside the viewport. Stack footer widgets to one column, remove mobile grid-column spans, wrap email/contact links, and avoid nowrap or min-width values that make footer nav/contact columns overflow.',
@@ -992,9 +993,13 @@ function esc_url($value){ return htmlspecialchars((string)$value, ENT_QUOTES | E
 function esc_html__($text, $domain = null){ return (string)$text; }
 function esc_attr__($text, $domain = null){ return (string)$text; }
 function __($text, $domain = null){ return (string)$text; }
+function _x($text, $context = null, $domain = null){ return (string)$text; }
+function esc_html_x($text, $context = null, $domain = null){ return esc_html($text); }
+function esc_attr_x($text, $context = null, $domain = null){ return esc_attr($text); }
 function esc_html_e($text, $domain = null){ echo esc_html($text); }
 function esc_attr_e($text, $domain = null){ echo esc_attr($text); }
 function wp_kses_post($value){ return (string)$value; }
+function wp_strip_all_tags($value){ return strip_tags((string)$value); }
 function sanitize_text_field($value){ return is_scalar($value) ? trim((string)$value) : ''; }
 function sanitize_email($value){ return sanitize_text_field($value); }
 function sanitize_textarea_field($value){ return sanitize_text_field($value); }
@@ -1020,6 +1025,7 @@ function wp_get_referer(){ return 'index.html'; }
 function wp_insert_post(){ return 1; }
 function update_post_meta(){ return true; }
 function wp_generate_password(){ return 'preview-token'; }
+function wp_unique_id($prefix = ''){ static $id = 0; $id += 1; return (string)$prefix . $id; }
 function wp_nonce_url($url){ return $url; }
 function check_admin_referer(){ return true; }
 function get_post($post = null){
@@ -1049,9 +1055,12 @@ function get_option($name, $default = false){ return $name === 'admin_email' ? '
 function current_user_can(){ return true; }
 function is_wp_error(){ return false; }
 function sanitize_key($value){ return preg_replace('/[^a-z0-9_\\-]/', '', strtolower((string)$value)); }
+function sanitize_html_class($value, $fallback = ''){ $sanitized = preg_replace('/[^A-Za-z0-9_\\-]/', '', (string)$value); return $sanitized !== '' ? $sanitized : $fallback; }
+function sanitize_title($value){ $value = strtolower((string)$value); $value = preg_replace('/[^a-z0-9]+/', '-', $value); return trim($value, '-'); }
 function wp_mail(){ return true; }
 function admin_url($path = ''){ return 'admin-post.php' . ($path ? '?' . ltrim($path, '?') : ''); }
 function add_query_arg($key, $value, $url = ''){ return $url ?: 'index.html'; }
+function wp_parse_url($url, $component = -1){ return parse_url((string)$url, $component); }
 function get_template_directory(){ global $theme_dir; return $theme_dir; }
 function get_theme_file_path($path = ''){ global $theme_dir; return $theme_dir . '/' . ltrim($path, '/'); }
 function get_theme_file_uri($path = ''){ return ltrim($path, '/'); }
@@ -1062,6 +1071,7 @@ function wp_body_open(){ return true; }
 function wp_head(){ echo '<link rel="stylesheet" href="assets/css/bundle.css">' . PHP_EOL; }
 function wp_footer(){ echo '<script src="assets/js/bundle.js"></script>' . PHP_EOL; }
 function date_i18n($format){ return date($format); }
+function wp_date($format){ return date($format); }
 function preview_home_url($path = ''){
   $path = '/' . trim((string)$path, '/');
   $map = array(
@@ -1090,6 +1100,38 @@ function get_footer(){ global $theme_dir; include $theme_dir . '/footer.php'; }
 function get_template_part($slug, $name = null){ global $theme_dir; $file = $theme_dir . '/' . $slug . ($name ? '-' . $name : '') . '.php'; if (!file_exists($file)) { $file = $theme_dir . '/' . $slug . '.php'; } if (file_exists($file)) { include $file; } }
 function get_search_form(){ global $theme_dir; if (file_exists($theme_dir . '/searchform.php')) { include $theme_dir . '/searchform.php'; } }
 function get_search_query(){ return ''; }
+function wp_nav_menu($args = array()){
+  $items = array(
+    (object) array('ID' => 1, 'db_id' => 1, 'title' => 'Services', 'url' => preview_home_url('/services/'), 'classes' => array('menu-item'), 'current' => false, 'current_item_ancestor' => false),
+    (object) array('ID' => 2, 'db_id' => 2, 'title' => 'About', 'url' => preview_home_url('/about/'), 'classes' => array('menu-item'), 'current' => false, 'current_item_ancestor' => false),
+    (object) array('ID' => 3, 'db_id' => 3, 'title' => 'Work', 'url' => preview_home_url('/work/'), 'classes' => array('menu-item'), 'current' => false, 'current_item_ancestor' => false),
+    (object) array('ID' => 4, 'db_id' => 4, 'title' => 'Blog', 'url' => preview_home_url('/blog/'), 'classes' => array('menu-item'), 'current' => false, 'current_item_ancestor' => false)
+  );
+  $menu = '';
+  $walker = isset($args['walker']) ? $args['walker'] : null;
+  foreach ($items as $item) {
+    if ($walker && method_exists($walker, 'start_el')) {
+      $walker->start_el($menu, $item, 0, (object) $args, $item->ID);
+      if (method_exists($walker, 'end_el')) { $walker->end_el($menu, $item, 0, (object) $args); }
+    } else {
+      $menu .= '<li class="menu-item"><a href="' . esc_url($item->url) . '">' . esc_html($item->title) . '</a></li>';
+    }
+  }
+  $container = isset($args['container']) ? $args['container'] : 'div';
+  $menu_class = isset($args['menu_class']) ? $args['menu_class'] : 'menu';
+  $html = ($container ? '<' . $container . ' class="menu-preview">' : '') . '<ul class="' . esc_attr($menu_class) . '">' . $menu . '</ul>' . ($container ? '</' . $container . '>' : '');
+  if (isset($args['echo']) && false === $args['echo']) { return $html; }
+  echo $html;
+  return true;
+}
+function is_front_page(){ global $template_rel; return $template_rel === 'front-page.php'; }
+function is_home(){ return false; }
+function is_page(){ global $template_rel; return strpos($template_rel, 'page-templates/') === 0; }
+function is_single(){ return false; }
+function is_singular(){ return true; }
+function is_archive(){ return false; }
+function is_search(){ return false; }
+function is_404(){ return false; }
 function have_posts(){ static $done = false; if ($done) { return false; } $done = true; return true; }
 function the_post(){ return true; }
 function the_ID(){ echo '1'; }
@@ -1099,6 +1141,9 @@ function the_title(){ echo 'Preview Title'; }
 function the_content(){ echo '<p>Preview content rendered by the factory harness.</p>'; }
 function get_permalink(){ return 'index.html'; }
 function the_permalink(){ echo 'index.html'; }
+function get_post_type_archive_link($post_type){ return $post_type === 'post' ? preview_home_url('/blog/') : preview_home_url('/' . sanitize_title($post_type) . '/'); }
+function get_term_link($term){ return preview_home_url('/blog/'); }
+function get_category_link($category){ return preview_home_url('/blog/'); }
 function get_the_excerpt(){ return 'Preview excerpt rendered by the factory harness.'; }
 function wp_trim_words($text, $num_words = 55){ $words = preg_split('/\\s+/', (string)$text); return implode(' ', array_slice($words, 0, $num_words)); }
 function get_post_type(){ return 'post'; }
@@ -1108,6 +1153,33 @@ function post_password_required(){ return false; }
 function have_comments(){ return false; }
 function wp_list_comments(){ return true; }
 function comment_form(){ echo '<form class="comment-form"></form>'; }
+class Walker_Nav_Menu {
+  public $tree_type = array('post_type', 'taxonomy', 'custom');
+  public $db_fields = array('parent' => 'menu_item_parent', 'id' => 'db_id');
+  public function walk($elements, $max_depth, ...$args){ return ''; }
+  public function start_lvl(&$output, $depth = 0, $args = null){}
+  public function end_lvl(&$output, $depth = 0, $args = null){}
+  public function start_el(&$output, $menu_item, $depth = 0, $args = null, $id = 0){
+    $title = isset($menu_item->title) ? $menu_item->title : 'Menu item';
+    $url = isset($menu_item->url) ? $menu_item->url : '#';
+    $output .= '<li class="menu-item"><a href="' . esc_url($url) . '">' . esc_html($title) . '</a></li>';
+  }
+  public function end_el(&$output, $menu_item, $depth = 0, $args = null){}
+}
+class WP_Query {
+  public $post_count = 0;
+  public $posts = array();
+  public function __construct($args = array()){
+    $count = isset($args['posts_per_page']) ? max(0, (int)$args['posts_per_page']) : 1;
+    $this->post_count = $count;
+    for ($index = 1; $index <= $count; $index += 1) {
+      $this->posts[] = (object) array('ID' => $index, 'post_title' => 'Preview Post ' . $index, 'post_excerpt' => 'Preview excerpt rendered by the factory harness.');
+    }
+  }
+  public function have_posts(){ return false; }
+  public function the_post(){ return false; }
+}
+function wp_reset_postdata(){ return true; }
 require_once $theme_dir . '/functions.php';
 include $theme_dir . '/' . $template_rel;
 `;

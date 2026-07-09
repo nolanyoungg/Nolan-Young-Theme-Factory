@@ -573,6 +573,7 @@ Create a visibly new Atlasframe Digital system with a distinct composition strat
 - Redesign the header dropdowns so they look like Atlasframe service navigation, not the copied starter menu.
 - Redesign the footer as a functional project-start and site-map area with Atlasframe-specific service paths, contact context, and maintenance proof.
 - Change the responsive behavior deliberately. Mobile should stack into concise editorial sections with short proof rows and visible imagery, not compressed desktop grids.
+- At 390px mobile width, the header must fit entirely within the viewport. The mobile header should show the logo and hamburger; desktop navigation and the desktop Contact Us CTA must be hidden or moved into the drawer, never clipped off the right edge.
 
 You must update the source styling system enough that the compiled CSS is materially different from the starter template. Make substantive changes across SCSS variables, layout primitives, header styles, homepage sections, cards/buttons/forms, footer styles, responsive rules, and interaction states. A copy-and-color swap is failed output.
 

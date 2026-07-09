@@ -957,7 +957,9 @@ Create a top-level WordPress administration menu named `Forms`.
 
 The Forms area must allow authorized administrators to view submissions by form type, inspect individual submissions, filter submissions, select one or more entries, export selected entries, and delete entries securely.
 
-Store submissions in a structured, non-public format. A private custom post type or dedicated database table is acceptable when implemented correctly.
+Store submissions in a structured, non-public format. Use a dedicated database table, options-backed storage, or another theme-validator-compatible approach.
+
+Do not register custom post types or taxonomies from the theme. Do not call `register_post_type()` or `register_taxonomy()` anywhere in the generated source.
 
 Separate the storage and administration logic into organized theme modules so it can be migrated to a companion plugin later if needed.
 
@@ -1445,7 +1447,7 @@ Before finishing, verify every requirement in this table.
 | Enqueue module | `inc/enqueue.php` loads the exact compiled bundle files |
 | SCSS structure | Every required SCSS partial exists at the specified path and is included through `src/scss/main.scss` |
 | JavaScript source | `src/js/main.js` contains the maintained source behavior |
-| Root templates | Every required root template, including `front-page.php`, `403.php`, and `searchform.php`, exists |
+| Root templates | Every required supported root template, including `front-page.php` and `searchform.php`, exists. Do not create root-level `403.php`. |
 | Homepage ownership | The homepage is implemented in `front-page.php` and not in an additional homepage page template |
 | Inc modules | Every required file in `inc/` exists and contains its assigned responsibility |
 | Template parts | Every required file in `template-parts/` exists and is used appropriately |

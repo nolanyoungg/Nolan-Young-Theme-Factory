@@ -873,6 +873,8 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- Keep build commands in package.json and preserve npm run build.',
     '- Keep generated runtime assets local to this theme.',
     '- Preserve prepared Theme Name, Description, Text Domain, slug, and package name unless the prepared fields are missing.',
+    '- Do not call register_post_type() or register_taxonomy(); this theme validator treats custom post types and taxonomies as plugin territory.',
+    '- Do not create a root-level 403.php file; use supported templates or template parts for error messaging.',
     '- This must be a major visual transformation of the copied template, not a light content swap.',
     '- Redesign the header architecture, homepage rhythm, page compositions, motion system, and visual language so the preview is clearly distinct from prior numbered themes.',
     '- A run that only swaps copy, brand names, colors, or images while keeping the starter layout and section system is failed model output.',

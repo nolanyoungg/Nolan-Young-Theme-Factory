@@ -2,9 +2,9 @@
   "phase": "source",
   "themeSlug": "007_nolan_young_theme_atlasframe_digital",
   "errors": [
-    "Generated theme is still too similar to the starter template in critical layout/style files: footer.php (83% similar), src/scss/layout/_header.scss (74% similar), src/scss/pages/_homepage.scss (100% similar), assets/css/bundle.css (81% similar).",
-    "Compiled CSS is too close to the starter template for a major visual redesign: size delta 110 bytes, 81% content similarity."
+    "Generated theme left starter-template files unchanged in critical layout/style paths: src/scss/pages/_homepage.scss.",
+    "Compiled CSS changed by only 110 bytes from the starter template; a major visual redesign must materially change the generated stylesheet."
   ],
   "warnings": [],
-  "checkedAt": "2026-07-09T01:06:43.750Z"
+  "checkedAt": "2026-07-09T02:53:21.261Z"
 }

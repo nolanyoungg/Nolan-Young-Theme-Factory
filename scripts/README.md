@@ -83,3 +83,5 @@ npm run theme:model-check -- --provider ollama --ollama-model llama3.1:8b
 npm run theme:model-check -- --provider lmstudio --lmstudio-model qwen/qwen2.5-coder-14b
 npm run test:scripts
 ```
+
+`theme:prepare` is the pre-generation setup step. It stages the selected template ZIP under `wp-content/themes/`, unzips/copies it into the numbered theme directory, updates prepared identity metadata, and runs `npm ci` inside the prepared theme before any AI mode is called. `theme:build` expects those dependencies to already exist and fails with a setup error if they are missing.

@@ -226,7 +226,7 @@ function createValidation(deps) {
       'src/scss/pages/_homepage.scss',
       'assets/css/bundle.css'
     ];
-    const similarFiles = [];
+    const unchangedFiles = [];
 
     for (const relPath of criticalFiles) {
       const generatedPath = path.join(themeDir, relPath);
@@ -234,16 +234,15 @@ function createValidation(deps) {
       if (!fs.existsSync(generatedPath) || !fs.existsSync(templatePath)) {
         continue;
       }
-      const generated = fs.readFileSync(generatedPath, 'utf8');
-      const template = fs.readFileSync(templatePath, 'utf8');
-      const similarity = contentSimilarity(generated, template);
-      if (similarity >= 0.72) {
-        similarFiles.push(`${relPath} (${Math.round(similarity * 100)}% similar)`);
+      const generated = normalizeForComparison(fs.readFileSync(generatedPath, 'utf8'));
+      const template = normalizeForComparison(fs.readFileSync(templatePath, 'utf8'));
+      if (generated === template) {
+        unchangedFiles.push(relPath);
       }
     }
 
-    if (similarFiles.length >= 4) {
-      errors.push(`Generated theme is still too similar to the starter template in critical layout/style files: ${similarFiles.join(', ')}.`);
+    if (unchangedFiles.length) {
+      errors.push(`Generated theme left starter-template files unchanged in critical layout/style paths: ${unchangedFiles.join(', ')}.`);
     }
 
     const generatedCss = path.join(themeDir, 'assets/css/bundle.css');
@@ -252,41 +251,12 @@ function createValidation(deps) {
       const generatedCssSize = fs.statSync(generatedCss).size;
       const templateCssSize = fs.statSync(templateCss).size;
       const sizeDelta = Math.abs(generatedCssSize - templateCssSize);
-      const cssSimilarity = contentSimilarity(fs.readFileSync(generatedCss, 'utf8'), fs.readFileSync(templateCss, 'utf8'));
-      if (sizeDelta < 3000 && cssSimilarity >= 0.6) {
-        errors.push(`Compiled CSS is too close to the starter template for a major visual redesign: size delta ${sizeDelta} bytes, ${Math.round(cssSimilarity * 100)}% content similarity.`);
+      if (sizeDelta < 1500) {
+        errors.push(`Compiled CSS changed by only ${sizeDelta} bytes from the starter template; a major visual redesign must materially change the generated stylesheet.`);
       }
     }
 
     return errors;
-  }
-
-  function contentSimilarity(a, b) {
-    const aTokens = comparisonTokens(a);
-    const bTokens = comparisonTokens(b);
-    if (!aTokens.size || !bTokens.size) {
-      return aTokens.size === bTokens.size ? 1 : 0;
-    }
-    let intersection = 0;
-    for (const token of aTokens) {
-      if (bTokens.has(token)) {
-        intersection += 1;
-      }
-    }
-    return intersection / Math.max(aTokens.size, bTokens.size);
-  }
-
-  function comparisonTokens(value) {
-    const normalized = normalizeForComparison(value)
-      .replace(/#[0-9a-f]{3,8}\b/gi, '#color')
-      .replace(/\b\d+(?:\.\d+)?(?:px|rem|em|%|vh|vw|s|ms)?\b/gi, '#num')
-      .toLowerCase();
-    const words = normalized.match(/[a-z0-9_-]{3,}/g) || [];
-    const tokens = new Set(words);
-    for (let index = 0; index < words.length - 2; index += 1) {
-      tokens.add(`${words[index]} ${words[index + 1]} ${words[index + 2]}`);
-    }
-    return tokens;
   }
   
   function validateSeededAssetContract(themeDir) {

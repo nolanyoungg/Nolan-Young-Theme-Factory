@@ -1,6 +1,6 @@
 # Nolan Young Theme Factory
 
-This repo is a template-first WordPress theme factory. It prepares a copied theme, runs exactly one selected generation mode, then performs deterministic build, validation, preview, packaging, and reporting work.
+This repo is a template-first WordPress theme factory. It prepares a copied theme, installs its build dependencies, runs exactly one selected generation mode, then performs deterministic build, validation, preview, packaging, and reporting work.
 
 ## Core Rule
 
@@ -12,7 +12,7 @@ AI generation may edit only the prepared theme directory:
 wp-content/themes/NNN_nolan_young_theme_[description]/
 ```
 
-The workflow owns template copying, build commands, validation, preview generation, ZIP packaging, cleanup, and reports.
+The workflow owns template copying, dependency installation, build commands, validation, preview generation, ZIP packaging, cleanup, and reports.
 
 ## Modes
 
@@ -57,6 +57,18 @@ npm run theme:env
 npm run theme:model-check
 npm run test:scripts
 ```
+
+## Preparation Flow
+
+`theme:run` and `theme:prepare` prepare a theme before any AI generation mode is called:
+
+1. Resolve the selected template source. The default source is the packaged starter ZIP when it exists, with the checked-in starter directory used only as a fallback.
+2. Stage the template ZIP under `wp-content/themes/`, unzip it, and copy the extracted WordPress theme into `wp-content/themes/{theme_slug}/`.
+3. Update prepared identity fields such as theme name, text domain, and package name.
+4. Run `npm ci` inside the prepared theme directory.
+5. Verify the local build dependency binaries exist before Codex, Ollama, or LM Studio generation starts.
+
+`theme:build` does not install dependencies. If dependencies are missing, rerun preparation or run `npm ci` inside the prepared theme directory before building or resuming.
 
 ## Run Examples
 

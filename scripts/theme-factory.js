@@ -30,6 +30,11 @@ const ZIPS_DIR = path.join(ROOT, 'dist', 'zipped-themes');
 const REPORTS_DIR = path.join(ROOT, 'reports', 'runs');
 const PROMPTS_DIR = path.join(ROOT, 'prompts', 'pending');
 const DEFAULT_TEMPLATE_DIR = path.join(THEMES_DIR, '000_nolan_young_theme_master_template_prompt_filler_template_1');
+const DEFAULT_TEMPLATE_ZIP_CANDIDATES = [
+  path.join(ROOT, 'wordpress-themplate-themes', 'nolan-young-theme-template-000--CLASSIC.zip'),
+  path.join(ROOT, 'dist', 'zipped-theme-templates', 'nolan-young-theme-template-000--CLASSIC.zip'),
+  path.join(ROOT, 'dist', 'zipped-theme-templates', 'nolan-young-theme-template-000-classic.zip')
+];
 const MODE_VALUES = new Set(['codex-only', 'ollama-only', 'lmstudio-only']);
 const SLUG_RE = /^\d{3}_nolan_young_theme_[a-z0-9]+(?:_[a-z0-9]+)*$/;
 const SEEDED_ASSET_MANIFEST = path.join('assets', 'images', 'asset-manifest.json');
@@ -145,6 +150,7 @@ async function run(args) {
   }
 
   const themeDir = getThemeDir(options.themeSlug);
+  verifyThemeBuildDependencies(themeDir);
   if (options.mode === 'codex-only') {
     seedGeneratedAssets(themeDir, options);
     runCodexGeneration(themeDir, options, reportDir);
@@ -352,6 +358,7 @@ function localModelDeps() {
 function cliOptionDeps() {
   return {
     DEFAULT_TEMPLATE_DIR,
+    defaultTemplateSourcePath,
     MODE_VALUES,
     firstPromptPath,
     makeNextSlug,
@@ -410,7 +417,7 @@ function prepareTheme(options) {
   }
 
   ensureDir(THEMES_DIR);
-  const extracted = materializeTemplateSource(templateSourcePath);
+  const extracted = materializeTemplateSource(templateSourcePath, themeSlug);
   fs.cpSync(extracted.themeDir, targetDir, {
     recursive: true,
     filter: (src) => !path.basename(src).match(/^node_modules$/)
@@ -425,9 +432,10 @@ function prepareTheme(options) {
   if (extracted.cleanupDir) {
     removeIfExists(extracted.cleanupDir);
   }
+  installPreparedThemeDependencies(targetDir);
 }
 
-function materializeTemplateSource(templateSourcePath) {
+function materializeTemplateSource(templateSourcePath, themeSlug) {
   const stat = fs.statSync(templateSourcePath);
   if (stat.isDirectory()) {
     const stylePath = path.join(templateSourcePath, 'style.css');
@@ -441,16 +449,43 @@ function materializeTemplateSource(templateSourcePath) {
     throw new Error(`Template source must be a directory or .zip: ${relative(templateSourcePath)}`);
   }
 
-  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'theme-template-'));
-  const unzip = spawnSync('unzip', ['-q', templateSourcePath, '-d', tempDir], { cwd: ROOT, encoding: 'utf8' });
-  assertStatus(unzip, `unzip ${relative(templateSourcePath)}`);
-  const candidates = findDirsWithFile(tempDir, 'style.css');
+  const stagingDir = fs.mkdtempSync(path.join(THEMES_DIR, `.template-${themeSlug}-`));
+  const stagedZip = path.join(stagingDir, path.basename(templateSourcePath));
+  fs.copyFileSync(templateSourcePath, stagedZip);
+  const unzip = spawnSync('unzip', ['-q', stagedZip, '-d', stagingDir], { cwd: ROOT, encoding: 'utf8' });
+  assertStatus(unzip, `unzip ${relative(stagedZip)}`);
+  const candidates = findDirsWithFile(stagingDir, 'style.css');
   if (!candidates.length) {
-    removeIfExists(tempDir);
+    removeIfExists(stagingDir);
     throw new Error(`Template zip does not contain a WordPress theme style.css: ${relative(templateSourcePath)}`);
   }
   candidates.sort((a, b) => a.length - b.length);
-  return { themeDir: candidates[0], cleanupDir: tempDir };
+  return { themeDir: candidates[0], cleanupDir: stagingDir };
+}
+
+function installPreparedThemeDependencies(themeDir) {
+  const pkgPath = path.join(themeDir, 'package.json');
+  const lockPath = path.join(themeDir, 'package-lock.json');
+  if (!fs.existsSync(pkgPath)) {
+    throw new Error(`Cannot install prepared theme dependencies without package.json: ${relative(pkgPath)}`);
+  }
+  if (!fs.existsSync(lockPath)) {
+    throw new Error(`Cannot run npm ci without package-lock.json: ${relative(lockPath)}`);
+  }
+  console.log(`Installing prepared theme dependencies in ${relative(themeDir)}...`);
+  assertStatus(spawnSync('npm', ['ci'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm ci');
+  verifyThemeBuildDependencies(themeDir);
+}
+
+function verifyThemeBuildDependencies(themeDir) {
+  const webpackBin = themeDependencyBin(themeDir, 'webpack');
+  if (!fs.existsSync(webpackBin)) {
+    throw new Error(`Theme dependencies are not installed for ${relative(themeDir)}. Run npm ci in that theme directory before build/resume.`);
+  }
+}
+
+function themeDependencyBin(themeDir, name) {
+  return path.join(themeDir, 'node_modules', '.bin', process.platform === 'win32' ? `${name}.cmd` : name);
 }
 
 function updatePreparedIdentity(themeDir, themeSlug, templateSourcePath) {
@@ -843,7 +878,7 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- A run that only swaps copy, brand names, colors, or images while keeping the starter layout and section system is failed model output.',
     '- Redesign source SCSS substantially enough that assets/css/bundle.css is materially different from the starter template after npm run build.',
     '- Rework section geometry, spacing, card systems, header/menu presentation, footer architecture, responsive rhythm, and content modules instead of preserving the starter composition.',
-    '- Source validation will compare critical generated layout/style files against the starter template and fail when front-page.php, header.php, footer.php, homepage sections, layout SCSS, or compiled CSS remain too similar.',
+    '- Source validation will fail when critical starter layout/style files remain unchanged or when the compiled CSS changes only trivially from the starter template.',
     '- Treat the homepage as a complete design pass: every homepage template part must be edited, reordered or redesigned so the sections flow as one polished agency website.',
     '- The homepage first viewport must look professionally composed at desktop and mobile widths: no cropped hero text, no oversized headline that pushes the primary image or calls to action out of view, and no large empty dead zones.',
     '- Keep hero display type controlled and readable. Do not use extreme viewport-scaled headline sizing; the full H1, supporting copy, CTAs, and a meaningful stock-photo crop should fit coherently in the opening viewport.',
@@ -894,14 +929,7 @@ function buildTheme(themeSlug) {
     throw new Error(`Missing theme package.json: ${relative(pkgPath)}`);
   }
 
-  const hasNodeModules = fs.existsSync(path.join(themeDir, 'node_modules'));
-  const webpackBin = path.join(themeDir, 'node_modules', '.bin', process.platform === 'win32' ? 'webpack.cmd' : 'webpack');
-  const hasWebpackBin = fs.existsSync(webpackBin);
-  const installCommand = fs.existsSync(path.join(themeDir, 'package-lock.json')) ? ['ci'] : ['install'];
-  if (!hasNodeModules || !hasWebpackBin) {
-    console.log(`Installing theme dependencies in ${relative(themeDir)}...`);
-    assertStatus(spawnSync('npm', installCommand, { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), `npm ${installCommand.join(' ')}`);
-  }
+  verifyThemeBuildDependencies(themeDir);
 
   console.log(`Building theme ${themeSlug}...`);
   assertStatus(spawnSync('npm', ['run', 'build'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm run build');
@@ -1297,14 +1325,22 @@ function resolveTemplateSource(args) {
     }
     throw new Error(`Template not found: ${args.template}`);
   }
+  const defaultTemplate = defaultTemplateSourcePath();
+  if (defaultTemplate) {
+    return defaultTemplate;
+  }
+  throw new Error('No default template source found.');
+}
+
+function defaultTemplateSourcePath() {
+  const defaultZip = DEFAULT_TEMPLATE_ZIP_CANDIDATES.find((candidate) => fs.existsSync(candidate));
+  if (defaultZip) {
+    return defaultZip;
+  }
   if (fs.existsSync(DEFAULT_TEMPLATE_DIR)) {
     return DEFAULT_TEMPLATE_DIR;
   }
-  const fallbackZip = path.join(ROOT, 'dist', 'zipped-theme-templates', 'nolan-young-theme-template-000-classic.zip');
-  if (fs.existsSync(fallbackZip)) {
-    return fallbackZip;
-  }
-  throw new Error('No default template source found.');
+  return null;
 }
 
 function resolvePromptPath(input) {

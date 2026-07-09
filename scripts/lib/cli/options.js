@@ -101,7 +101,8 @@ async function askRunOptions(options, deps) {
       options.promptPath = deps.resolvePromptPath(await askWithDefault(rl, 'Prompt file', deps.relative(firstPrompt)));
     }
     if (!options.templateSourcePath) {
-      options.templateSourcePath = deps.resolvePath(await askWithDefault(rl, 'Template source path', deps.relative(deps.DEFAULT_TEMPLATE_DIR)));
+      const defaultTemplate = deps.defaultTemplateSourcePath ? deps.defaultTemplateSourcePath() : deps.DEFAULT_TEMPLATE_DIR;
+      options.templateSourcePath = deps.resolvePath(await askWithDefault(rl, 'Template source path', deps.relative(defaultTemplate)));
     }
     if (!options.themeSlug) {
       options.themeSlug = await askWithDefault(rl, 'Theme slug', deps.makeNextSlug(options.promptPath));

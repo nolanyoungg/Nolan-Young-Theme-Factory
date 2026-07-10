@@ -6,8 +6,16 @@ const {
   DEFAULT_LMSTUDIO_API_KEY,
   DEFAULT_LMSTUDIO_BASE_URL,
   DEFAULT_LMSTUDIO_TEMPERATURE,
+  DEFAULT_LMSTUDIO_TIMEOUT_MS,
   normalizeLmStudioBaseUrl
 } = require('../providers/lmstudio');
+const {
+  DEFAULT_OLLAMA_API_KEY,
+  DEFAULT_OLLAMA_BASE_URL,
+  DEFAULT_OLLAMA_TEMPERATURE,
+  DEFAULT_OLLAMA_TIMEOUT_MS,
+  normalizeOllamaBaseUrl
+} = require('../providers/ollama');
 
 function parseArgs(rawArgs) {
   const args = {};
@@ -54,12 +62,24 @@ async function collectRunOptions(args, deps) {
     codexModel: args.codexModel || args['codex-model'] || '',
     codexReasoning: args.codexReasoning || args['codex-reasoning'] || '',
     codexExtraArgs: splitExtraArgs(args.codexExtraArgs || args['codex-extra-args'] || ''),
-    ollamaExecutable: args.ollamaExecutable || args['ollama-executable'] || 'ollama',
+    ollamaBaseUrl: normalizeOllamaBaseUrl(args.ollamaBaseUrl || args['ollama-base-url'] || process.env.OLLAMA_BASE_URL || DEFAULT_OLLAMA_BASE_URL),
     ollamaModel: args.ollamaModel || args['ollama-model'] || '',
+    ollamaApiKey: args.ollamaApiKey || args['ollama-api-key'] || process.env.OLLAMA_API_KEY || DEFAULT_OLLAMA_API_KEY,
+    ollamaTemperature: args.ollamaTemperature || args['ollama-temperature'] || process.env.OLLAMA_TEMPERATURE || DEFAULT_OLLAMA_TEMPERATURE,
+    ollamaTimeoutMs: args.ollamaTimeoutMs || args['ollama-timeout-ms'] || process.env.OLLAMA_TIMEOUT_MS || DEFAULT_OLLAMA_TIMEOUT_MS,
     lmstudioBaseUrl: normalizeLmStudioBaseUrl(args.lmstudioBaseUrl || args['lmstudio-base-url'] || process.env.LMSTUDIO_BASE_URL || DEFAULT_LMSTUDIO_BASE_URL),
     lmstudioModel: args.lmstudioModel || args['lmstudio-model'] || '',
     lmstudioApiKey: args.lmstudioApiKey || args['lmstudio-api-key'] || process.env.LMSTUDIO_API_KEY || DEFAULT_LMSTUDIO_API_KEY,
-    lmstudioTemperature: args.lmstudioTemperature || args['lmstudio-temperature'] || DEFAULT_LMSTUDIO_TEMPERATURE,
+    lmstudioTemperature: args.lmstudioTemperature || args['lmstudio-temperature'] || process.env.LMSTUDIO_TEMPERATURE || DEFAULT_LMSTUDIO_TEMPERATURE,
+    lmstudioTimeoutMs: args.lmstudioTimeoutMs || args['lmstudio-timeout-ms'] || process.env.LMSTUDIO_TIMEOUT_MS || DEFAULT_LMSTUDIO_TIMEOUT_MS,
+    localModelMaxContextBytes: args.localModelMaxContextBytes || args['local-model-max-context-bytes'] || process.env.LOCAL_MODEL_MAX_CONTEXT_BYTES,
+    localModelMaxToolCalls: args.localModelMaxToolCalls || args['local-model-max-tool-calls'] || process.env.LOCAL_MODEL_MAX_TOOL_CALLS,
+    localModelMaxToolOutputBytes: args.localModelMaxToolOutputBytes || args['local-model-max-tool-output-bytes'] || process.env.LOCAL_MODEL_MAX_TOOL_OUTPUT_BYTES,
+    localModelMaxTokens: args.localModelMaxTokens || args['local-model-max-tokens'] || process.env.LOCAL_MODEL_MAX_TOKENS,
+    localModelStageTimeoutMs: args.localModelStageTimeoutMs || args['local-model-stage-timeout-ms'] || process.env.LOCAL_MODEL_STAGE_TIMEOUT_MS,
+    localModelHeartbeatMs: args.localModelHeartbeatMs || args['local-model-heartbeat-ms'] || process.env.LOCAL_MODEL_HEARTBEAT_MS,
+    resumeFromStage: args.resumeFromStage || args['resume-from-stage'] || null,
+    resumeLocal: Boolean(args.resumeLocal || args['resume-local'] || args.resumeFromStage || args['resume-from-stage']),
     force: Boolean(args.force)
   };
 
@@ -87,6 +107,12 @@ async function collectRunOptions(args, deps) {
   if (options.mode === 'lmstudio-only' && !options.lmstudioModel) {
     throw new Error('Missing --lmstudio-model for lmstudio-only mode.');
   }
+  if (options.resumeLocal && !isPlannedLocalModelMode(options.mode)) {
+    throw new Error('--resume-local and --resume-from-stage are available only for ollama-only or lmstudio-only mode.');
+  }
+  if (options.resumeLocal && options.force) {
+    throw new Error('Do not combine local-model resume with --force. Resume validates and continues the existing prepared theme.');
+  }
   return options;
 }
 
@@ -113,8 +139,9 @@ async function askRunOptions(options, deps) {
       options.codexReasoning = await askWithDefault(rl, 'Codex reasoning (blank uses Codex config)', options.codexReasoning);
       options.codexExtraArgs = splitExtraArgs(await askWithDefault(rl, 'Codex extra args', options.codexExtraArgs.join(' ')));
     } else if (options.mode === 'ollama-only') {
-      options.ollamaExecutable = await askWithDefault(rl, 'Ollama executable', options.ollamaExecutable);
+      options.ollamaBaseUrl = normalizeOllamaBaseUrl(await askWithDefault(rl, 'Ollama OpenAI-compatible base URL', options.ollamaBaseUrl));
       options.ollamaModel = await askWithDefault(rl, 'Ollama model', options.ollamaModel || 'llama3.1:8b');
+      options.ollamaTemperature = await askWithDefault(rl, 'Ollama temperature', options.ollamaTemperature);
     } else {
       options.lmstudioBaseUrl = normalizeLmStudioBaseUrl(await askWithDefault(rl, 'LM Studio base URL', options.lmstudioBaseUrl));
       options.lmstudioModel = await askWithDefault(rl, 'LM Studio model identifier', options.lmstudioModel);

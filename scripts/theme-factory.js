@@ -2,6 +2,7 @@
 'use strict';
 
 const fs = require('node:fs');
+const crypto = require('node:crypto');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
@@ -14,13 +15,16 @@ const {
 } = require('./lib/cli/options');
 const {
   DEFAULT_LMSTUDIO_BASE_URL,
-  checkLmStudioProvider
+  createLmStudioProvider
 } = require('./lib/providers/lmstudio');
-const { checkOllamaProvider } = require('./lib/providers/ollama');
 const {
-  runLocalModelGeneration,
-  validateLocalModelPlan
-} = require('./lib/local-model/stages');
+  DEFAULT_OLLAMA_BASE_URL,
+  createOllamaProvider
+} = require('./lib/providers/ollama');
+const {
+  runLocalModelGeneration
+} = require('./lib/local-model/agent');
+const { validateLocalModelPlan } = require('./lib/local-model/stages');
 const { createValidation } = require('./lib/validation');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -101,6 +105,8 @@ async function dispatch(command, args) {
       return resume(args);
     case 'prepare':
       return prepare(args);
+    case 'assets':
+      return assetsCommand(args);
     case 'validate':
       return validateCommand(args);
     case 'build':
@@ -127,12 +133,43 @@ async function dispatch(command, args) {
 
 async function run(args) {
   const options = await collectRunOptions(args, cliOptionDeps());
+  const providerName = providerForMode(options.mode);
   const localModelPlan = isPlannedLocalModelMode(options.mode)
     ? validateLocalModelPlan(collectMarkdownHeadings(fs.readFileSync(options.promptPath, 'utf8')), localModelProviderLabel(options.mode), localModelDeps())
     : [];
-  await modelCheck(providerForMode(options.mode), options);
-
   const reportDir = ensureReportDir(options.themeSlug);
+  const generationAttemptPath = path.join(reportDir, 'generation-attempt.json');
+  if (fs.existsSync(generationAttemptPath) && !options.resumeLocal && !options.force) {
+    const priorAttempt = readJson(generationAttemptPath);
+    throw new Error(`Generation was already attempted for ${options.themeSlug} with status ${priorAttempt.status || 'unknown'}. Preserve that output; use local resume only for a valid interrupted checkpoint or choose a fresh theme number.`);
+  }
+  let generationProvider;
+  const preflightStartedAt = new Date().toISOString();
+  try {
+    generationProvider = await modelCheck(providerName, { ...options, requireTools: isPlannedLocalModelMode(options.mode) });
+    writeJson(path.join(reportDir, 'provider-preflight.json'), {
+      status: 'passed',
+      provider: providerName,
+      model: generationProvider ? generationProvider.modelId : options.codexModel || 'codex-config-default',
+      metadata: generationProvider ? generationProvider.metadata() : null,
+      startedAt: preflightStartedAt,
+      completedAt: new Date().toISOString()
+    });
+  } catch (error) {
+    writeJson(path.join(reportDir, 'provider-preflight.json'), {
+      status: 'blocked',
+      provider: providerName,
+      model: providerName === 'ollama' ? options.ollamaModel : providerName === 'lmstudio' ? options.lmstudioModel : options.codexModel || 'codex-config-default',
+      startedAt: preflightStartedAt,
+      failedAt: new Date().toISOString(),
+      error: {
+        name: error.name || 'Error',
+        code: error.code || null,
+        message: error.message || String(error)
+      }
+    });
+    throw error;
+  }
 
   writeJson(path.join(reportDir, 'run.config.json'), {
     mode: options.mode,
@@ -150,12 +187,52 @@ async function run(args) {
   }
 
   const themeDir = getThemeDir(options.themeSlug);
-  verifyThemeBuildDependencies(themeDir);
-  if (options.mode === 'codex-only') {
-    seedGeneratedAssets(themeDir, options);
-    runCodexGeneration(themeDir, options, reportDir);
+  if (options.resumeLocal) {
+    requirePreparedAssetManifest(themeDir);
   } else {
-    await runLocalModelGeneration(providerForMode(options.mode), themeDir, options, reportDir, localModelDeps());
+    prepareGeneratedAssets(themeDir, options);
+  }
+  const assetEvidence = recordAssetPreparation(themeDir, reportDir, options);
+  const runConfig = readJson(path.join(reportDir, 'run.config.json'));
+  runConfig.assetPreparation = assetEvidence;
+  if (generationProvider) {
+    runConfig.provider = generationProvider.metadata();
+  }
+  writeJson(path.join(reportDir, 'run.config.json'), runConfig);
+  const generationAttempt = fs.existsSync(generationAttemptPath)
+    ? readJson(generationAttemptPath)
+    : {
+        themeSlug: options.themeSlug,
+        mode: options.mode,
+        provider: providerName,
+        model: generationProvider ? generationProvider.modelId : options.codexModel || 'codex-config-default',
+        startedAt: new Date().toISOString()
+      };
+  generationAttempt.status = options.resumeLocal ? 'resuming' : 'running';
+  generationAttempt.updatedAt = new Date().toISOString();
+  writeJson(generationAttemptPath, generationAttempt);
+  verifyThemeBuildDependencies(themeDir);
+  try {
+    if (options.mode === 'codex-only') {
+      runCodexGeneration(themeDir, options, reportDir);
+    } else {
+      await runLocalModelGeneration(generationProvider, themeDir, options, reportDir);
+    }
+    generationAttempt.status = 'generation-completed';
+    generationAttempt.generationCompletedAt = new Date().toISOString();
+    generationAttempt.updatedAt = generationAttempt.generationCompletedAt;
+    writeJson(generationAttemptPath, generationAttempt);
+  } catch (error) {
+    generationAttempt.status = 'failed';
+    generationAttempt.failedAt = new Date().toISOString();
+    generationAttempt.updatedAt = generationAttempt.failedAt;
+    generationAttempt.error = {
+      name: error.name || 'Error',
+      code: error.code || null,
+      message: error.message || String(error)
+    };
+    writeJson(generationAttemptPath, generationAttempt);
+    throw error;
   }
 
   buildTheme(options.themeSlug);
@@ -168,7 +245,28 @@ async function run(args) {
   writeJson(path.join(reportDir, 'run.result.json'), {
     themeSlug: options.themeSlug,
     mode: options.mode,
+    provider: providerName,
+    model: generationProvider ? generationProvider.modelId : options.codexModel || 'codex-config-default',
     prepared,
+    infrastructure: {
+      providerPreflight: 'passed',
+      assetPreparation: 'passed',
+      assetManifestHash: assetEvidence.manifestHash,
+      approvedAssetSetHash: assetEvidence.approvedAssetSetHash
+    },
+    generation: { status: 'passed' },
+    build: { status: 'passed' },
+    sourceValidation: { status: 'passed' },
+    previewPublication: {
+      status: 'passed',
+      path: relative(path.join(PREVIEWS_DIR, options.themeSlug))
+    },
+    packaging: {
+      status: 'passed',
+      path: relative(path.join(ZIPS_DIR, `${options.themeSlug}.zip`))
+    },
+    artifactValidation: { status: 'passed' },
+    visualQuality: { status: 'pending-manual-inspection' },
     completedAt: new Date().toISOString(),
     status: 'completed'
   });
@@ -204,6 +302,18 @@ async function prepare(args) {
 
   prepareTheme(options);
   console.log(themeSlug);
+}
+
+async function assetsCommand(args) {
+  const themeSlug = requireSlug(args.themeSlug || args['theme-slug']);
+  const themeDir = existingThemeDir(themeSlug);
+  const options = {
+    themeSlug,
+    promptPath: args.prompt ? resolvePromptPath(args.prompt) : null
+  };
+  prepareGeneratedAssets(themeDir, options);
+  const evidence = recordAssetPreparation(themeDir, ensureReportDir(themeSlug), options);
+  console.log(JSON.stringify(evidence, null, 2));
 }
 
 async function validateCommand(args) {
@@ -280,6 +390,7 @@ async function envCommand() {
   }
   console.log(`default template: ${fs.existsSync(DEFAULT_TEMPLATE_DIR) ? relative(DEFAULT_TEMPLATE_DIR) : 'missing'}`);
   console.log('modes: codex-only, ollama-only, lmstudio-only');
+  console.log(`ollama default base URL: ${DEFAULT_OLLAMA_BASE_URL}`);
   console.log(`lmstudio default base URL: ${DEFAULT_LMSTUDIO_BASE_URL}`);
 }
 
@@ -290,12 +401,15 @@ async function modelCheckCommand(args) {
 async function selfTest() {
   const checks = [];
   checks.push(runCheck('node syntax', () => {
-    const result = spawnSync(process.execPath, ['--check', path.join(ROOT, 'scripts', 'theme-factory.js')], { cwd: ROOT, encoding: 'utf8' });
-    assertStatus(result, 'node --check scripts/theme-factory.js');
+    const files = walk(path.join(ROOT, 'scripts')).filter((file) => file.endsWith('.js'));
+    for (const file of files) {
+      const result = spawnSync(process.execPath, ['--check', file], { cwd: ROOT, encoding: 'utf8' });
+      assertStatus(result, `node --check ${relative(file)}`);
+    }
   }));
   checks.push(runCheck('package scripts', () => {
     const pkg = readJson(path.join(ROOT, 'package.json'));
-    for (const scriptName of ['theme:run', 'theme:resume', 'theme:prepare', 'theme:validate', 'theme:build', 'theme:preview', 'theme:preview:index', 'theme:zip', 'theme:delete', 'theme:env', 'theme:model-check', 'test:scripts']) {
+    for (const scriptName of ['theme:run', 'theme:resume', 'theme:prepare', 'theme:assets', 'theme:validate', 'theme:build', 'theme:preview', 'theme:preview:index', 'theme:zip', 'theme:delete', 'theme:env', 'theme:model-check', 'test:scripts']) {
       if (!pkg.scripts || !pkg.scripts[scriptName]) {
         throw new Error(`Missing package script: ${scriptName}`);
       }
@@ -314,10 +428,6 @@ async function selfTest() {
   checks.push(runCheck('validate current source', () => {
     validateSourceOrThrow('000_nolan_young_theme_master_template_prompt_filler_template_1', { writeReport: false });
   }));
-  checks.push(await runCheckAsync('codex model check', async () => {
-    await modelCheck('codex', {});
-  }));
-
   const failed = checks.filter((check) => !check.ok);
   for (const check of checks) {
     console.log(`${check.ok ? 'ok' : 'fail'} ${check.name}${check.error ? ` - ${check.error}` : ''}`);
@@ -338,20 +448,7 @@ function runCheck(name, fn) {
 
 function localModelDeps() {
   return {
-    ROOT,
-    assertStatus,
-    collectMarkdownHeadings,
-    ensureDir,
-    ensureInside,
-    fs,
-    listThemeContext,
-    matchesAllowList,
-    normalizeHeading,
-    normalizeRelativeFile,
-    path,
-    removeIfExists,
-    withProgressHeartbeat,
-    writeJson
+    normalizeHeading
   };
 }
 
@@ -392,15 +489,6 @@ function validationDeps() {
     writeJson,
     zipEntryHasExcludedDir
   };
-}
-
-async function runCheckAsync(name, fn) {
-  try {
-    await fn();
-    return { name, ok: true };
-  } catch (error) {
-    return { name, ok: false, error: error.message };
-  }
 }
 
 function prepareTheme(options) {
@@ -530,18 +618,20 @@ function upsertCssHeader(content, field, value) {
   return content.replace(/^\/\*\s*\n/, `/*\n${field}: ${value}\n`);
 }
 
-function seedGeneratedAssets(themeDir, options) {
+function prepareGeneratedAssets(themeDir, options = {}) {
   const themeSlug = path.basename(themeDir);
   const brand = titleFromSlug(themeSlug).replace(/^\d{3}\s+Nolan Young Theme\s+/, '');
-  const assets = seededAssetCatalog(themeSlug, brand);
+  const catalog = seededAssetCatalog(themeSlug, brand);
   const isLandscaping = isLandscapingTheme(themeSlug);
+  const acquiredAt = new Date().toISOString();
 
-  const palette = isLandscaping ? landscapingPalette() : paletteForSlug(themeSlug);
+  const paletteSeed = themeSlug.replace(/^\d{3}_nolan_young_theme_/, '');
+  const palette = isLandscaping ? landscapingPalette() : paletteForSlug(paletteSeed);
   if (isLandscaping) {
     pruneCopiedIllustrationSvgs(themeDir);
     seedLandscapingThemeJson(themeDir);
   }
-  for (const asset of assets) {
+  for (const asset of catalog) {
     const target = path.join(themeDir, asset.path);
     ensureDir(path.dirname(target));
     if (asset.kind === 'stock-photo') {
@@ -551,15 +641,85 @@ function seedGeneratedAssets(themeDir, options) {
     }
   }
 
+  const assets = catalog.map((asset, index) => normalizePreparedAsset(asset, themeSlug, acquiredAt, index));
   const manifest = {
-    generatedAt: new Date().toISOString(),
+    generatedAt: acquiredAt,
     themeSlug,
-    source: 'Separate pre-generation stock-photo seeding by the Nolan Young Theme Factory before Codex generation.',
+    source: 'Deterministic provider-neutral asset preparation by the Nolan Young Theme Factory before AI generation.',
     license: 'Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.',
-    usageRule: 'Codex must use stock photos for photographic/hero/portfolio/menu imagery and SVG only for interface marks, icons, and small UI details.',
+    usageRule: 'Every generation provider receives this same approved asset set. Stock photos are for photographic/hero/portfolio/menu imagery; SVG is for interface marks, icons, and small UI details.',
     assets
   };
   writeJson(path.join(themeDir, SEEDED_ASSET_MANIFEST), manifest);
+}
+
+function normalizePreparedAsset(asset, themeSlug, acquiredAt, index) {
+  const stock = asset.kind === 'stock-photo';
+  const baseName = path.basename(asset.path, path.extname(asset.path)).replace(/[^a-z0-9]+/gi, '-').toLowerCase();
+  return {
+    ...asset,
+    id: `${String(index + 1).padStart(2, '0')}-${baseName}`,
+    file: asset.path,
+    source: stock ? 'Unsplash' : 'Original local asset generated by the Nolan Young Theme Factory',
+    source_url: stock ? asset.pageUrl : 'https://github.com/nolanyoungg/Nolan-Young-Theme-Factory',
+    license: stock ? 'Unsplash License' : 'Project-owned original asset distributed with the theme',
+    license_url: stock ? 'https://unsplash.com/license' : 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.html',
+    creator: stock ? 'Unsplash contributor identified on the linked source page' : 'Nolan Young Theme Factory',
+    creator_url: stock ? asset.pageUrl : 'https://shibey.com',
+    acquired_at: acquiredAt,
+    allowed_use: 'Approved for this generated WordPress theme and its static preview.',
+    theme_slug: themeSlug,
+    alt_text: asset.alt,
+    notes: asset.role
+  };
+}
+
+function requirePreparedAssetManifest(themeDir) {
+  const manifestPath = path.join(themeDir, SEEDED_ASSET_MANIFEST);
+  if (!fs.existsSync(manifestPath)) {
+    throw new Error('Missing approved asset manifest for theme generation.');
+  }
+  return manifestPath;
+}
+
+function recordAssetPreparation(themeDir, reportDir, options = {}) {
+  const manifestPath = requirePreparedAssetManifest(themeDir);
+  const manifest = readJson(manifestPath);
+  const evidence = {
+    status: 'prepared',
+    themeSlug: path.basename(themeDir),
+    prompt: options.promptPath ? relative(options.promptPath) : null,
+    manifest: relative(manifestPath),
+    manifestHash: sha256File(manifestPath),
+    approvedAssetSetHash: hashApprovedAssetSet(themeDir, manifest),
+    assetCount: Array.isArray(manifest.assets) ? manifest.assets.length : 0,
+    recordedAt: new Date().toISOString()
+  };
+  writeJson(path.join(reportDir, 'asset-preparation.json'), evidence);
+  return evidence;
+}
+
+function hashApprovedAssetSet(themeDir, manifest) {
+  const hash = crypto.createHash('sha256');
+  const assets = Array.isArray(manifest.assets) ? [...manifest.assets] : [];
+  assets.sort((left, right) => String(left.path || left.file).localeCompare(String(right.path || right.file), 'en'));
+  for (const asset of assets) {
+    const relPath = normalizeRelativeFile(asset.path || asset.file);
+    const assetPath = path.join(themeDir, ...relPath.split('/'));
+    ensureInside(themeDir, assetPath);
+    if (!fs.existsSync(assetPath) || !fs.statSync(assetPath).isFile()) {
+      throw new Error(`Approved asset is missing: ${relPath}`);
+    }
+    hash.update(relPath);
+    hash.update(Buffer.from([0]));
+    hash.update(fs.readFileSync(assetPath));
+    hash.update(Buffer.from([0]));
+  }
+  return hash.digest('hex');
+}
+
+function sha256File(file) {
+  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
 function pruneCopiedIllustrationSvgs(themeDir) {
@@ -837,7 +997,8 @@ function runCodexGeneration(themeDir, options, reportDir) {
   command.push('-');
 
   const before = statusPaths();
-  const result = spawnSync(options.codexExecutable || 'codex', command, {
+  const invocation = resolveCodexInvocation(options.codexExecutable || 'codex', command);
+  const result = spawnSync(invocation.command, invocation.args, {
     cwd: themeDir,
     input: prompt,
     encoding: 'utf8',
@@ -848,12 +1009,31 @@ function runCodexGeneration(themeDir, options, reportDir) {
     relative(themeDir)
   ]);
   fs.writeFileSync(path.join(reportDir, 'codex.log'), [
-    `$ ${(options.codexExecutable || 'codex')} ${command.join(' ')}`,
+    `$ ${invocation.display}`,
     '',
     result.stdout || '',
     result.stderr || ''
   ].join('\n'));
   assertStatus(result, 'codex generation');
+}
+
+function resolveCodexInvocation(executable, args) {
+  if (process.platform === 'win32' && String(executable).toLowerCase() === 'codex') {
+    const appData = process.env.APPDATA || '';
+    const script = path.join(appData, 'npm', 'node_modules', '@openai', 'codex', 'bin', 'codex.js');
+    if (appData && fs.existsSync(script)) {
+      return {
+        command: process.execPath,
+        args: [script, ...args],
+        display: `codex ${args.join(' ')}`
+      };
+    }
+  }
+  return {
+    command: executable,
+    args,
+    display: `${executable} ${args.join(' ')}`
+  };
 }
 
 function buildCodexPrompt(promptPath, themeSlug, themeDir) {
@@ -909,20 +1089,6 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     'User creative brief:',
     userPrompt
   ].join('\n');
-}
-
-async function withProgressHeartbeat(label, work) {
-  const startedAt = Date.now();
-  const timer = setInterval(() => {
-    const elapsedMinutes = Math.floor((Date.now() - startedAt) / 60000);
-    console.log(`[${new Date().toISOString()}] ${label} still running (${elapsedMinutes} minutes elapsed)`);
-  }, 15 * 60 * 1000);
-  timer.unref();
-  try {
-    return await work();
-  } finally {
-    clearInterval(timer);
-  }
 }
 
 function buildTheme(themeSlug) {
@@ -1365,19 +1531,28 @@ async function modelCheck(provider, args) {
   }
   if (provider === 'codex') {
     const executable = args.codexExecutable || args['codex-executable'] || 'codex';
-    assertStatus(spawnSync(executable, ['--version'], { cwd: ROOT, encoding: 'utf8' }), `${executable} --version`);
+    const invocation = resolveCodexInvocation(executable, ['--version']);
+    assertStatus(spawnSync(invocation.command, invocation.args, { cwd: ROOT, encoding: 'utf8' }), `${executable} --version`);
     console.log('PASS model-check codex');
-    return;
+    return null;
   }
-  if (provider === 'ollama') {
-    checkOllamaProvider(args, localModelDeps());
-    console.log('PASS model-check ollama');
-    return;
-  }
-  if (provider === 'lmstudio') {
-    const modelIds = await checkLmStudioProvider(args);
-    console.log(`PASS model-check lmstudio${modelIds.length ? ` (${modelIds.join(', ')})` : ''}`);
-    return;
+  if (provider === 'ollama' || provider === 'lmstudio') {
+    const instance = provider === 'ollama' ? createOllamaProvider(args) : createLmStudioProvider(args);
+    const modelId = provider === 'ollama'
+      ? args.ollamaModel || args['ollama-model'] || instance.modelId
+      : args.lmstudioModel || args['lmstudio-model'] || instance.modelId;
+    let modelIds;
+    if (modelId) {
+      await instance.checkModel(modelId);
+      modelIds = await instance.listModels();
+    } else {
+      modelIds = await instance.listModels();
+    }
+    if (modelId) {
+      await instance.checkToolCalling(modelId);
+    }
+    console.log(`PASS model-check ${provider}${modelIds.length ? ` (${modelIds.join(', ')})` : ''}${instance.capabilities.requiredToolCalling === true ? ' [tool calling verified]' : ''}`);
+    return instance;
   }
   throw new Error(`Unsupported provider: ${provider}`);
 }
@@ -1633,24 +1808,6 @@ function ensureInside(parent, child) {
   }
 }
 
-function matchesAllowList(relPath, allowList) {
-  return allowList.some((pattern) => {
-    const normalized = pattern.replace(/\\/g, '/');
-    if (normalized.endsWith('/**')) {
-      return relPath.startsWith(normalized.slice(0, -3) + '/');
-    }
-    return relPath === normalized;
-  });
-}
-
-function listThemeContext(themeDir) {
-  return walk(themeDir)
-    .map((file) => relativeTo(themeDir, file))
-    .filter((file) => !file.startsWith('node_modules/'))
-    .sort()
-    .join('\n');
-}
-
 function statusPaths() {
   const result = spawnSync('git', ['status', '--porcelain=v1'], { cwd: ROOT, encoding: 'utf8' });
   assertStatus(result, 'git status');
@@ -1699,6 +1856,7 @@ Commands:
   run            Prepare, generate, build, validate, preview, zip
   resume         Re-run deterministic post-generation work for a theme
   prepare        Copy a template into wp-content/themes/{slug}
+  assets         Prepare and record the approved per-theme asset set
   validate       Validate source and artifacts
   build          Run npm build inside a theme
   preview        Render static preview pages
@@ -1713,6 +1871,10 @@ Generation modes:
   codex-only
   ollama-only
   lmstudio-only
+
+Local-model resume flags:
+  --resume-local
+  --resume-from-stage <stage-id>
 `);
 }
 

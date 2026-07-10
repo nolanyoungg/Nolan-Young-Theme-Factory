@@ -7,6 +7,7 @@
     "theme:run": "node scripts/theme-factory.js run",
     "theme:resume": "node scripts/theme-factory.js resume",
     "theme:prepare": "node scripts/theme-factory.js prepare",
+    "theme:assets": "node scripts/theme-factory.js assets",
     "theme:validate": "node scripts/theme-factory.js validate",
     "theme:build": "node scripts/theme-factory.js build",
     "theme:preview": "node scripts/theme-factory.js preview",
@@ -15,7 +16,7 @@
     "theme:delete": "node scripts/theme-factory.js delete",
     "theme:env": "node scripts/theme-factory.js env",
     "theme:model-check": "node scripts/theme-factory.js model-check",
-    "test:scripts": "node scripts/theme-factory.js self-test"
+    "test:scripts": "node --test --test-isolation=none scripts/tests/*.test.js && node scripts/theme-factory.js self-test"
   },
   "engines": {
     "node": ">=20"

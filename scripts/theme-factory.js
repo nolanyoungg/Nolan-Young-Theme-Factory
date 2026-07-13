@@ -622,6 +622,7 @@ function prepareGeneratedAssets(themeDir, options = {}) {
   const themeSlug = path.basename(themeDir);
   const brand = titleFromSlug(themeSlug).replace(/^\d{3}\s+Nolan Young Theme\s+/, '');
   const catalog = seededAssetCatalog(themeSlug, brand);
+  validateAssetCatalog(catalog);
   const isLandscaping = isLandscapingTheme(themeSlug);
   const acquiredAt = new Date().toISOString();
 
@@ -664,14 +665,34 @@ function normalizePreparedAsset(asset, themeSlug, acquiredAt, index) {
     source_url: stock ? asset.pageUrl : 'https://github.com/nolanyoungg/Nolan-Young-Theme-Factory',
     license: stock ? 'Unsplash License' : 'Project-owned original asset distributed with the theme',
     license_url: stock ? 'https://unsplash.com/license' : 'https://www.gnu.org/licenses/old-licenses/gpl-2.0.html',
-    creator: stock ? 'Unsplash contributor identified on the linked source page' : 'Nolan Young Theme Factory',
-    creator_url: stock ? asset.pageUrl : 'https://shibey.com',
+    creator: stock ? asset.creator : 'Nolan Young Theme Factory',
+    creator_url: stock ? asset.creatorUrl : 'https://shibey.com',
     acquired_at: acquiredAt,
     allowed_use: 'Approved for this generated WordPress theme and its static preview.',
     theme_slug: themeSlug,
     alt_text: asset.alt,
     notes: asset.role
   };
+}
+
+function validateAssetCatalog(catalog) {
+  for (const asset of catalog) {
+    if (asset.kind !== 'stock-photo') {
+      continue;
+    }
+    const canonicalPage = typeof asset.pageUrl === 'string'
+      && /^https:\/\/unsplash\.com\/photos\/(?!photo-)[^/?#]+(?:[?#].*)?$/.test(asset.pageUrl);
+    const complete = typeof asset.sourceUrl === 'string'
+      && asset.sourceUrl.startsWith('https://images.unsplash.com/')
+      && canonicalPage
+      && typeof asset.creator === 'string'
+      && asset.creator.trim()
+      && typeof asset.creatorUrl === 'string'
+      && /^https:\/\/unsplash\.com\/@[^/?#]+\/?$/.test(asset.creatorUrl);
+    if (!complete) {
+      throw new Error(`Approved stock asset "${asset.path}" is missing verified creator or canonical Unsplash source metadata.`);
+    }
+  }
 }
 
 function requirePreparedAssetManifest(themeDir) {
@@ -837,42 +858,52 @@ function softwareAgencyStockAssets(brand) {
     {
       path: 'assets/images/hero/agency-workspace.jpg',
       kind: 'stock-photo',
-      role: 'homepage hero photo for a premium WordPress and Shopify agency workspace',
-      alt: `${brand} strategy workspace with laptops and planning material`,
+      role: 'homepage hero photo showing a contemporary office interior',
+      alt: 'Office hallway with glass-panel doors and adjacent work areas',
       sourceUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1800&q=82',
-      pageUrl: 'https://unsplash.com/photos/photo-1497366754035-f200968a6e72'
+      pageUrl: 'https://unsplash.com/photos/hallway-between-glass-panel-doors-yWwob8kwOCk',
+      creator: 'Nastuh Abootalebi',
+      creatorUrl: 'https://unsplash.com/@sunday_digital'
     },
     {
       path: 'assets/images/hero/developer-screens.jpg',
       kind: 'stock-photo',
       role: 'header dropdown and services photo for software development screens',
-      alt: `${brand} developer screens and code workspace`,
+      alt: 'MacBook displaying code on a busy desk',
       sourceUrl: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=82',
-      pageUrl: 'https://unsplash.com/photos/photo-1498050108023-c5249f4df085'
+      pageUrl: 'https://unsplash.com/photos/a-macbook-with-lines-of-code-on-its-screen-on-a-busy-desk-m_HRfLhgABo',
+      creator: 'Christopher Gower',
+      creatorUrl: 'https://unsplash.com/@cgower'
     },
     {
       path: 'assets/images/portfolio/ecommerce-planning.jpg',
       kind: 'stock-photo',
       role: 'Shopify and ecommerce planning case-study photo',
-      alt: `${brand} ecommerce planning and analytics workspace`,
+      alt: 'Laptop displaying analytics on a glass-top table',
       sourceUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=82',
-      pageUrl: 'https://unsplash.com/photos/photo-1460925895917-afdab827c52f'
+      pageUrl: 'https://unsplash.com/photos/laptop-computer-on-glass-top-table-hpjSkU2UYSU',
+      creator: 'Carlos Muza',
+      creatorUrl: 'https://unsplash.com/@kmuza'
     },
     {
       path: 'assets/images/portfolio/team-collaboration.jpg',
       kind: 'stock-photo',
       role: 'about and process photo for collaborative agency work',
-      alt: `${brand} team collaboration around a digital project`,
+      alt: 'People collaborating around a table with laptops',
       sourceUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1600&q=82',
-      pageUrl: 'https://unsplash.com/photos/photo-1522071820081-009f0129c71c'
+      pageUrl: 'https://unsplash.com/photos/HkTMcmlMOUQ',
+      creator: 'Annie Spratt',
+      creatorUrl: 'https://unsplash.com/@anniespratt'
     },
     {
       path: 'assets/images/portfolio/performance-review.jpg',
       kind: 'stock-photo',
       role: 'WordPress performance and analytics case-study photo',
-      alt: `${brand} performance review and analytics dashboard`,
+      alt: 'Laptop screen displaying performance analytics graphs',
       sourceUrl: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1600&q=82',
-      pageUrl: 'https://unsplash.com/photos/photo-1551288049-bebda4e38f71'
+      pageUrl: 'https://unsplash.com/photos/graphs-of-performance-analytics-on-a-laptop-screen-JKUTrJ4vK00',
+      creator: 'Luke Chesser',
+      creatorUrl: 'https://unsplash.com/@lukechesser'
     },
     {
       path: 'assets/images/texture/studio-detail.jpg',
@@ -880,7 +911,9 @@ function softwareAgencyStockAssets(brand) {
       role: 'subtle editorial texture photo for background crops',
       alt: '',
       sourceUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80',
-      pageUrl: 'https://unsplash.com/photos/photo-1516321318423-f06f85e504b3'
+      pageUrl: 'https://unsplash.com/photos/FlPc9_VocJ4',
+      creator: 'John Schnobrich',
+      creatorUrl: 'https://unsplash.com/@johnishappysometimes'
     },
     {
       path: 'assets/icons/platform-mark.svg',

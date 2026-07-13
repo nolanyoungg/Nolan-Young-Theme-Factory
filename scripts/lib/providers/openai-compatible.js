@@ -3,6 +3,9 @@
 const DEFAULT_OPENAI_COMPATIBLE_TIMEOUT_MS = 1000 * 60 * 30;
 const DEFAULT_OPENAI_COMPATIBLE_TEMPERATURE = 0.2;
 const TOOL_CAPABILITY_PROBE_NAME = 'local_model_agent_capability_probe';
+const MODEL_METADATA_SOURCE = 'OpenAI-compatible GET /models response';
+const MAX_SELECTED_MODEL_METADATA_BYTES = 32 * 1024;
+const SENSITIVE_FIELD_RE = /^(authorization|api[_-]?key|access[_-]?token|secret|password|credential)$/i;
 
 class OpenAICompatibleProviderError extends Error {
   constructor(message, details = {}) {
@@ -62,6 +65,18 @@ class OpenAICompatibleProvider {
     this._connectionHint = String(config.connectionHint || '').trim();
     this._modelHint = String(config.modelHint || '').trim();
     this._checkedModelId = null;
+    Object.defineProperty(this, '_listedModelMetadata', {
+      value: new Map(),
+      enumerable: false,
+      configurable: false,
+      writable: false
+    });
+    Object.defineProperty(this, '_selectedModelMetadata', {
+      value: unavailableModelMetadata('model-not-checked'),
+      enumerable: false,
+      configurable: false,
+      writable: true
+    });
 
     if (typeof this._fetch !== 'function') {
       throw this._error('HTTP fetch is unavailable in this Node.js runtime.', {
@@ -80,7 +95,8 @@ class OpenAICompatibleProvider {
       temperature: this.temperature,
       timeout: this.timeout,
       capabilities: { ...this.capabilities },
-      checkedModelId: this._checkedModelId
+      checkedModelId: this._checkedModelId,
+      selectedModelMetadata: cloneJsonValue(this._selectedModelMetadata)
     };
   }
 
@@ -152,10 +168,23 @@ class OpenAICompatibleProvider {
         operation: 'listModels'
       });
     }
-    return [...new Set(raw.data
-      .map((entry) => typeof entry === 'string' ? entry : entry && entry.id)
-      .filter((id) => typeof id === 'string' && id.trim())
-      .map((id) => id.trim()))].sort();
+    this._listedModelMetadata.clear();
+    const modelIds = new Set();
+    for (const rawEntry of raw.data) {
+      const id = String(typeof rawEntry === 'string' ? rawEntry : rawEntry && rawEntry.id || '').trim();
+      if (!id) {
+        continue;
+      }
+      modelIds.add(id);
+      const candidate = sanitizeSelectedModelEntry(rawEntry, this._secrets());
+      const current = this._listedModelMetadata.get(id) || null;
+      if (modelMetadataScore(candidate) > modelMetadataScore(current)) {
+        this._listedModelMetadata.set(id, candidate);
+      } else if (!this._listedModelMetadata.has(id)) {
+        this._listedModelMetadata.set(id, null);
+      }
+    }
+    return [...modelIds].sort();
   }
 
   async checkModel(modelId = this.modelId) {
@@ -176,6 +205,15 @@ class OpenAICompatibleProvider {
       });
     }
     this._checkedModelId = selected;
+    const selectedMetadata = this._listedModelMetadata.get(selected) || null;
+    this._selectedModelMetadata = selectedMetadata
+      ? {
+          available: true,
+          source: MODEL_METADATA_SOURCE,
+          truncated: selectedMetadata.truncated,
+          entry: selectedMetadata.entry
+        }
+      : unavailableModelMetadata('selected-model-entry-contained-no-additional-metadata');
     return selected;
   }
 
@@ -501,6 +539,102 @@ function normalizeToolArguments(value, options = {}) {
   }
 }
 
+function unavailableModelMetadata(reason) {
+  return {
+    available: false,
+    source: MODEL_METADATA_SOURCE,
+    reason
+  };
+}
+
+function sanitizeSelectedModelEntry(rawEntry, secrets = []) {
+  if (!rawEntry || typeof rawEntry !== 'object' || Array.isArray(rawEntry)) {
+    return null;
+  }
+  const state = { truncated: false };
+  let entry = sanitizeModelMetadataValue(rawEntry, secrets, state, 0);
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) {
+    return null;
+  }
+  const informativeKeys = Object.keys(entry).filter((key) => key !== 'id');
+  if (!informativeKeys.length) {
+    return null;
+  }
+  if (Buffer.byteLength(JSON.stringify(entry), 'utf8') > MAX_SELECTED_MODEL_METADATA_BYTES) {
+    state.truncated = true;
+    entry = compactModelMetadata(entry);
+  }
+  return { entry, truncated: state.truncated };
+}
+
+function sanitizeModelMetadataValue(value, secrets, state, depth) {
+  if (value === null || typeof value === 'boolean' || typeof value === 'number') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const redacted = redactText(value, secrets);
+    if (redacted.length > 4096) {
+      state.truncated = true;
+      return `${redacted.slice(0, 4096)}...`;
+    }
+    return redacted;
+  }
+  if (depth >= 6) {
+    state.truncated = true;
+    return '[TRUNCATED]';
+  }
+  if (Array.isArray(value)) {
+    if (value.length > 64) {
+      state.truncated = true;
+    }
+    return value.slice(0, 64).map((item) => sanitizeModelMetadataValue(item, secrets, state, depth + 1));
+  }
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+  const output = {};
+  const entries = Object.entries(value);
+  if (entries.length > 128) {
+    state.truncated = true;
+  }
+  for (const [key, item] of entries.slice(0, 128)) {
+    if (SENSITIVE_FIELD_RE.test(key)) {
+      continue;
+    }
+    output[key] = sanitizeModelMetadataValue(item, secrets, state, depth + 1);
+  }
+  return output;
+}
+
+function compactModelMetadata(entry) {
+  const keys = Object.keys(entry).sort((left, right) => {
+    const score = (key) => key === 'id'
+      ? 0
+      : /(quant|context)/i.test(key)
+        ? 1
+        : /(object|created|owner|publisher|family|format|parameter|architecture|capabil|status|state|type)/i.test(key)
+          ? 2
+          : 3;
+    return score(left) - score(right);
+  });
+  const compact = {};
+  for (const key of keys) {
+    const candidate = { ...compact, [key]: entry[key] };
+    if (Buffer.byteLength(JSON.stringify(candidate), 'utf8') <= MAX_SELECTED_MODEL_METADATA_BYTES) {
+      compact[key] = entry[key];
+    }
+  }
+  return compact;
+}
+
+function modelMetadataScore(metadata) {
+  return metadata ? Buffer.byteLength(JSON.stringify(metadata.entry), 'utf8') : 0;
+}
+
+function cloneJsonValue(value) {
+  return JSON.parse(JSON.stringify(value));
+}
+
 function redactValue(value, secrets = []) {
   if (typeof value === 'string') {
     return redactText(value, secrets);
@@ -513,7 +647,7 @@ function redactValue(value, secrets = []) {
   }
   const redacted = {};
   for (const [key, item] of Object.entries(value)) {
-    if (/^(authorization|api[_-]?key|access[_-]?token|secret|password)$/i.test(key)) {
+    if (SENSITIVE_FIELD_RE.test(key)) {
       redacted[key] = '[REDACTED]';
     } else {
       redacted[key] = redactValue(item, secrets);

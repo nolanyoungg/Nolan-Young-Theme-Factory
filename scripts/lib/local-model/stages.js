@@ -91,6 +91,7 @@ const LOCAL_MODEL_STAGES = [
       'single.php',
       'search.php',
       '404.php',
+      '403.php',
       'comments.php',
       'searchform.php',
       'header.php',
@@ -107,6 +108,7 @@ const LOCAL_MODEL_STAGES = [
       'single.php',
       'search.php',
       '404.php',
+      '403.php',
       'comments.php',
       'searchform.php',
       'page-templates/**',
@@ -144,7 +146,7 @@ const LOCAL_MODEL_STAGES = [
   },
   {
     id: '06-scss-design-system',
-    promptSections: ['Style / CSS Requirements', 'CSS Architecture', 'Color System', 'Visual Design Direction', 'Typography Direction'],
+    promptSections: ['Style / CSS Requirements', 'CSS Architecture', 'Accessibility and Motion', 'Webpack Build Requirements', 'Color System', 'Visual Design Direction', 'Typography Direction'],
     read: [
       'style.css',
       'theme.json',
@@ -252,10 +254,7 @@ function validateLocalModelPlan(promptHeadings, providerLabel = 'Local model', d
   const normalize = deps.normalizeHeading || normalizeHeading;
   const normalizedHeadings = promptHeadings.map((heading) => normalize(heading));
   return LOCAL_MODEL_STAGES.map((stage) => {
-    const matchedSections = stage.promptSections.filter((section) => {
-      const normalized = normalize(section);
-      return normalizedHeadings.some((heading) => heading === normalized || heading.includes(normalized) || normalized.includes(heading));
-    });
+    const matchedSections = stage.promptSections.filter((section) => normalizedHeadings.includes(normalize(section)));
     if (!matchedSections.length) {
       throw new Error(`${providerLabel} stage "${stage.id}" has no matching production prompt coverage. Expected one of: ${stage.promptSections.join(', ')}`);
     }
@@ -374,14 +373,13 @@ function extractPromptSections(prompt, wantedSections) {
       continue;
     }
     const normalized = normalizeHeading(match[2]);
-    if (!wanted.some((item) => normalized === item || normalized.includes(item) || item.includes(normalized))) {
+    if (!wanted.includes(normalized)) {
       continue;
     }
-    const level = match[1].length;
     let end = index + 1;
     while (end < lines.length) {
       const next = lines[end].match(/^(#{1,6})\s+(.+?)\s*$/);
-      if (next && next[1].length <= level) {
+      if (next) {
         break;
       }
       end += 1;

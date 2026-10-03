@@ -1,0 +1,11 @@
+.journal-layout { display: grid; grid-template-columns: .7fr 1.3fr; gap: 10%; align-items: start; }
+.journal-aside figure img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: 72% center; }
+.journal-aside nav { display: grid; gap: 0; margin-block: 28px; }
+.journal-aside nav a { font-size: 12px; padding-block: 11px; border-bottom: 1px solid var(--line); text-decoration: none; }
+.journal-articles article { padding-bottom: 50px; margin-bottom: 50px; border-bottom: 1px solid var(--line); scroll-margin-top: 28px; }
+.journal-articles article:last-child { margin-bottom: 0; }
+.journal-articles h2 { font-size: 43px; }
+.journal-deck { font: italic 21px/1.4 var(--serif); color: var(--olive); }
+.journal-next { padding-bottom: 70px; }
+.post-list article { padding-block: 30px; border-bottom: 1px solid var(--line); }
+@media (max-width: 700px) { .journal-layout { grid-template-columns: minmax(0, 1fr); gap: 20px; } .journal-aside figure img { aspect-ratio: 1.7; } .journal-articles h2 { font-size: 34px; } }

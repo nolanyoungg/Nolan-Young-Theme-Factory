@@ -1,0 +1,8 @@
+.collection-story { display: grid; grid-template-columns: 1.1fr 1fr; gap: 9%; align-items: center; padding-block: 65px; border-bottom: 1px solid var(--line); }
+.collection-story:last-child { border-bottom: 0; }
+.collection-story:nth-child(even) figure { order: 2; }
+.collection-story figure img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+.material-list { font-size: 13px; margin-block: 25px; }
+.material-list dt { border-top: 1px solid var(--line); padding-top: 13px; font-size: 10px; text-transform: uppercase; letter-spacing: .1em; color: var(--olive); }
+.material-list dd { margin: 4px 0 15px; }
+@media (max-width: 700px) { .collection-story { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 40px; } .collection-story:nth-child(even) figure { order: 0; } }

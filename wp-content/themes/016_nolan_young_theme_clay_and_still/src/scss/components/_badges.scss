@@ -1,0 +1,4 @@
+.olive-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--olive); margin-right: 9px; vertical-align: middle; }
+.oval-seal { position: absolute; z-index: 1; right: -20px; bottom: 62px; width: 103px; height: 132px; border: 1px solid var(--cocoa); border-radius: 50%; background: var(--peach); display: flex; flex-direction: column; justify-content: center; align-items: center; transform: rotate(13deg); font: 16px/1.25 var(--serif); }
+.oval-seal i { font-size: 13px; }
+@media (max-width: 700px) { .oval-seal { right: 8px; bottom: 42px; width: 67px; height: 83px; font-size: 12px; } .oval-seal i { font-size: 10px; } }

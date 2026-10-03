@@ -1,0 +1,6 @@
+.studio-pillars { background: var(--peach-light); }
+.pillar-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 50px; }
+.pillar-grid article { border-top: 1px solid #bda897; padding-top: 24px; }
+.pillar-grid h3 { font-size: 28px; }
+.pillar-grid p:not(.eyebrow) { font-size: 14px; }
+@media (max-width: 700px) { .pillar-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } }

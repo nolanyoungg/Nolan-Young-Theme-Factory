@@ -1,0 +1,5 @@
+.wrap { width: min(var(--page-width), calc(100% - 112px)); margin-inline: auto; }
+.reading-width { max-width: 740px; }
+.section-space { padding-block: 88px; }
+@media (max-width: 1000px) { .wrap { width: calc(100% - 64px); } .section-space { padding-block: 64px; } }
+@media (max-width: 700px) { .wrap { width: calc(100% - 40px); } .section-space { padding-block: 48px; } }

@@ -1,0 +1,2 @@
+<?php /** Optional short studio statement. */ ?>
+<section class="wrap reading-width section-space"><p class="eyebrow">Clay &amp; Still</p><h2>Enough space<br>to <em>notice.</em></h2><p>A quieter room begins with the things you choose to keep. We imagine ceramics that feel familiar from the first touch, with just enough irregularity to remind you of the hands behind them.</p><a class="text-link" href="<?php echo clay_still_url( '/about/' ); ?>">Step into the studio ↗</a></section>

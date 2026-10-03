@@ -1,0 +1,5 @@
+.button { display: inline-flex; justify-content: center; align-items: center; gap: 28px; padding: 15px 24px; border: 1px solid var(--cocoa); background: var(--cocoa); color: var(--ivory); font-size: 12px; line-height: 1.5; font-weight: 500; text-decoration: none; transition: background .2s, color .2s; max-width: 100%; }
+.button:hover { background: var(--olive); border-color: var(--olive); color: var(--ivory); }
+.button-outline { color: var(--cocoa); background: transparent; }
+.button-outline:hover { background: var(--cocoa); color: var(--ivory); }
+@media (max-width: 700px) { .button { padding: 14px 20px; gap: 16px; white-space: normal; } }

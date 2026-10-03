@@ -1,0 +1,10 @@
+{
+  "status": "prepared",
+  "themeSlug": "016_nolan_young_theme_clay_and_still",
+  "prompt": "prompts\\pending\\010-clay-and-still.md",
+  "manifest": "wp-content\\themes\\016_nolan_young_theme_clay_and_still\\assets\\images\\asset-manifest.json",
+  "manifestHash": "e768aac6cf85db81e11856d55207058b3f5494eac72728baed2f9b5fc7d2aeca",
+  "approvedAssetSetHash": "9f9f3cc70aca21a4165e68bc08d470b469e251f9b18bdf60841b536d20b59d99",
+  "assetCount": 4,
+  "recordedAt": "2026-10-03T20:44:29.427Z"
+}

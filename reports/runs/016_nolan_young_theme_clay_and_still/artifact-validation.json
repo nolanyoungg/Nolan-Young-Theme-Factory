@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "016_nolan_young_theme_clay_and_still",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome was not found."
+  ],
+  "checkedAt": "2026-10-03T21:07:43.894Z"
+}

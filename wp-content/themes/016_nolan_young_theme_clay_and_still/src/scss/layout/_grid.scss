@@ -1,0 +1,4 @@
+.editorial-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 9%; align-items: center; }
+.editorial-photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center bottom; }
+.editorial-copy { max-width: 510px; }
+@media (max-width: 700px) { .editorial-split { grid-template-columns: minmax(0, 1fr); gap: 36px; } .editorial-photo img { aspect-ratio: 5 / 4; } }

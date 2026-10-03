@@ -1,0 +1,17 @@
+.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 50px; margin-bottom: 45px; }
+.section-heading h2 { margin: 0; }
+.section-heading > p { max-width: 360px; margin-bottom: 3px; font-size: 14px; }
+.page-intro { padding-top: 34px; padding-bottom: 58px; border-bottom: 1px solid var(--line); }
+.page-intro h1 { max-width: 950px; }
+.intro-copy { max-width: 650px; margin: 0; font-size: 17px; }
+.page-intro .eyebrow { margin-bottom: 14px; }
+.material-note { border-top: 1px solid var(--line); text-align: center; }
+.material-note img { margin: 0 auto 25px; }
+.material-note p { max-width: 720px; margin-inline: auto; }
+@media (max-width: 700px) {
+	.section-heading { display: block; margin-bottom: 30px; }
+	.section-heading > p, .section-heading > a { margin-top: 22px; }
+	.page-intro { padding-top: 22px; padding-bottom: 36px; }
+	.back-link { margin-bottom: 30px; }
+	.intro-copy { font-size: 15px; }
+}

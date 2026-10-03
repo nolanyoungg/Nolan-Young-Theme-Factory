@@ -1,0 +1,2 @@
+// Shared mixins are deliberately small; page geometry lives beside each composition.
+@mixin fine-rule { border-top: 1px solid var(--line); }

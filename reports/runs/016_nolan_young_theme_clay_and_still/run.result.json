@@ -1,0 +1,40 @@
+{
+  "themeSlug": "016_nolan_young_theme_clay_and_still",
+  "mode": "codex-only",
+  "provider": "codex",
+  "model": "codex-config-default",
+  "prepared": true,
+  "infrastructure": {
+    "providerPreflight": "passed",
+    "assetPreparation": "passed",
+    "assetManifestHash": "e768aac6cf85db81e11856d55207058b3f5494eac72728baed2f9b5fc7d2aeca",
+    "approvedAssetSetHash": "9f9f3cc70aca21a4165e68bc08d470b469e251f9b18bdf60841b536d20b59d99"
+  },
+  "generation": {
+    "status": "passed"
+  },
+  "build": {
+    "status": "passed"
+  },
+  "sourceValidation": {
+    "status": "passed"
+  },
+  "previewPublication": {
+    "status": "passed",
+    "path": "docs\\Preview-Themes-Github\\016_nolan_young_theme_clay_and_still"
+  },
+  "packaging": {
+    "status": "passed",
+    "path": "dist\\zipped-themes\\016_nolan_young_theme_clay_and_still.zip"
+  },
+  "artifactValidation": {
+    "status": "passed"
+  },
+  "visualQuality": {
+    "reviewedAt": "2026-10-03T21:14:12.6456616Z",
+    "status": "passed-with-note",
+    "notes": "Full homepage and all seven inner pages inspected. Mobile menu opens and closes with Escape. No horizontal overflow at 390px or 1280px viewport. A decorative oval produces 1px horizontal overflow at the default 908px intermediate viewport; non-blocking cosmetic issue preserved without source repair."
+  },
+  "completedAt": "2026-10-03T21:07:43.894Z",
+  "status": "completed"
+}

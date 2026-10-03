@@ -1,0 +1,5 @@
+.contact-layout { display: grid; grid-template-columns: .85fr 1.15fr; gap: 9%; align-items: start; }
+.contact-aside figure { margin-block: 32px; }
+.contact-aside figure img { width: 100%; aspect-ratio: 1.65; object-fit: cover; object-position: 70% center; }
+.contact-aside > p { font-size: 14px; }
+@media (max-width: 700px) { .contact-layout { grid-template-columns: minmax(0, 1fr); gap: 36px; } }

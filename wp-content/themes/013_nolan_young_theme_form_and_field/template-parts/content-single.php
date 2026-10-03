@@ -1,0 +1,1 @@
+<article class="prose entry-content"><p class="eyebrow">Form &amp; Field / Journal</p><h1><?php the_title(); ?></h1><?php the_content(); wp_link_pages(); ?><a class="text-link" href="<?php echo form_field_url( 'blog' ); ?>">Back to the journal ↗</a></article>

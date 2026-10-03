@@ -1,0 +1,82 @@
+.hero { padding-top: 23px; }
+.hero-topline { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.edition { color: var(--muted); }
+.hero-intro { display: grid; grid-template-columns: 1.65fr 1fr; align-items: end; gap: 55px; padding-block: 32px 35px; }
+.hero h1 { font-size: clamp(54px, 5.7vw, 82px); line-height: 1.015; max-width: 790px; letter-spacing: -.055em; }
+.hero h1 em { color: var(--rust); font-weight: 400; }
+.hero-note { display: grid; grid-template-columns: 20px 1fr; column-gap: 22px; max-width: 355px; justify-self: end; }
+.small-cross { font-size: 27px; line-height: 1; color: var(--rust); }
+.hero-note p { font-size: 15px; line-height: 1.55; }
+.hero-actions { grid-column: 2; margin-top: 16px; display: flex; align-items: flex-start; flex-direction: column; gap: 8px; font-size: 11px; }
+.hero-actions > a:last-child { padding-block: 4px; text-decoration: none; }
+.hero-photo img { height: clamp(240px, 32vw, 425px); width: 100%; object-fit: cover; object-position: center 59%; }
+.hero-photo figcaption { text-transform: uppercase; font-size: 9px; letter-spacing: .07em; }
+.studio-statement { display: grid; grid-template-columns: .55fr 1.45fr; gap: 60px; }
+.studio-statement > .eyebrow { padding-top: 12px; }
+.statement-bottom { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; align-items: end; margin-top: 30px; }
+.statement-bottom .text-link { justify-self: end; }
+.work-section { background: var(--stone); }
+.work-section .image-note { max-width: 680px; margin-top: 38px; }
+.service-row { display: grid; grid-template-columns: 40px 1fr 1fr 30px; align-items: start; gap: 32px; padding: 31px 0; border-top: 1px solid var(--rule); text-decoration: none; }
+.service-row:last-child { border-bottom: 1px solid var(--rule); }
+.service-row h3 { max-width: 280px; }
+.service-row p { max-width: 400px; color: var(--muted); }
+.row-number { color: var(--rust); padding-top: 5px; }
+.row-arrow { font-size: 24px; transition: transform var(--motion); }
+.service-row:hover .row-arrow { transform: translate(3px, -3px); }
+.service-row:hover h3 { color: var(--rust); }
+.process-section { border-block: 1px solid var(--rule); }
+.process-grid { display: grid; grid-template-columns: .9fr 1fr; gap: clamp(40px, 9vw, 140px); align-items: center; }
+.process-photo img { width: 100%; height: 555px; object-fit: cover; object-position: 30% center; }
+.process-intro { margin-top: 24px; max-width: 460px; }
+.process-list { padding: 0; margin: 30px 0 20px; list-style: none; counter-reset: process; }
+.process-list li { counter-increment: process; display: grid; grid-template-columns: 35px 1fr; gap: 20px; border-top: 1px solid var(--rule); padding: 19px 0; }
+.process-list li::before { content: "0" counter(process); font-size: 11px; color: var(--rust); padding-top: 4px; }
+.process-list h3 { font-family: var(--sans); font-size: 15px; letter-spacing: 0; }
+.process-list p { font-size: 13px; margin-top: 8px; }
+.invitation { display: grid; grid-template-columns: .55fr 1.1fr .35fr; align-items: start; gap: 50px; padding-block: 92px; }
+.invitation > .eyebrow { padding-top: 10px; }
+.invitation h2 { font-size: clamp(40px, 4.3vw, 62px); }
+.invitation .button { margin-top: 30px; }
+.invitation-mark { font: 400 42px/1.1 var(--serif); display: flex; flex-direction: column; align-items: center; justify-self: end; border: 1px solid var(--rust); color: var(--rust); padding: 20px 24px; }
+.invitation-mark span { font-style: italic; font-size: 28px; }
+@media (max-width: 900px) {
+  .hero-intro { grid-template-columns: 1.5fr 1fr; gap: 30px; }
+  .hero-note { column-gap: 8px; }
+  .studio-statement { grid-template-columns: 1fr 2fr; gap: 30px; }
+  .statement-bottom { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .statement-bottom .text-link { justify-self: start; }
+  .service-row { grid-template-columns: 26px 1fr 1fr 20px; gap: 20px; }
+  .process-photo img { height: 500px; }
+  .invitation { grid-template-columns: .6fr 1.4fr; gap: 25px; }
+  .invitation-mark { display: none; }
+}
+@media (max-width: 600px) {
+  .hero { padding-top: 18px; }
+  .hero-topline { display: block; max-width: 100%; }
+  .hero-topline .eyebrow { font-size: 9px; letter-spacing: .085em; }
+  .edition { display: none; }
+  .hero-intro { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 24px; }
+  .hero h1 { font-size: clamp(42px, 11.8vw, 55px); line-height: 1.04; max-width: 100%; width: auto; letter-spacing: -.052em; overflow-wrap: break-word; white-space: normal; }
+  .hero-note { grid-template-columns: 16px minmax(0, 1fr); gap: 0 12px; max-width: 100%; width: 100%; justify-self: start; }
+  .hero-note p { font-size: 13px; line-height: 1.5; }
+  .hero-actions { max-width: 100%; gap: 7px; margin-top: 9px; }
+  .hero-actions a { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+  .hero-actions .text-link { padding-block: 6px; font-size: 11px; }
+  .hero-photo img { height: 220px; object-position: 50% 60%; }
+  .hero-photo figcaption { display: block; font-size: 8px; padding-top: 9px; }
+  .hero-photo figcaption span { display: block; }
+  .studio-statement { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .studio-statement > .eyebrow { padding: 0; }
+  .statement-bottom { margin-top: 22px; }
+  .service-row { grid-template-columns: 25px minmax(0, 1fr) 20px; gap: 12px; padding: 25px 0; }
+  .service-row h3 { font-size: 25px; max-width: 100%; }
+  .service-row p { grid-column: 2; font-size: 13px; }
+  .row-arrow { grid-column: 3; grid-row: 1; font-size: 22px; }
+  .process-grid { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .process-photo img { height: 275px; }
+  .process-list li { grid-template-columns: 24px minmax(0, 1fr); gap: 15px; }
+  .invitation { grid-template-columns: minmax(0, 1fr); gap: 20px; padding-block: 55px; }
+  .invitation h2 { font-size: 40px; }
+  .invitation .button { width: 100%; }
+}

@@ -1,0 +1,1 @@
+<div class="prose"><h2>A quiet corner, for now.</h2><p>There are no matching entries here. Explore the journal’s notes on light, proportion and reuse, or return to the studio.</p><a class="text-link" href="<?php echo form_field_url( 'blog' ); ?>">Read the journal ↗</a><p><a href="<?php echo form_field_url(); ?>">Return home</a></p></div>

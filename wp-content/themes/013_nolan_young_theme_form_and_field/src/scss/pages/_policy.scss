@@ -1,0 +1,3 @@
+.policy-copy { margin-left: max(var(--gutter), calc((100% - var(--container)) / 2)); }
+.policy-copy h2 { font-size: 32px; }
+@media (max-width: 600px) { .policy-copy { margin-inline: auto; } }

@@ -1,0 +1,1 @@
+<section class="section stone-band"><div class="container section-heading"><div><p class="eyebrow">From ideas to a brief</p><h2>A home shaped around you.</h2><p>Explore how a residential engagement could take an idea into a considered design.</p></div><a class="text-link" href="<?php echo form_field_url( 'services/featured' ); ?>">Residential architecture ↗</a></div></section>

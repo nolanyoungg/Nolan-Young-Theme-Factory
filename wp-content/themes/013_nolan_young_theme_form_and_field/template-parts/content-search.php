@@ -1,0 +1,1 @@
+<article class="entry-summary"><p class="eyebrow">Form &amp; Field / Reading</p><h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2><?php the_excerpt(); ?><a class="text-link" href="<?php the_permalink(); ?>">Read more ↗</a></article>

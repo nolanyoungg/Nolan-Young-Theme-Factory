@@ -1,0 +1,17 @@
+label { display: block; font-size: 12px; }
+label > span { color: var(--muted); font-size: 10px; }
+input, textarea, select { display: block; width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--rule); border-radius: 0; padding: 13px 12px; background: var(--chalk); color: var(--ink); margin-top: 8px; font-size: 16px; line-height: 1.5; }
+textarea { resize: vertical; min-height: 130px; }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.inquiry-form > label, .inquiry-form > button { margin-top: 24px; }
+.demo-notice { padding: 17px; border-left: 2px solid var(--rust); background: var(--stone); font-size: 12px; margin: 22px 0 28px; }
+.form-status:not(:empty) { padding: 16px; border: 1px solid var(--rust); margin-top: 24px; }
+.search-form { max-width: 640px; margin-block: 30px; }
+.search-form > div { display: flex; align-items: stretch; gap: 12px; margin-top: 8px; }
+.search-form input { margin: 0; }
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: minmax(0, 1fr); }
+  .inquiry-form .button { width: 100%; }
+  .search-form > div { flex-direction: column; }
+}

@@ -1,0 +1,13 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+body { margin: 0; background: var(--chalk); color: var(--ink); }
+img, svg, video { display: block; max-width: 100%; }
+img { height: auto; }
+figure, p, h1, h2, h3, h4 { margin: 0; }
+button, input, select, textarea { font: inherit; }
+button, summary { cursor: pointer; }
+a { color: inherit; text-underline-offset: .24em; text-decoration-thickness: 1px; }
+button { color: inherit; }
+[hidden] { display: none !important; }
+section, article, header, footer, main, nav, div, figure, aside { min-width: 0; }
+::selection { background: var(--rust); color: var(--chalk); }

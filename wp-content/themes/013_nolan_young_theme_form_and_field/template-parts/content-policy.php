@@ -1,0 +1,6 @@
+<article class="container section policy-copy prose">
+	<h2>The inquiry demonstration</h2><p>The inquiry form checks sample fields in your browser only. It has no message delivery or storage endpoint. Entries are not sent to the studio, and the confirmation shown after checking the form is not a receipt for a message. Please avoid entering sensitive or personal information.</p>
+	<h2>Local assets</h2><p>This theme uses local photographs, styles and scripts, plus fonts already installed on your device. It includes no analytics, advertising scripts or remote font requests. Links in the image credits take you to the photographers’ pages and license information; those sites have their own privacy practices.</p>
+	<h2>The site environment</h2><p>The hosting service, WordPress installation and any separately installed plugins may process request logs or use cookies. Those services are outside this demonstration theme. A site operator should review the actual environment and publish their own privacy information before accepting real inquiries.</p>
+	<h2>Questions and next steps</h2><p>Form &amp; Field is fictional. The contact page demonstrates a project conversation and does not represent an operating professional service.</p><a class="text-link" href="<?php echo form_field_url(); ?>">Return to the studio ↗</a>
+</article>

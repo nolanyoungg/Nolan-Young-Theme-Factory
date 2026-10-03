@@ -1,0 +1,1 @@
+<form role="search" method="get" class="search-form" action="<?php echo form_field_url(); ?>"><label for="studio-search">Search the studio</label><div><input id="studio-search" type="search" name="s" value="<?php echo esc_attr( get_search_query() ); ?>" required><button class="button" type="submit">Search ↗</button></div></form>

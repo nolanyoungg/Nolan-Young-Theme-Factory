@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "ink", "color": "#252520", "name": "Black ink" },
+        { "slug": "chalk", "color": "#f5f3ed", "name": "Chalk" },
+        { "slug": "stone", "color": "#e6e1d6", "name": "Warm stone" },
+        { "slug": "rust", "color": "#91482f", "name": "Rust" }
+      ]
+    },
+    "layout": { "contentSize": "720px", "wideSize": "1320px" },
+    "typography": {
+      "fontFamilies": [
+        { "slug": "sans", "name": "Studio sans", "fontFamily": "Arial, Helvetica, sans-serif" },
+        { "slug": "serif", "name": "Editorial serif", "fontFamily": "Georgia, Times New Roman, serif" }
+      ]
+    }
+  }
+}

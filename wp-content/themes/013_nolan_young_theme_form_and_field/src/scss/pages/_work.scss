@@ -1,0 +1,15 @@
+.project-index { display: flex; flex-wrap: wrap; gap: 20px 32px; align-items: center; padding-block: 25px; border-bottom: 1px solid var(--rule); font-size: 12px; }
+.project-index .eyebrow { margin-right: auto; }
+.project-study { border-bottom: 1px solid var(--rule); }
+.project-panorama img { width: 100%; height: 500px; object-fit: cover; object-position: center 60%; }
+.project-panorama--1 img { object-position: 30% 40%; }
+.project-panorama--2 img { height: 390px; object-position: left 75%; }
+.study-stamp { border: 1px solid var(--rust); color: var(--rust); padding: 8px 15px; }
+.project-notes { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 45px; padding-top: 38px; }
+.project-notes h3 { font-family: var(--sans); font-size: 12px; letter-spacing: 0; margin-bottom: 14px; }
+.project-notes div p { color: var(--muted); font-size: 13px; }
+@media (max-width: 700px) {
+  .project-index { flex-direction: column; align-items: flex-start; gap: 15px; }
+  .project-notes { grid-template-columns: minmax(0, 1fr); gap: 25px; }
+  .project-panorama img, .project-panorama--2 img { height: 280px; }
+}

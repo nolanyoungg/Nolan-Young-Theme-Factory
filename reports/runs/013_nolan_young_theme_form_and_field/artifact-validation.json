@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "013_nolan_young_theme_form_and_field",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome was not found."
+  ],
+  "checkedAt": "2026-10-03T20:23:53.179Z"
+}

@@ -1,0 +1,12 @@
+ .inner-section { padding-block: 3rem 5rem; }
+.page-intro { padding-top: 4.5rem; padding-bottom: 1.5rem; text-align: center; }
+.page-intro h1 { max-width: 900px; margin-inline: auto; }
+.page-intro .lede { max-width: 670px; margin-inline: auto; }
+.butter-band { background: var(--butter); padding-block: 4.5rem; }
+.arch-photo { width: 100%; object-fit: cover; border-radius: 48% 48% .6rem .6rem; aspect-ratio: 1 / 1.03; }
+.scallop { position: relative; }
+.scallop::before { content: ''; position: absolute; height: 18px; width: 100%; top: -17px; left: 0; background: radial-gradient(circle at 12px 0, transparent 12px, var(--butter) 12.5px) 0 0 / 24px 24px; pointer-events: none; }
+.bakery-note { padding: 2rem; border-block: 1px solid var(--line); }
+.is-arriving { animation: morning-rise .65s ease-out both; }
+@keyframes morning-rise { from { transform: translateY(14px); } to { transform: translateY(0); } }
+@media (max-width: 700px) { .inner-section { padding-block: 2rem 3.5rem; } .page-intro { padding-top: 2.7rem; text-align: left; } .butter-band { padding-block: 3rem; } .arch-photo { aspect-ratio: 1.15 / 1; } }

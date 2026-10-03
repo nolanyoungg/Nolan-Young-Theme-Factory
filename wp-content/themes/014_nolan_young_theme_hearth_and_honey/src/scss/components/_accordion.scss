@@ -1,0 +1,4 @@
+ details { border-bottom: 1px solid var(--line); padding: 1.1rem 0; }
+summary { cursor: pointer; font-weight: 700; padding-right: .6rem; }
+details p { margin: 1rem 0 0; }
+details[open] summary { color: var(--terracotta); }

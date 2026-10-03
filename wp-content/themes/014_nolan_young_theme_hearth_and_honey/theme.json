@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "ink",
+          "color": "#652b34",
+          "name": "Burgundy ink"
+        },
+        {
+          "slug": "paper",
+          "color": "#fff9ed",
+          "name": "Warm cream"
+        },
+        {
+          "slug": "butter",
+          "color": "#f6df8b",
+          "name": "Butter yellow"
+        },
+        {
+          "slug": "terracotta",
+          "color": "#ac563e",
+          "name": "Terracotta"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1180px"
+    }
+  }
+}

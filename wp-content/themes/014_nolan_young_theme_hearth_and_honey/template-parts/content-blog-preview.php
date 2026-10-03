@@ -1,0 +1,1 @@
+<section class="container narrow inner-section"><p class="eyebrow">NOTES FROM THE BAKERY</p><h2>Make that loaf last.</h2><p>Keep a cut loaf cut-side down, freeze a few slices for later, and give tomorrow’s toast something to look forward to.</p><?php hearth_honey_link( '/blog/#keep-a-loaf', 'Read the bread-care notes ↗', 'text-link' ); ?></section>

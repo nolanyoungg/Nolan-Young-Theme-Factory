@@ -1,0 +1,6 @@
+ .split { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: center; gap: 6rem; }
+.process-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 3rem; margin-top: 2.8rem; }
+.process-grid article { border-top: 1px solid var(--line); padding-top: 1.5rem; }
+.process-grid span { display: inline-block; margin-bottom: 1rem; font-size: .75rem; }
+@media (max-width: 900px) { .split { gap: 2.5rem; } }
+@media (max-width: 700px) { .split, .process-grid { grid-template-columns: minmax(0,1fr); gap: 2rem; } }

@@ -1,0 +1,5 @@
+ .round-stamp { position: absolute; bottom: 2.6rem; left: -2rem; width: 126px; height: 126px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--butter); color: var(--ink); outline: 1px dashed var(--ink); outline-offset: -8px; transform: rotate(-12deg); }
+.round-stamp span { font-size: .46rem; font-weight: 700; letter-spacing: .1em; }
+.round-stamp b { font: italic 1.7rem/.9 Georgia, serif; text-align: center; padding: .55rem 0; }
+.tiny-sun { font-size: 1.2rem; margin-right: .5rem; vertical-align: middle; }
+.interface-mark { width: 32px; height: 32px; margin-bottom: 1rem; border-radius: 50%; filter: sepia(1) saturate(.6); }

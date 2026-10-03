@@ -1,0 +1,10 @@
+{
+  "status": "prepared",
+  "themeSlug": "014_nolan_young_theme_hearth_and_honey",
+  "prompt": "prompts\\pending\\008-hearth-and-honey.md",
+  "manifest": "wp-content\\themes\\014_nolan_young_theme_hearth_and_honey\\assets\\images\\asset-manifest.json",
+  "manifestHash": "bdc23afb3119f37c67b0cddad0fb812c79b46313230924701ddc53d686b48788",
+  "approvedAssetSetHash": "b4cb9332148c1c6a05794e681087e824a843776a61a7a9f69a83eb99ddccb27c",
+  "assetCount": 4,
+  "recordedAt": "2026-10-03T18:37:23.026Z"
+}

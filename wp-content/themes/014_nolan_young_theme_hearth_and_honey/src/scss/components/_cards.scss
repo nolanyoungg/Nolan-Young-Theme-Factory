@@ -1,0 +1,9 @@
+ .special-card { padding: 2.5rem; border: 1px solid var(--ink); border-radius: 1rem 1rem 5rem 1rem; background: var(--butter); }
+.special-card h3 { font-size: 2.6rem; }
+.special-price { font: 2rem Georgia, serif; }
+.special-price span { font: .72rem Arial, sans-serif; }
+.hours-card { padding: 2.5rem; border: 1px solid var(--line); border-radius: 1rem; }
+.hours-card h3 { font-size: 2.1rem; }
+.hours-card dl div, .coffee-list div { display: flex; justify-content: space-between; gap: 1rem; padding: .75rem 0; border-bottom: 1px solid var(--line); }
+dd { margin: 0; text-align: right; }
+@media (max-width: 700px) { .special-card, .hours-card { padding: 1.6rem; } }

@@ -1,0 +1,1 @@
+<article class="journal-entry"><p class="eyebrow">NOTES FROM HEARTH &amp; HONEY</p><h1><?php the_title(); ?></h1><div class="entry-content"><?php the_content(); wp_link_pages(); ?></div><?php hearth_honey_link( '/blog/', 'More notes from the bakery ↗', 'text-link' ); ?></article>

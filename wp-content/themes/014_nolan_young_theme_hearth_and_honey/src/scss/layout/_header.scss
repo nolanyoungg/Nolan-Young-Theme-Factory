@@ -1,0 +1,24 @@
+ .site-header { position: relative; z-index: 20; background: var(--cream); }
+.status-strip { background: var(--ink); color: var(--cream); text-align: center; padding: .45rem 1rem; font-size: .67rem; letter-spacing: .08em; }
+.status-strip span { margin-left: 2rem; }
+.header-row { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 102px; border-bottom: 1px solid var(--line); }
+.wordmark { display: block; font: 1.9rem/1 Georgia, serif; letter-spacing: -.055em; text-decoration: none; }
+.wordmark i { font-weight: 400; }
+.wordmark span { display: block; font: .5rem/1.7 Arial, sans-serif; letter-spacing: .18em; margin-top: .5rem; }
+.desktop-nav { display: flex; align-items: center; gap: 1.6rem; font-size: .8rem; }
+.desktop-nav > a, .menu-peek > a { text-decoration: none; padding-block: 1rem; }
+.desktop-nav a:hover { text-decoration: underline; }
+.menu-peek { display: flex; align-items: center; gap: .1rem; }
+.peek-toggle { background: none; color: var(--ink); border: 0; width: 32px; height: 44px; }
+.peek-toggle[aria-expanded='true'] span { display: block; transform: rotate(45deg); }
+.menu-feature { position: absolute; top: calc(100% - 1px); right: max(3rem, calc((100% - 1180px) / 2)); width: 560px; max-width: calc(100% - 48px); padding: 1.5rem; border: 1px solid var(--line); background: var(--paper); box-shadow: 0 16px 24px #652b3410; display: grid; grid-template-columns: 150px minmax(0,1fr); gap: 1.5rem; border-radius: 0 0 1rem 1rem; }
+.menu-feature img { width: 100%; height: 200px; object-fit: cover; border-radius: 80px 80px 8px 8px; }
+.menu-feature h2 { font-size: 1.8rem; }
+.menu-feature p { font-size: .8rem; margin-bottom: .7rem; }
+.mobile-menu { display: none; }
+.menu-toggle { padding: .65rem; width: 44px; height: 44px; background: none; border: 1px solid var(--ink); border-radius: 50%; color: var(--ink); flex: 0 0 44px; }
+.menu-toggle span { display: block; height: 1px; width: 20px; background: currentColor; margin: 5px 0; transition: transform .2s; }
+.menu-toggle[aria-expanded='true'] span:first-child { transform: translateY(3px) rotate(45deg); }
+.menu-toggle[aria-expanded='true'] span:last-child { transform: translateY(-3px) rotate(-45deg); }
+@media (max-width: 1050px) { .desktop-nav { gap: .8rem; } .header-row { gap: .9rem; } .header-cta { padding: .8rem 1rem; } .wordmark { font-size: 1.7rem; } }
+@media (max-width: 900px) { .status-strip, .desktop-nav, .header-cta { display: none; } .header-row { min-height: 82px; } .wordmark { font-size: 1.85rem; } .mobile-menu { display: grid; gap: .2rem; padding-block: 1rem 1.5rem; } .mobile-menu a { padding: .6rem 0; text-decoration: none; border-bottom: 1px solid var(--line); } .mobile-menu p { margin: 1.1rem 0 0; font-size: .8rem; } }

@@ -1,0 +1,7 @@
+ .inquiry { padding: 2.3rem; background: var(--butter); border-radius: 1.5rem; }
+.inquiry h2 { font-size: 2.6rem; }
+.inquiry > p { font-size: .86rem; }
+.field-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 0 1rem; }
+.form-feedback:not(:empty) { border-left: 3px solid var(--ink); margin: 1rem 0 0; padding: .6rem 1rem; }
+.search-form { margin: 2rem 0; }
+@media (max-width: 700px) { .inquiry { padding: 1.5rem; } .field-grid { grid-template-columns: 1fr; } }

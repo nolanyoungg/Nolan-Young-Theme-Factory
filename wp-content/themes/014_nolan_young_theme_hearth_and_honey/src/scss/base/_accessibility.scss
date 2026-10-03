@@ -1,0 +1,5 @@
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--terracotta); outline-offset: 5px; }
+.skip-link { position: fixed; top: 10px; left: 12px; padding: 12px 20px; background: var(--ink); color: var(--cream); z-index: 100; transform: translateY(-160%); }
+.skip-link:focus { transform: none; }
+.screen-reader-text { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

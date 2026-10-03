@@ -1,0 +1,11 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body { margin: 0; background: var(--cream); color: var(--ink); }
+img { display: block; max-width: 100%; height: auto; }
+figure, blockquote { margin: 0; }
+button, input, textarea, select { font: inherit; }
+button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+a { color: inherit; text-underline-offset: .25em; }
+[hidden] { display: none !important; }
+main, section, div, article, aside, nav, figure { min-width: 0; }

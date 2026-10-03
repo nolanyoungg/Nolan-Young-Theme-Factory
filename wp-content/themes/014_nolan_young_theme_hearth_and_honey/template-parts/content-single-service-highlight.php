@@ -1,0 +1,1 @@
+<article class="special-card"><p class="eyebrow">SATURDAY, SORTED</p><h3>The weekend<br>bread box.</h3><p>A house loaf, two honey buns and honey butter. All the ingredients for a slower start.</p><p class="special-price">$18</p><?php hearth_honey_link( '/services/featured/', 'Peek inside the box ↗', 'button' ); ?></article>

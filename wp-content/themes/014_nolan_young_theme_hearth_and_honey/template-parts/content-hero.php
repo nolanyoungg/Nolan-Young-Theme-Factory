@@ -1,0 +1,4 @@
+<section class="hero container" aria-labelledby="welcome-title">
+<div class="hero-copy"><p class="eyebrow"><span class="tiny-sun" aria-hidden="true">✳</span> YOUR NEIGHBORHOOD MORNING RITUAL</p><h1 id="welcome-title">Good mornings<br>start <em>here.</em></h1><p class="lede">Slow-fermented sourdough. Coffee worth sitting down for. A little sweetness, just because.</p><div class="button-row"><?php hearth_honey_link( '/services/', 'See what’s baking ↗', 'button' ); hearth_honey_link( '/contact/', 'Find your way here', 'text-link' ); ?></div><p class="hero-note">Small batches. Warm welcomes. Tue&#8211;Sun from 7am.</p></div>
+<figure class="hero-media"><?php hearth_honey_photo( 'hero', 'arch-photo', true ); ?><div class="round-stamp" aria-hidden="true"><span>FLOUR. WATER. TIME.</span><b>Good<br>bread.</b><span>NOTHING RUSHED.</span></div><figcaption>A little inspiration from the bread rack. Illustrative stock.</figcaption></figure>
+</section>

@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "014_nolan_young_theme_hearth_and_honey",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome was not found."
+  ],
+  "checkedAt": "2026-10-03T18:56:20.016Z"
+}

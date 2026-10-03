@@ -1,0 +1,5 @@
+ .button { display: inline-flex; justify-content: center; align-items: center; gap: .8rem; border: 1px solid var(--ink); border-radius: 100px; padding: .9rem 1.55rem; background: var(--ink); color: var(--cream); font-size: .84rem; font-weight: 700; text-decoration: none; line-height: 1.4; max-width: 100%; text-align: center; transition: transform .2s ease, background .2s ease; }
+.button:hover { background: #823641; transform: translateY(-2px); }
+.text-link { display: inline-block; font-size: .86rem; font-weight: 700; text-decoration-thickness: 1px; padding-block: .55rem; }
+.button-row { display: flex; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
+@media (max-width: 700px) { .button-row { align-items: stretch; flex-direction: column; gap: .6rem; } .button-row .text-link { text-align: center; } }

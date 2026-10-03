@@ -1,0 +1,4 @@
+<section class="daily-menu scallop" aria-labelledby="daily-title"><div class="container menu-layout">
+<div class="menu-intro"><p class="eyebrow">FLOUR-DUSTED FAVORITES</p><h2 id="daily-title">On the counter.</h2><p>Baked each morning, gone when they’re gone. Here’s a taste of our everyday lineup.</p><?php hearth_honey_link( '/services/', 'The full bake & coffee menu ↗', 'text-link' ); ?><span class="menu-doodle" aria-hidden="true">~ fresh daily ~</span></div>
+<div class="menu-list"><?php foreach ( hearth_honey_menu() as $bake ) : ?><article class="menu-item"><div><h3><?php echo esc_html( $bake[0] ); ?></h3><p><?php echo esc_html( $bake[1] ); ?></p></div><span class="price"><?php echo esc_html( $bake[2] ); ?></span></article><?php endforeach; ?><p class="small-note">Sample menu · Prices in USD · Ask about allergens before ordering.</p></div>
+</div></section>

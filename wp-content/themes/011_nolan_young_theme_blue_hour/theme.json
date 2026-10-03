@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "defaultPalette": false,
+      "palette": [
+        { "slug": "midnight", "color": "#101525", "name": "Midnight" },
+        { "slug": "ivory", "color": "#f3eedf", "name": "Warm ivory" },
+        { "slug": "periwinkle", "color": "#a0a5ff", "name": "Electric periwinkle" },
+        { "slug": "brass", "color": "#c6a96b", "name": "Brass" }
+      ]
+    },
+    "layout": { "contentSize": "720px", "wideSize": "1240px" },
+    "typography": { "fontFamilies": [{ "slug": "system", "name": "System sans", "fontFamily": "Arial, Helvetica, sans-serif" }] }
+  }
+}

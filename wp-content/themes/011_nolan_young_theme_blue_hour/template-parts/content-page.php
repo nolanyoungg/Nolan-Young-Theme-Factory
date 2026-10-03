@@ -1,0 +1,1 @@
+<article class="container prose section"><p class="eyebrow">Blue Hour / From the room</p><h1><?php the_title(); ?></h1><?php the_content(); ?><?php wp_link_pages(); ?><p><?php blue_hour_link( '/', 'Back to Blue Hour ↗', 'text-link' ); ?></p></article>

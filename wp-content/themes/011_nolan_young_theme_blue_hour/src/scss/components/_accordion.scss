@@ -1,0 +1,4 @@
+details { border-bottom: 1px solid var(--line); padding: 1.2rem 0; }
+summary { font-weight: 700; line-height: 1.5; }
+details > p { margin-top: 1rem; color: var(--muted); }
+details[open] > summary { color: var(--periwinkle); }

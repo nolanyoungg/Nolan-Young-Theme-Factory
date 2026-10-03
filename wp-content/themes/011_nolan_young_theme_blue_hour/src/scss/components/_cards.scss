@@ -1,0 +1,10 @@
+.arrangement-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.arrangement-grid article { padding: 2rem 2rem 0 0; min-width: 0; }
+.arrangement-grid article + article { padding-left: 2rem; border-left: 1px solid var(--line); }
+.arrangement-grid h3, .arrangement-grid h2 { margin-bottom: 1.2rem; }
+.arrangement-grid p { color: var(--muted); font-size: .94rem; }
+.large-number { display: block; color: var(--brass); font-family: var(--display); font-size: 4rem; line-height: 1; margin-bottom: 2rem; }
+@media (max-width: 760px) {
+  .arrangement-grid { grid-template-columns: minmax(0, 1fr); }
+  .arrangement-grid article, .arrangement-grid article + article { padding: 1.8rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
+}

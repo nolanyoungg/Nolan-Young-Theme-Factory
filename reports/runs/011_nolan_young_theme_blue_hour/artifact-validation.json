@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "011_nolan_young_theme_blue_hour",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome was not found."
+  ],
+  "checkedAt": "2026-10-03T20:05:09.392Z"
+}

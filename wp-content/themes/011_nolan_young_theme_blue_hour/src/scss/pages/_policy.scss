@@ -1,0 +1,6 @@
+.prose p { color: var(--muted); }
+.prose > h2:first-child { margin-top: 0; }
+.prose ul, .prose ol { padding-left: 1.5rem; }
+.error-page { padding-block: 100px; }
+.error-page > p:not(.eyebrow) { margin-block: 25px; color: var(--muted); }
+@media (max-width: 650px) { .error-page { padding-block: 50px; } }

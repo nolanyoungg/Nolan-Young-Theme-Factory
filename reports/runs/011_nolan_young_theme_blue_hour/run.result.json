@@ -1,0 +1,40 @@
+{
+  "themeSlug": "011_nolan_young_theme_blue_hour",
+  "mode": "codex-only",
+  "provider": "codex",
+  "model": "codex-config-default",
+  "prepared": true,
+  "infrastructure": {
+    "providerPreflight": "passed",
+    "assetPreparation": "passed",
+    "assetManifestHash": "c4815c92aea6a420b06380ab36a1031a8187431b5cb71f4863eda455df41e02f",
+    "approvedAssetSetHash": "fd999604bf067e4dc99360fbdc8add28b680c28bee18a682400b09a821cbfc80"
+  },
+  "generation": {
+    "status": "passed"
+  },
+  "build": {
+    "status": "passed"
+  },
+  "sourceValidation": {
+    "status": "passed"
+  },
+  "previewPublication": {
+    "status": "passed",
+    "path": "docs\\Preview-Themes-Github\\011_nolan_young_theme_blue_hour"
+  },
+  "packaging": {
+    "status": "passed",
+    "path": "dist\\zipped-themes\\011_nolan_young_theme_blue_hour.zip"
+  },
+  "artifactValidation": {
+    "status": "passed"
+  },
+  "visualQuality": {
+    "status": "passed",
+    "reviewedAt": "2026-10-03T20:05:45.7318154Z",
+    "notes": "Full homepage and seven inner page layouts inspected in browser. Mobile menu opens and closes with Escape; no horizontal overflow at 390px. Section links verified after generic WordPress URL-fragment compatibility correction; generated source unchanged. Desktop Chrome artifact probe unavailable; manual browser mobile inspection completed."
+  },
+  "completedAt": "2026-10-03T20:01:41.569Z",
+  "status": "completed"
+}

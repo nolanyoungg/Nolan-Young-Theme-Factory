@@ -1,0 +1,9 @@
+.poster-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.gig-poster { background: var(--periwinkle); color: var(--night); padding: 26px; display: flex; flex-direction: column; align-items: start; min-width: 0; }
+.gig-poster:nth-child(2) { background: var(--brass); }
+.gig-poster:nth-child(3) { background: var(--ivory); }
+.gig-poster > p:first-child, .gig-poster > span { font-size: .62rem; letter-spacing: .12em; font-weight: 700; }
+.gig-poster h3 { font: clamp(2.5rem, 4.5vw, 4rem)/.97 var(--display); text-transform: uppercase; margin-block: 35px; }
+.gig-poster h3 + p { font-size: .86rem; padding-bottom: 28px; }
+.gig-poster > span { margin-top: auto; border-top: 1px dashed currentColor; width: 100%; padding-top: 18px; }
+@media (max-width: 760px) { .poster-grid { grid-template-columns: minmax(0, 1fr); } .gig-poster h3 { font-size: 3.5rem; } }

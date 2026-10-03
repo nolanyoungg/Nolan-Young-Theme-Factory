@@ -1,0 +1,9 @@
+<?php
+/** Template Name: Blue Hour — Past Notes */
+get_header(); ?>
+<main id="primary">
+<?php blue_hour_intro( 'Past notes', 'The sound stays with you.', 'An archive of imagined evenings. These are fictional program concepts, not performances that took place or artists represented by Blue Hour.' ); ?>
+<section class="container archive-feature"><figure><?php blue_hour_photo( 'detail', '', true ); ?><figcaption>Illustrative piano study / not an event photograph</figcaption></figure><div><p class="eyebrow">Concept no. 01 / Piano trio</p><h2>Midnight, in three parts.</h2><p>A spare opening melody. A bass line that finds its feet. Brushes arriving like rain. This imagined program traces a single musical idea through three very different conversations.</p><p class="caption">Sample archive · September 2026 · Acoustic session</p></div></section>
+<section class="section container"><div class="section-heading"><h2>From the imaginary archive.</h2><p class="microcopy">Fictional titles / illustrative dates</p></div><div class="poster-grid"><article class="gig-poster"><p>CONCEPT 02 · AUGUST 2026</p><h3>Last<br>light<br>quartet.</h3><p>A horn-led evening of warm ballads and loose, loping rhythms. The kind of finale that leaves the room quiet for a second longer.</p><span>LIVE / SMALL ENSEMBLE</span></article><article class="gig-poster"><p>CONCEPT 03 · JULY 2026</p><h3>The<br>slow<br>side.</h3><p>A hosted record night about space: lingering piano phrases, featherweight percussion, and the art of leaving something unsaid.</p><span>RECORDS / DEEP LISTENING</span></article><article class="gig-poster"><p>CONCEPT 04 · JUNE 2026</p><h3>Two<br>chairs.<br>One tune.</h3><p>A fictional voice-and-bass conversation, reworking a small songbook through call, response, and the occasional beautiful surprise.</p><span>LIVE / INTIMATE DUO</span></article></div></section>
+<?php get_template_part( 'template-parts/content', 'blog-preview' ); ?>
+</main><?php get_footer(); ?>

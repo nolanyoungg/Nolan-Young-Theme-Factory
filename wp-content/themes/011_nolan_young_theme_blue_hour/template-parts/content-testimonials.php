@@ -1,0 +1,1 @@
+<section class="container room-manifesto"><p class="eyebrow">A thought behind Blue Hour</p><p class="manifesto-text">“Sometimes the best part of a night is the part you didn't plan to stay for.”</p><p>A Blue Hour house note — original fictional brand copy, not a customer testimonial.</p></section>

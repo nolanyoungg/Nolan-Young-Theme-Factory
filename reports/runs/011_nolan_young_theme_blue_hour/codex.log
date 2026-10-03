@@ -1,0 +1,2505 @@
+$ codex exec --cd C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour --approve-for-me --ephemeral -
+
+2026-10-03T19:43:21.262235Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-10-03T19:43:21.262306Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-10-03T19:43:21.267281Z  WARN codex_core_plugins::loader: failed to load plugin: missing or invalid plugin.json plugin="openai-developers@openai-curated-remote" path=C:\Users\Nolan\.codex\plugins\cache\openai-curated-remote\openai-developers\1.3.6
+2026-10-03T19:43:21.270584Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.154.0
+--------
+workdir: C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+model: gpt-6-astra
+provider: openai
+approval: on-request
+sandbox: workspace-write [workdir, /tmp, $TMPDIR] (network access enabled)
+reasoning effort: high
+reasoning summaries: detailed
+session id: 01a1034a-e070-74f0-8426-d034a05ecbaf
+--------
+user
+You are generating exactly one WordPress theme pass for the Nolan Young Theme Factory.
+
+Prepared theme slug: 011_nolan_young_theme_blue_hour
+You are already running from the prepared theme directory.
+
+Hard rules:
+- Edit only files inside the current prepared theme directory.
+- Do not create previews, ZIPs, reports, branches, commits, or files outside this directory.
+- Do not copy templates or rename the prepared theme folder.
+- Do not run a repair pass after validation; this is the only Codex generation pass.
+- Keep the implementation compact and focused on the requested pages. Do not add extra routing systems or unrelated features.
+- Use small, scoped file edits. For apply_patch, update existing files rather than deleting and adding the same path in one patch.
+- Before shell-based file writes or cleanup, resolve the exact destination paths and verify they remain inside this prepared theme directory. Avoid giant shell commands that mix many writes with deletion.
+- Keep build commands in package.json and preserve npm run build.
+- Keep generated runtime assets local to this theme.
+- Preserve prepared Theme Name, Description, Text Domain, slug, and package name unless the prepared fields are missing.
+- Do not call register_post_type() or register_taxonomy(); this theme validator treats custom post types and taxonomies as plugin territory.
+- Do not create a root-level 403.php file; use supported templates or template parts for error messaging.
+- This must be a major visual transformation of the copied template, not a light content swap.
+- Redesign the header architecture, homepage rhythm, page compositions, motion system, and visual language so the preview is clearly distinct from prior numbered themes.
+- A run that only swaps copy, brand names, colors, or images while keeping the starter layout and section system is failed model output.
+- Redesign source SCSS substantially enough that assets/css/bundle.css is materially different from the starter template after npm run build.
+- Rework section geometry, spacing, card systems, header/menu presentation, footer architecture, responsive rhythm, and content modules instead of preserving the starter composition.
+- Source validation will fail when critical starter layout/style files remain unchanged or when the compiled CSS changes only trivially from the starter template.
+- Treat the homepage as a complete design pass: every homepage template part must be edited, reordered or redesigned so the sections flow as one polished agency website.
+- The homepage first viewport must look professionally composed at desktop and mobile widths: no cropped hero text, no oversized headline that pushes the primary image or calls to action out of view, and no large empty dead zones.
+- Keep hero display type controlled and readable. Do not use extreme viewport-scaled headline sizing; the full H1, supporting copy, CTAs, and a meaningful stock-photo crop should fit coherently in the opening viewport.
+- At 390px mobile width there must be no horizontal overflow: the header status strip, logo row, H1, supporting copy, CTAs, chips, notes, and hero image must fit within the viewport. Use constrained mobile font clamps, max-width: 100%, min-width: 0, wrapping, stacked buttons, and overflow-wrap where needed.
+- At mobile widths the header must be logo plus hamburger only. Hide or move the desktop Contact Us CTA into the drawer; never leave a desktop CTA clipped off the right edge.
+- For mobile hero CSS, explicitly override desktop sizing. Do not leave h1 max-width, vw font sizes, flex rows, or white-space behavior that can push text or controls off the right edge.
+- Fully personalize and redesign the footer; do not leave generic copied footer widgets, newsletter copy, service links, legal rows, or brand paragraphs.
+- At 390px mobile width the footer must also fit inside the viewport. Stack footer widgets to one column, remove mobile grid-column spans, wrap email/contact links, and avoid nowrap or min-width values that make footer nav/contact columns overflow.
+- Use the seeded stock photos listed below for visible hero, service, work, process, about, and header-dropdown imagery. These are real stock photos, not filler generated graphics.
+- Use SVG only for interface marks, hamburger/menu icons, small UI icons, decorative marks, and lightweight diagrams; do not use SVG as the primary hero/portfolio placeholder imagery.
+- Make header dropdown panel content, right-side dropdown copy, dropdown images, and mobile drawer content match the business and services described in the user prompt.
+- Add accessible animation and interaction through src/js/main.js and SCSS, respecting reduced-motion preferences.
+- Replace every old copied-theme business name, including Northstar Websites, Nolan Designs, and any prior numbered-theme identity in PHP, markdown, SVG, alt text, form email subjects, and page copy.
+- Do not leave old copied-theme content in unused template parts, fallback pages, docs, icon READMEs, forms, or accessibility docs.
+- Before finishing, inspect the entire current theme for stale copied identity strings and remove them from every source/documentation file inside this theme.
+- The generated theme will fail validation if any stale copied identity string remains.
+- Complete the conversion across the whole theme source, not just the visible homepage. Update fallback pages, README, CHANGELOG, accessibility docs, icon docs, customization docs, footer widgets, form email subjects, helpers, page templates, template parts, SCSS variables, and compiled CSS so they all match the new business.
+- Do not leave old default-template color tokens such as #2563eb, #1d4ed8, #14b8a6, or #f97316 in SCSS, CSS, SVG, or inline styles when the brief provides a different palette.
+- Run npm run build after editing SCSS or JS so assets/css/bundle.css and assets/js/bundle.js reflect the generated source.
+- Reference the seeded photo inventory broadly in source templates and helper data; using only one seeded asset is insufficient for a complete theme transformation.
+- As a final self-audit before exiting, search the current theme directory for stale brand names, old software-agency phrases, old default palette colors, and unused copied SVG illustration names. Fix any matches inside this prepared theme directory.
+
+Seeded local stock-photo and icon inventory:
+Manifest: assets\images\asset-manifest.json
+- assets/images/hero/editorial-hero.jpg (stock-photo): Editorial hero photograph; illustrative stock, not a claimed project or product; alt="piano keys"
+- assets/images/portfolio/editorial-detail.jpg (stock-photo): Supporting editorial photograph; illustrative stock, not a claimed project or product; alt="piano keys"
+- assets/icons/mark-1.svg (local-svg-icon): Original local decorative interface mark 1; alt="Decorative interface mark"
+- assets/icons/mark-2.svg (local-svg-icon): Original local decorative interface mark 2; alt="Decorative interface mark"
+
+User creative brief:
+# Blue Hour
+
+Business: Blue Hour, an intimate fictional jazz listening room. This is a fictional sample brand with a complete, polished website.
+
+## Visual direction
+Midnight navy, electric periwinkle, warm ivory, brass accent. Strong poster typography with oversized condensed-looking system sans lettering, asymmetric gig-poster blocks, instrument close-up photography, thin ticket-stub separators and punchy date badges. Build a memorable dark music venue site, not an agency page.
+Opening headline: “Stay for one more set.”
+Do not reuse the starter's section order, blue gradients, mega-menu architecture, or giant grid of software services. Compose an intentional distinct design with a modest 4–6 section homepage, consistent inner pages, and a fully branded footer.
+
+## Pages and navigation
+Home: poster-like hero with piano photo, sample weekly lineup, listening room story, practical visit notes, private events invitation. About: listening culture and room atmosphere. Services: live sessions, listening nights and private events. Work: performance/program archive with fictional concept event names. Journal: listening notes and jazz introductions. Contact: visit information and booking inquiry. Service detail: listening-room private event with capacity examples clearly labeled illustrative. All event dates and names are demo content, not real ticket availability.
+All of these must be complete browseable pages with real sample copy. Navigation routes: Home /, About /about/, Services /services/, Work /work/, Journal /blog/, Contact /contact/, Privacy /privacy-policy/, and Service detail /services/featured/. Use these destinations consistently, relabeling the navigation naturally for this business. Use ordinary same-frame links so visitors can navigate the website inside an embedded preview. Every page must provide a route home and relevant next steps.
+
+## Approved visual assets
+Use only these prepared local files for imagery:
+- assets/images/hero/editorial-hero.jpg — piano keys
+- assets/images/portfolio/editorial-detail.jpg — piano keys
+- assets/icons/mark-1.svg — Decorative interface mark
+- assets/icons/mark-2.svg — Decorative interface mark
+Use the approved photos at visually useful sizes and with deliberate crops. Supporting icon files can appear in process or footer details. Photography is illustrative stock, not work performed by this fictional brand; credit the photographers in a small image-credit section. Do not retain unrelated office photos, software terminology, or old brand copy in any page, form, unused component, documentation, or SVG.
+
+## Interaction and accessibility
+Use a minimal accessible mobile navigation with an operable hamburger, accurate expanded state, Escape close and visible keyboard focus. All pages must remain readable at 390px without horizontal overflow. Use a subtle CSS transition or intersection reveal with reduced-motion support; essential content must remain visible when JavaScript is disabled. Provide useful FAQ details, readable form labels, a friendly static-demo notice for submission controls, a skip link, and meaningful image alternatives. Forms must not falsely claim a message or payment was sent. No remote fonts, trackers, external runtime scripts, or dependency additions.
+
+codex
+I’ll inspect the prepared theme, then build Blue Hour’s pages and visual system, update the documentation, and compile the local assets in this single generation pass.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Location; rg --files -g '"'!node_modules'"' -g '"'!package-lock.json'"' -g 'AGENTS*' -g 'package.json' -g '*.php' -g '*.scss' -g '*.js' -g '*.md' -g 'asset-manifest.json' -g 'style.css' -g '*.svg'" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 117ms:
+
+template-parts\content-testimonials.php
+template-parts\content-style-pillars.php
+template-parts\content-single.php
+template-parts\content-single-service-highlight.php
+template-parts\content-search.php
+template-parts\content-process.php
+template-parts\content-policy.php
+template-parts\content-page.php
+template-parts\content-none.php
+template-parts\content-hero.php
+template-parts\content-footer-widgets.php
+template-parts\content-featured-work.php
+template-parts\content-cta-banner.php
+template-parts\content-brand-statement.php
+template-parts\content-blog-preview.php
+template-parts\content-all-services.php
+style.css
+src\scss\pages\_work.scss
+src\scss\pages\_services.scss
+src\scss\pages\_policy.scss
+src\scss\pages\_homepage.scss
+src\scss\pages\_contact.scss
+src\scss\pages\_blog.scss
+src\scss\pages\_about-us.scss
+src\scss\main.scss
+src\scss\layout\_sections.scss
+src\scss\layout\_header.scss
+src\scss\layout\_grid.scss
+src\scss\layout\_footer.scss
+src\scss\layout\_container.scss
+src\scss\components\_portfolio-filter.scss
+src\scss\components\_forms.scss
+src\scss\components\_carousel.scss
+src\scss\components\_cards.scss
+src\scss\components\_buttons.scss
+src\scss\components\_before-after.scss
+src\scss\components\_badges.scss
+src\scss\components\_accordion.scss
+src\scss\base\_typography.scss
+src\scss\base\_reset.scss
+src\scss\base\_newsletter.scss
+src\scss\base\_forms.scss
+src\scss\base\_accessibility.scss
+src\scss\abstracts\_variables.scss
+src\scss\abstracts\_mixins.scss
+src\scss\abstracts\_functions.scss
+src\js\main.js
+single.php
+searchform.php
+search.php
+README.md
+page.php
+page-templates\template-work.php
+page-templates\template-single-service.php
+page-templates\template-services.php
+page-templates\template-policy.php
+page-templates\template-contact.php
+page-templates\template-blog.php
+page-templates\template-about-us.php
+package.json
+index.php
+inc\template-tags.php
+inc\setup.php
+inc\policy-routing.php
+inc\newsletter.php
+inc\helpers.php
+inc\forms.php
+inc\enqueue.php
+inc\customizer.php
+inc\custom-post-types.php
+header.php
+functions.php
+front-page.php
+footer.php
+docs\getting-started.md
+docs\customization.md
+comments.php
+CHANGELOG.md
+build\webpack.config.js
+blocks\README.md
+404.php
+403.php
+archive.php
+assets\js\bundle.js
+accessibility\README.md
+assets\images\asset-manifest.json
+assets\images\texture\subtle-grid.svg
+assets\icons\README.md
+assets\icons\mark-2.svg
+assets\icons\mark-1.svg
+assets\icons\icon1.svg
+assets\images\portfolio\work-theme.svg
+assets\images\portfolio\work-roadmap.svg
+assets\images\portfolio\work-results.svg
+assets\images\portfolio\work-redesign.svg
+assets\images\portfolio\work-inquiry.svg
+assets\images\portfolio\work-care.svg
+assets\images\portfolio\service-support.svg
+assets\images\portfolio\service-strategy.svg
+assets\images\portfolio\service-results.svg
+assets\images\portfolio\service-integration.svg
+assets\images\portfolio\service-development.svg
+assets\images\portfolio\service-design.svg
+assets\images\portfolio\article-structure.svg
+assets\images\portfolio\article-review.svg
+assets\images\portfolio\article-launch.svg
+assets\images\portfolio\article-brief.svg
+assets\images\hero\northstar-hero.svg
+assets\images\hero\case-study.svg
+assets\images\hero\business-solution.svg
+assets\images\hero\about-values.svg
+assets\images\hero\about-collaboration.svg
+assets\images\hero\about-approach.svg
+Path
+----
+C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command 'Get-Content package.json,style.css,functions.php,front-page.php,header.php,footer.php,inc/helpers.php,inc/setup.php,inc/enqueue.php,inc/policy-routing.php,assets/images/asset-manifest.json' in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 479ms:
+{
+  "name": "011-nolan-young-theme-blue-hour",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "webpack --config build/webpack.config.js --mode development --watch",
+    "build": "webpack --config build/webpack.config.js --mode production"
+  },
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.2",
+    "sass": "^1.77.8",
+    "sass-loader": "^16.0.1",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
+/*
+Theme Name: 011 Nolan Young Theme Blue Hour
+Author: Nolan Young
+Description: Generated WordPress theme prepared from 000_nolan_young_theme_master_template_prompt_filler_template_1.
+Version: 1.0.0
+License: GPL-2.0-or-later
+Text Domain: 011-nolan-young-theme-blue-hour
+*/
+
+<?php
+/**
+ * Theme bootstrap.
+ *
+ * @package Nolan_Young_Template
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+foreach ( array(
+	'inc/setup.php',
+	'inc/enqueue.php',
+	'inc/template-tags.php',
+	'inc/helpers.php',
+	'inc/custom-post-types.php',
+	'inc/customizer.php',
+	'inc/forms.php',
+	'inc/newsletter.php',
+	'inc/policy-routing.php',
+) as $nolan_young_template_include ) {
+	$nolan_young_template_path = get_template_directory() . '/' . $nolan_young_template_include;
+	if ( file_exists( $nolan_young_template_path ) ) {
+		require_once $nolan_young_template_path;
+	}
+}
+
+<?php
+/**
+ * Front page.
+ *
+ * @package Nolan_Young_Template
+ */
+
+get_header();
+$services = nolan_young_template_services();
+$work     = nolan_young_template_work_items();
+$articles = nolan_young_template_articles();
+?>
+<main id="primary" class="site-main">
+	<?php get_template_part( 'template-parts/content', 'hero' ); ?>
+	<?php get_template_part( 'template-parts/content', 'featured-work' ); ?>
+	<?php get_template_part( 'template-parts/content', 'brand-statement' ); ?>
+	<?php get_template_part( 'template-parts/content', 'all-services' ); ?>
+	<?php get_template_part( 'template-parts/content', 'process' ); ?>
+
+	<section class="section portfolio-filter" aria-labelledby="work-filter-title">
+		<div class="container">
+			<div class="section-heading">
+				<p class="eyebrow"><?php esc_html_e( 'Featured work filter', 'nolan-young-template' ); ?></p>
+				<h2 id="work-filter-title"><?php esc_html_e( 'Browse the kinds of website problems Northstar helps organize.', 'nolan-young-template' ); ?></h2>
+			</div>
+			<div class="filter-controls" role="tablist" aria-label="<?php esc_attr_e( 'Work categories', 'nolan-young-template' ); ?>">
+				<button type="button" class="is-active" data-filter="all" aria-pressed="true"><?php esc_html_e( 'All', 'nolan-young-template' ); ?></button>
+				<?php foreach ( array( 'Strategy', 'Design', 'Development', 'Integration', 'Support', 'Results' ) as $category ) : ?>
+					<button type="button" data-filter="<?php echo esc_attr( $category ); ?>" aria-pressed="false"><?php echo esc_html( $category ); ?></button>
+				<?php endforeach; ?>
+			</div>
+			<div class="portfolio-grid" data-filter-grid>
+				<?php foreach ( $work as $item ) : ?>
+					<article class="portfolio-card" data-category="<?php echo esc_attr( $item['category'] ); ?>">
+						<?php nolan_young_template_render_image( $item['image'], $item['title'] ); ?>
+						<p class="eyebrow"><?php echo esc_html( $item['category'] ); ?></p>
+						<h3><a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['title'] ); ?></a></h3>
+						<p><?php echo esc_html( $item['excerpt'] ); ?></p>
+					</article>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
+	<section class="section case-study section-dark">
+		<div class="container split">
+			<div>
+				<p class="eyebrow"><?php esc_html_e( 'Featured case study', 'nolan-young-template' ); ?></p>
+				<h2><?php esc_html_e( 'A service website rebuilt around clearer choices.', 'nolan-young-template' ); ?></h2>
+				<p><?php esc_html_e( 'This representative case study shows the kind of work the theme supports: a scattered service site became a more direct system of service pages, proof points, content prompts, and inquiry paths.', 'nolan-young-template' ); ?></p>
+				<dl class="case-study__list">
+					<dt><?php esc_html_e( 'Challenge', 'nolan-young-template' ); ?></dt><dd><?php esc_html_e( 'Visitors could not quickly compare services or understand the next step.', 'nolan-young-template' ); ?></dd>
+					<dt><?php esc_html_e( 'Solution', 'nolan-young-template' ); ?></dt><dd><?php esc_html_e( 'Northstar-style templates emphasized services, process, support, and contact flow.', 'nolan-young-template' ); ?></dd>
+					<dt><?php esc_html_e( 'Outcome', 'nolan-young-template' ); ?></dt><dd><?php esc_html_e( 'The site became easier to scan, maintain, and extend without claiming unsupported performance numbers.', 'nolan-young-template' ); ?></dd>
+				</dl>
+			</div>
+			<?php nolan_young_template_render_image( 'assets/images/hero/case-study.svg', __( 'Website case study interface', 'nolan-young-template' ), 'media-frame' ); ?>
+		</div>
+	</section>
+
+	<section class="section before-after" aria-labelledby="comparison-title">
+		<div class="container">
+			<div class="section-heading">
+				<p class="eyebrow"><?php esc_html_e( 'Before and after', 'nolan-young-template' ); ?></p>
+				<h2 id="comparison-title"><?php esc_html_e( 'From scattered pages to a guided website system.', 'nolan-young-template' ); ?></h2>
+			</div>
+			<div class="comparison-grid">
+				<article><h3><?php esc_html_e( 'Before', 'nolan-young-template' ); ?></h3><ul><li><?php esc_html_e( 'Services described in disconnected page blocks.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Navigation relied on visitors guessing what mattered.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Forms lacked context for the inquiry type.', 'nolan-young-template' ); ?></li></ul></article>
+				<article><h3><?php esc_html_e( 'After', 'nolan-young-template' ); ?></h3><ul><li><?php esc_html_e( 'Service paths, work examples, and FAQs support decisions.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Header panels expose the most important destinations.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Contact and service forms capture useful context.', 'nolan-young-template' ); ?></li></ul></article>
+			</div>
+		</div>
+	</section>
+
+	<section class="section">
+		<div class="container">
+			<div class="section-heading"><p class="eyebrow"><?php esc_html_e( 'Engagement options', 'nolan-young-template' ); ?></p><h2><?php esc_html_e( 'Choose the level of help that fits the project stage.', 'nolan-young-template' ); ?></h2></div>
+			<div class="card-grid card-grid--three">
+				<?php foreach ( array( __( 'Plan', 'nolan-young-template' ) => __( 'Strategy, sitemap, content priorities, and launch requirements for teams preparing a build.', 'nolan-young-template' ), __( 'Build', 'nolan-young-template' ) => __( 'Design and WordPress implementation for a focused business website or service section.', 'nolan-young-template' ), __( 'Improve', 'nolan-young-template' ) => __( 'Refinement, support, accessibility checks, and content improvements after launch.', 'nolan-young-template' ) ) as $title => $text ) : ?>
+					<article class="info-card"><h3><?php echo esc_html( $title ); ?></h3><p><?php echo esc_html( $text ); ?></p><a class="btn btn-text" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Discuss fit', 'nolan-young-template' ); ?></a></article>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</section>
+
+	<?php get_template_part( 'template-parts/content', 'single-service-highlight' ); ?>
+	<?php get_template_part( 'template-parts/content', 'style-pillars' ); ?>
+	<?php get_template_part( 'template-parts/content', 'testimonials' ); ?>
+	<?php get_template_part( 'template-parts/content', 'blog-preview' ); ?>
+
+	<section class="section faq-section">
+		<div class="container narrow">
+			<p class="eyebrow"><?php esc_html_e( 'FAQ', 'nolan-young-template' ); ?></p>
+			<h2><?php esc_html_e( 'Questions teams usually ask before starting.', 'nolan-young-template' ); ?></h2>
+			<?php
+			$faqs = array(
+				__( 'What do you need before a project starts?', 'nolan-young-template' ) => __( 'A clear business goal, decision maker, available content, and any technical requirements are enough to begin discovery.', 'nolan-young-template' ),
+				__( 'Can the site be edited in WordPress?', 'nolan-young-template' ) => __( 'The theme is structured around reusable templates and WordPress-managed content so routine updates can stay practical.', 'nolan-young-template' ),
+				__( 'How are timelines handled?', 'nolan-young-template' ) => __( 'Timelines depend on scope, content readiness, review cycles, and integrations. The process section is designed to make those dependencies visible early.', 'nolan-young-template' ),
+				__( 'Do you support existing websites?', 'nolan-young-template' ) => __( 'Yes. Support can focus on cleanup, accessibility, content improvements, maintenance planning, or targeted rebuilds.', 'nolan-young-template' ),
+				__( 'What happens after launch?', 'nolan-young-template' ) => __( 'Post-launch work can include issue review, documentation, content support, and a prioritized improvement list.', 'nolan-young-template' ),
+				__( 'Can forms identify service inquiries?', 'nolan-young-template' ) => __( 'The service template includes a form that passes the related service identifier with each submission.', 'nolan-young-template' ),
+				__( 'How do we get started?', 'nolan-young-template' ) => __( 'Use the contact form with a short project summary and the most important outcome you need the website to support.', 'nolan-young-template' ),
+			);
+			foreach ( $faqs as $question => $answer ) :
+				?>
+				<section class="accordion-item"><button type="button" aria-expanded="false"><?php echo esc_html( $question ); ?></button><div hidden><p><?php echo esc_html( $answer ); ?></p></div></section>
+			<?php endforeach; ?>
+		</div>
+	</section>
+
+	<section class="section final-cta section-dark">
+		<div class="container center">
+			<p class="eyebrow"><?php esc_html_e( 'Next step', 'nolan-young-template' ); ?></p>
+			<h2><?php esc_html_e( 'Build a website that makes the next decision clearer.', 'nolan-young-template' ); ?></h2>
+			<p><?php esc_html_e( 'Share the project stage, the audience, and the business action your site needs to support.', 'nolan-young-template' ); ?></p>
+			<div class="button-row"><a class="btn btn-primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Us', 'nolan-young-template' ); ?></a><a class="btn btn-secondary" href="<?php echo esc_url( home_url( '/work/' ) ); ?>"><?php esc_html_e( 'View Work', 'nolan-young-template' ); ?></a></div>
+		</div>
+	</section>
+</main>
+<?php get_footer(); ?>
+
+<?php
+/**
+ * Site header with Northstar menu panels.
+ *
+ * @package Nolan_Young_Template
+ */
+
+$services = nolan_young_template_services();
+$articles = nolan_young_template_articles();
+?><!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'nolan-young-template' ); ?></a>
+<div class="menu-backdrop" data-menu-backdrop hidden></div>
+<header class="site-header" data-site-header>
+	<div class="site-header__inner">
+		<a class="site-branding" href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php nolan_young_template_render_logo(); ?></a>
+		<nav class="primary-navigation" aria-label="<?php esc_attr_e( 'Primary navigation', 'nolan-young-template' ); ?>">
+			<button class="nav-trigger" type="button" data-menu-item="services" aria-controls="services-menu" aria-expanded="false"><?php esc_html_e( 'Services', 'nolan-young-template' ); ?></button>
+			<button class="nav-trigger" type="button" data-menu-item="about" aria-controls="about-menu" aria-expanded="false"><?php esc_html_e( 'About', 'nolan-young-template' ); ?></button>
+			<a class="nav-link" href="<?php echo esc_url( home_url( '/work/' ) ); ?>"><?php esc_html_e( 'Work', 'nolan-young-template' ); ?></a>
+			<button class="nav-trigger" type="button" data-menu-item="blog" aria-controls="blog-menu" aria-expanded="false"><?php esc_html_e( 'Blog', 'nolan-young-template' ); ?></button>
+		</nav>
+		<a class="btn btn-header-cta" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Us', 'nolan-young-template' ); ?></a>
+		<button class="mobile-menu-toggle" type="button" data-mobile-menu-open aria-controls="mobile-drawer" aria-expanded="false"><span></span><span></span><span></span><span class="screen-reader-text"><?php esc_html_e( 'Open menu', 'nolan-young-template' ); ?></span></button>
+	</div>
+	<div class="nolan-menu" id="services-menu" data-menu-dropdown="services" hidden>
+		<div class="nolan-menu__inner">
+			<div class="nolan-menu__rail" role="list">
+				<?php foreach ( $services as $key => $service ) : ?>
+					<button type="button" data-rail-item="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $service['title'] ); ?></button>
+				<?php endforeach; ?>
+			</div>
+			<div class="nolan-menu__content">
+				<?php foreach ( $services as $key => $service ) : ?>
+					<section data-rail-content="<?php echo esc_attr( $key ); ?>">
+						<?php nolan_young_template_render_image( $service['image'], $service['title'] ); ?>
+						<div><p class="eyebrow"><?php esc_html_e( 'Service', 'nolan-young-template' ); ?></p><h2><?php echo esc_html( $service['title'] ); ?></h2><p><?php echo esc_html( $service['excerpt'] ); ?></p><ul><?php foreach ( $service['bullets'] as $bullet ) : ?><li><?php echo esc_html( $bullet ); ?></li><?php endforeach; ?></ul><a class="btn btn-text" href="<?php echo esc_url( $service['url'] ); ?>"><?php esc_html_e( 'Explore service', 'nolan-young-template' ); ?></a></div>
+					</section>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</div>
+	<div class="nolan-menu" id="about-menu" data-menu-dropdown="about" hidden>
+		<div class="nolan-menu__inner">
+			<div class="nolan-menu__rail" role="list">
+				<button type="button" data-rail-item="approach"><?php esc_html_e( 'Approach', 'nolan-young-template' ); ?></button>
+				<button type="button" data-rail-item="values"><?php esc_html_e( 'Values', 'nolan-young-template' ); ?></button>
+				<button type="button" data-rail-item="collaboration"><?php esc_html_e( 'Collaboration', 'nolan-young-template' ); ?></button>
+			</div>
+			<div class="nolan-menu__content">
+				<section data-rail-content="approach"><?php nolan_young_template_render_image( 'assets/images/hero/about-approach.svg', __( 'Planning board for a website project', 'nolan-young-template' ) ); ?><div><h2><?php esc_html_e( 'Built around clarity before production.', 'nolan-young-template' ); ?></h2><ul><li><?php esc_html_e( 'Discovery leads the design direction.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Content structure is planned early.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Launch work stays practical and documented.', 'nolan-young-template' ); ?></li></ul><a class="btn btn-secondary" href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'Meet Northstar', 'nolan-young-template' ); ?></a></div></section>
+				<section data-rail-content="values"><?php nolan_young_template_render_image( 'assets/images/hero/about-values.svg', __( 'Website quality values', 'nolan-young-template' ) ); ?><div><h2><?php esc_html_e( 'Useful design, responsible code, direct communication.', 'nolan-young-template' ); ?></h2><ul><li><?php esc_html_e( 'Accessible interactions.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Portable local assets.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Plain-language handoff notes.', 'nolan-young-template' ); ?></li></ul><a class="btn btn-secondary" href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'Read values', 'nolan-young-template' ); ?></a></div></section>
+				<section data-rail-content="collaboration"><?php nolan_young_template_render_image( 'assets/images/hero/about-collaboration.svg', __( 'Collaborative website review', 'nolan-young-template' ) ); ?><div><h2><?php esc_html_e( 'A calm process for busy teams.', 'nolan-young-template' ); ?></h2><ul><li><?php esc_html_e( 'Focused checkpoints.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Clear revision windows.', 'nolan-young-template' ); ?></li><li><?php esc_html_e( 'Support options after launch.', 'nolan-young-template' ); ?></li></ul><a class="btn btn-secondary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Start a conversation', 'nolan-young-template' ); ?></a></div></section>
+			</div>
+		</div>
+	</div>
+	<div class="nolan-menu nolan-menu--blog" id="blog-menu" data-menu-dropdown="blog" hidden>
+		<div class="nolan-menu__blog-grid">
+			<?php foreach ( $articles as $article ) : ?>
+				<article class="blog-card"><?php nolan_young_template_render_image( $article['image'], $article['title'] ); ?><p class="eyebrow"><?php echo esc_html( $article['tag'] ); ?></p><h3><a href="<?php echo esc_url( $article['url'] ); ?>"><?php echo esc_html( $article['title'] ); ?></a></h3><p><?php echo esc_html( $article['excerpt'] ); ?></p></article>
+			<?php endforeach; ?>
+		</div>
+	</div>
+</header>
+<aside class="mobile-drawer" id="mobile-drawer" data-mobile-drawer hidden>
+	<div class="mobile-drawer__top"><a class="site-branding" href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php nolan_young_template_render_logo(); ?></a><button type="button" class="mobile-drawer__close" data-mobile-menu-close><?php esc_html_e( 'Close', 'nolan-young-template' ); ?></button></div>
+	<nav aria-label="<?php esc_attr_e( 'Mobile navigation', 'nolan-young-template' ); ?>">
+		<?php foreach ( array( 'Services' => $services ) as $label => $items ) : ?>
+			<section class="mobile-accordion"><button type="button" aria-expanded="false"><?php echo esc_html( $label ); ?></button><div hidden><?php foreach ( $items as $item ) : ?><a href="<?php echo esc_url( $item['url'] ); ?>"><?php echo esc_html( $item['title'] ); ?></a><?php endforeach; ?></div></section>
+		<?php endforeach; ?>
+		<section class="mobile-accordion"><button type="button" aria-expanded="false"><?php esc_html_e( 'About Us', 'nolan-young-template' ); ?></button><div hidden><a href="<?php echo esc_url( home_url( '/about/' ) ); ?>"><?php esc_html_e( 'Company approach', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/about/#values' ) ); ?>"><?php esc_html_e( 'Values', 'nolan-young-template' ); ?></a><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Northstar', 'nolan-young-template' ); ?></a></div></section>
+		<a href="<?php echo esc_url( home_url( '/work/' ) ); ?>"><?php esc_html_e( 'Work', 'nolan-young-template' ); ?></a>
+		<section class="mobile-accordion"><button type="button" aria-expanded="false"><?php esc_html_e( 'Blog', 'nolan-young-template' ); ?></button><div hidden><a href="<?php echo esc_url( home_url( '/blog/' ) ); ?>"><?php esc_html_e( 'All articles', 'nolan-young-template' ); ?></a><?php foreach ( $articles as $article ) : ?><a href="<?php echo esc_url( $article['url'] ); ?>"><?php echo esc_html( $article['title'] ); ?></a><?php endforeach; ?></div></section>
+		<a class="btn btn-primary btn-full" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Us', 'nolan-young-template' ); ?></a>
+	</nav>
+</aside>
+
+<?php
+/**
+ * Footer.
+ *
+ * @package Nolan_Young_Template
+ */
+?>
+<footer class="site-footer">
+	<?php get_template_part( 'template-parts/content', 'cta-banner' ); ?>
+	<div class="site-footer__inner">
+		<?php get_template_part( 'template-parts/content', 'footer-widgets' ); ?>
+		<div class="site-footer__legal">
+			<p>&copy; <?php echo esc_html( date_i18n( 'Y' ) ); ?> <?php esc_html_e( 'Northstar Websites. All rights reserved.', 'nolan-young-template' ); ?></p>
+			<nav aria-label="<?php esc_attr_e( 'Legal links', 'nolan-young-template' ); ?>">
+				<a href="<?php echo esc_url( home_url( '/privacy-policy/' ) ); ?>"><?php esc_html_e( 'Privacy policy', 'nolan-young-template' ); ?></a>
+				<a href="<?php echo esc_url( home_url( '/terms/' ) ); ?>"><?php esc_html_e( 'Terms', 'nolan-young-template' ); ?></a>
+			</nav>
+		</div>
+	</div>
+</footer>
+<?php wp_footer(); ?>
+</body>
+</html>
+
+<?php
+/**
+ * Shared Northstar Websites data and rendering helpers.
+ *
+ * @package Nolan_Young_Template
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function nolan_young_template_page_url( $slug ) {
+	return esc_url( home_url( '/' . trim( $slug, '/' ) . '/' ) );
+}
+
+function nolan_young_template_asset_uri( $path ) {
+	return esc_url( get_theme_file_uri( ltrim( $path, '/' ) ) );
+}
+
+function nolan_young_template_services() {
+	return array(
+		'strategy'    => array(
+			'title'   => __( 'Website Strategy', 'nolan-young-template' ),
+			'url'     => nolan_young_template_page_url( 'services/website-strategy' ),
+			'image'   => 'assets/images/portfolio/service-strategy.svg',
+			'excerpt' => __( 'A practical roadmap for content, structure, conversion paths, and launch priorities before design begins.', 'nolan-young-template' ),
+			'bullets' => array( __( 'Discovery and goals', 'nolan-young-template' ), __( 'Sitemap and content model', 'nolan-young-template' ), __( 'Conversion path planning', 'nolan-young-template' ), __( 'Launch priorities', 'nolan-young-template' ) ),
+		),
+		'design'      => array(
+			'title'   => __( 'Modern WordPress Design', 'nolan-young-template' ),
+			'url'     => nolan_young_template_page_url( 'services/wordpress-design' ),
+			'image'   => 'assets/images/portfolio/service-design.svg',
+			'excerpt' => __( 'Content-forward page designs with responsive layouts, accessible patterns, and a flexible visual system.', 'nolan-young-template' ),
+			'bullets' => array( __( 'Page design systems', 'nolan-young-template' ), __( 'Reusable sections', 'nolan-young-template' ), __( 'Mobile-first layouts', 'nolan-young-template' ), __( 'Editor-friendly styling', 'nolan-young-template' ) ),
+		),
+		'development' => array(
+			'title'   => __( 'Custom Theme Build', 'nolan-young-template' ),
+			'url'     => nolan_young_template_page_url( 'services/custom-theme-build' ),
+			'image'   => 'assets/images/portfolio/service-development.svg',
+			'excerpt' => __( 'Clean WordPress theme implementation with maintainable templates, local assets, and predictable build tooling.', 'nolan-young-template' ),
+			'bullets' => array( __( 'Theme architecture', 'nolan-young-template' ), __( 'Template parts', 'nolan-young-template' ), __( 'Performance-minded assets', 'nolan-young-template' ), __( 'Quality checks', 'nolan-young-template' ) ),
+		),
+		'integration' => array(
+			'title'   => __( 'Content and Tool Integration', 'nolan-young-template' ),
+			'url'     => nolan_young_template_page_url( 'services/content-tool-integration' ),
+			'image'   => 'assets/images/portfolio/service-integration.svg',
+			'excerpt' => __( 'Connect forms, publishing workflows, analytics-ready events, and practical operational details without clutter.', 'nolan-young-template' ),
+			'bullets' => array( __( 'Forms and routing', 'nolan-young-template' ), __( 'Content structures', 'nolan-young-template' ), __( 'Admin workflows', 'nolan-young-template' ), __( 'Launch configuration', 'nolan-young-template' ) ),
+		),
+		'support'     => array(
+			'title'   => __( 'Care and Support', 'nolan-young-template' ),
+			'url'     => nolan_young_template_page_url( 'services/care-support' ),
+			'image'   => 'assets/images/portfolio/service-support.svg',
+			'excerpt' => __( 'Post-launch improvements, troubleshooting, updates, and guidance that keep the site useful after launch.', 'nolan-young-template' ),
+			'bullets' => array( __( 'Site health review', 'nolan-young-template' ), __( 'Content support', 'nolan-young-template' ), __( 'Issue triage', 'nolan-young-template' ), __( 'Improvement planning', 'nolan-young-template' ) ),
+		),
+		'results'     => array(
+			'title'   => __( 'Optimization and Results', 'nolan-young-template' ),
+			'url'     => nolan_young_template_page_url( 'services/optimization-results' ),
+			'image'   => 'assets/images/portfolio/service-results.svg',
+			'excerpt' => __( 'Refine navigation, calls to action, page speed, and content clarity based on business priorities.', 'nolan-young-template' ),
+			'bullets' => array( __( 'Conversion review', 'nolan-young-template' ), __( 'Usability fixes', 'nolan-young-template' ), __( 'Content improvements', 'nolan-young-template' ), __( 'Maintenance roadmap', 'nolan-young-template' ) ),
+		),
+	);
+}
+
+function nolan_young_template_articles() {
+	return array(
+		array( 'tag' => __( 'Planning', 'nolan-young-template' ), 'title' => __( 'What a useful website brief should include', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'blog/website-brief-guide' ), 'image' => 'assets/images/portfolio/article-brief.svg', 'excerpt' => __( 'A concise guide to goals, audiences, content, and decisions that make a build move cleanly.', 'nolan-young-template' ) ),
+		array( 'tag' => __( 'WordPress', 'nolan-young-template' ), 'title' => __( 'Choosing a WordPress structure that stays manageable', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'blog/wordpress-structure' ), 'image' => 'assets/images/portfolio/article-structure.svg', 'excerpt' => __( 'How templates, reusable parts, and editor settings can keep future publishing straightforward.', 'nolan-young-template' ) ),
+		array( 'tag' => __( 'Launch', 'nolan-young-template' ), 'title' => __( 'A practical website launch checklist', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'blog/launch-checklist' ), 'image' => 'assets/images/portfolio/article-launch.svg', 'excerpt' => __( 'Content, redirects, forms, accessibility, and performance checks to review before a site goes live.', 'nolan-young-template' ) ),
+		array( 'tag' => __( 'Support', 'nolan-young-template' ), 'title' => __( 'What to review after the first month online', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'blog/first-month-review' ), 'image' => 'assets/images/portfolio/article-review.svg', 'excerpt' => __( 'Early signals that help teams improve content, calls to action, and support workflows.', 'nolan-young-template' ) ),
+	);
+}
+
+function nolan_young_template_work_items() {
+	return array(
+		array( 'category' => 'Strategy', 'title' => __( 'Service Website Roadmap', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'work/service-website-roadmap' ), 'image' => 'assets/images/portfolio/work-roadmap.svg', 'excerpt' => __( 'A reorganized site plan that clarified service pages, lead paths, and editorial priorities.', 'nolan-young-template' ) ),
+		array( 'category' => 'Design', 'title' => __( 'Professional Services Redesign', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'work/professional-services-redesign' ), 'image' => 'assets/images/portfolio/work-redesign.svg', 'excerpt' => __( 'A modern visual system with calmer navigation, stronger page hierarchy, and reusable sections.', 'nolan-young-template' ) ),
+		array( 'category' => 'Development', 'title' => __( 'Custom WordPress Theme', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'work/custom-wordpress-theme' ), 'image' => 'assets/images/portfolio/work-theme.svg', 'excerpt' => __( 'A maintainable theme build using modular PHP, SCSS source files, and compiled production bundles.', 'nolan-young-template' ) ),
+		array( 'category' => 'Integration', 'title' => __( 'Inquiry Workflow Upgrade', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'work/inquiry-workflow-upgrade' ), 'image' => 'assets/images/portfolio/work-inquiry.svg', 'excerpt' => __( 'Structured forms and admin views that made new website inquiries easier to review and export.', 'nolan-young-template' ) ),
+		array( 'category' => 'Support', 'title' => __( 'Content Care System', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'work/content-care-system' ), 'image' => 'assets/images/portfolio/work-care.svg', 'excerpt' => __( 'A support workflow for keeping content accurate, pages current, and small improvements moving.', 'nolan-young-template' ) ),
+		array( 'category' => 'Results', 'title' => __( 'Conversion Path Refresh', 'nolan-young-template' ), 'url' => nolan_young_template_page_url( 'work/conversion-path-refresh' ), 'image' => 'assets/images/portfolio/work-results.svg', 'excerpt' => __( 'Navigation and CTA updates that made important actions clearer without overstating outcomes.', 'nolan-young-template' ) ),
+	);
+}
+
+function nolan_young_template_render_image( $path, $alt = '', $class = '' ) {
+	printf(
+		'<img src="%1$s" alt="%2$s" class="%3$s" loading="lazy" decoding="async">',
+		nolan_young_template_asset_uri( $path ),
+		esc_attr( $alt ),
+		esc_attr( $class )
+	);
+}
+
+function nolan_young_template_render_logo() {
+	?>
+	<span class="brand-mark" aria-hidden="true"><?php echo file_get_contents( get_theme_file_path( 'assets/icons/icon1.svg' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+	<span class="site-branding__text">
+		<span class="site-branding__name"><?php esc_html_e( 'Northstar Websites', 'nolan-young-template' ); ?></span>
+		<span class="site-branding__tagline"><?php esc_html_e( 'Websites that help businesses grow.', 'nolan-young-template' ); ?></span>
+	</span>
+	<?php
+}
+
+function nolan_young_template_render_contact_form( $form_type = 'contact', $service = '' ) {
+	$action = esc_url( admin_url( 'admin-post.php' ) );
+	?>
+	<form class="northstar-form" method="post" action="<?php echo $action; ?>" novalidate data-enhanced-form>
+		<input type="hidden" name="action" value="nolan_young_template_submit_form">
+		<input type="hidden" name="form_type" value="<?php echo esc_attr( $form_type ); ?>">
+		<input type="hidden" name="service" value="<?php echo esc_attr( $service ); ?>">
+		<?php wp_nonce_field( 'nolan_young_template_form', 'nolan_young_template_form_nonce' ); ?>
+		<div class="form-honeypot" aria-hidden="true"><label>Leave this field empty <input type="text" name="company_url" tabindex="-1" autocomplete="off"></label></div>
+		<label><?php esc_html_e( 'Name', 'nolan-young-template' ); ?><input required name="name" type="text" autocomplete="name"></label>
+		<label><?php esc_html_e( 'Email', 'nolan-young-template' ); ?><input required name="email" type="email" autocomplete="email"></label>
+		<label><?php esc_html_e( 'Phone', 'nolan-young-template' ); ?><input name="phone" type="tel" autocomplete="tel"></label>
+		<label><?php esc_html_e( 'Message', 'nolan-young-template' ); ?><textarea required name="message" rows="5"></textarea></label>
+		<p class="form-note"><?php esc_html_e( 'Required fields are checked before submission. Your inquiry is stored privately for authorized site administrators.', 'nolan-young-template' ); ?></p>
+		<button class="btn btn-primary" type="submit"><?php esc_html_e( 'Send inquiry', 'nolan-young-template' ); ?></button>
+	</form>
+	<?php
+}
+
+function nolan_young_template_render_newsletter_form() {
+	?>
+	<form class="newsletter-form" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" data-enhanced-form>
+		<input type="hidden" name="action" value="nolan_young_template_newsletter_signup">
+		<?php wp_nonce_field( 'nolan_young_template_newsletter', 'nolan_young_template_newsletter_nonce' ); ?>
+		<div class="form-honeypot" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+		<label><?php esc_html_e( 'First name', 'nolan-young-template' ); ?><input name="first_name" type="text" autocomplete="given-name"></label>
+		<label><?php esc_html_e( 'Email address', 'nolan-young-template' ); ?><input required name="email" type="email" autocomplete="email"></label>
+		<button class="btn btn-secondary" type="submit"><?php esc_html_e( 'Subscribe', 'nolan-young-template' ); ?></button>
+	</form>
+	<?php
+}
+
+<?php
+/**
+ * Theme setup.
+ *
+ * @package Nolan_Young_Template
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function nolan_young_template_setup() {
+	load_theme_textdomain( 'nolan-young-template', get_template_directory() . '/languages' );
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'custom-logo', array( 'height' => 96, 'width' => 320, 'flex-height' => true, 'flex-width' => true ) );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'align-wide' );
+	add_theme_support( 'editor-styles' );
+	add_editor_style( 'assets/css/bundle.css' );
+	add_theme_support( 'html5', array( 'search-form', 'comment-form', 'comment-list', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
+	register_nav_menus(
+		array(
+			'primary' => esc_html__( 'Primary Navigation', 'nolan-young-template' ),
+			'footer'  => esc_html__( 'Footer Navigation', 'nolan-young-template' ),
+		)
+	);
+}
+add_action( 'after_setup_theme', 'nolan_young_template_setup' );
+
+function nolan_young_template_content_width() {
+	$GLOBALS['content_width'] = apply_filters( 'nolan_young_template_content_width', 1120 );
+}
+add_action( 'after_setup_theme', 'nolan_young_template_content_width', 0 );
+
+<?php
+/**
+ * Asset enqueueing.
+ *
+ * @package Nolan_Young_Template
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+function nolan_young_template_asset_version( $relative_path ) {
+	$path = get_theme_file_path( $relative_path );
+	return file_exists( $path ) ? (string) filemtime( $path ) : '1.0.0';
+}
+
+function nolan_young_template_enqueue_assets() {
+	wp_enqueue_style(
+		'nolan-young-template-style',
+		get_theme_file_uri( 'assets/css/bundle.css' ),
+		array(),
+		nolan_young_template_asset_version( 'assets/css/bundle.css' )
+	);
+	wp_enqueue_script(
+		'nolan-young-template-script',
+		get_theme_file_uri( 'assets/js/bundle.js' ),
+		array(),
+		nolan_young_template_asset_version( 'assets/js/bundle.js' ),
+		true
+	);
+}
+add_action( 'wp_enqueue_scripts', 'nolan_young_template_enqueue_assets' );
+
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+{
+  "generatedAt": "2026-10-03T19:43:19.517Z",
+  "themeSlug": "011_nolan_young_theme_blue_hour",
+  "source": "Deterministic provider-neutral asset preparation by the Nolan Young Theme Factory before AI generation.",
+  "license": "Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.",
+  "usageRule": "Every generation provider receives this same approved asset set. Stock photos are for photographic/hero/portfolio/menu imagery; SVG is for interface marks, icons, and small UI details.",
+  "assets": [
+    {
+      "path": "assets/images/hero/editorial-hero.jpg",
+      "kind": "stock-photo",
+      "role": "Editorial hero photograph; illustrative stock, not a claimed project or product",
+      "alt": "piano keys",
+      "sourceUrl": "https://images.unsplash.com/photo-1545873494-055618a61ab1?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/piano-keys-C4wa08E0AXc",
+      "creator": "Joshua Hoehne",
+      "creatorUrl": "https://unsplash.com/@joshua_hoehne",
+      "id": "01-editorial-hero",
+      "file": "assets/images/hero/editorial-hero.jpg",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/piano-keys-C4wa08E0AXc",
+      "license": "Unsplash License",
+      "license_url": "https://unsplash.com/license",
+      "creator_url": "https://unsplash.com/@joshua_hoehne",
+      "acquired_at": "2026-10-03T19:43:19.517Z",
+      "allowed_use": "Approved for this generated WordPress theme and its static preview.",
+      "theme_slug": "011_nolan_young_theme_blue_hour",
+      "alt_text": "piano keys",
+      "notes": "Editorial hero photograph; illustrative stock, not a claimed project or product"
+    },
+    {
+      "path": "assets/images/portfolio/editorial-detail.jpg",
+      "kind": "stock-photo",
+      "role": "Supporting editorial photograph; illustrative stock, not a claimed project or product",
+      "alt": "piano keys",
+      "sourceUrl": "https://images.unsplash.com/photo-1512733596533-7b00ccf8ebaf?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/piano-keys-RWytwNueNng",
+      "creator": "Johannes Plenio",
+      "creatorUrl": "https://unsplash.com/@jplenio",
+      "id": "02-editorial-detail",
+      "file": "assets/images/portfolio/editorial-detail.jpg",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/piano-keys-RWytwNueNng",
+      "license": "Unsplash License",
+      "license_url": "https://unsplash.com/license",
+      "creator_url": "https://unsplash.com/@jplenio",
+      "acquired_at": "2026-10-03T19:43:19.517Z",
+      "allowed_use": "Approved for this generated WordPress theme and its static preview.",
+      "theme_slug": "011_nolan_young_theme_blue_hour",
+      "alt_text": "piano keys",
+      "notes": "Supporting editorial photograph; illustrative stock, not a claimed project or product"
+    },
+    {
+      "path": "assets/icons/mark-1.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 1",
+      "alt": "Decorative interface mark",
+      "id": "03-mark-1",
+      "file": "assets/icons/mark-1.svg",
+      "source": "Original local asset generated by the Nolan Young Theme Factory",
+      "source_url": "https://github.com/nolanyoungg/Nolan-Young-Theme-Factory",
+      "license": "Project-owned original asset distributed with the theme",
+      "license_url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "creator": "Nolan Young Theme Factory",
+      "creator_url": "https://shibey.com",
+      "acquired_at": "2026-10-03T19:43:19.517Z",
+      "allowed_use": "Approved for this generated WordPress theme and its static preview.",
+      "theme_slug": "011_nolan_young_theme_blue_hour",
+      "alt_text": "Decorative interface mark",
+      "notes": "Original local decorative interface mark 1"
+    },
+    {
+      "path": "assets/icons/mark-2.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 2",
+      "alt": "Decorative interface mark",
+      "id": "04-mark-2",
+      "file": "assets/icons/mark-2.svg",
+      "source": "Original local asset generated by the Nolan Young Theme Factory",
+      "source_url": "https://github.com/nolanyoungg/Nolan-Young-Theme-Factory",
+      "license": "Project-owned original asset distributed with the theme",
+      "license_url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "creator": "Nolan Young Theme Factory",
+      "creator_url": "https://shibey.com",
+      "acquired_at": "2026-10-03T19:43:19.517Z",
+      "allowed_use": "Approved for this generated WordPress theme and its static preview.",
+      "theme_slug": "011_nolan_young_theme_blue_hour",
+      "alt_text": "Decorative interface mark",
+      "notes": "Original local decorative interface mark 2"
+    }
+  ]
+}
+
+**Reading compact text**
+web search: 
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content page.php,index.php,build/webpack.config.js,src/scss/main.scss,inc/template-tags.php; Get-ChildItem -Force -Name; rg --files -g 'AGENTS*' -g '"'!node_modules'"' ..\\..\\..\\.." in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 129ms:
+<?php get_header(); ?><main id="primary" class="site-main"><?php while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', 'page' ); endwhile; ?></main><?php get_footer(); ?>
+
+<?php
+/**
+ * Index.
+ *
+ * @package Nolan_Young_Template
+ */
+
+get_header();
+?>
+<main id="primary" class="site-main">
+	<?php if ( have_posts() ) : while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', get_post_type() ); endwhile; the_posts_navigation(); else : get_template_part( 'template-parts/content', 'none' ); endif; ?>
+</main>
+<?php get_footer();
+
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = (env, argv) => ({
+  mode: argv.mode || 'production',
+  devtool: argv.mode === 'development' ? 'source-map' : false,
+  entry: path.resolve(__dirname, '../src/js/main.js'),
+  output: {
+    path: path.resolve(__dirname, '../assets/js'),
+    filename: 'bundle.js',
+    clean: false
+  },
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+      }
+    ]
+  },
+  plugins: [new MiniCssExtractPlugin({ filename: '../css/bundle.css' })]
+});
+
+@use "abstracts/variables";
+@use "abstracts/mixins";
+@use "abstracts/functions";
+@use "base/reset";
+@use "base/typography";
+@use "base/accessibility";
+@use "base/forms" as baseForms;
+@use "base/newsletter";
+@use "components/buttons";
+@use "components/cards";
+@use "components/forms" as componentForms;
+@use "components/badges";
+@use "components/accordion";
+@use "components/carousel";
+@use "components/portfolio-filter";
+@use "components/before-after";
+@use "layout/container";
+@use "layout/header";
+@use "layout/footer";
+@use "layout/grid";
+@use "layout/sections";
+@use "pages/homepage";
+@use "pages/contact";
+@use "pages/about-us";
+@use "pages/services";
+@use "pages/work";
+@use "pages/blog";
+@use "pages/policy";
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+function nolan_young_template_fallback_menu() {
+	echo '<ul class="menu"><li><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'nolan-young-template' ) . '</a></li><li><a href="' . esc_url( home_url( '/services/' ) ) . '">' . esc_html__( 'Services', 'nolan-young-template' ) . '</a></li><li><a href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Contact', 'nolan-young-template' ) . '</a></li></ul>';
+}
+
+accessibility
+assets
+blocks
+build
+docs
+inc
+node_modules
+page-templates
+src
+template-parts
+.editorconfig
+.gitignore
+.theme-factory-run.json
+.theme-template-source
+403.php
+404.php
+archive.php
+CHANGELOG.md
+comments.php
+footer.php
+front-page.php
+functions.php
+header.php
+index.php
+LICENSE.txt
+package-lock.json
+package.json
+page.php
+README.md
+screenshot.png
+search.php
+searchform.php
+single.php
+style.css
+theme.json
+..\..\..\..\Notes\agent-files\AGENTSMD-MNYphoto-theme-agewntfiles-v1.md
+..\..\..\..\MNY-Photo-wordpress-template-theme-SAVE\AGENTS.md
+..\..\..\..\NolanWebsiteSampleParts\AGENTS.md
+..\..\..\..\MNY-Photo-wordpress\AGENTS.md
+..\..\..\..\MNY-Photo-wordpress\wp-content\themes\MNYphoto\AGENTS.md
+..\..\..\..\MNY-Photo-wordpress-template-theme-SAVE\wp-content\themes\MNYphoto\AGENTS.md
+..\..\..\..\shibey-wordpress\wp-content\themes\NOLAN-YOUNG-theme\AGENTS.md
+..\..\..\..\shibey-wordpress\AGENTS.md
+..\..\..\..\shibey-wordpress\wp-content\plugins\ny-seo\AGENTS.md
+..\..\..\..\Nolan-Young-Theme-Factory\AGENTS.md
+
+web search: https://developer.wordpress.org/themes/classic-themes/basics/template-hierarchy/
+**Preparing theme file updates**
+**Inspecting template headers**
+codex
+The starter has a large agency layout and unused business content throughout. I’m replacing it with a five-section listening-room homepage: piano poster hero, weekly bill, room story, visit notes, and private-events invitation. Inner pages will share the navy, periwinkle, ivory, and brass design, with fictional programming clearly labeled.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content ..\\..\\..\\AGENTS.md; Get-Content theme.json,assets/icons/mark-1.svg,assets/icons/mark-2.svg; Get-Content page-templates/template-about-us.php -TotalCount 18; Get-Content inc/customizer.php -TotalCount 35; Get-Content comments.php,searchform.php" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 116ms:
+# Nolan Young Theme Factory - Agent Policy
+
+This repository is a template-first WordPress theme factory. Infrastructure work and generated-theme evaluation are separate jobs.
+
+## Boundaries
+
+Theme source belongs only in `wp-content/themes/NNN_nolan_young_theme_[description]/`.
+
+ZIP files belong only in `dist/zipped-themes/NNN_nolan_young_theme_[description].zip`.
+
+GitHub Pages previews belong only in `docs/Preview-Themes-Github/NNN_nolan_young_theme_[description]/`.
+
+The folder name `wordpress-themplate-themes` is intentionally spelled this way.
+
+## Generation Rules
+
+The prep script copies the selected template into `wp-content/themes/{slug}` before AI generation starts.
+
+During theme generation, the model may edit only `wp-content/themes/{slug}/`.
+
+The model must not create the initial theme folder, copy templates, rename folders, generate previews, update docs, create ZIPs, edit scripts, edit prompts, or touch any file outside the prepared theme folder.
+
+The repository agent must not modify generated themes to satisfy checks. Failed output is valid evaluation evidence and must be preserved.
+
+## Evaluation Integrity
+
+A generated theme is successful only when the generated source itself passes source validation, build, preview rendering, ZIP packaging, artifact validation, and visual preview inspection without repository-agent repairs.
+
+Do not make infrastructure, harness, validation, preview, or packaging changes to compensate for failed generated theme output in the same run.
+
+If preview fails because generated source references missing functions, classes, files, array keys, assets, invalid PHP, or inconsistent generated names, the generated theme has failed. Preserve the output and report the failure.
+
+Preview harness changes are allowed only for generic WordPress core compatibility needs. They must be minimal, justified, and not specific to a brand, theme number, prompt, generated helper, generated data shape, or broken internal contract.
+
+Never use a successful preview as proof of generation quality if that preview required post-generation harness fallbacks for missing generated source behavior.
+
+Do not mark a generated theme complete if any generated PHP helper, template, data provider, class, asset reference, or required theme file is missing from generated source.
+
+If local-model generation produces incomplete or inconsistent source, stop after deterministic validation or preview failure and classify the result as failed model output. Improve future prompts or planned stages in a new run; do not salvage the failed result in place.
+
+Final reports must distinguish infrastructure success, generation success, validation success, preview publication success, and visual quality. A published preview of a failed generated theme is not a successful generated theme.
+
+Hard rule: if generated theme preview fails because of missing generated source symbols, data, files, assets, or inconsistent generated naming, do not patch the preview harness. Mark the generated theme failed.
+
+## Mode Rules
+
+`ollama-only` means Ollama generation only through its OpenAI-compatible HTTP API at `http://127.0.0.1:11434/v1` by default.
+
+`lmstudio-only` means LM Studio generation only through its OpenAI-compatible HTTP API at `http://127.0.0.1:1234/v1` by default.
+
+Ollama-only and LM Studio-only use planned local-model stages. These stages are declared before generation starts and always run as part of the mode; prompt count is not repair.
+
+Every local-model stage must declare its prompt-section ownership and separate read and write scopes. Missing production prompt coverage blocks the run before model invocation.
+
+`codex-only` means one Codex generation pass.
+
+There are only three generation modes: `ollama-only`, `lmstudio-only`, and `codex-only`.
+
+There is no hybrid mode, automatic model fallback, validation-triggered AI pass, build-triggered AI pass, or second AI cleanup pass.
+
+A planned generation stage is declared before generation begins, owns defined read and write scopes, receives bounded current theme context, and runs regardless of validation state.
+
+A repair stage is triggered by a failed check or designed to make generated output pass after the fact. Repair stages are prohibited.
+
+## Local Model Agent Rules
+
+Ollama and LM Studio use the shared OpenAI-compatible provider abstraction. Each provider exposes model metadata, chat completion, model listing, model checking, normalized content and tool calls, normalized errors, timeouts, and capability metadata. API keys and authorization headers must never be written to logs or reports.
+
+`theme:model-check` and `theme:run` must verify the selected model and perform a required structured tool-call probe before local generation begins. A provider or model that cannot complete the probe must fail before generation. Ollama has no CLI generation path, provider fallback, or alternate output path.
+
+The local-model implementation is divided into:
+
+- `scripts/lib/local-model/agent.js` for orchestration, limits, progress, reports, and checkpoints.
+- `scripts/lib/local-model/context.js` for bounded actual source context.
+- `scripts/lib/local-model/tools.js` for safe read-only inspection tools.
+- `scripts/lib/local-model/patch.js` for path validation, candidate checks, and transactional patch application.
+- `scripts/lib/local-model/stages.js` for planned stage policy and prompt-section ownership.
+- `scripts/lib/local-model/protocols.js` for final-response and structured tool-call parsing.
+- `scripts/lib/providers/openai-compatible.js`, `lmstudio.js`, and `ollama.js` for provider behavior.
+
+The nine planned stages are `01-identity-copy`, `02-header-navigation`, `03-homepage-layout`, `04-page-templates`, `05-forms-admin`, `06-scss-design-system`, `07-js-interactions`, `08-footer-cleanup`, and `09-docs-and-stale-copy-cleanup`. Each stage has independent `read`, `write`, and `checks` declarations. Read scope controls context and tools; write scope controls patch paths.
+
+The model receives bounded actual contents for relevant PHP, SCSS, JavaScript, JSON, Markdown, configuration, and build files. It may request only `list_files`, `read_file`, `read_file_excerpt`, and `search_files`. The Node runner owns every filesystem operation. Absolute paths, traversal, out-of-scope paths, binary reads, `node_modules`, symlinks, and oversized tool responses are rejected.
+
+Each stage may make at most 12 tool calls. Each tool response is limited to 40 KB, malformed tool arguments receive at most one retry, and the default stage timeout is approximately 30 minutes.
+
+The only accepted local-model edit is one unified diff. The runner validates every patch path against the stage write scope, rejects unsafe paths and symlinks, applies the diff to a temporary candidate, runs declared candidate checks, and replaces the prepared theme only after success. A failed response, patch, or candidate check is preserved as evidence and ends the run without a repair attempt.
+
+Local-model stages must not write compiled bundles or `package-lock.json`. Compiled CSS and JavaScript are produced later by the deterministic build from accepted source changes.
+
+Successful stages create detailed evidence and hash-bound checkpoints. Local generation may resume only with `--resume-local`; `--resume-from-stage` may select a stage only when the recorded prompt, template, provider, model, policy, and current theme hashes all match. A mismatch fails safely instead of replaying or skipping generation.
+
+## Deterministic Work
+
+Build, validation, preview generation, ZIP packaging, cleanup, and reports are deterministic post-generation work.
+
+Validation is observational and read-only. Source validation runs before preview and ZIP creation. Artifact validation runs after preview and ZIP packaging. If a required template file is missing, validation reports it and does not copy it back.
+
+Model output is applied without semantic modification. The application layer may parse one unified diff, enforce the declared write scope, apply it through a checked candidate transaction, and run observational candidate checks. It must not fix PHP, rewrite SCSS, invent fallback CSS, replace URLs, salvage malformed output, or keep old source when generated code is invalid.
+
+Codex must run from the prepared theme directory with a writable sandbox and ephemeral execution. Repository snapshots around Codex are required to detect out-of-bound changes.
+
+Preview generation renders actual generated theme templates through a read-only PHP harness. It may read generated themes and write only under `docs/Preview-Themes-Github/` and `docs/index.html`. Preview replacement must be transactional and must preserve an existing preview when candidate rendering fails.
+
+Approved third-party image use must come from `assets/images/asset-manifest.json`. Models may create original local SVG marks, icons, textures, and illustrations, but must not invent provenance or describe illustrations as photographs.
+
+Packaging must package from a temporary copy and must not modify generated theme source.
+
+Run reports belong in `reports/runs/{theme_slug}/`. Do not store secrets there.
+
+Local-model reports must include provider and model metadata, capability preflight, stage policy, read and write scopes, context summaries, tool activity, raw responses, extracted diffs, applied paths, candidate-check results, status, and checkpoint hashes without secrets.
+
+Failed generated output must be preserved. Improving a failed result means improving a future prompt and starting a fresh run, not changing the failed result in place.
+
+## Image Acquisition and Asset Seeding
+
+Image acquisition is a standalone pre-generation process. Images must be gathered, generated, approved, copied, resized, optimized, attributed, and recorded before any AI theme generation call begins.
+
+During generation, the model may reference only images already present in the prepared theme source or listed in the approved asset manifest. The model must not search for images, generate images, invent image URLs, invent provenance, or invent licensing.
+
+Prefer image sources in this order:
+
+1. Existing approved local assets.
+2. Previously acquired reusable copyright-safe stock assets.
+3. New copyright-safe stock assets from verified permissive sources.
+4. Generated original local images only when stock is unavailable or unsuitable.
+
+The asset acquisition process must be callable as a separate public workflow before theme generation, for example:
+
+```text
+npm run theme:assets -- --prompt <prompt-file> --theme-slug <theme-slug>
+```
+
+`theme:assets` is provider-neutral. A prompt/theme pair must receive the same approved manifest and copied asset set before `codex-only`, `ollama-only`, or `lmstudio-only` generation so provider comparisons do not use different visual inputs.
+
+The asset workflow may write only approved asset folders, copied per-theme image files, and asset reports or manifests. It must not edit prompts, scripts, generated theme code outside the prepared image destination, previews, ZIPs, or validation results.
+
+Shared approved assets belong under repository-controlled asset folders such as `assets/approved-stock/`, `assets/generated-images/`, and `assets/manifests/`.
+
+Per-theme copied images belong under `wp-content/themes/{theme_slug}/assets/images/`.
+
+Every approved image must have a manifest entry before generation starts. Manifest entries must include `id`, `file`, `source`, `source_url`, `license`, `license_url`, `creator`, `creator_url`, `acquired_at`, `allowed_use`, `theme_slug`, `alt_text`, and `notes`.
+
+Do not use an image unless its source and license are recorded in the manifest. Do not use general search-result images unless the original source page confirms a compatible license.
+
+Do not use images with unclear, missing, editorial-only, noncommercial-only, attribution-impossible, or incompatible licenses. Do not use copyrighted brand, product, venue, or person images unless they are owned by the project or explicitly permissioned for this use.
+
+Do not hotlink third-party images. Copy every approved image file into a repository-controlled asset folder.
+
+The repository runner owns image licensing decisions. The model does not decide whether an image is legally safe.
+
+Reusable approved images may be used across multiple themes only when the manifest confirms their license still permits the intended use and they fit the prompt.
+
+If no safe image can be found, the asset step must fail or use a generated original local graphic. It must never use unverified images.
+
+Theme generation may start only after approved images exist locally, the manifest exists, required metadata is present, copied paths are available, and the prompt lists exactly which images the model may use.
+
+If a prompt asks for photography or an image-backed visual design and no approved asset manifest exists, the runner must fail before model invocation with: `Missing approved asset manifest for theme generation.`
+
+Missing assets are not a repair condition.
+
+## Public Commands
+
+Use npm scripts as the public command layer:
+
+```text
+npm run theme:run
+npm run theme:resume
+npm run theme:prepare
+npm run theme:assets
+npm run theme:validate
+npm run theme:build
+npm run theme:preview
+npm run theme:preview:index
+npm run theme:zip
+npm run theme:delete
+npm run theme:env
+npm run theme:model-check
+npm run test:scripts
+```
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        {
+          "slug": "ink",
+          "color": "#111827",
+          "name": "Ink"
+        },
+        {
+          "slug": "paper",
+          "color": "#f8fafc",
+          "name": "Paper"
+        },
+        {
+          "slug": "accent",
+          "color": "#2563eb",
+          "name": "Accent"
+        }
+      ]
+    },
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1180px"
+    }
+  }
+}
+
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Original local decorative interface mark 1">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(245 42% 10%)"/>
+      <stop offset=".52" stop-color="hsl(283 72% 36%)"/>
+      <stop offset="1" stop-color="hsl(337 88% 58%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#g)"/>
+  <path d="M24 56 42 28l12 19 9-13 13 22" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="30" r="7" fill="hsl(53 80% 62%)"/>
+  <path d="M21 70h54" stroke="rgba(255,255,255,.72)" stroke-width="6" stroke-linecap="round"/>
+</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="Original local decorative interface mark 2">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="hsl(245 42% 10%)"/>
+      <stop offset=".52" stop-color="hsl(283 72% 36%)"/>
+      <stop offset="1" stop-color="hsl(337 88% 58%)"/>
+    </linearGradient>
+  </defs>
+  <rect width="96" height="96" rx="24" fill="url(#g)"/>
+  <path d="M24 56 42 28l12 19 9-13 13 22" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="32" cy="30" r="7" fill="hsl(53 80% 62%)"/>
+  <path d="M21 70h54" stroke="rgba(255,255,255,.72)" stroke-width="6" stroke-linecap="round"/>
+</svg>
+<?php
+/**
+ * Template Name: About Us
+ *
+ * @package Nolan_Young_Template
+ */
+get_header();
+?>
+<main id="primary" class="site-main page-about">
+	<section class="section page-hero"><div class="container split"><div><p class="eyebrow"><?php esc_html_e( 'About Northstar', 'nolan-young-template' ); ?></p><h1><?php esc_html_e( 'A practical website partner for service businesses.', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'Northstar Websites helps teams turn scattered ideas, services, and content into WordPress websites that are easier to understand, maintain, and improve.', 'nolan-young-template' ); ?></p></div><?php nolan_young_template_render_image( 'assets/images/hero/about-approach.svg', __( 'Website planning workspace', 'nolan-young-template' ), 'media-frame' ); ?></div></section>
+	<section class="section" id="values"><div class="container"><div class="card-grid card-grid--three"><article class="info-card"><h2><?php esc_html_e( 'Clear before clever', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Navigation, content, and forms are planned around the decisions visitors need to make.', 'nolan-young-template' ); ?></p></article><article class="info-card"><h2><?php esc_html_e( 'Built to keep working', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'The theme favors reusable components, local assets, and documented behavior over fragile one-off sections.', 'nolan-young-template' ); ?></p></article><article class="info-card"><h2><?php esc_html_e( 'Respectful collaboration', 'nolan-young-template' ); ?></h2><p><?php esc_html_e( 'Project work is organized around focused reviews, plain-language next steps, and realistic support needs.', 'nolan-young-template' ); ?></p></article></div></div></section>
+	<?php get_template_part( 'template-parts/content', 'process' ); ?>
+	<?php get_template_part( 'template-parts/content', 'cta-banner' ); ?>
+</main>
+<?php get_footer(); ?>
+<?php
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+<?php if ( post_password_required() ) { return; } ?><section id="comments" class="comments-area"><?php if ( have_comments() ) : ?><h2><?php esc_html_e( 'Discussion', 'nolan-young-template' ); ?></h2><ol class="comment-list"><?php wp_list_comments(); ?></ol><?php endif; ?><?php comment_form(); ?></section>
+
+<form role="search" method="get" class="search-form" action="<?php echo esc_url( home_url( '/' ) ); ?>"><label><span class="screen-reader-text"><?php esc_html_e( 'Search for:', 'nolan-young-template' ); ?></span><input type="search" class="search-field" aria-label="<?php esc_attr_e( 'Search services, work, or articles', 'nolan-young-template' ); ?>" value="<?php echo esc_attr( get_search_query() ); ?>" name="s"></label><button type="submit" class="search-submit"><?php esc_html_e( 'Search', 'nolan-young-template' ); ?></button></form>
+
+
+**Composing helper functions**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$themeRoot = (Get-Location).ProviderPath
+if ($themeRoot -ne '"'C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\011_nolan_young_theme_blue_hour') { throw 'Unexpected theme directory' }
+function Write-ThemeFile([string]"'$relative, [string]$content) {
+ $destination = [IO.Path]::GetFullPath((Join-Path $themeRoot $relative))
+ if (-not $destination.StartsWith($themeRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '"'Out of scope destination' }
+ [IO.File]::WriteAllText("'$destination, $content + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+}
+
+Write-ThemeFile '"'functions.php' @'
+<?php
+/** Blue Hour theme bootstrap. */
+if ( "'! defined( '"'ABSPATH' ) ) { exit; }
+foreach ( array( 'setup', 'enqueue', 'helpers', 'template-tags' ) as "'$blue_hour_include ) {
+	require_once get_template_directory() . '"'/inc/' . "'$blue_hour_include . '"'.php';
+}
+'@
+Write-ThemeFile 'inc/setup.php' @'
+<?php
+/** Blue Hour uses WordPress pages and posts. */
+if ( "'! defined( '"'ABSPATH' ) ) { exit; }
+function blue_hour_setup() {
+	load_theme_textdomain( '011-nolan-young-theme-blue-hour', get_template_directory() . '/languages' );
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'align-wide' );
+	add_theme_support( 'html5', array( 'search-form', 'gallery', 'caption', 'style', 'script' ) );
+	add_theme_support( 'editor-styles' );
+	add_editor_style( 'assets/css/bundle.css' );
+	register_nav_menus( array( 'primary' => __( 'Blue Hour navigation', '011-nolan-young-theme-blue-hour' ) ) );
+}
+add_action( 'after_setup_theme', 'blue_hour_setup' );
+'@
+Write-ThemeFile 'inc/enqueue.php' @'
+<?php
+if ( "'! defined( '"'ABSPATH' ) ) { exit; }
+function blue_hour_enqueue() {
+	wp_enqueue_style( 'blue-hour', get_theme_file_uri( 'assets/css/bundle.css' ), array(), (string) filemtime( get_theme_file_path( 'assets/css/bundle.css' ) ) );
+	wp_enqueue_script( 'blue-hour', get_theme_file_uri( 'assets/js/bundle.js' ), array(), (string) filemtime( get_theme_file_path( 'assets/js/bundle.js' ) ), true );
+}
+add_action( 'wp_enqueue_scripts', 'blue_hour_enqueue' );
+'@
+Write-ThemeFile 'inc/helpers.php' @'
+<?php
+/** Small shared presentation helpers for Blue Hour. */
+if ( "'! defined( '"'ABSPATH' ) ) { exit; }
+function blue_hour_link( "'$path, $label, $class = '"'' ) {
+	printf( '<a class=\"%s\" href=\"%s\">%s</a>', esc_attr( "'$class ), esc_url( home_url( $path ) ), esc_html( $label ) );
+}
+function blue_hour_photo( $kind = '"'detail', "'$class = '"'', "'$eager = false ) {
+	$path = '"'hero' === "'$kind ? '"'assets/images/hero/editorial-hero.jpg' : 'assets/images/portfolio/editorial-detail.jpg';
+	printf( '<img class=\"%s\" src=\"%s\" alt=\"Piano keys — illustrative stock photograph\" loading=\"%s\" decoding=\"async\"%s>', esc_attr( "'$class ), esc_url( get_theme_file_uri( $path ) ), $eager ? '"'eager' : 'lazy', "'$eager ? '"' fetchpriority=\"high\"' : '' );
+}
+function blue_hour_nav() {
+	return array( '/' => 'Home', '/about/' => 'The room', '/services/' => 'The sessions', '/work/' => 'Past notes', '/blog/' => 'Journal', '/contact/' => 'Visit & inquire' );
+}
+function blue_hour_intro( "'$number, $title, $text ) {
+	?>
+	<section class="page-intro container">
+		<p class="eyebrow"><?php echo esc_html( '"'Blue Hour / ' . "'$number ); ?></p>
+		<h1><?php echo esc_html( $title ); ?></h1>
+		<p class="lead"><?php echo esc_html( $text ); ?></p>
+	</section>
+	<?php
+}
+function blue_hour_bill() {
+	return array(
+		array( '"'THU', '12', 'Soft edges, sharp keys.', 'After-dark piano trio', '19:30 / 21:00', 'A lyrical piano lead, a steady bass pulse, and brushes that leave room for the melody.' ),
+		array( 'FRI', '13', 'The velvet interval.', 'Voice & upright bass', '20:00 / 21:30', 'A voice and a bass trade lines in a spare, close-up conversation. Familiar song forms take an unexpected turn.' ),
+		array( 'SAT', '14', 'Between the grooves.', 'Deep-listening vinyl night', '19:00 / 22:00', 'Side-long selections, unhurried transitions, and a host who shares just enough context before the needle drops.' ),
+	);
+}
+function blue_hour_form() {
+	?>
+	<form class=\"inquiry-form\" data-demo-form aria-describedby=\"demo-note\" onsubmit=\"return false;\">
+		<p class=\"eyebrow\">Booking notebook</p>
+		<h2>Tell us your idea.</h2>
+		<p id=\"demo-note\">This is a static demo. Nothing is sent, stored, or booked. Please use sample details only.</p>
+		<label for=\"inquiry-name\">Your name<input id=\"inquiry-name\" name=\"name\" autocomplete=\"off\" required></label>
+		<label for=\"inquiry-email\">Email address<input id=\"inquiry-email\" name=\"email\" type=\"email\" autocomplete=\"off\" required></label>
+		<label for=\"inquiry-kind\">What brings you here?<select id=\"inquiry-kind\" name=\"interest\"><option>Private listening event</option><option>A question about visiting</option><option>Programming conversation</option></select></label>
+		<label for=\"inquiry-message\">A few details<textarea id=\"inquiry-message\" name=\"message\" rows=\"4\" required placeholder=\"An occasion, a preferred month, a little about your group…\"></textarea></label>
+		<button class=\"button\" type=\"button\" data-demo-submit>Preview inquiry <span aria-hidden=\"true\">↗</span></button>
+		<p role=\"status\" data-form-status></p>
+		<noscript><p>This sample form does not submit. JavaScript enables a local completeness check only.</p></noscript>
+	</form>
+	<?php
+}
+'@
+Write-ThemeFile 'inc/template-tags.php' @'
+<?php
+/** Blue Hour shared navigation. */
+if ( "'! defined( '"'ABSPATH' ) ) { exit; }
+function blue_hour_footer_links() {
+	foreach ( blue_hour_nav() as "'$path => $label ) { blue_hour_link( $path, $label ); }
+}
+'"'@
+Write-ThemeFile 'header.php' @'
+<?php /** Blue Hour masthead: direct links and one small listening-room disclosure. */ ?>
+<"'!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+<meta charset="<?php bloginfo( '"'charset' ); ?>\">
+<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+<?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<a class=\"skip-link\" href=\"#primary\">Skip to content</a>
+<header class=\"site-header\">
+	<div class=\"container masthead\">
+		<a class=\"wordmark\" href=\"<?php echo esc_url( home_url( '/' ) ); ?>\" rel=\"home\" aria-label=\"Blue Hour home\">BLUE HOUR<span>JAZZ &amp; LISTENING ROOM</span></a>
+		<button class=\"menu-toggle\" type=\"button\" aria-controls=\"site-navigation\" aria-expanded=\"false\" hidden><span class=\"menu-lines\" aria-hidden=\"true\"></span><span class=\"screen-reader-text\">Menu</span></button>
+		<nav id=\"site-navigation\" class=\"site-navigation\" aria-label=\"Main navigation\">
+			<?php foreach ( blue_hour_nav() as "'$path => $label ) { blue_hour_link( $path, $label, '"'/contact/' === "'$path ? '"'nav-visit' : '' ); } ?>
+			<p class=\"mobile-note\">Low lights. Open ears.<br>A fictional room for very real listening.</p>
+		</nav>
+		<details class=\"room-disclosure\">
+			<summary aria-label=\"A note from the room\">33⅓ <span aria-hidden=\"true\">+</span></summary>
+			<div class=\"room-panel\"><?php blue_hour_photo( 'detail' ); ?><div><p class=\"eyebrow\">Settle into the sound</p><h2>A seat. A side. A whole new mood.</h2><p>Live sessions, carefully chosen records, and evenings made for listening.</p><?php blue_hour_link( '/services/', 'Find your kind of night ↗' ); ?></div></div>
+		</details>
+	</div>
+</header>
+'@
+Write-ThemeFile 'front-page.php' @'
+<?php get_header(); ?>
+<main id=\"primary\">
+	<?php
+	get_template_part( 'template-parts/content', 'hero' );
+	get_template_part( 'template-parts/content', 'featured-work' );
+	get_template_part( 'template-parts/content', 'brand-statement' );
+	get_template_part( 'template-parts/content', 'process' );
+	get_template_part( 'template-parts/content', 'cta-banner' );
+	?>
+</main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'template-parts/content-hero.php' @'
+<section class=\"hero container\" aria-labelledby=\"hero-title\">
+	<div class=\"hero-copy\">
+		<p class=\"eyebrow\"><span class=\"signal\" aria-hidden=\"true\"></span> A little later. A little closer.</p>
+		<h1 id=\"hero-title\">Stay for<br>one more <em>set.</em></h1>
+		<p class=\"hero-description\">An intimate jazz listening room for the notes that linger. Come for the music. Let the rest of the evening find you.</p>
+		<div class=\"button-row\"><?php blue_hour_link( '#weekly-bill', 'Explore the weekly bill ↘', 'button' ); ?><?php blue_hour_link( '/contact/', 'Plan a visit ↗', 'text-link' ); ?></div>
+		<p class=\"microcopy\">A fictional venue. All sessions &amp; dates are demo content.</p>
+	</div>
+	<figure class=\"hero-art\">
+		<?php blue_hour_photo( 'hero', 'hero-photo', true ); ?>
+		<div class=\"photo-topline\"><span>THE BLUE HOUR SESSIONS</span><span>VOL. 01</span></div>
+		<div class=\"record-stamp\" aria-hidden=\"true\">GOOD<br>EVENINGS<br><span>START HERE ↗</span></div>
+		<figcaption><span>LESS NOISE.<br>MORE FEELING.</span><span>PIANO / BASS / BRUSHES<br>AND ROOM TO BREATHE</span></figcaption>
+	</figure>
+	<div class=\"hero-foot\"><span>LIVE MUSIC · DEEP LISTENING · LATE CONVERSATIONS</span><span>TAKE YOUR TIME <span aria-hidden=\"true\">↓</span></span></div>
+</section>
+'@
+Write-ThemeFile 'template-parts/content-featured-work.php' @'
+<section class=\"section bill-section\" id=\"weekly-bill\" aria-labelledby=\"bill-title\">
+	<div class=\"container\">
+		<div class=\"section-heading\"><div><p class=\"eyebrow\">01 / On the turntable &amp; on the stage</p><h2 id=\"bill-title\">This week, in feeling.</h2></div><p>November 12–14, 2026<br><span class=\"microcopy\">An illustrative lineup. No tickets on sale.</span></p></div>
+		<div class=\"weekly-bill\">
+		<?php foreach ( blue_hour_bill() as "'$event ) : ?>
+			<article class="ticket-row"><div class="date-badge"><span><?php echo esc_html( $event[0] ); ?></span><strong><?php echo esc_html( $event[1] ); ?></strong><span>NOV</span></div><div class="ticket-title"><p class="eyebrow"><?php echo esc_html( $event[3] ); ?></p><h3><?php echo esc_html( $event[2] ); ?></h3></div><p class="set-times"><?php echo esc_html( $event[4] ); ?><span>Sample set times</span></p><?php blue_hour_link( '"'/services/', 'Meet the sessions ↗', 'text-link' ); ?></article>
+		<?php endforeach; ?>
+		</div>
+	</div>
+</section>
+'@
+Write-ThemeFile 'template-parts/content-brand-statement.php' @'
+<section class=\"section room-story container\" aria-labelledby=\"story-title\">
+	<figure class=\"story-photo\"><?php blue_hour_photo( 'detail' ); ?><figcaption>A closer look at the keys. Illustrative photography.</figcaption></figure>
+	<div class=\"story-copy\"><p class=\"eyebrow\">02 / A room with a point of view</p><h2 id=\"story-title\">The best seat<br>is a state of mind.</h2><p>Blue Hour imagines a small room with a big respect for sound. A place where the piano gets the last word, the silences matter, and nobody needs to know every record to belong.</p><p>We like our lights low, our welcomes warm, and our music right there in the room with you.</p><?php blue_hour_link( '/about/', 'Step inside our story ↗', 'text-link' ); ?></div>
+</section>
+'@
+Write-ThemeFile 'template-parts/content-process.php' @'
+<section class=\"section visit-notes\" aria-labelledby=\"visit-title\">
+	<div class=\"container visit-grid\"><div><p class=\"eyebrow\">03 / Before the first note</p><h2 id=\"visit-title\">Come as you are.<br>Listen a little closer.</h2><?php blue_hour_link( '/contact/', 'The visiting notes ↗', 'text-link' ); ?></div><div class=\"visit-list\"><article><span>01</span><div><h3>Give the room a moment.</h3><p>Our sample evenings begin with time to settle in before the first set. Arrive unhurried; let the outside world fall away.</p></div></article><article><span>02</span><div><h3>Keep the music in the foreground.</h3><p>Quiet conversations between sets, phones on silent, and no flash. A little care makes a better room for everyone.</p></div></article><article><span>03</span><div><h3>First time? You belong here.</h3><p>No dress code in this imagined room. No jazz quiz at the door. Curiosity is all you need to bring.</p></div></article></div></div>
+</section>
+'@
+Write-ThemeFile 'template-parts/content-cta-banner.php' @'
+<section class=\"private-invite container\" aria-labelledby=\"private-title\"><p class=\"eyebrow\">04 / Your people. Our kind of evening.</p><div><h2 id=\"private-title\">Make a night of it.</h2><?php blue_hour_link( '/services/featured/', 'Explore private gatherings ↗', 'button button-dark' ); ?></div><p>A milestone, a small celebration, a reason to gather.<br>Imagine a listening room that is yours for the evening.</p></section>
+'@
+Write-ThemeFile 'footer.php' @'
+<footer class=\"site-footer\">
+	<?php get_template_part( 'template-parts/content', 'footer-widgets' ); ?>
+	<div class=\"container footer-bottom\"><p>© <?php echo esc_html( date( 'Y' ) ); ?> Blue Hour · A fictional listening room.</p><?php blue_hour_link( '/privacy-policy/', 'Privacy & demo details' ); ?><a href=\"#primary\">Back to the music ↑</a></div>
+</footer>
+<?php wp_footer(); ?>
+</body>
+</html>
+'@
+Write-ThemeFile 'template-parts/content-footer-widgets.php' @'
+<div class=\"container footer-grid\"><div class=\"footer-signoff\"><p class=\"eyebrow\">Until the next set</p><a class=\"footer-brand\" href=\"<?php echo esc_url( home_url( '/' ) ); ?>\">BLUE<br>HOUR<span aria-hidden=\"true\">✳</span></a><p>Good music. Good company.<br>A little room for both.</p></div><div><h2>Find your way</h2><nav class=\"footer-nav\" aria-label=\"Footer navigation\"><?php blue_hour_footer_links(); ?></nav></div><div><h2>A note about the room</h2><p>Blue Hour is a fictional sample brand. There is no operating venue, physical address, or live ticket inventory.</p><?php blue_hour_link( '/contact/', 'Explore a sample inquiry ↗', 'text-link' ); ?><details class=\"image-credits\"><summary>Image credits</summary><p>Piano photographs by <a href=\"https://unsplash.com/photos/piano-keys-C4wa08E0AXc\">Joshua Hoehne</a> and <a href=\"https://unsplash.com/photos/piano-keys-RWytwNueNng\">Johannes Plenio</a> on Unsplash, used under the <a href=\"https://unsplash.com/license\">Unsplash License</a>. Illustrative stock; not photographs of a Blue Hour venue or performance.</p></details></div></div>
+'@
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 158ms:
+**Checking home anchor URL**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$themeRoot = (Get-Location).ProviderPath
+if ($themeRoot -ne '"'C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\011_nolan_young_theme_blue_hour') { throw 'Unexpected theme directory' }
+function Write-ThemeFile([string]"'$relative, [string]$content) {
+ $destination = [IO.Path]::GetFullPath((Join-Path $themeRoot $relative))
+ if (-not $destination.StartsWith($themeRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '"'Out of scope destination' }
+ [IO.File]::WriteAllText("'$destination, $content + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+}
+
+Write-ThemeFile '"'page-templates/template-about-us.php' @'
+<?php
+/** Template Name: Blue Hour — The Room */
+get_header(); ?>
+<main id=\"primary\">
+<?php blue_hour_intro( 'The room', 'A little room. A deeper listen.', 'Blue Hour is an imagined refuge for the attentive ear: intimate live sets, records played all the way through, and the pleasure of being present.' ); ?>
+<section class=\"container editorial-split section\"><div><?php blue_hour_photo( 'hero', 'editorial-photo', true ); ?><p class=\"caption\">Piano study / illustrative stock photography.</p></div><div><p class=\"eyebrow\">Our listening culture</p><h2>Leave a little space for the unexpected.</h2><p>A melody you have never heard can feel like a place you know. That is the feeling behind Blue Hour. Our fictional room is built around the exchange between a musician, an instrument, and the people who came to listen.</p><p>You do not need a record collection or a vocabulary for harmony. You can simply sit down, notice the bass line, and follow whatever catches your ear.</p><p>Between sets, the room opens back up: a conversation, a recommendation, the name of a tune scribbled on a napkin.</p></div></section>
+<?php get_template_part( 'template-parts/content', 'style-pillars' ); ?>
+<?php get_template_part( 'template-parts/content', 'testimonials' ); ?>
+<?php get_template_part( 'template-parts/content', 'cta-banner' ); ?>
+</main><?php get_footer(); ?>
+'@
+Write-ThemeFile 'page-templates/template-services.php' @'
+<?php
+/** Template Name: Blue Hour — The Sessions */
+get_header(); ?>
+<main id=\"primary\">
+<?php blue_hour_intro( 'The sessions', 'Three ways to lose track of time.', 'Live music, a record side, a room full of your favorite people. Different evenings, the same attention to sound. Every program below is an illustrative concept.' ); ?>
+<?php get_template_part( 'template-parts/content', 'all-services' ); ?>
+<section class=\"section container narrow\"><p class=\"eyebrow\">A few listening notes</p><h2>Before you settle in.</h2><details><summary>Is this a real program I can book?</summary><p>No. Blue Hour is a fictional sample brand. Event names, dates, set times, and arrangements are demonstrations, with no tickets or reservations available.</p></details><details><summary>How is a listening night different from a live set?</summary><p>Our concept listening nights focus on recorded music, played in complete sides with short introductions. Live sessions imagine musicians sharing two focused sets with a pause between them.</p></details><details><summary>Do I need to know jazz?</summary><p>Not at all. Follow an instrument, notice a change in the rhythm, or just enjoy the mood. Listening is enough.</p></details><?php blue_hour_link( '/contact/', 'Visit notes & sample inquiry ↗', 'text-link' ); ?></section>
+</main><?php get_footer(); ?>
+'@
+Write-ThemeFile 'template-parts/content-all-services.php' @'
+<section class=\"container session-list\">
+	<article class=\"session-feature\"><div class=\"session-image\"><?php blue_hour_photo( 'hero', '', true ); ?><span>01 / LIVE</span></div><div><p class=\"eyebrow\">The live sessions</p><h2>Close enough to hear the room breathe.</h2><p>Small ensembles. Two unhurried sets. Piano-led trios, sparse duos, and thoughtful interpretations with room for a detour. Our concept program puts the connection between musicians at the center.</p><p class=\"caption\">Illustrative format · Two 50-minute sets · A pause between</p><?php blue_hour_link( '/work/', 'Explore the program archive ↗', 'text-link' ); ?></div></article>
+	<article class=\"session-feature\"><div class=\"session-image\"><?php blue_hour_photo( 'detail' ); ?><span>02 / LISTEN</span></div><div><p class=\"eyebrow\">The listening nights</p><h2>One side at a time.</h2><p>An evening around carefully chosen records, from lyrical small-group sessions to spacious late-night compositions. A host introduces the sound, then lets the music do the talking.</p><p class=\"caption\">Illustrative format · Hosted selections · Room for discovery</p><?php blue_hour_link( '/blog/', 'Start with the listening journal ↗', 'text-link' ); ?></div></article>
+	<?php get_template_part( 'template-parts/content', 'single-service-highlight' ); ?>
+</section>
+'@
+Write-ThemeFile 'template-parts/content-single-service-highlight.php' @'
+<article class=\"session-feature session-private\"><div><p class=\"eyebrow\">03 / Gather</p><h2>Your own Blue Hour.</h2></div><div><p>Bring the people. Set the occasion. Imagine an intimate celebration with a listening session at its heart, from the first welcome to the last record.</p><p>Sample formats range from a seated record evening to a small live duo. Capacity examples are illustrative, never booking promises.</p><?php blue_hour_link( '/services/featured/', 'Private listening events ↗', 'button' ); ?></div></article>
+'@
+Write-ThemeFile 'page-templates/template-work.php' @'
+<?php
+/** Template Name: Blue Hour — Past Notes */
+get_header(); ?>
+<main id=\"primary\">
+<?php blue_hour_intro( 'Past notes', 'The sound stays with you.', 'An archive of imagined evenings. These are fictional program concepts, not performances that took place or artists represented by Blue Hour.' ); ?>
+<section class=\"container archive-feature\"><figure><?php blue_hour_photo( 'detail', '', true ); ?><figcaption>Illustrative piano study / not an event photograph</figcaption></figure><div><p class=\"eyebrow\">Concept no. 01 / Piano trio</p><h2>Midnight, in three parts.</h2><p>A spare opening melody. A bass line that finds its feet. Brushes arriving like rain. This imagined program traces a single musical idea through three very different conversations.</p><p class=\"caption\">Sample archive · September 2026 · Acoustic session</p></div></section>
+<section class=\"section container\"><div class=\"section-heading\"><h2>From the imaginary archive.</h2><p class=\"microcopy\">Fictional titles / illustrative dates</p></div><div class=\"poster-grid\"><article class=\"gig-poster\"><p>CONCEPT 02 · AUGUST 2026</p><h3>Last<br>light<br>quartet.</h3><p>A horn-led evening of warm ballads and loose, loping rhythms. The kind of finale that leaves the room quiet for a second longer.</p><span>LIVE / SMALL ENSEMBLE</span></article><article class=\"gig-poster\"><p>CONCEPT 03 · JULY 2026</p><h3>The<br>slow<br>side.</h3><p>A hosted record night about space: lingering piano phrases, featherweight percussion, and the art of leaving something unsaid.</p><span>RECORDS / DEEP LISTENING</span></article><article class=\"gig-poster\"><p>CONCEPT 04 · JUNE 2026</p><h3>Two<br>chairs.<br>One tune.</h3><p>A fictional voice-and-bass conversation, reworking a small songbook through call, response, and the occasional beautiful surprise.</p><span>LIVE / INTIMATE DUO</span></article></div></section>
+<?php get_template_part( 'template-parts/content', 'blog-preview' ); ?>
+</main><?php get_footer(); ?>
+'@
+Write-ThemeFile 'page-templates/template-blog.php' @'
+<?php
+/** Template Name: Blue Hour — Listening Journal */
+get_header(); ?>
+<main id=\"primary\">
+<?php blue_hour_intro( 'Journal', 'Notes for open ears.', 'A short reading shelf for the curious listener. No homework required, and no right way to hear a piece of music.' ); ?>
+<section class=\"container journal-index\"><p class=\"eyebrow\">In this edition</p><a href=\"#follow-the-bass\">01 / Follow the bass ↘</a><a href=\"#space-between\">02 / The space between notes ↘</a><a href=\"#first-set\">03 / Your first live set ↘</a></section>
+<div class=\"container journal-layout\"><aside><?php blue_hour_photo( 'hero', '', true ); ?><p class=\"caption\">A small detail. A whole world of sound.</p></aside><div>
+<article class=\"journal-entry\" id=\"follow-the-bass\"><p class=\"eyebrow\">01 / A listening introduction · 2 min</p><h2>Start at the bottom. Follow the bass.</h2><p>When the tune feels busy, listen for the lowest moving line. The bass often gives you a way through: a pulse to walk beside, a repeating shape, or a small nudge into a new harmony.</p><p>Try keeping your attention there for one chorus. Then move to the piano or voice. The same passage can feel completely different when you choose another thread to follow.</p><p>You do not need to name the chords. Notice where the music feels settled, and where it seems to lean forward. That small change in attention can open the whole piece.</p></article>
+<article class=\"journal-entry\" id=\"space-between\"><p class=\"eyebrow\">02 / Listening practice · 2 min</p><h2>The space between the notes.</h2><p>A pause is part of the phrase. It lets a sound decay, gives another player room to answer, and makes the next entrance feel earned. In a quiet room, the tail of a piano note can become its own small event.</p><p>On your next listen, pay attention to where a musician stops. What carries on underneath? Does the silence relax the music or create a little suspense?</p><p>This is one reason Blue Hour imagines a listening-first room. Soft sounds deserve somewhere to land.</p></article>
+<article class=\"journal-entry\" id=\"first-set\"><p class=\"eyebrow\">03 / Room etiquette · 2 min</p><h2>Your first set, without the nerves.</h2><p>Settle in before the music starts and silence your phone. If you need to step out, a break between pieces is a considerate moment. Save long conversations for the interval.</p><p>Applause often follows a solo, and always fits at the end of a piece. If you are unsure, let the room guide you. You are there to enjoy the exchange, not to pass a test.</p><p>Most of all, allow yourself to be surprised. A tune you thought was not for you might become the one you remember on the way home.</p></article>
+</div></div>
+<section class=\"container journal-outro\"><?php blue_hour_link( '/services/', 'Find your next kind of evening ↗', 'button' ); ?></section>
+</main><?php get_footer(); ?>
+'@
+Write-ThemeFile 'page-templates/template-contact.php' @'
+<?php
+/** Template Name: Blue Hour — Visit and Inquire */
+get_header(); ?>
+<main id=\"primary\">
+<?php blue_hour_intro( 'Visit & inquire', 'An evening starts with a hello.', 'Explore how a night at Blue Hour might feel, or try the sample private-event inquiry. This fictional room has no physical location or live reservations.' ); ?>
+<section class=\"container contact-grid section\"><div><p class=\"eyebrow\">The visiting notebook</p><h2>Before you come by.</h2><dl class=\"visit-facts\"><dt>Where</dt><dd>An imagined neighborhood listening room. No real street address or directions.</dd><dt>When</dt><dd>Sample programming: Thursday–Saturday evenings. Times on the weekly bill are illustrative only.</dd><dt>Reservations</dt><dd>No seats are currently sold or reserved. All event names and dates are demo content.</dd><dt>Access & comfort</dt><dd>A real venue should confirm step-free access, seating needs, restrooms, and sound levels directly before a visit. This sample cannot confirm physical facilities.</dd></dl><details><summary>Can I book through this website?</summary><p>No. The form is an interactive demonstration. It sends no email, stores no inquiry, and takes no payment.</p></details><details><summary>What would I include in an event inquiry?</summary><p>Your preferred date, approximate group size, live music or records, and any access needs. Please enter only fictional details in this demo.</p></details><?php blue_hour_link( '/services/featured/', 'Read the private-event concept ↗', 'text-link' ); ?></div><?php blue_hour_form(); ?></section>
+</main><?php get_footer(); ?>
+'@
+Write-ThemeFile 'page-templates/template-single-service.php' @'
+<?php
+/** Template Name: Blue Hour — Private Listening Event */
+get_header(); ?>
+<main id=\"primary\">
+<?php blue_hour_intro( 'Private listening events', 'A room for your kind of occasion.', 'A milestone dinner, a thoughtful gathering, or an evening that needs no excuse. Imagine bringing your people into the Blue Hour mood.' ); ?>
+<section class=\"container archive-feature\"><figure><?php blue_hour_photo( 'detail', '', true ); ?><figcaption>Illustrative instrument photograph / not a venue photograph</figcaption></figure><div><p class=\"eyebrow\">One evening, thoughtfully paced</p><h2>Start with the feeling.</h2><p>A private listening event pairs a relaxed welcome with music given its own moment. A hosted vinyl selection can keep things intimate; a small acoustic duo can bring a little spontaneity.</p><p>The imagined flow: arrive, settle, listen, pause, and let the conversation return. Music shapes the evening without filling every second.</p><?php blue_hour_link( '/contact/', 'Try a sample event inquiry ↗', 'button' ); ?></div></section>
+<section class=\"section container\"><div class=\"section-heading\"><h2>A few possible arrangements.</h2><p>All capacities and durations below are illustrative.<br>No actual venue limits or availability are implied.</p></div><div class=\"arrangement-grid\"><article><p class=\"eyebrow\">01 / The record room</p><h3>12–20 listeners</h3><p>A seated, hosted record evening with two complete album sides and a break for conversation. Example duration: two hours.</p></article><article><p class=\"eyebrow\">02 / The close-up set</p><h3>20–30 listeners</h3><p>A small acoustic duo, two focused sets, and an unhurried interval. Example duration: two and a half hours.</p></article><article><p class=\"eyebrow\">03 / The whole evening</p><h3>30–40 guests</h3><p>A relaxed gathering with a dedicated seated listening moment. Example duration: three hours. Layout would need venue confirmation.</p></article></div></section>
+<section class=\"section container event-process\"><div><?php blue_hour_photo( 'hero' ); ?></div><div><p class=\"eyebrow\">From a thought to an evening</p><h2>Give the night a shape.</h2><ol><li><strong>Share the occasion.</strong> Set a mood, a group size, and a preferred date.</li><li><strong>Choose the sound.</strong> Imagine a live duo or a hosted record selection.</li><li><strong>Consider the room.</strong> Confirm access, seating, hospitality, and timing with a real operator before any booking.</li></ol><details><summary>Are prices or catering included?</summary><p>No packages, prices, catering commitments, or real bookings are offered by this sample. These arrangements illustrate possibilities only.</p></details><?php blue_hour_link( '/contact/', 'Open the sample booking notebook ↗', 'text-link' ); ?></div></section>
+</main><?php get_footer(); ?>
+'@
+Write-ThemeFile 'page-templates/template-policy.php' @'
+<?php
+/** Template Name: Blue Hour — Privacy and Demo Details */
+get_header(); ?>
+<main id=\"primary\"><?php blue_hour_intro( 'Privacy', 'A little clarity, before you browse.', 'How this fictional Blue Hour sample handles its demonstration features.' ); ?><?php get_template_part( 'template-parts/content', 'policy' ); ?></main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'template-parts/content-policy.php' @'
+<section class=\"container prose section\"><h2>The sample inquiry</h2><p>The Blue Hour form runs a local completeness check only. It does not send email, take payments, create reservations, or save your entries. Please use fictional information when trying it.</p><h2>Local assets and browsing</h2><p>The theme loads its styles, scripts, and photographs locally. It adds no analytics trackers, remote fonts, or marketing cookies. A WordPress installation, its hosting provider, or additional plugins may have separate logging and cookie behavior.</p><h2>External photo credits</h2><p>The image-credit links lead to Unsplash. If you follow them, that website's own privacy practices apply. The photographs here are local copies approved in the theme asset manifest.</p><h2>About this brand</h2><p>Blue Hour is a fictional listening room. Its program names, dates, set times, capacity examples, and venue descriptions are illustrative. There is no physical venue or actual ticket inventory.</p><h2>For a future operator</h2><p>Before collecting real inquiries, publish privacy information appropriate to the actual operator, form provider, hosting, retention practices, and contact arrangements.</p><?php blue_hour_link( '/', 'Return to Blue Hour ↗', 'button' ); ?></section>
+'@
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 156ms:
+**Preparing page template wrappers**
+codex
+The requested page templates now have Blue Hour copy, including the program archive, three complete journal notes, visit information, and private-event examples. I’m adding the responsive styles and navigation behavior next, then removing the unused starter artwork and agency content before the final checks.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$themeRoot = (Get-Location).ProviderPath
+if ($themeRoot -ne '"'C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\011_nolan_young_theme_blue_hour') { throw 'Unexpected theme directory' }
+function Write-ThemeFile([string]"'$relative, [string]$content) {
+ $destination = [IO.Path]::GetFullPath((Join-Path $themeRoot $relative))
+ if (-not $destination.StartsWith($themeRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '"'Out of scope destination' }
+ [IO.File]::WriteAllText("'$destination, $content + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+}
+
+Write-ThemeFile '"'template-parts/content-style-pillars.php' @'
+<section class=\"section listening-values\"><div class=\"container\"><p class=\"eyebrow\">The room's unwritten rules</p><div class=\"arrangement-grid\"><article><span class=\"large-number\">01</span><h2>Music first.</h2><p>The performance is the center of the evening. We imagine a room where even the softest phrase has a place.</p></article><article><span class=\"large-number\">02</span><h2>Everyone in.</h2><p>New ears are welcome. You do not need to recognize a standard or know the names on a record sleeve.</p></article><article><span class=\"large-number\">03</span><h2>Take it slowly.</h2><p>Let a side finish. Let a set unfold. A good evening does not need to hurry toward the next thing.</p></article></div></div></section>
+'@
+Write-ThemeFile 'template-parts/content-testimonials.php' @'
+<section class=\"container room-manifesto\"><p class=\"eyebrow\">A thought behind Blue Hour</p><p class=\"manifesto-text\">“Sometimes the best part of a night is the part you didn't plan to stay for.”</p><p>A Blue Hour house note — original fictional brand copy, not a customer testimonial.</p></section>
+'@
+Write-ThemeFile 'template-parts/content-blog-preview.php' @'
+<section class=\"section journal-teaser container\"><p class=\"eyebrow\">The listening journal</p><div><h2>A good place to begin is anywhere.</h2><p>Follow a bass line. Notice a silence. Let your first live set surprise you. Three short notes for curious ears.</p><?php blue_hour_link( '/blog/', 'Open the journal ↗', 'text-link' ); ?></div></section>
+'@
+Write-ThemeFile 'template-parts/content-page.php' @'
+<article class=\"container prose section\"><p class=\"eyebrow\">Blue Hour / From the room</p><h1><?php the_title(); ?></h1><?php the_content(); ?><?php wp_link_pages(); ?><p><?php blue_hour_link( '/', 'Back to Blue Hour ↗', 'text-link' ); ?></p></article>
+'@
+Write-ThemeFile 'template-parts/content-single.php' @'
+<article class=\"container prose section\"><p class=\"eyebrow\">Blue Hour / Listening journal</p><h1><?php the_title(); ?></h1><?php the_content(); ?><?php wp_link_pages(); ?><p><?php blue_hour_link( '/blog/', 'More listening notes ↗', 'text-link' ); ?></p></article>
+'@
+Write-ThemeFile 'template-parts/content-search.php' @'
+<article class=\"search-result\"><p class=\"eyebrow\">From Blue Hour</p><h2><a href=\"<?php the_permalink(); ?>\"><?php the_title(); ?></a></h2><?php the_excerpt(); ?></article>
+'@
+Write-ThemeFile 'template-parts/content-none.php' @'
+<section class=\"container prose section\"><p class=\"eyebrow\">A quiet moment</p><h2>No notes here just yet.</h2><p>There is still plenty to explore in the room. Start with the listening journal or find your way home.</p><div class=\"button-row\"><?php blue_hour_link( '/blog/', 'Read the journal ↗', 'button' ); ?><?php blue_hour_link( '/', 'Home', 'text-link' ); ?></div></section>
+'@
+Write-ThemeFile 'page.php' @'
+<?php get_header(); ?>
+<main id=\"primary\"><?php while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', 'page' ); endwhile; ?></main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'index.php' @'
+<?php get_header(); ?>
+<main id=\"primary\"><?php blue_hour_intro( 'Notes', 'From the room.', 'Listening notes, observations, and small discoveries.' ); ?><div class=\"container\"><?php if ( have_posts() ) : while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', 'search' ); endwhile; the_posts_navigation(); else : get_template_part( 'template-parts/content', 'none' ); endif; ?></div></main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'archive.php' @'
+<?php get_header(); ?>
+<main id=\"primary\"><header class=\"page-intro container\"><p class=\"eyebrow\">Blue Hour / Collected notes</p><?php the_archive_title( '<h1>', '</h1>' ); ?><?php the_archive_description(); ?></header><div class=\"container\"><?php if ( have_posts() ) : while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', 'search' ); endwhile; the_posts_navigation(); else : get_template_part( 'template-parts/content', 'none' ); endif; ?></div></main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'single.php' @'
+<?php get_header(); ?>
+<main id=\"primary\"><?php while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', 'single' ); endwhile; ?></main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'search.php' @'
+<?php get_header(); ?>
+<main id=\"primary\"><section class=\"container page-intro\"><p class=\"eyebrow\">Blue Hour / Search</p><h1>Find a note.</h1><?php get_search_form(); ?></section><div class=\"container\"><?php if ( have_posts() ) : while ( have_posts() ) : the_post(); get_template_part( 'template-parts/content', 'search' ); endwhile; the_posts_navigation(); else : get_template_part( 'template-parts/content', 'none' ); endif; ?></div></main>
+<?php get_footer(); ?>
+'@
+Write-ThemeFile 'searchform.php' @'
+<form role=\"search\" method=\"get\" class=\"search-form\" action=\"<?php echo esc_url( home_url( '/' ) ); ?>\"><label for=\"room-search\">Search Blue Hour</label><div class=\"button-row\"><input id=\"room-search\" type=\"search\" value=\"<?php echo esc_attr( get_search_query() ); ?>\" name=\"s\" placeholder=\"Listening notes, sessions…\"><button type=\"submit\" class=\"button\">Search</button></div></form>
+'@
+Write-ThemeFile 'comments.php' @'
+<?php /** Blue Hour articles invite listening; comments are not displayed by this theme. */ ?>
+'@
+Write-ThemeFile '404.php' @'
+<?php get_header(); ?>
+<main id=\"primary\"><section class=\"container page-intro error-page\"><p class=\"eyebrow\">404 / A missed beat</p><h1>Let's find the melody again.</h1><p>This page has left the set list. Head back to the room or explore the listening journal.</p><div class=\"button-row\"><?php blue_hour_link( '/', 'Back to Blue Hour ↗', 'button' ); ?><?php blue_hour_link( '/blog/', 'Read the journal', 'text-link' ); ?></div></section></main>
+<?php get_footer(); ?>
+'@
+"'$pages = @{ '"'about' = 'about-us'; 'services' = 'services'; 'work' = 'work'; 'blog' = 'blog'; 'contact' = 'contact'; 'privacy-policy' = 'policy'; 'featured' = 'single-service' }
+foreach ("'$slug in $pages.Keys) {
+ Write-ThemeFile ("page-" + $slug + ".php") ("<?php /** Blue Hour standard page-slug template. */ require get_template_directory() . '"'/page-templates/template-\" + "'$pages[$slug] + ".php'"';\")
+}
+Write-ThemeFile 'home.php' @'
+<?php /** Blue Hour journal when WordPress assigns a posts page. */ require get_template_directory() . '/page-templates/template-blog.php'; ?>
+'@
+foreach ("'$module in @('"'custom-post-types', 'customizer', 'forms', 'newsletter', 'policy-routing')) {
+ Write-ThemeFile (\"inc/\" + "'$module + ".php") "<?php /** Blue Hour reserves this extension point. No runtime behavior is registered. */"
+}
+Write-ThemeFile '"'theme.json' @'
+{
+  \""'$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "defaultPalette": false,
+      "palette": [
+        { "slug": "midnight", "color": "#101525", "name": "Midnight" },
+        { "slug": "ivory", "color": "#f3eedf", "name": "Warm ivory" },
+        { "slug": "periwinkle", "color": "#a0a5ff", "name": "Electric periwinkle" },
+        { "slug": "brass", "color": "#c6a96b", "name": "Brass" }
+      ]
+    },
+    "layout": { "contentSize": "720px", "wideSize": "1240px" },
+    "typography": { "fontFamilies": [{ "slug": "system", "name": "System sans", "fontFamily": "Arial, Helvetica, sans-serif" }] }
+  }
+}
+'"'@
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 139ms:
+**Writing scoped SCSS pieces**
+**Inspecting hero visuals**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$themeRoot = (Get-Location).ProviderPath
+if ($themeRoot -ne '"'C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\011_nolan_young_theme_blue_hour') { throw 'Unexpected theme directory' }
+function Write-ThemeFile([string]"'$relative, [string]$content) {
+ $destination = [IO.Path]::GetFullPath((Join-Path $themeRoot $relative))
+ if (-not $destination.StartsWith($themeRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '"'Out of scope destination' }
+ [IO.File]::WriteAllText("'$destination, $content + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+}
+
+Write-ThemeFile '"'src/scss/main.scss' @'
+@use \"abstracts/variables\";
+@use \"base/reset\";
+@use \"base/typography\";
+@use \"base/accessibility\";
+@use \"base/forms\";
+@use \"components/buttons\";
+@use \"components/cards\";
+@use \"components/accordion\";
+@use \"layout/container\";
+@use \"layout/header\";
+@use \"layout/footer\";
+@use \"layout/sections\";
+@use \"pages/homepage\";
+@use \"pages/about-us\";
+@use \"pages/services\";
+@use \"pages/work\";
+@use \"pages/blog\";
+@use \"pages/contact\";
+@use \"pages/policy\";
+'@
+Write-ThemeFile 'src/scss/abstracts/_variables.scss' @'
+:root {
+  color-scheme: dark;
+  --night: #101525;
+  --panel: #191f32;
+  --ivory: #f3eedf;
+  --periwinkle: #a0a5ff;
+  --brass: #c6a96b;
+  --muted: #bebec9;
+  --line: #414454;
+  --display: Impact, Haettenschweiler, \"Arial Narrow\", \"Franklin Gothic Medium\", sans-serif;
+  --body: Arial, Helvetica, sans-serif;
+}
+'@
+Write-ThemeFile 'src/scss/base/_reset.scss' @'
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { margin: 0; background: var(--night); color: var(--ivory); font-family: var(--body); font-size: 16px; line-height: 1.65; }
+img { display: block; max-width: 100%; height: auto; }
+figure, h1, h2, h3, p { margin: 0; }
+p + p { margin-top: 1em; }
+a { color: inherit; text-underline-offset: .25em; }
+button, input, select, textarea { font: inherit; }
+button, summary { cursor: pointer; }
+button { color: inherit; }
+[hidden] { display: none "'!important; }
+::selection { background: var(--periwinkle); color: var(--night); }
+main { min-height: 50vh; }
+'"'@
+Write-ThemeFile 'src/scss/base/_typography.scss' @'
+h1, h2, h3 { line-height: 1.04; font-weight: 400; text-wrap: balance; }
+h1, h2 { font-family: var(--display); letter-spacing: -.025em; }
+h1 { font-size: clamp(3rem, 6vw, 5.75rem); }
+h2 { font-size: clamp(2.2rem, 3.7vw, 3.7rem); }
+h3 { font-size: 1.5rem; font-weight: 700; letter-spacing: -.035em; }
+p { max-width: 68ch; }
+.eyebrow { font-size: .68rem; line-height: 1.6; letter-spacing: .16em; text-transform: uppercase; font-weight: 700; color: var(--brass); margin-bottom: 1.3rem; }
+.lead { font-size: 1.13rem; color: var(--muted); max-width: 58ch; }
+.microcopy, .caption, figcaption { font-size: .75rem; line-height: 1.6; color: var(--muted); }
+.caption { margin-top: 1rem; }
+@media (max-width: 650px) {
+  h1 { font-size: clamp(2.65rem, 10vw, 3.7rem); max-width: 100%; overflow-wrap: anywhere; }
+  h2 { font-size: clamp(2rem, 8vw, 2.8rem); }
+  h3 { font-size: 1.3rem; }
+  .lead { font-size: 1rem; }
+}
+'@
+Write-ThemeFile 'src/scss/base/_accessibility.scss' @'
+.screen-reader-text { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.skip-link { position: fixed; top: -100px; left: 16px; padding: 12px 20px; background: var(--ivory); color: var(--night); z-index: 100; }
+.skip-link:focus { top: 10px; }
+:focus-visible { outline: 3px solid var(--brass); outline-offset: 5px; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none "'!important; transition: none !important; }
+}
+'"'@
+Write-ThemeFile 'src/scss/base/_forms.scss' @'
+label { display: block; font-size: .875rem; font-weight: 700; }
+input, textarea, select { display: block; width: 100%; min-width: 0; margin: .4rem 0 1.3rem; padding: .85rem; border: 1px solid #747786; border-radius: 0; color: var(--ivory); background: var(--night); }
+textarea { resize: vertical; }
+input::placeholder, textarea::placeholder { color: #b7b7c3; opacity: 1; }
+.inquiry-form { background: var(--panel); padding: clamp(1.3rem, 4vw, 3rem); border-top: 3px solid var(--periwinkle); }
+.inquiry-form > p { font-size: .85rem; margin: 1.25rem 0; }
+.inquiry-form h2 { font-size: 2.5rem; }
+[data-form-status]:empty { display: none; }
+[data-form-status] { color: var(--brass); }
+.search-form { max-width: 700px; margin-top: 2rem; }
+.search-form input { margin: 0; flex: 1; }
+'@
+Write-ThemeFile 'src/scss/components/_buttons.scss' @'
+.button-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.button { display: inline-flex; justify-content: space-between; align-items: center; gap: 1rem; max-width: 100%; padding: .9rem 1.2rem; border: 1px solid var(--periwinkle); background: var(--periwinkle); color: var(--night); text-decoration: none; font-size: .82rem; font-weight: 700; line-height: 1.5; transition: background .2s ease, transform .2s ease; }
+.button:hover { background: var(--ivory); transform: translateY(-2px); }
+.button-dark { background: var(--night); color: var(--ivory); border-color: var(--night); }
+.button-dark:hover { color: var(--night); }
+.text-link { display: inline-block; width: fit-content; max-width: 100%; font-weight: 700; font-size: .85rem; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: .2rem; transition: color .2s ease; }
+.text-link:hover { color: var(--brass); }
+@media (max-width: 650px) {
+  .button-row { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .button-row .button { width: 100%; }
+}
+'@
+Write-ThemeFile 'src/scss/components/_cards.scss' @'
+.arrangement-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.arrangement-grid article { padding: 2rem 2rem 0 0; min-width: 0; }
+.arrangement-grid article + article { padding-left: 2rem; border-left: 1px solid var(--line); }
+.arrangement-grid h3, .arrangement-grid h2 { margin-bottom: 1.2rem; }
+.arrangement-grid p { color: var(--muted); font-size: .94rem; }
+.large-number { display: block; color: var(--brass); font-family: var(--display); font-size: 4rem; line-height: 1; margin-bottom: 2rem; }
+@media (max-width: 760px) {
+  .arrangement-grid { grid-template-columns: minmax(0, 1fr); }
+  .arrangement-grid article, .arrangement-grid article + article { padding: 1.8rem 0; border-left: 0; border-bottom: 1px solid var(--line); }
+}
+'@
+Write-ThemeFile 'src/scss/components/_accordion.scss' @'
+details { border-bottom: 1px solid var(--line); padding: 1.2rem 0; }
+summary { font-weight: 700; line-height: 1.5; }
+details > p { margin-top: 1rem; color: var(--muted); }
+details[open] > summary { color: var(--periwinkle); }
+'@
+Write-ThemeFile 'src/scss/layout/_container.scss' @'
+.container { width: min(1240px, calc(100% - 96px)); margin-inline: auto; }
+.narrow { max-width: 800px; }
+.prose { max-width: 760px; }
+.prose h2 { margin-top: 2.2rem; margin-bottom: 1rem; font-size: 2.1rem; }
+.prose h1 { margin-bottom: 2rem; }
+.prose .button { margin-top: 2rem; }
+@media (max-width: 900px) { .container { width: calc(100% - 48px); } }
+@media (max-width: 650px) { .container { width: calc(100% - 36px); } }
+'@
+Write-ThemeFile 'src/scss/layout/_header.scss' @'
+.site-header { position: relative; z-index: 20; border-bottom: 1px solid var(--line); }
+.masthead { display: flex; min-height: 102px; align-items: center; justify-content: space-between; gap: 2rem; }
+.wordmark { text-decoration: none; font-family: var(--display); font-size: 2rem; line-height: 1; letter-spacing: -.025em; flex-shrink: 0; }
+.wordmark span { display: block; font: 700 .55rem/1 var(--body); letter-spacing: .24em; padding-top: 9px; }
+.site-navigation { display: flex; align-items: center; gap: clamp(1rem, 2vw, 1.8rem); }
+.site-navigation > a { font-size: .77rem; text-decoration: none; padding-block: .8rem; }
+.site-navigation > a:hover, .site-navigation > a[aria-current=\"page\"] { color: var(--periwinkle); }
+.nav-visit { border-bottom: 1px solid var(--brass); }
+.mobile-note { display: none; }
+.room-disclosure { padding: 0; border: 0; }
+.room-disclosure > summary { list-style: none; border: 1px solid var(--line); padding: .7rem; font-size: .75rem; }
+.room-disclosure > summary::-webkit-details-marker { display: none; }
+.room-panel { position: absolute; right: max(24px, calc((100% - 1240px) / 2)); top: calc(100% + 1px); width: 500px; max-width: calc(100vw - 48px); background: var(--panel); padding: 20px; border: 1px solid var(--line); display: grid; grid-template-columns: 140px 1fr; gap: 22px; box-shadow: 0 20px 40px #0006; }
+.room-panel img { width: 100%; height: 100%; object-fit: cover; }
+.room-panel h2 { font-size: 2rem; margin-bottom: .8rem; }
+.room-panel p, .room-panel a { font-size: .8rem; }
+.room-panel a { display: inline-block; margin-top: 1rem; color: var(--periwinkle); }
+.menu-toggle { background: transparent; border: 1px solid var(--line); width: 46px; height: 46px; display: none; align-items: center; justify-content: center; flex-shrink: 0; }
+.menu-lines, .menu-lines::after { display: block; width: 20px; height: 2px; background: var(--ivory); position: relative; transition: transform .2s; }
+.menu-lines::after { content: \"\"; position: absolute; top: 7px; }
+.menu-lines { transform: translateY(-3px); }
+.menu-toggle[aria-expanded=\"true\"] .menu-lines { transform: rotate(45deg); }
+.menu-toggle[aria-expanded=\"true\"] .menu-lines::after { top: 0; transform: rotate(-90deg); }
+@media (max-width: 1050px) {
+  .room-disclosure { display: none; }
+  .masthead { gap: 1.2rem; }
+  .site-navigation { gap: 1rem; }
+}
+@media (max-width: 850px) {
+  .masthead { min-height: 80px; flex-wrap: wrap; padding-block: 16px; gap: 0; }
+  .wordmark { font-size: 1.8rem; }
+  .wordmark span { font-size: .5rem; }
+  .menu-toggle:not([hidden]) { display: flex; }
+  .site-navigation { display: grid; grid-template-columns: 1fr 1fr; flex-basis: 100%; padding-top: 1.5rem; gap: 0 1rem; min-width: 0; }
+  .site-navigation > a { font-size: .95rem; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+  .site-navigation.nav-enhanced { display: none; }
+  .site-navigation.nav-enhanced.is-open { display: flex; flex-direction: column; align-items: stretch; }
+  .mobile-note { display: block; font-size: .8rem; color: var(--muted); margin: 1.5rem 0 .25rem; grid-column: 1 / -1; }
+}
+'@
+Write-ThemeFile 'src/scss/layout/_footer.scss' @'
+.site-footer { border-top: 1px solid var(--line); margin-top: 90px; }
+.footer-grid { display: grid; grid-template-columns: 1.25fr .7fr 1fr; gap: 70px; padding-block: 65px; }
+.footer-grid > div { min-width: 0; }
+.footer-brand { display: block; position: relative; width: fit-content; font-family: var(--display); font-size: clamp(4rem, 7vw, 6.5rem); line-height: .85; letter-spacing: -.03em; text-decoration: none; color: var(--periwinkle); }
+.footer-brand span { font: 3rem var(--body); position: absolute; top: 0; right: -55px; color: var(--brass); }
+.footer-signoff > p:last-child { font-size: .85rem; margin-top: 25px; color: var(--muted); }
+.footer-grid h2 { font-family: var(--body); font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin: .2rem 0 1.5rem; color: var(--brass); }
+.footer-grid p { font-size: .85rem; color: var(--muted); }
+.footer-nav { display: grid; gap: .55rem; }
+.footer-nav a { font-size: .85rem; text-decoration: none; }
+.footer-nav a:hover { color: var(--periwinkle); }
+.footer-grid .text-link { margin-top: 1.3rem; }
+.image-credits { font-size: .75rem; margin-top: 1.5rem; }
+.image-credits p { font-size: .73rem; }
+.footer-bottom { display: flex; justify-content: space-between; gap: 1.5rem; padding-block: 25px; border-top: 1px solid var(--line); color: var(--muted); font-size: .7rem; }
+.site-footer a { overflow-wrap: anywhere; }
+@media (max-width: 850px) {
+  .footer-grid { gap: 32px; grid-template-columns: 1fr 1fr; }
+  .footer-signoff { grid-column: 1 / -1; }
+}
+@media (max-width: 650px) {
+  .site-footer { margin-top: 54px; }
+  .footer-grid { grid-template-columns: minmax(0, 1fr); gap: 38px; padding-block: 42px; }
+  .footer-grid > div { grid-column: auto; max-width: 100%; }
+  .footer-brand { font-size: 4.5rem; }
+  .footer-brand span { right: -45px; font-size: 2.5rem; }
+  .footer-bottom { flex-direction: column; gap: .8rem; }
+}
+'@
+Write-ThemeFile 'src/scss/layout/_sections.scss' @'
+.section { padding-block: 80px; }
+.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; margin-bottom: 36px; }
+.section-heading > p { color: var(--muted); font-size: .85rem; }
+.page-intro { padding-block: 65px 55px; border-bottom: 1px solid var(--line); }
+.page-intro h1 { max-width: 900px; }
+.page-intro .lead { margin-top: 1.5rem; }
+.editorial-split, .archive-feature, .event-process { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 70px; align-items: center; }
+.editorial-split h2, .archive-feature h2, .event-process h2 { margin-bottom: 1.5rem; }
+.editorial-split p, .archive-feature p, .event-process p { color: var(--muted); }
+.editorial-photo { width: 100%; height: 510px; object-fit: cover; object-position: center 64%; }
+.archive-feature { padding-top: 50px; }
+.archive-feature img { width: 100%; height: 440px; object-fit: cover; }
+.archive-feature figcaption { padding-top: .75rem; }
+.archive-feature .button { margin-top: 1.5rem; }
+.journal-teaser { display: grid; grid-template-columns: 1fr 2fr; border-top: 1px solid var(--line); }
+.journal-teaser h2 { max-width: 680px; }
+.journal-teaser p { margin: 1.5rem 0; }
+@keyframes settle-in { from { transform: translateY(12px); } to { transform: translateY(0); } }
+.motion-in { animation: settle-in .65s ease-out both; }
+@media (max-width: 850px) {
+  .editorial-split, .archive-feature, .event-process { gap: 35px; }
+}
+@media (max-width: 650px) {
+  .section { padding-block: 48px; }
+  .section-heading { flex-direction: column; align-items: start; gap: 1rem; margin-bottom: 25px; }
+  .page-intro { padding-block: 38px; }
+  .editorial-split, .archive-feature, .event-process, .journal-teaser { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .editorial-photo, .archive-feature img { height: 300px; }
+  .editorial-split > *, .archive-feature > *, .event-process > * { min-width: 0; }
+}
+'@
+Write-ThemeFile 'src/scss/pages/_homepage.scss' @'
+.hero { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); gap: 0 54px; padding-top: 45px; }
+.hero-copy { align-self: center; padding-block: 20px 32px; min-width: 0; }
+.hero .eyebrow { display: flex; align-items: center; gap: 10px; }
+.signal { width: 7px; height: 7px; background: var(--brass); border-radius: 50%; flex-shrink: 0; }
+.hero h1 { font-family: var(--display); text-transform: uppercase; font-size: clamp(3.5rem, 5.7vw, 5.35rem); line-height: .99; letter-spacing: -.025em; max-width: 100%; }
+.hero h1 em { color: var(--periwinkle); font-style: normal; }
+.hero-description { max-width: 41ch; font-size: 1rem; color: var(--muted); margin-top: 1.5rem; }
+.hero .button-row { margin-top: 1.8rem; gap: 1.3rem; }
+.hero .microcopy { margin-top: 1.3rem; font-size: .65rem; }
+.hero-art { position: relative; height: 480px; min-width: 0; background: #060914; border: 1px solid var(--line); }
+.hero-photo { width: 100%; height: 100%; object-fit: cover; object-position: center 64%; }
+.photo-topline { position: absolute; top: 0; inset-inline: 0; display: flex; justify-content: space-between; gap: 1rem; padding: 19px; font-size: .55rem; letter-spacing: .12em; color: var(--ivory); background: #101525bb; }
+.record-stamp { position: absolute; top: 72px; right: 24px; border-radius: 50%; background: var(--periwinkle); color: var(--night); width: 126px; height: 126px; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 1.35rem/1 var(--display); text-align: center; transform: rotate(9deg); }
+.record-stamp span { font: 700 .45rem var(--body); margin-top: 8px; letter-spacing: .07em; }
+.hero-art figcaption { position: absolute; bottom: 0; inset-inline: 0; background: var(--periwinkle); color: var(--night); display: flex; align-items: end; justify-content: space-between; padding: 19px; gap: 1rem; }
+.hero-art figcaption > span:first-child { font: 1.65rem/.95 var(--display); letter-spacing: -.02em; }
+.hero-art figcaption > span:last-child { font-size: .5rem; letter-spacing: .1em; font-weight: 700; }
+.hero-foot { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 1rem; padding-block: 25px; margin-top: 32px; border-top: 1px solid var(--line); font-size: .6rem; letter-spacing: .12em; color: var(--muted); }
+.hero-foot > span:last-child { color: var(--brass); }
+.bill-section { background: var(--ivory); color: var(--night); padding-block: 60px; }
+.bill-section .eyebrow { color: #67532d; }
+.bill-section .section-heading > p, .bill-section .microcopy { color: #555568; }
+.ticket-row { display: grid; grid-template-columns: 78px minmax(0, 1fr) 125px 160px; gap: 30px; align-items: center; padding: 25px 0; border-top: 1px dashed #98958f; }
+.ticket-row:last-child { border-bottom: 1px dashed #98958f; }
+.date-badge { display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--night); color: var(--ivory); padding: 9px; font-size: .6rem; line-height: 1.4; letter-spacing: .12em; }
+.date-badge strong { font: 2.4rem/1.15 var(--display); }
+.ticket-title .eyebrow { margin-bottom: .5rem; font-size: .6rem; }
+.ticket-title h3 { font-size: clamp(1.2rem, 2vw, 1.9rem); }
+.set-times { font-size: .8rem; font-weight: 700; }
+.set-times span { display: block; font-size: .65rem; font-weight: 400; margin-top: 5px; }
+.ticket-row .text-link { font-size: .72rem; }
+.bill-section .text-link:hover { color: #625126; }
+.room-story { display: grid; grid-template-columns: .85fr 1fr; gap: 90px; align-items: center; }
+.story-photo { position: relative; padding: 20px 20px 0 0; }
+.story-photo::before { content: \"\"; border: 1px solid var(--brass); position: absolute; inset: 0 0 40px 20px; z-index: -1; }
+.story-photo img { width: 100%; height: 410px; object-fit: cover; }
+.story-photo figcaption { margin-top: 12px; font-size: .65rem; }
+.story-copy h2 { margin-bottom: 1.5rem; }
+.story-copy > p:not(.eyebrow) { color: var(--muted); }
+.story-copy .text-link { margin-top: 1.5rem; }
+.visit-notes { border-top: 1px solid var(--line); }
+.visit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+.visit-grid > div > .text-link { margin-top: 1.8rem; }
+.visit-list article { display: flex; gap: 24px; padding-block: 23px; border-top: 1px solid var(--line); }
+.visit-list article:first-child { padding-top: 0; border: 0; }
+.visit-list article > span { font-size: .7rem; color: var(--brass); margin-top: 6px; }
+.visit-list h3 { font-size: 1.1rem; margin-bottom: .6rem; }
+.visit-list p { color: var(--muted); font-size: .88rem; }
+.private-invite { padding: 42px 48px; background: var(--periwinkle); color: var(--night); position: relative; }
+.private-invite::before, .private-invite::after { content: \"\"; width: 22px; height: 22px; border-radius: 50%; background: var(--night); position: absolute; top: calc(50% - 11px); }
+.private-invite::before { left: -11px; }
+.private-invite::after { right: -11px; }
+.private-invite .eyebrow { color: var(--night); }
+.private-invite > div { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+.private-invite h2 { font-size: clamp(2.7rem, 5vw, 4.5rem); }
+.private-invite > p:last-child { font-size: .88rem; margin-top: 1.3rem; }
+@media (max-width: 1050px) {
+  .hero { gap: 0 32px; }
+  .hero h1 { font-size: clamp(3rem, 5.6vw, 5rem); }
+  .hero-art { height: 440px; }
+  .hero .button-row { gap: 1rem; }
+  .ticket-row { grid-template-columns: 68px minmax(0, 1fr) 110px; gap: 22px; }
+  .ticket-row > .text-link { grid-column: 2 / -1; }
+  .room-story, .visit-grid { gap: 45px; }
+}
+@media (max-width: 650px) {
+  .hero { display: flex; flex-direction: column; gap: 0; padding-top: 22px; }
+  .hero-copy { padding: 0 0 25px; width: 100%; }
+  .hero .eyebrow { font-size: .58rem; letter-spacing: .1em; margin-bottom: 14px; flex-wrap: wrap; }
+  .hero h1 { font-size: clamp(2.6rem, 10.8vw, 3.5rem); max-width: 100%; line-height: 1.01; white-space: normal; overflow-wrap: anywhere; }
+  .hero-description { font-size: .91rem; margin-top: 14px; max-width: 100%; line-height: 1.55; }
+  .hero .button-row { flex-direction: column; align-items: stretch; gap: 10px; margin-top: 18px; }
+  .hero .button { padding-block: 11px; }
+  .hero .text-link { font-size: .8rem; }
+  .hero .microcopy { margin-top: 12px; font-size: .6rem; max-width: 100%; }
+  .hero-art { width: 100%; height: 232px; }
+  .hero-photo { object-position: center 61%; }
+  .photo-topline { font-size: .45rem; padding: 10px 12px; }
+  .record-stamp { width: 78px; height: 78px; font-size: .9rem; top: 44px; right: 15px; }
+  .record-stamp span { font-size: .31rem; margin-top: 4px; }
+  .hero-art figcaption { padding: 10px 12px; }
+  .hero-art figcaption > span:first-child { font-size: 1.15rem; }
+  .hero-art figcaption > span:last-child { font-size: .4rem; }
+  .hero-foot { margin-top: 20px; padding-block: 17px; font-size: .48rem; flex-wrap: wrap; line-height: 1.7; }
+  .bill-section { padding-block: 40px; }
+  .ticket-row { grid-template-columns: 58px minmax(0, 1fr); gap: 12px 18px; padding-block: 20px; }
+  .ticket-title h3 { font-size: 1.2rem; }
+  .date-badge { grid-row: span 2; }
+  .set-times { grid-column: 2; }
+  .set-times span { display: inline; margin-left: .5rem; }
+  .ticket-row > .text-link { grid-column: 2; }
+  .room-story, .visit-grid { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+  .story-photo img { height: 300px; }
+  .private-invite { padding: 30px 24px; }
+  .private-invite > div { flex-direction: column; align-items: stretch; gap: 20px; }
+  .private-invite h2 { font-size: 2.65rem; }
+  .private-invite br { display: none; }
+}
+'@
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 90ms:
+**Checking elapsed time**
+codex
+The layout now uses piano photography, ticket-style lineup rows, and a poster-inspired type system. The mobile styles explicitly constrain the hero, stack its controls, move navigation behind a hamburger, and reduce the footer to one column. I’m finishing the interaction code and documentation cleanup before building.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$themeRoot = (Get-Location).ProviderPath
+if ($themeRoot -ne '"'C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\011_nolan_young_theme_blue_hour') { throw 'Unexpected theme directory' }
+function Write-ThemeFile([string]"'$relative, [string]$content) {
+ $destination = [IO.Path]::GetFullPath((Join-Path $themeRoot $relative))
+ if (-not $destination.StartsWith($themeRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '"'Out of scope destination' }
+ [IO.File]::WriteAllText("'$destination, $content + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+}
+
+Write-ThemeFile '"'src/scss/pages/_about-us.scss' @'
+.listening-values { background: var(--panel); }
+.room-manifesto { padding-block: 80px; max-width: 900px; text-align: center; }
+.manifesto-text { font-family: var(--display); font-size: clamp(2.5rem, 4.6vw, 4.2rem); line-height: 1.1; color: var(--periwinkle); }
+.room-manifesto > p:last-child { font-size: .7rem; color: var(--muted); margin: 24px auto 0; }
+@media (max-width: 650px) { .room-manifesto { padding-block: 48px; } }
+'@
+Write-ThemeFile 'src/scss/pages/_services.scss' @'
+.session-feature { display: grid; grid-template-columns: 1fr 1fr; gap: 65px; align-items: center; padding-block: 55px; border-bottom: 1px solid var(--line); }
+.session-image { position: relative; }
+.session-image img { width: 100%; height: 350px; object-fit: cover; object-position: center 65%; }
+.session-image > span { position: absolute; bottom: 0; left: 0; padding: 12px 20px; color: var(--night); background: var(--periwinkle); font-weight: 700; font-size: .7rem; letter-spacing: .15em; }
+.session-feature h2 { margin-bottom: 1.5rem; }
+.session-feature .text-link, .session-feature .button { margin-top: 1.5rem; }
+.session-feature p { color: var(--muted); }
+.session-private { background: var(--panel); padding-inline: 35px; margin-top: 35px; border: 1px solid var(--line); }
+.session-private .eyebrow { color: var(--brass); }
+.event-process img { width: 100%; height: 380px; object-fit: cover; object-position: center 65%; }
+.event-process ol { padding-left: 1.2rem; color: var(--muted); }
+.event-process li { padding: .5rem 0 .5rem .5rem; }
+.event-process .text-link { margin-top: 1.5rem; }
+.narrow > h2 { margin-bottom: 1.5rem; }
+.narrow > .text-link { margin-top: 1.5rem; }
+@media (max-width: 650px) {
+  .session-feature { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-block: 35px; }
+  .session-feature > * { min-width: 0; }
+  .session-image img, .event-process img { height: 260px; }
+  .session-private { padding: 25px; }
+}
+'@
+Write-ThemeFile 'src/scss/pages/_work.scss' @'
+.poster-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.gig-poster { background: var(--periwinkle); color: var(--night); padding: 26px; display: flex; flex-direction: column; align-items: start; min-width: 0; }
+.gig-poster:nth-child(2) { background: var(--brass); }
+.gig-poster:nth-child(3) { background: var(--ivory); }
+.gig-poster > p:first-child, .gig-poster > span { font-size: .62rem; letter-spacing: .12em; font-weight: 700; }
+.gig-poster h3 { font: clamp(2.5rem, 4.5vw, 4rem)/.97 var(--display); text-transform: uppercase; margin-block: 35px; }
+.gig-poster h3 + p { font-size: .86rem; padding-bottom: 28px; }
+.gig-poster > span { margin-top: auto; border-top: 1px dashed currentColor; width: 100%; padding-top: 18px; }
+@media (max-width: 760px) { .poster-grid { grid-template-columns: minmax(0, 1fr); } .gig-poster h3 { font-size: 3.5rem; } }
+'@
+Write-ThemeFile 'src/scss/pages/_blog.scss' @'
+.journal-index { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 35px; padding-block: 30px; border-bottom: 1px solid var(--line); }
+.journal-index .eyebrow { margin: 0; }
+.journal-index a { font-size: .8rem; }
+.journal-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 80px; padding-block: 50px; }
+.journal-layout aside img { width: 100%; height: 480px; object-fit: cover; object-position: center 65%; }
+.journal-entry { padding-bottom: 50px; margin-bottom: 45px; border-bottom: 1px solid var(--line); scroll-margin-top: 35px; }
+.journal-entry:last-child { margin-bottom: 0; }
+.journal-entry h2 { margin-bottom: 1.5rem; }
+.journal-entry > p:not(.eyebrow) { color: var(--muted); }
+.journal-outro { padding-bottom: 25px; }
+.search-result { border-bottom: 1px solid var(--line); padding-block: 30px; }
+.search-result h2 { margin-bottom: 1rem; font-size: 2.4rem; }
+.search-result h2 a { text-decoration: none; }
+@media (max-width: 760px) {
+  .journal-layout { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-block: 35px; }
+  .journal-layout aside img { height: 250px; }
+  .journal-index { display: grid; gap: 14px; }
+}
+'@
+Write-ThemeFile 'src/scss/pages/_contact.scss' @'
+.contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 85px; align-items: start; }
+.visit-facts { margin: 30px 0; }
+.visit-facts dt { border-top: 1px solid var(--line); padding-top: 20px; color: var(--brass); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.visit-facts dd { margin: 10px 0 20px; color: var(--muted); font-size: .92rem; }
+.contact-grid > div > .text-link { margin-top: 2rem; }
+@media (max-width: 850px) { .contact-grid { gap: 35px; } }
+@media (max-width: 650px) { .contact-grid { grid-template-columns: minmax(0, 1fr); } }
+'@
+Write-ThemeFile 'src/scss/pages/_policy.scss' @'
+.prose p { color: var(--muted); }
+.prose > h2:first-child { margin-top: 0; }
+.prose ul, .prose ol { padding-left: 1.5rem; }
+.error-page { padding-block: 100px; }
+.error-page > p:not(.eyebrow) { margin-block: 25px; color: var(--muted); }
+@media (max-width: 650px) { .error-page { padding-block: 50px; } }
+'@
+Write-ThemeFile 'src/js/main.js' @'
+import '../scss/main.scss';
+
+const toggle = document.querySelector('.menu-toggle');
+const navigation = document.querySelector('#site-navigation');
+const mobile = window.matchMedia('(max-width: 850px)');
+if (toggle && navigation) {
+  toggle.hidden = false;
+  navigation.classList.add('nav-enhanced');
+  const closeMenu = (returnFocus = false) => {
+    navigation.classList.remove('is-open');
+    toggle.setAttribute('aria-expanded', 'false');
+    if (returnFocus) toggle.focus();
+  };
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') "'!== '"'true';
+    toggle.setAttribute('aria-expanded', String(open));
+    navigation.classList.toggle('is-open', open);
+  });
+  navigation.addEventListener('click', (event) => {
+    if (event.target.closest('a')) closeMenu();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') closeMenu(true);
+  });
+  document.addEventListener('click', (event) => {
+    if ("'!event.target.closest('"'.site-header')) closeMenu();
+  });
+  document.addEventListener('focusin', (event) => {
+    if ("'!event.target.closest('"'.site-header')) closeMenu();
+  });
+  mobile.addEventListener('change', () => closeMenu());
+}
+
+const roomNote = document.querySelector('.room-disclosure');
+if (roomNote) {
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && roomNote.open) {
+      roomNote.open = false;
+      roomNote.querySelector('summary').focus();
+    }
+  });
+  document.addEventListener('click', (event) => {
+    if ("'!roomNote.contains(event.target)) roomNote.open = false;
+  });
+  document.addEventListener('"'focusin', (event) => {
+    if ("'!roomNote.contains(event.target)) roomNote.open = false;
+  });
+}
+
+const normalizePath = (path) => path.replace(/'"\\/+"'$/, '"'') || '/';
+document.querySelectorAll('.site-navigation a').forEach((link) => {
+  if (normalizePath(new URL(link.href).pathname) === normalizePath(window.location.pathname)) {
+    link.setAttribute('aria-current', 'page');
+  }
+});
+
+document.querySelectorAll('[data-demo-form]').forEach((form) => {
+  const preview = () => {
+    if ("'!form.reportValidity()) return;
+    form.querySelector('"'[data-form-status]').textContent =
+      'Your sample inquiry is complete. This is only a preview: nothing was sent, stored, or booked.';
+  };
+  form.addEventListener('submit', (event) => { event.preventDefault(); preview(); });
+  form.querySelector('[data-demo-submit]').addEventListener('click', preview);
+});
+
+const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+if ('IntersectionObserver' in window && "'!motionPreference.matches) {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        if (!motionPreference.matches) entry.target.classList.add('"'motion-in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.ticket-row, .story-copy, .gig-poster, .session-feature').forEach((element) => observer.observe(element));
+}
+'@
+"'$unusedScss = @('"'abstracts/_mixins.scss','abstracts/_functions.scss','base/_newsletter.scss','components/_forms.scss','components/_badges.scss','components/_carousel.scss','components/_portfolio-filter.scss','components/_before-after.scss','layout/_grid.scss')
+foreach ("'$partial in $unusedScss) {
+ Write-ThemeFile ("src/scss/" + $partial) '"'// Blue Hour: shared presentation lives in the focused modules imported by main.scss.'
+}
+Write-ThemeFile 'README.md' @'
+# Blue Hour
+
+A fictional jazz listening room with a five-section poster homepage, piano photography, a weekly sample bill, and a listening-first editorial voice. All programs, event dates, times, and capacity examples are demo content. No real venue or ticket availability is represented.
+
+## Build
+
+Run "'`npm run build` from this theme to compile local SCSS and JavaScript using the prepared dependencies. No remote fonts, trackers, or runtime libraries are added. The prepared theme metadata and package identity are retained.
+
+## Pages
+
+Create ordinary WordPress pages with these paths. Their standard slug templates select the complete sample compositions automatically; the named page templates can also be selected in the editor.
+
+- Home: / — front-page.php
+- The room: /about/
+- The sessions: /services/
+- Past notes: /work/
+- Listening journal: /blog/
+- Visit and inquire: /contact/
+- Privacy and demo details: /privacy-policy/
+- Private listening event: /services/featured/ — create Featured as a child of Services
+
+The journal includes three complete sample essays. WordPress posts still have standard single, archive, and search templates. No custom post types, taxonomies, URL rewrites, or automatic database writes are used.
+
+## Demo form
+
+The sample inquiry only checks completeness in the browser. It sends no email, stores nothing, and books nothing. Use sample data only. Buttons clearly describe the preview. Without JavaScript the notice remains visible and the form cannot submit.
+
+## Photography
+
+Only the two local photographs in assets/images/asset-manifest.json are used. Joshua Hoehne supplied the hero piano photograph; Johannes Plenio supplied the detail piano photograph, both via Unsplash under the recorded Unsplash License. These are illustrative stock, not images of a Blue Hour venue or actual programs. Public credits are in the footer.
+
+## Accessibility
+
+Navigation is keyboard operable, with Escape close and accurate expanded state. Without JavaScript, mobile navigation remains expanded and readable. Native details provide FAQs. Content stays visible before animation and with scripts disabled. Reduced motion disables transitions and entrance motion. Responsive rules explicitly cover 390px layouts; visual verification belongs to the separate evaluation workflow.
+'"'@
+Write-ThemeFile 'CHANGELOG.md' @'
+# Blue Hour changelog
+
+## 1.0.0
+
+- Created a listening-room visual system in midnight, periwinkle, ivory, and brass.
+- Composed a five-section homepage with a piano poster, weekly bill, room story, visit notes, and private invitation.
+- Added complete room, sessions, archive, journal, contact, private-event, and privacy sample pages.
+- Replaced copied illustration usage with the approved local piano photographs and public credits.
+- Added compact accessible navigation, native FAQs, local-only form preview, and reduced-motion-aware animation.
+- Preserved the prepared build command and theme metadata.
+'@
+Write-ThemeFile 'docs/getting-started.md' @'
+# Getting started with Blue Hour
+
+Activate the theme, create the pages listed in README.md, and assign the home page under WordPress Reading settings if using a static front page. Use the exact page slugs so the standard page templates resolve. The Featured page belongs under Services.
+
+Run "'`npm run build` after source changes. Compiled bundles live in assets/css and assets/js. All runtime resources are local.
+
+This is a fictional demonstration: do not publish the sample dates as real programming. The inquiry form has no server handler, delivery, persistence, payment, or reservation behavior.
+'"'@
+Write-ThemeFile 'docs/customization.md' @'
+# Blue Hour customization
+
+The homepage composition is defined in front-page.php with five focused template parts. Sample lineup data and presentation helpers live in inc/helpers.php. Inner-page copy lives in page-templates; page-slug wrappers use normal WordPress template selection.
+
+Colors are defined in src/scss/abstracts/_variables.scss and mirrored in theme.json. Typography uses installed system fonts. Header, footer, homepage, and inner-page styles each have focused modules. Edit source SCSS, then run "'`npm run build`.
+
+Only the two approved local piano photographs may be used in this generation. Keep their manifest provenance and the footer credits. Photography is illustrative. Do not imply real performances, facilities, ticket availability, or venue capacity.
+
+The contact form is intentionally a local demo. An actual booking system would require a separately configured provider and operator-specific privacy information.
+'"'@
+Write-ThemeFile 'accessibility/README.md' @'
+# Blue Hour accessibility notes
+
+- A visible-on-focus skip link targets the main content.
+- The mobile menu uses a named button, aria-controls, and accurate aria-expanded state. Escape closes it and returns focus. It is an inline disclosure, so it does not trap focus.
+- All navigation links remain available when JavaScript is disabled.
+- The desktop listening note and FAQs use native details/summary.
+- Inquiry fields have visible, associated labels. Required fields use browser validation; a live status explicitly says that nothing was sent, stored, or booked.
+- Entrance motion only translates content already visible. Reduced-motion preferences disable animation and transitions.
+- Mobile typography, grids, controls, and footer columns have explicit small-screen rules. No remote fonts or autoplay media are used.
+- Stock photographs have descriptive alternatives; decorative CSS marks do not add spoken noise.
+
+These are implementation notes, not a claim of formal accessibility certification. Browser, keyboard, zoom, and assistive-technology evaluation should accompany deployment.
+'@
+Write-ThemeFile 'assets/icons/README.md' @'
+# Blue Hour interface marks
+
+mark-1.svg and mark-2.svg are approved local decorative interface assets recorded in the image manifest. They are optional small supporting marks, never substitutes for piano photography. The active interface uses a CSS hamburger and lightweight typographic symbols. Decorative marks must be hidden from assistive technology when adjacent text supplies their meaning.
+'@
+Write-ThemeFile 'blocks/README.md' @'
+# Blue Hour blocks
+
+This classic theme supports ordinary WordPress page and post content. No custom blocks or content types are registered. Named page templates provide the complete fictional listening-room sample.
+'@
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 85ms:
+**Checking the file list**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "rg -n -i 'northstar|nolan designs|nolan.young.template|website|software|#2563eb|#1d4ed8|#14b8a6|#f97316|work-roadmap|business-solution|service-development' --glob '"'!node_modules/**'"' --glob '"'!package-lock.json'"' --glob '"'!assets/css/bundle.css'"' --glob '"'!assets/js/bundle.js'"' --glob '"'!.theme*'"'; Get-Command php,node,npm -ErrorAction SilentlyContinue | Select-Object Name,Source; Get-Content .theme-template-source,.theme-factory-run.json -TotalCount 25" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 129ms:
+
+Name     Source
+----     ------
+php.exe  C:\Program Files\PHP\current\php.exe
+node.exe C:\Program Files\nodejs\node.exe
+npm.ps1  C:\Program Files\nodejs\npm.ps1
+template=NOLAN-YOUNG-theme-000
+prepared_slug=000_nolan_young_theme_master_template_prompt_filler_template_1
+
+{
+  "themeSlug": "011_nolan_young_theme_blue_hour",
+  "prompt": "prompts\\pending\\011-blue-hour.md",
+  "templateSource": "wp-content\\themes\\000_nolan_young_theme_master_template_prompt_filler_template_1",
+  "preparedAt": "2026-10-03T19:43:17.496Z"
+}
+
+
+**Checking template content**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Content 403.php,assets/images/hero/northstar-hero.svg,assets/icons/icon1.svg -TotalCount 7; rg --files --hidden -g '"'!node_modules/**'"' -g '"'!.git/**'"' -g '"'!.theme*'"'; Get-Content .gitignore" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 125ms:
+<?php get_header(); ?><main id="primary" class="site-main"><section class="section"><div class="container narrow"><h1><?php esc_html_e( 'Access restricted', 'nolan-young-template' ); ?></h1><p><?php esc_html_e( 'This area is not available from the current request. Use the main navigation or contact Northstar Websites if you expected to reach a project resource.', 'nolan-young-template' ); ?></p><a class="btn btn-primary" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>"><?php esc_html_e( 'Contact Us', 'nolan-young-template' ); ?></a></div></section></main><?php get_footer(); ?>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img" aria-label="Layered website planning interface"><rect width="900" height="650" rx="36" fill="#f4f7fb"/><rect x="80" y="80" width="740" height="490" rx="28" fill="#fff" stroke="#e2e8f0"/><rect x="120" y="130" width="300" height="34" rx="17" fill="#2563eb"/><rect x="120" y="190" width="520" height="18" rx="9" fill="#cbd5e1"/><rect x="120" y="225" width="460" height="18" rx="9" fill="#e2e8f0"/><rect x="120" y="300" width="190" height="150" rx="18" fill="#dbeafe"/><rect x="350" y="300" width="190" height="150" rx="18" fill="#ccfbf1"/><rect x="580" y="300" width="190" height="150" rx="18" fill="#ffedd5"/><path d="M710 105l18 54 56 20-56 20-18 54-18-54-56-20 56-20 18-54z" fill="#14b8a6"/></svg>
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Northstar Websites compass mark"><rect width="64" height="64" rx="14" fill="#2563eb"/><path d="M32 8l5.8 17.4L56 32l-18.2 6.6L32 56l-5.8-17.4L8 32l18.2-6.6L32 8z" fill="#fff"/><circle cx="32" cy="32" r="6" fill="#14b8a6"/></svg>
+
+theme.json
+accessibility\README.md
+404.php
+403.php
+.gitignore
+.editorconfig
+package.json
+package-lock.json
+LICENSE.txt
+index.php
+template-parts\content-testimonials.php
+template-parts\content-style-pillars.php
+template-parts\content-single.php
+template-parts\content-single-service-highlight.php
+template-parts\content-search.php
+template-parts\content-process.php
+template-parts\content-policy.php
+template-parts\content-page.php
+template-parts\content-none.php
+template-parts\content-hero.php
+template-parts\content-footer-widgets.php
+template-parts\content-featured-work.php
+template-parts\content-cta-banner.php
+template-parts\content-brand-statement.php
+template-parts\content-blog-preview.php
+template-parts\content-all-services.php
+style.css
+inc\template-tags.php
+inc\setup.php
+inc\policy-routing.php
+inc\newsletter.php
+inc\helpers.php
+inc\forms.php
+inc\enqueue.php
+inc\customizer.php
+inc\custom-post-types.php
+home.php
+header.php
+functions.php
+front-page.php
+footer.php
+docs\getting-started.md
+docs\customization.md
+comments.php
+CHANGELOG.md
+build\webpack.config.js
+src\scss\pages\_work.scss
+src\scss\pages\_services.scss
+src\scss\pages\_policy.scss
+src\scss\pages\_homepage.scss
+src\scss\pages\_contact.scss
+src\scss\pages\_blog.scss
+src\scss\pages\_about-us.scss
+src\scss\main.scss
+blocks\README.md
+page.php
+page-featured.php
+page-work.php
+page-contact.php
+page-blog.php
+page-about.php
+page-privacy-policy.php
+page-services.php
+single.php
+searchform.php
+search.php
+screenshot.png
+README.md
+src\scss\layout\_sections.scss
+src\scss\layout\_header.scss
+src\scss\layout\_grid.scss
+src\scss\layout\_footer.scss
+src\scss\layout\_container.scss
+assets\js\bundle.js
+src\scss\components\_before-after.scss
+src\scss\components\_badges.scss
+src\scss\components\_buttons.scss
+src\scss\components\_accordion.scss
+src\scss\components\_cards.scss
+src\scss\components\_carousel.scss
+page-templates\template-about-us.php
+archive.php
+src\scss\abstracts\_functions.scss
+src\scss\components\_forms.scss
+src\scss\components\_portfolio-filter.scss
+src\scss\abstracts\_mixins.scss
+page-templates\template-blog.php
+src\scss\abstracts\_variables.scss
+page-templates\template-contact.php
+page-templates\template-policy.php
+page-templates\template-work.php
+page-templates\template-single-service.php
+page-templates\template-services.php
+assets\images\asset-manifest.json
+src\js\main.js
+src\scss\base\_accessibility.scss
+src\scss\base\_typography.scss
+src\scss\base\_reset.scss
+src\scss\base\_newsletter.scss
+src\scss\base\_forms.scss
+assets\css\bundle.css
+assets\images\texture\.gitkeep
+assets\images\texture\subtle-grid.svg
+assets\images\hero\northstar-hero.svg
+assets\images\hero\editorial-hero.jpg
+assets\images\hero\case-study.svg
+assets\images\hero\business-solution.svg
+assets\images\hero\about-values.svg
+assets\images\hero\about-collaboration.svg
+assets\images\hero\about-approach.svg
+assets\images\hero\.gitkeep
+assets\images\portfolio\.gitkeep
+assets\images\portfolio\work-theme.svg
+assets\images\portfolio\work-roadmap.svg
+assets\images\portfolio\work-results.svg
+assets\images\portfolio\work-redesign.svg
+assets\images\portfolio\work-inquiry.svg
+assets\images\portfolio\work-care.svg
+assets\images\portfolio\service-support.svg
+assets\images\portfolio\service-strategy.svg
+assets\images\portfolio\service-results.svg
+assets\images\portfolio\service-integration.svg
+assets\images\portfolio\service-development.svg
+assets\images\portfolio\service-design.svg
+assets\images\portfolio\editorial-detail.jpg
+assets\images\portfolio\article-structure.svg
+assets\images\portfolio\article-review.svg
+assets\images\portfolio\article-launch.svg
+assets\images\portfolio\article-brief.svg
+assets\icons\README.md
+assets\icons\mark-2.svg
+assets\icons\mark-1.svg
+assets\icons\icon1.svg
+node_modules/
+*.log
+*.map
+
+
+**Checking existing SVG assets**
+**Inspecting scaffold strings**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '
+$themeRoot = (Get-Location).ProviderPath
+if ($themeRoot -ne '"'C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\011_nolan_young_theme_blue_hour') { throw 'Unexpected directory' }
+"'$obsolete = @(Get-ChildItem -LiteralPath (Join-Path $themeRoot '"'assets/images/hero'),(Join-Path "'$themeRoot '"'assets/images/portfolio'),(Join-Path "'$themeRoot '"'assets/images/texture') -File -Filter '*.svg' | Select-Object -ExpandProperty FullName)
+"'$obsolete += (Join-Path $themeRoot '"'assets/icons/icon1.svg')
+"'$obsolete += (Join-Path $themeRoot '"'403.php')
+foreach ("'$item in $obsolete) {
+ $destination = [IO.Path]::GetFullPath($item)
+ if (-not $destination.StartsWith($themeRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw '"'Out of scope cleanup' }
+ if (Test-Path -LiteralPath "'$destination) { Remove-Item -LiteralPath $destination -Force }
+}
+Write-Output ("Removed " + $obsolete.Count + " obsolete starter files.")
+rg --no-ignore --hidden -n -i '"'northstar|nolan designs|nolan.young.template|software|#2563eb|#1d4ed8|#14b8a6|#f97316|work-roadmap|business-solution|service-development' . -g '"'!node_modules/**'"' -g '"'!.git/**'"' -g '"'!package-lock.json'"' -g '"'!assets/css/bundle.css'"' -g '"'!assets/js/bundle.js'"' -g '"'!.theme*'"'
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+2026-10-03T19:59:43.785648Z  WARN codex_core::guardian::review_session: failed to refresh guardian trunk rollout snapshot: Session persistence is disabled; cannot guardian review fork.
+ exited 1 in 176ms:
+Removed 25 obsolete starter files.
+
+**Checking source consistency**
+**Checking function references**
+**Reviewing interaction details**
+**Removing the inline handler**
+**Running syntax checks**
+codex
+The source cleanup is complete: the old illustrations and unsupported `403.php` are removed, and the brand and palette search found no stale matches. I’ll now build the bundles and run read-only PHP and source checks. Per the single-pass rule, any failure will be reported without a repair pass.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command '$files = Get-ChildItem -Path . -Filter '"'*.php' -Recurse -File | Where-Object { "'$_.FullName -notmatch '"'\\\\node_modules\\\\' }; "'$failed = @(); foreach ($file in $files) { $result = & php -l $file.FullName 2>&1; if ($LASTEXITCODE -ne 0) { $failed += $result } }; if ($failed.Count) { $failed; exit 1 }; Write-Output ('"'PHP syntax checks passed: ' + "'$files.Count + '"' files.'); rg --no-ignore -n 'register_post_type\\s*\\(|register_taxonomy\\s*\\(' . -g '*.php' -g '"'!node_modules/**'"'; if ("'$LASTEXITCODE -eq 1) { Write-Output '"'No custom post type or taxonomy registrations.'; exit 0 }" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command 'npm run build' in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 2687ms:
+PHP syntax checks passed: 52 files.
+No custom post type or taxonomy registrations.
+
+ succeeded in 8596ms:
+
+> 011-nolan-young-theme-blue-hour@1.0.0 build
+> webpack --config build/webpack.config.js --mode production
+
+asset ../css/bundle.css 21.3 KiB [emitted] (name: main)
+asset bundle.js 2.04 KiB [emitted] [minimized] (name: main)
+Entrypoint main 23.3 KiB = ../css/bundle.css 21.3 KiB bundle.js 2.04 KiB
+orphan modules 24 KiB (javascript) 937 bytes (runtime) [orphan] 8 modules
+cacheable modules 3.04 KiB (javascript) 21.3 KiB (css/mini-extract)
+  ./src/js/main.js 3.04 KiB [built] [code generated]
+  css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/scss/main.scss 21.3 KiB [built] [code generated]
+webpack 5.107.2 compiled successfully in 1855 ms
+
+**Checking symbol references**
+**Validating source references**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "
+rg --no-ignore --hidden -n -i 'northstar|nolan designs|nolan.young.template|#2563eb|#1d4ed8|#14b8a6|#f97316|website brief|website strategy|service businesses|conversion path|care and support|business-solution\\.svg|work-roadmap\\.svg|northstar-hero\\.svg' . -g '"'!node_modules/**'"' -g '"'!.git/**'"' -g '"'!package-lock.json'"' -g '"'!.theme*'"'
+if ("'$LASTEXITCODE -eq 1) { Write-Output '"'Final source, documentation, SVG, and compiled-bundle identity/palette audit: clean.' }
+@'
+const fs = require('fs');
+const path = require('path');
+const root = process.cwd();
+const files = [];
+function walk(dir) {
+  for (const item of fs.readdirSync(dir, {withFileTypes:true})) {
+    if (item.name === 'node_modules' || item.name === '.git') continue;
+    const full = path.join(dir,item.name);
+    if (item.isDirectory()) walk(full);
+    else files.push(full);
+  }
+}
+walk(root);
+const phpFiles = files.filter(f=>f.endsWith('.php'));
+const source = phpFiles.map(f=>fs.readFileSync(f,'utf8')).join('\\n');
+const definitions = new Set([...source.matchAll(/function\\s+(blue_hour_\\w+)\\s*\\(/g)].map(m=>m[1]));
+const calls = new Set([...source.matchAll(/\\b(blue_hour_\\w+)\\s*\\(/g)].map(m=>m[1]));
+const missing = [...calls].filter(name=>"'!definitions.has(name));
+if(missing.length) throw new Error('"'Missing functions: '+missing.join(', '));
+const assets = JSON.parse(fs.readFileSync('assets/images/asset-manifest.json','utf8')).assets;
+for(const asset of assets) {
+  if("'!fs.existsSync(path.join(root,asset.file))) throw new Error('"'Missing approved asset '+asset.file);
+}
+const parts = [...source.matchAll(/get_template_part\\(\\s*'template-parts\\/content',\\s*'(["'^'"']+)'\\s*\\)/g)];
+for(const match of parts) {
+  if("'!fs.existsSync(path.join(root,'"'template-parts','content-'+match[1]+'.php'))) throw new Error('Missing template part '+match[1]);
+}
+const front = fs.readFileSync('front-page.php','utf8');
+console.log('Resolved '+definitions.size+' Blue Hour function definitions, '+parts.length+' template-part references, and '+assets.length+' approved assets.');
+console.log('Homepage section count: '+[...front.matchAll(/get_template_part/g)].length+'.');
+console.log('Prepared package: '+JSON.parse(fs.readFileSync('package.json','utf8')).name);
+console.log('Compiled CSS: '+fs.statSync('assets/css/bundle.css').size+' bytes; compiled JS: '+fs.statSync('assets/js/bundle.js').size+' bytes.');
+'@ | node
+" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\011_nolan_young_theme_blue_hour
+ succeeded in 172ms:
+Final source, documentation, SVG, and compiled-bundle identity/palette audit: clean.
+Resolved 9 Blue Hour function definitions, 21 template-part references, and 4 approved assets.
+Homepage section count: 5.
+Prepared package: 011-nolan-young-theme-blue-hour
+Compiled CSS: 21763 bytes; compiled JS: 2094 bytes.
+
+codex
+Implemented Blue Hour’s single-pass transformation: five-section homepage, all requested page templates, responsive navigation, local photography, demo inquiry form, and updated documentation.
+
+Checks passed:
+
+- `npm run build`
+- PHP syntax checks for 52 files
+- Helper, template-part, and approved-asset checks
+- Stale identity and palette audit
+
+All edits stayed inside the prepared theme. No previews, ZIPs, or reports were created; browser visual verification remains unperformed.
+tokens used
+96,890
+Implemented Blue Hour’s single-pass transformation: five-section homepage, all requested page templates, responsive navigation, local photography, demo inquiry form, and updated documentation.
+
+Checks passed:
+
+- `npm run build`
+- PHP syntax checks for 52 files
+- Helper, template-part, and approved-asset checks
+- Stale identity and palette audit
+
+All edits stayed inside the prepared theme. No previews, ZIPs, or reports were created; browser visual verification remains unperformed.

@@ -1,0 +1,1 @@
+<section class="container prose section"><p class="eyebrow">A quiet moment</p><h2>No notes here just yet.</h2><p>There is still plenty to explore in the room. Start with the listening journal or find your way home.</p><div class="button-row"><?php blue_hour_link( '/blog/', 'Read the journal ↗', 'button' ); ?><?php blue_hour_link( '/', 'Home', 'text-link' ); ?></div></section>

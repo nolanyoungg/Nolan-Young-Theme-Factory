@@ -1,0 +1,18 @@
+.journal-index { display: flex; align-items: center; flex-wrap: wrap; gap: 20px 35px; padding-block: 30px; border-bottom: 1px solid var(--line); }
+.journal-index .eyebrow { margin: 0; }
+.journal-index a { font-size: .8rem; }
+.journal-layout { display: grid; grid-template-columns: .75fr 1.25fr; gap: 80px; padding-block: 50px; }
+.journal-layout aside img { width: 100%; height: 480px; object-fit: cover; object-position: center 65%; }
+.journal-entry { padding-bottom: 50px; margin-bottom: 45px; border-bottom: 1px solid var(--line); scroll-margin-top: 35px; }
+.journal-entry:last-child { margin-bottom: 0; }
+.journal-entry h2 { margin-bottom: 1.5rem; }
+.journal-entry > p:not(.eyebrow) { color: var(--muted); }
+.journal-outro { padding-bottom: 25px; }
+.search-result { border-bottom: 1px solid var(--line); padding-block: 30px; }
+.search-result h2 { margin-bottom: 1rem; font-size: 2.4rem; }
+.search-result h2 a { text-decoration: none; }
+@media (max-width: 760px) {
+  .journal-layout { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-block: 35px; }
+  .journal-layout aside img { height: 250px; }
+  .journal-index { display: grid; gap: 14px; }
+}

@@ -1,0 +1,1 @@
+<section class="section journal-teaser container"><p class="eyebrow">The listening journal</p><div><h2>A good place to begin is anywhere.</h2><p>Follow a bass line. Notice a silence. Let your first live set surprise you. Three short notes for curious ears.</p><?php blue_hour_link( '/blog/', 'Open the journal ↗', 'text-link' ); ?></div></section>

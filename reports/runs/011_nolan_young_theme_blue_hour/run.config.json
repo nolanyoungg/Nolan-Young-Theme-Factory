@@ -1,0 +1,20 @@
+{
+  "mode": "codex-only",
+  "prompt": "prompts\\pending\\011-blue-hour.md",
+  "assetCatalog": "assets/manifests/011-blue-hour.json",
+  "templateSource": "wp-content\\themes\\000_nolan_young_theme_master_template_prompt_filler_template_1",
+  "themeSlug": "011_nolan_young_theme_blue_hour",
+  "validationPolicy": "stylesheet-content-v2",
+  "createdAt": "2026-10-03T19:43:17.401Z",
+  "localModelStages": [],
+  "assetPreparation": {
+    "status": "prepared",
+    "themeSlug": "011_nolan_young_theme_blue_hour",
+    "prompt": "prompts\\pending\\011-blue-hour.md",
+    "manifest": "wp-content\\themes\\011_nolan_young_theme_blue_hour\\assets\\images\\asset-manifest.json",
+    "manifestHash": "c4815c92aea6a420b06380ab36a1031a8187431b5cb71f4863eda455df41e02f",
+    "approvedAssetSetHash": "fd999604bf067e4dc99360fbdc8add28b680c28bee18a682400b09a821cbfc80",
+    "assetCount": 4,
+    "recordedAt": "2026-10-03T19:43:20.460Z"
+  }
+}

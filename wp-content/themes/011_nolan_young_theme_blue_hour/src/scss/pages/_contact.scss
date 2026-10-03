@@ -1,0 +1,7 @@
+.contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 85px; align-items: start; }
+.visit-facts { margin: 30px 0; }
+.visit-facts dt { border-top: 1px solid var(--line); padding-top: 20px; color: var(--brass); font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.visit-facts dd { margin: 10px 0 20px; color: var(--muted); font-size: .92rem; }
+.contact-grid > div > .text-link { margin-top: 2rem; }
+@media (max-width: 850px) { .contact-grid { gap: 35px; } }
+@media (max-width: 650px) { .contact-grid { grid-template-columns: minmax(0, 1fr); } }

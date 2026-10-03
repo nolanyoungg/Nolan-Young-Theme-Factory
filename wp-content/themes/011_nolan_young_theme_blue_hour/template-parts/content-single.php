@@ -1,0 +1,1 @@
+<article class="container prose section"><p class="eyebrow">Blue Hour / Listening journal</p><h1><?php the_title(); ?></h1><?php the_content(); ?><?php wp_link_pages(); ?><p><?php blue_hour_link( '/blog/', 'More listening notes ↗', 'text-link' ); ?></p></article>

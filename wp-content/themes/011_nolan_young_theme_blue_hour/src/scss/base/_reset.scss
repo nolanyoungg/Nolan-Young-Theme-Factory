@@ -1,0 +1,13 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body { margin: 0; background: var(--night); color: var(--ivory); font-family: var(--body); font-size: 16px; line-height: 1.65; }
+img { display: block; max-width: 100%; height: auto; }
+figure, h1, h2, h3, p { margin: 0; }
+p + p { margin-top: 1em; }
+a { color: inherit; text-underline-offset: .25em; }
+button, input, select, textarea { font: inherit; }
+button, summary { cursor: pointer; }
+button { color: inherit; }
+[hidden] { display: none !important; }
+::selection { background: var(--periwinkle); color: var(--night); }
+main { min-height: 50vh; }

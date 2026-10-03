@@ -1,0 +1,5 @@
+.listening-values { background: var(--panel); }
+.room-manifesto { padding-block: 80px; max-width: 900px; text-align: center; }
+.manifesto-text { font-family: var(--display); font-size: clamp(2.5rem, 4.6vw, 4.2rem); line-height: 1.1; color: var(--periwinkle); }
+.room-manifesto > p:last-child { font-size: .7rem; color: var(--muted); margin: 24px auto 0; }
+@media (max-width: 650px) { .room-manifesto { padding-block: 48px; } }

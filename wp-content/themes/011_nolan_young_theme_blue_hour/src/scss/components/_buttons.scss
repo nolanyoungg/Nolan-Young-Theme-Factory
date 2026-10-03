@@ -1,0 +1,11 @@
+.button-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.button { display: inline-flex; justify-content: space-between; align-items: center; gap: 1rem; max-width: 100%; padding: .9rem 1.2rem; border: 1px solid var(--periwinkle); background: var(--periwinkle); color: var(--night); text-decoration: none; font-size: .82rem; font-weight: 700; line-height: 1.5; transition: background .2s ease, transform .2s ease; }
+.button:hover { background: var(--ivory); transform: translateY(-2px); }
+.button-dark { background: var(--night); color: var(--ivory); border-color: var(--night); }
+.button-dark:hover { color: var(--night); }
+.text-link { display: inline-block; width: fit-content; max-width: 100%; font-weight: 700; font-size: .85rem; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: .2rem; transition: color .2s ease; }
+.text-link:hover { color: var(--brass); }
+@media (max-width: 650px) {
+  .button-row { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .button-row .button { width: 100%; }
+}

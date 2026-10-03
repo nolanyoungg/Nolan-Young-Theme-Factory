@@ -3,6 +3,7 @@
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const { compareStylesheets } = require('./design-comparison');
 
 function createValidation(deps) {
   const {
@@ -248,11 +249,9 @@ function createValidation(deps) {
     const generatedCss = path.join(themeDir, 'assets/css/bundle.css');
     const templateCss = path.join(DEFAULT_TEMPLATE_DIR, 'assets/css/bundle.css');
     if (fs.existsSync(generatedCss) && fs.existsSync(templateCss)) {
-      const generatedCssSize = fs.statSync(generatedCss).size;
-      const templateCssSize = fs.statSync(templateCss).size;
-      const sizeDelta = Math.abs(generatedCssSize - templateCssSize);
-      if (sizeDelta < 1500) {
-        errors.push(`Compiled CSS changed by only ${sizeDelta} bytes from the starter template; a major visual redesign must materially change the generated stylesheet.`);
+      const comparison = compareStylesheets(fs.readFileSync(generatedCss, 'utf8'), fs.readFileSync(templateCss, 'utf8'));
+      if (comparison.substantiallyUnchanged) {
+        errors.push(`Compiled CSS retains ${Math.round(comparison.similarity * 100)}% starter token-sequence similarity; a major visual redesign must materially change the stylesheet content.`);
       }
     }
 

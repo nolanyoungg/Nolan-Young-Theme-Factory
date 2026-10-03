@@ -179,6 +179,7 @@ async function run(args) {
     assetCatalog: options.assetCatalog || null,
     templateSource: relative(options.templateSourcePath),
     themeSlug: options.themeSlug,
+    validationPolicy: 'stylesheet-content-v2',
     createdAt: new Date().toISOString(),
     localModelStages: localModelPlan
   });

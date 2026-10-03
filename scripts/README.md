@@ -110,3 +110,9 @@ npm run theme:run -- --mode codex-only --prompt prompts/pending/007-form-and-fie
 The Windows runner invokes npm's JavaScript CLI with Node, avoiding the [Windows command-shim limitation](https://nodejs.org/api/child_process.html#spawning-bat-and-cmd-files-on-windows). Script tests use Node's default test isolation and work on Node 22.15.
 
 In PowerShell, use `npm.cmd run ... -- --option value` if the `npm.ps1` shim drops option names. When `unzip` is unavailable, select the checked-in starter explicitly with `--template-source-path wp-content/themes/000_nolan_young_theme_master_template_prompt_filler_template_1`. Stock downloads use Node's HTTPS client and verify the response type before caching. Codex retains its theme-scoped workspace sandbox, uses automatic approval review, and streams diagnostics to the run's `codex.log`; its full generation pass has a 90-minute maximum. A timeout preserves the incomplete output and requires a fresh run, never a cleanup pass.
+
+### Source differentiation policy
+
+New runs record `stylesheet-content-v2` in their configuration. Stylesheet differentiation compares sets of five-token sequences using Jaccard similarity; 85% or higher starter similarity fails. Comments and formatting do not affect the comparison. This replaces the byte-length delta heuristic: different designs can produce similarly sized bundles, and comment padding can change size without changing a design. Critical layout/source files must still differ from the starter, and browser inspection remains necessary to assess actual visual quality.
+
+Runs 009 (Ridge & River) and 010 (Clay & Still) failed the original byte-length rule and remain failed, with their original source and validation evidence preserved. They must not be resumed or reclassified under the new policy. New samples use fresh theme numbers and complete generation passes.

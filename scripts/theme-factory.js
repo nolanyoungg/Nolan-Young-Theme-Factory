@@ -26,6 +26,8 @@ const {
 } = require('./lib/local-model/agent');
 const { validateLocalModelPlan } = require('./lib/local-model/stages');
 const { createValidation } = require('./lib/validation');
+const { runNpm } = require('./lib/npm');
+const { renderGallery } = require('./lib/gallery');
 
 const ROOT = path.resolve(__dirname, '..');
 const THEMES_DIR = path.join(ROOT, 'wp-content', 'themes');
@@ -174,6 +176,7 @@ async function run(args) {
   writeJson(path.join(reportDir, 'run.config.json'), {
     mode: options.mode,
     prompt: relative(options.promptPath),
+    assetCatalog: options.assetCatalog || null,
     templateSource: relative(options.templateSourcePath),
     themeSlug: options.themeSlug,
     createdAt: new Date().toISOString(),
@@ -309,6 +312,7 @@ async function assetsCommand(args) {
   const themeDir = existingThemeDir(themeSlug);
   const options = {
     themeSlug,
+    assetCatalog: args.assetCatalog || args['asset-catalog'] || null,
     promptPath: args.prompt ? resolvePromptPath(args.prompt) : null
   };
   prepareGeneratedAssets(themeDir, options);
@@ -383,7 +387,7 @@ async function envCommand() {
     ['ollama', ['--version']]
   ];
   for (const [cmd, cmdArgs] of checks) {
-    const result = spawnSync(cmd, cmdArgs, { cwd: ROOT, encoding: 'utf8' });
+    const result = cmd === 'npm' ? runNpm(cmdArgs, { cwd: ROOT, encoding: 'utf8' }) : spawnSync(cmd, cmdArgs, { cwd: ROOT, encoding: 'utf8' });
     const ok = result.status === 0;
     const firstLine = (result.stdout || result.stderr || '').split(/\r?\n/).find(Boolean) || '';
     console.log(`${ok ? 'ok' : 'missing'} ${cmd}${firstLine ? ` - ${firstLine}` : ''}`);
@@ -561,7 +565,7 @@ function installPreparedThemeDependencies(themeDir) {
     throw new Error(`Cannot run npm ci without package-lock.json: ${relative(lockPath)}`);
   }
   console.log(`Installing prepared theme dependencies in ${relative(themeDir)}...`);
-  assertStatus(spawnSync('npm', ['ci'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm ci');
+  assertStatus(runNpm(['ci'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm ci');
   verifyThemeBuildDependencies(themeDir);
 }
 
@@ -621,7 +625,7 @@ function upsertCssHeader(content, field, value) {
 function prepareGeneratedAssets(themeDir, options = {}) {
   const themeSlug = path.basename(themeDir);
   const brand = titleFromSlug(themeSlug).replace(/^\d{3}\s+Nolan Young Theme\s+/, '');
-  const catalog = seededAssetCatalog(themeSlug, brand);
+  const catalog = options.assetCatalog ? readApprovedAssetCatalog(options.assetCatalog) : seededAssetCatalog(themeSlug, brand);
   validateAssetCatalog(catalog);
   const isLandscaping = isLandscapingTheme(themeSlug);
   const acquiredAt = new Date().toISOString();
@@ -636,7 +640,14 @@ function prepareGeneratedAssets(themeDir, options = {}) {
     const target = path.join(themeDir, asset.path);
     ensureDir(path.dirname(target));
     if (asset.kind === 'stock-photo') {
-      downloadStockPhoto(asset.sourceUrl, target);
+      if (options.assetCatalog) {
+        const cached = path.join(ROOT, 'assets', 'approved-stock', `${crypto.createHash('sha256').update(asset.sourceUrl).digest('hex')}.jpg`);
+        ensureDir(path.dirname(cached));
+        downloadStockPhoto(asset.sourceUrl, cached);
+        fs.copyFileSync(cached, target);
+      } else {
+        downloadStockPhoto(asset.sourceUrl, target);
+      }
     } else {
       fs.writeFileSync(target, isLandscaping ? createLandscapingIconSvg(asset.role, palette) : createIconSvg(asset.role, palette));
     }
@@ -652,6 +663,27 @@ function prepareGeneratedAssets(themeDir, options = {}) {
     assets
   };
   writeJson(path.join(themeDir, SEEDED_ASSET_MANIFEST), manifest);
+}
+
+function readApprovedAssetCatalog(catalogPath) {
+  const file = path.resolve(ROOT, catalogPath);
+  ensureInside(path.join(ROOT, 'assets', 'manifests'), file);
+  const catalog = readJson(file);
+  if (catalog.approved !== true || !Array.isArray(catalog.assets) || !catalog.assets.length) {
+    throw new Error('Asset catalog must contain a reviewed, approved asset list.');
+  }
+  const seen = new Set();
+  for (const asset of catalog.assets) {
+    if (!/^assets\/(images|icons)\/[a-z0-9_/-]+\.(jpg|svg)$/.test(asset.path || '') || asset.path.includes('..') || seen.has(asset.path)) {
+      throw new Error(`Invalid or duplicate asset catalog path: ${asset.path}`);
+    }
+    if (!['stock-photo', 'local-svg-icon'].includes(asset.kind)) throw new Error(`Unsupported approved asset kind: ${asset.kind}`);
+    if (asset.kind === 'stock-photo' && !asset.path.endsWith('.jpg')) throw new Error('Stock photos must use a .jpg destination.');
+    if (asset.kind === 'local-svg-icon' && !asset.path.endsWith('.svg')) throw new Error('Local icons must use an .svg destination.');
+    seen.add(asset.path);
+  }
+  validateAssetCatalog(catalog.assets);
+  return catalog.assets;
 }
 
 function normalizePreparedAsset(asset, themeSlug, acquiredAt, index) {
@@ -934,7 +966,17 @@ function downloadStockPhoto(sourceUrl, target) {
   if (fs.existsSync(target) && fs.statSync(target).size > 1024) {
     return;
   }
-  const result = spawnSync('curl', ['-L', '--silent', '--show-error', '--fail', sourceUrl, '-o', target], {
+  const result = spawnSync(process.execPath, ['-e', `
+    const fs = require('node:fs');
+    (async () => {
+      const response = await fetch(process.argv[1], { signal: AbortSignal.timeout(120000) });
+      if (!response.ok) throw new Error('Image download returned HTTP ' + response.status);
+      if (!/^image\\//i.test(response.headers.get('content-type') || '')) throw new Error('Image download did not return an image');
+      const bytes = Buffer.from(await response.arrayBuffer());
+      if (bytes.length < 1024) throw new Error('Image download is unexpectedly small');
+      fs.writeFileSync(process.argv[2], bytes);
+    })().catch((error) => { console.error(error.message); process.exitCode = 1; });
+  `, sourceUrl, target], {
     cwd: ROOT,
     encoding: 'utf8',
     maxBuffer: 1024 * 1024 * 20
@@ -1017,7 +1059,7 @@ function runCodexGeneration(themeDir, options, reportDir) {
   const command = [
     'exec',
     '--cd', themeDir,
-    '--sandbox', 'workspace-write',
+    '--approve-for-me',
     '--ephemeral'
   ];
   if (options.codexModel) {
@@ -1031,22 +1073,27 @@ function runCodexGeneration(themeDir, options, reportDir) {
 
   const before = statusPaths();
   const invocation = resolveCodexInvocation(options.codexExecutable || 'codex', command);
-  const result = spawnSync(invocation.command, invocation.args, {
-    cwd: themeDir,
-    input: prompt,
-    encoding: 'utf8',
-    maxBuffer: 1024 * 1024 * 100
-  });
+  const logPath = path.join(reportDir, 'codex.log');
+  fs.writeFileSync(logPath, `$ ${invocation.display}\n\n`);
+  const log = fs.openSync(logPath, 'a');
+  let result;
+  try {
+    result = spawnSync(invocation.command, invocation.args, {
+      cwd: themeDir,
+      input: prompt,
+      encoding: 'utf8',
+      stdio: ['pipe', log, log],
+      timeout: 90 * 60 * 1000,
+      maxBuffer: 1024 * 1024 * 100
+    });
+  } finally {
+    fs.closeSync(log);
+  }
   const afterCodex = statusPaths();
   assertOnlyAllowedStatusChanges(before, afterCodex, [
     relative(themeDir)
   ]);
-  fs.writeFileSync(path.join(reportDir, 'codex.log'), [
-    `$ ${invocation.display}`,
-    '',
-    result.stdout || '',
-    result.stderr || ''
-  ].join('\n'));
+  if (result.status !== 0) result.stderr = fs.readFileSync(logPath, 'utf8').slice(-12000);
   assertStatus(result, 'codex generation');
 }
 
@@ -1083,6 +1130,9 @@ function buildCodexPrompt(promptPath, themeSlug, themeDir) {
     '- Do not create previews, ZIPs, reports, branches, commits, or files outside this directory.',
     '- Do not copy templates or rename the prepared theme folder.',
     '- Do not run a repair pass after validation; this is the only Codex generation pass.',
+    '- Keep the implementation compact and focused on the requested pages. Do not add extra routing systems or unrelated features.',
+    '- Use small, scoped file edits. For apply_patch, update existing files rather than deleting and adding the same path in one patch.',
+    '- Before shell-based file writes or cleanup, resolve the exact destination paths and verify they remain inside this prepared theme directory. Avoid giant shell commands that mix many writes with deletion.',
     '- Keep build commands in package.json and preserve npm run build.',
     '- Keep generated runtime assets local to this theme.',
     '- Preserve prepared Theme Name, Description, Text Domain, slug, and package name unless the prepared fields are missing.',
@@ -1134,7 +1184,7 @@ function buildTheme(themeSlug) {
   verifyThemeBuildDependencies(themeDir);
 
   console.log(`Building theme ${themeSlug}...`);
-  assertStatus(spawnSync('npm', ['run', 'build'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm run build');
+  assertStatus(runNpm(['run', 'build'], { cwd: themeDir, encoding: 'utf8', maxBuffer: 1024 * 1024 * 100 }), 'npm run build');
 }
 
 function generatePreview(themeSlug) {
@@ -1386,60 +1436,23 @@ include $theme_dir . '/' . $template_rel;
 
 function generatePreviewIndex() {
   ensureDir(PREVIEWS_DIR);
-  const slugs = fs.readdirSync(PREVIEWS_DIR, { withFileTypes: true })
+  const themes = fs.readdirSync(PREVIEWS_DIR, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && SLUG_RE.test(entry.name))
-    .map((entry) => entry.name)
-    .sort();
-
-  const cards = slugs.map((slug) => {
-    const themeDir = path.join(THEMES_DIR, slug);
-    const title = fs.existsSync(path.join(themeDir, 'style.css')) ? readStyleHeader(path.join(themeDir, 'style.css'), 'Theme Name') || titleFromSlug(slug) : titleFromSlug(slug);
-    const zipReady = fs.existsSync(path.join(ZIPS_DIR, `${slug}.zip`));
-    return `  <section class="card" aria-label="${escapeHtml(title)} preview">
-    <div class="preview">
-      <iframe title="${escapeHtml(title)} preview" src="Preview-Themes-Github/${slug}/index.html" loading="lazy"></iframe>
-    </div>
-    <div class="body">
-      <div>
-        <p class="eyebrow">${slug}</p>
-        <h2>${escapeHtml(title)}</h2>
-        <p>Generated WordPress theme preview.</p>
-      </div>
-      <div class="tag-row"><span class="pill">${zipReady ? 'ZIP ready' : 'ZIP pending'}</span><span class="pill status">Published preview</span></div>
-      <div class="links">
-        <a class="button" href="Preview-Themes-Github/${slug}/homepage_preview.html">Open Preview</a>
-      </div>
-    </div>
-  </section>`;
-  }).join('\n');
-
-  const html = `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nolan Young Theme Preview Gallery</title>
-<style>
-:root{color-scheme:dark;--bg:#050914;--panel:#0d1a2b;--line:rgb(80 209 255 / 24%);--line-2:rgb(184 255 77 / 24%);--text:#f2fbff;--muted:#9fb2c8;--soft:#d7e8f2;--blue:#38d6ff;--cyan:#66f2ff;--lime:#b8ff4d;--shadow:0 26px 90px rgb(0 0 0 / 42%)}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 16% -10%,rgb(56 214 255 / 18%),transparent 34%),radial-gradient(circle at 92% 10%,rgb(184 255 77 / 9%),transparent 26%),linear-gradient(180deg,var(--bg),#07111f 44%,#050914);color:var(--text);font-family:Inter,Arial,sans-serif;line-height:1.6}a{color:inherit}.page,.foot{width:min(1180px,calc(100% - 32px));margin:0 auto}.page{padding:4rem 0 2rem}.eyebrow{margin:0 0 .75rem;color:var(--lime);font-size:.78rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}h1,h2,h3,p{margin-top:0}h1{max-width:850px;margin:0 0 1rem;font-size:clamp(3rem,7vw,6.5rem);line-height:.94}h2{margin-bottom:.6rem;font-size:clamp(2rem,4vw,3.7rem);line-height:1}.lede{max-width:720px;margin:0 0 2rem;color:var(--muted);font-size:1.05rem}.grid{display:grid;gap:1.2rem}.card{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:0;background:linear-gradient(135deg,rgb(16 36 59 /.92),rgb(13 26 43 /.96));border:1px solid var(--line);border-radius:30px;overflow:hidden;box-shadow:var(--shadow)}.preview{position:relative;min-height:680px;background:#08101b;border-right:1px solid var(--line)}iframe{display:block;width:100%;height:100%;min-height:680px;border:0}.body{padding:2rem 2rem 2.2rem;display:flex;flex-direction:column;justify-content:space-between;gap:1.5rem}.tag-row,.links{display:flex;flex-wrap:wrap;gap:.75rem}.pill{display:inline-flex;align-items:center;justify-content:center;padding:.45rem .75rem;border-radius:999px;background:rgb(184 255 77 /.12);border:1px solid var(--line-2);color:var(--soft);font-size:.82rem;font-weight:700}.status{background:rgb(56 214 255 /.12);border-color:var(--line);color:var(--text)}.button{display:inline-flex;align-items:center;justify-content:center;padding:.95rem 1.2rem;border-radius:999px;background:linear-gradient(135deg,var(--lime),var(--cyan));color:#08101b;text-decoration:none;font-weight:900;min-height:48px}footer{padding:0 0 3rem;color:var(--muted)}@media (max-width:900px){.card{grid-template-columns:1fr}.preview{border-right:0;border-bottom:1px solid var(--line);min-height:420px}iframe{min-height:420px}.body{padding:1.4rem}}@media (max-width:600px){.page,.foot{width:min(100% - 20px,1180px)}h1{font-size:clamp(2.4rem,14vw,4rem)}}
-</style>
-</head>
-<body>
-<main class="page">
-  <p class="eyebrow">Generated outputs</p>
-  <h1>Preview Themes</h1>
-  <p class="lede">Generated WordPress theme previews.</p>
-  <div class="grid">
-${cards || '    <p>No generated previews found.</p>'}
-  </div>
-</main>
-<footer class="foot">
-  <p>Preview gallery rebuilt from the current repository inventory.</p>
-</footer>
-</body>
-</html>
-`;
+    .map((entry) => entry.name).sort().reverse()
+    .map((slug) => {
+      const stylePath = path.join(THEMES_DIR, slug, 'style.css');
+      const title = fs.existsSync(stylePath) ? readStyleHeader(stylePath, 'Theme Name') || titleFromSlug(slug) : titleFromSlug(slug);
+      const pages = fs.readdirSync(path.join(PREVIEWS_DIR, slug))
+        .filter((name) => name.endsWith('.html') && fs.statSync(path.join(PREVIEWS_DIR, slug, name)).isFile())
+        .sort((a, b) => {
+          const order = PREVIEW_PAGES.map(([name]) => name);
+          const rank = (name) => order.includes(name) ? order.indexOf(name) : order.length;
+          return rank(a) - rank(b) || a.localeCompare(b);
+        });
+      return { slug, title, pages };
+    }).filter((theme) => theme.pages.length);
   ensureDir(path.join(ROOT, 'docs'));
-  fs.writeFileSync(path.join(ROOT, 'docs', 'index.html'), html);
+  fs.writeFileSync(path.join(ROOT, 'docs', 'index.html'), renderGallery(themes));
   console.log('Preview index generated: docs/index.html');
 }
 

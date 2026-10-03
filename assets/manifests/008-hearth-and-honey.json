@@ -1,0 +1,39 @@
+{
+  "approved": true,
+  "reviewedAt": "2026-10-03",
+  "notes": "Original source pages declare free use under the Unsplash License. Use as editorial sample imagery with credit, not as evidence of work or ownership. No identifiable people or logos selected.",
+  "assets": [
+    {
+      "path": "assets/images/hero/editorial-hero.jpg",
+      "kind": "stock-photo",
+      "role": "Editorial hero photograph; illustrative stock, not a claimed project or product",
+      "alt": "Several loaves of artisan bread on a rack",
+      "sourceUrl": "https://images.unsplash.com/photo-1763297014734-e2ac58a6f3c0?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/several-loaves-of-artisan-bread-on-a-rack-1l2qWh-W5AU",
+      "creator": "Intrepid",
+      "creatorUrl": "https://unsplash.com/@intrepidfilm"
+    },
+    {
+      "path": "assets/images/portfolio/editorial-detail.jpg",
+      "kind": "stock-photo",
+      "role": "Supporting editorial photograph; illustrative stock, not a claimed project or product",
+      "alt": "a bunch of loaves of bread in a basket",
+      "sourceUrl": "https://images.unsplash.com/photo-1565801776220-10bd41565980?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/a-bunch-of-loaves-of-bread-in-a-basket-wL240EPD1Ck",
+      "creator": "Eric Prouzet",
+      "creatorUrl": "https://unsplash.com/@eprouzet"
+    },
+    {
+      "path": "assets/icons/mark-1.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 1",
+      "alt": "Decorative interface mark"
+    },
+    {
+      "path": "assets/icons/mark-2.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 2",
+      "alt": "Decorative interface mark"
+    }
+  ]
+}

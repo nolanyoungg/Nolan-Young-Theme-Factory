@@ -1,0 +1,35 @@
+{
+  "approved": true,
+  "reviewedAt": "2026-10-03",
+  "notes": "Original source pages declare free use under the Unsplash License. Use as editorial sample imagery with credit, not as evidence of work or ownership. No identifiable people or logos selected.",
+  "assets": [
+    {
+      "path": "assets/images/hero/editorial-hero.jpg",
+      "kind": "stock-photo",
+      "role": "Editorial hero photograph; illustrative stock, not a claimed project or product",
+      "alt": "landscape photography of mountain range",
+      "sourceUrl": "https://images.unsplash.com/photo-1532415989833-18884ebf071b?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/landscape-photography-of-mountain-range-mRyCvjWhM1k",
+      "creator": "Alexander Hipp",
+      "creatorUrl": "https://unsplash.com/@alexanderhipp"
+    },
+    {
+      "path": "assets/icons/mark-1.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 1",
+      "alt": "Decorative interface mark"
+    },
+    {
+      "path": "assets/icons/mark-2.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 2",
+      "alt": "Decorative interface mark"
+    },
+    {
+      "path": "assets/icons/mark-3.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 3",
+      "alt": "Decorative interface mark"
+    }
+  ]
+}

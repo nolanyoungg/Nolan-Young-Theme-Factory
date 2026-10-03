@@ -16,7 +16,7 @@
     "theme:delete": "node scripts/theme-factory.js delete",
     "theme:env": "node scripts/theme-factory.js env",
     "theme:model-check": "node scripts/theme-factory.js model-check",
-    "test:scripts": "node --test --test-isolation=none scripts/tests/*.test.js && node scripts/theme-factory.js self-test"
+    "test:scripts": "node --test scripts/tests/*.test.js && node scripts/theme-factory.js self-test"
   },
   "engines": {
     "node": ">=20"

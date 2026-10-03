@@ -94,3 +94,19 @@ npm run test:scripts
 ```
 
 `theme:prepare` copies the template, updates prepared identity, and runs `npm ci`. `theme:assets` is the standalone, provider-neutral asset step. Fair comparisons use equivalent per-theme manifests and require the same byte-identical asset set, verified by `approvedAssetSetHash`. `theme:build` expects prepared dependencies and never installs or repairs them.
+
+## Showcase and creative asset catalogs
+
+`npm run theme:preview:index` rebuilds the collection from the HTML pages actually present in each preview directory. Each card places the interactive website above its name. Page links target that card's iframe, so every exported page can be explored without leaving the collection. Newest themes appear first; search and desktop/mobile width controls are progressive enhancements.
+
+Pass `--asset-catalog assets/manifests/<brief>.json` to `theme:run` or `theme:assets` to use a reviewed image selection instead of the default software imagery. Catalogs contain `approved: true` and `assets` with `path`, `kind`, `role`, `alt`, and (for stock photos) `sourceUrl`, `pageUrl`, `creator`, and `creatorUrl`. Review the original source page and license before marking a catalog approved. The catalogs in this collection use the [Unsplash License](https://unsplash.com/license); photo attribution remains in the per-theme manifest. Catalog paths are restricted to the repository manifest folder and image/icon destinations. Stock files are cached in `assets/approved-stock/` and copied locally before generation.
+
+Example:
+
+```sh
+npm run theme:run -- --mode codex-only --prompt prompts/pending/007-form-and-field.md --theme-slug 007_nolan_young_theme_form_and_field --asset-catalog assets/manifests/007-form-and-field.json
+```
+
+The Windows runner invokes npm's JavaScript CLI with Node, avoiding the [Windows command-shim limitation](https://nodejs.org/api/child_process.html#spawning-bat-and-cmd-files-on-windows). Script tests use Node's default test isolation and work on Node 22.15.
+
+In PowerShell, use `npm.cmd run ... -- --option value` if the `npm.ps1` shim drops option names. When `unzip` is unavailable, select the checked-in starter explicitly with `--template-source-path wp-content/themes/000_nolan_young_theme_master_template_prompt_filler_template_1`. Stock downloads use Node's HTTPS client and verify the response type before caching. Codex retains its theme-scoped workspace sandbox, uses automatic approval review, and streams diagnostics to the run's `codex.log`; its full generation pass has a 90-minute maximum. A timeout preserves the incomplete output and requires a fresh run, never a cleanup pass.

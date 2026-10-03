@@ -56,6 +56,7 @@ async function collectRunOptions(args, deps) {
   let options = {
     mode: args.mode,
     promptPath: args.prompt ? deps.resolvePromptPath(args.prompt) : null,
+    assetCatalog: args.assetCatalog || args['asset-catalog'] || null,
     templateSourcePath: args.templateSourcePath || args['template-source-path'] ? deps.resolveTemplateSource(args) : null,
     themeSlug: args.themeSlug || args['theme-slug'] || null,
     codexExecutable: args.codexExecutable || args['codex-executable'] || 'codex',

@@ -1,0 +1,39 @@
+{
+  "approved": true,
+  "reviewedAt": "2026-10-03",
+  "notes": "Original source pages declare free use under the Unsplash License. Use as editorial sample imagery with credit, not as evidence of work or ownership. No identifiable people or logos selected.",
+  "assets": [
+    {
+      "path": "assets/images/hero/editorial-hero.jpg",
+      "kind": "stock-photo",
+      "role": "Editorial hero photograph; illustrative stock, not a claimed project or product",
+      "alt": "white concrete building",
+      "sourceUrl": "https://images.unsplash.com/photo-1525199588264-c9ceb2e22457?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/white-concrete-building-BK00-RIxFLc",
+      "creator": "Pierre Châtel-Innocenti",
+      "creatorUrl": "https://unsplash.com/@chatelp"
+    },
+    {
+      "path": "assets/images/portfolio/editorial-detail.jpg",
+      "kind": "stock-photo",
+      "role": "Supporting editorial photograph; illustrative stock, not a claimed project or product",
+      "alt": "photo of beige concrete building",
+      "sourceUrl": "https://images.unsplash.com/photo-1524228461686-3de5d5289d09?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/fzbQz0RoNLs",
+      "creator": "Annie Spratt",
+      "creatorUrl": "https://unsplash.com/@anniespratt"
+    },
+    {
+      "path": "assets/icons/mark-1.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 1",
+      "alt": "Decorative interface mark"
+    },
+    {
+      "path": "assets/icons/mark-2.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 2",
+      "alt": "Decorative interface mark"
+    }
+  ]
+}

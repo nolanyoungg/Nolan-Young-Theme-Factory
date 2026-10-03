@@ -1323,7 +1323,10 @@ function wp_footer(){ echo '<script src="assets/js/bundle.js"></script>' . PHP_E
 function date_i18n($format){ return date($format); }
 function wp_date($format){ return date($format); }
 function preview_home_url($path = ''){
-  $path = '/' . trim((string)$path, '/');
+  $raw = (string)$path;
+  $suffix_at = strcspn($raw, '?#');
+  $suffix = substr($raw, $suffix_at);
+  $path = '/' . trim(substr($raw, 0, $suffix_at), '/');
   $map = array(
     '/' => 'index.html',
     '/about' => 'about-us_preview.html',
@@ -1339,9 +1342,9 @@ function preview_home_url($path = ''){
     '/privacy-policy' => 'policy_preview.html',
     '/privacy-policy/' => 'policy_preview.html'
   );
-  if (isset($map[$path])) { return $map[$path]; }
-  if (strpos($path, '/services/') === 0) { return 'single_services_preview.html'; }
-  return 'index.html';
+  if (isset($map[$path])) { return $map[$path] . $suffix; }
+  if (strpos($path, '/services/') === 0) { return 'single_services_preview.html' . $suffix; }
+  return 'index.html' . $suffix;
 }
 function home_url($path = ''){ return preview_home_url($path); }
 function site_url($path = ''){ return preview_home_url($path); }

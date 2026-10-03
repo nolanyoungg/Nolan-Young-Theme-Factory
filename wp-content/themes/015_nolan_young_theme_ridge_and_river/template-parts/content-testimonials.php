@@ -1,0 +1,1 @@
+<section class="ethos-note container"><p class="eyebrow">A NOTE ON THIS OUTFITTER</p><h2>A fictional brand.<br>A considered way of walking.</h2><p>These pages describe an imagined small-group walking business. They do not claim real customer reviews, professional certifications, awards or completed expeditions.</p></section>

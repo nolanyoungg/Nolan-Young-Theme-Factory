@@ -1,0 +1,14 @@
+.story-spread { display: grid; grid-template-columns: 1.2fr 1fr; gap: 7%; align-items: center; }
+.story-spread figure img { width: 100%; height: 470px; object-fit: cover; object-position: 25% center; }
+.story-spread figcaption { padding-top: .65rem; color: var(--muted); }
+.story-note { border-left: 1px solid var(--line); padding-left: 2rem; }
+.principles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3rem; }
+.principles article { border-top: 1px solid var(--line); padding-top: 2rem; }
+.principles p { font-size: .92rem; }
+.ethos-note { padding: 30px 0 65px; max-width: 760px; }
+.ethos-note h2 { font-size: 2rem; }
+@media (max-width: 700px) {
+ .story-spread, .principles { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+ .story-spread figure img { height: 310px; }
+ .story-note { padding-left: 1.2rem; }
+}

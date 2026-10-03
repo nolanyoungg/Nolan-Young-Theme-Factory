@@ -1,0 +1,26 @@
+.service-landscape img { width: 100%; height: 320px; object-fit: cover; }
+.service-landscape .image-note { margin-top: .7rem; color: var(--muted); }
+.service-entry { display: grid; grid-template-columns: 45px 1fr 1.15fr; gap: 2rem; border-top: 1px solid var(--line); padding-block: 45px; scroll-margin-top: 2rem; }
+.service-entry:last-child { border-bottom: 1px solid var(--line); }
+.service-entry h2 { font-size: 2.5rem; }
+.service-entry .eyebrow { font-size: .61rem; }
+.ridge-detail { display: grid; grid-template-columns: 1.7fr 1fr; gap: 2rem; align-items: start; }
+.ridge-detail figure img { width: 100%; height: 480px; object-fit: cover; }
+.ridge-detail figcaption { padding-block: .75rem; color: var(--muted); }
+.route-facts { padding: 2rem; background: var(--cream); }
+.route-facts dl { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; font-size: .83rem; margin-block: 0 2rem; }
+.route-facts dd { margin: 0; text-align: right; font-weight: 700; }
+.timeline { list-style: none; padding: 0; margin: 0; }
+.timeline li { display: grid; grid-template-columns: 60px 1fr; gap: 1.2rem; padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
+.timeline span { font: .8rem var(--mono); color: var(--rust); }
+.timeline h3 { font-size: 1.3rem; }
+.timeline p { font-size: .9rem; margin: 0; }
+@media (max-width: 700px) {
+ .service-landscape img { height: 220px; }
+ .service-entry { grid-template-columns: 24px minmax(0, 1fr); gap: 1rem; padding-block: 30px; }
+ .service-entry > :last-child { grid-column: 2; }
+ .service-entry h2 { font-size: 2rem; }
+ .ridge-detail { grid-template-columns: minmax(0, 1fr); }
+ .ridge-detail figure img { height: 280px; }
+ .route-facts { padding: 1.4rem; }
+}

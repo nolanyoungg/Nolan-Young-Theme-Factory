@@ -1,0 +1,9 @@
+.trip-form { display: grid; gap: 1.5rem; }
+.form-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-notice { font-size: .85rem; padding: 1rem 1.2rem; border-left: 3px solid var(--rust); background: var(--cream); margin: 0; }
+.form-result { font-size: .9rem; }
+.form-result:empty { display: none; }
+.trip-form .button { justify-self: start; }
+.search-form { display: flex; align-items: end; gap: .75rem; max-width: 650px; margin-block: 1.5rem; }
+.search-form label { flex: 1; }
+@media (max-width: 600px) { .form-pair { grid-template-columns: minmax(0, 1fr); } .search-form { flex-direction: column; align-items: stretch; } .trip-form .button { width: 100%; } }

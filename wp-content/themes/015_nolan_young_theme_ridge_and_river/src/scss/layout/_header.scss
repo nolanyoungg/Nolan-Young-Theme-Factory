@@ -1,0 +1,30 @@
+.site-header { border-bottom: 1px solid var(--line); position: relative; z-index: 20; background: var(--paper); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; min-height: 100px; }
+.brand { display: flex; align-items: center; gap: .7rem; flex-shrink: 0; text-decoration: none; font-size: 1.65rem; font-weight: 700; letter-spacing: -.07em; line-height: 1.1; }
+.brand i { font-family: Georgia, serif; font-weight: 400; }
+.brand small { display: block; font-family: var(--mono); font-size: .53rem; letter-spacing: .12em; margin-top: .5rem; }
+.brand .field-mark { margin: 0; width: 42px; height: 42px; }
+.trail-navigation { display: flex; align-items: center; gap: 1.7rem; }
+.trail-navigation > a { text-decoration: none; font-weight: 700; font-size: .78rem; padding-block: .8rem; }
+.trail-navigation > a:first-child { display: none; }
+.trail-navigation > a:last-of-type { padding: .85rem 1.1rem; border: 1px solid var(--pine); }
+.trail-navigation a:hover { color: var(--rust); }
+.drawer-note { display: none; }
+.menu-toggle { background: transparent; border: 1px solid var(--line); padding: 13px; min-width: 46px; min-height: 46px; }
+.menu-bars { display: block; width: 20px; height: 12px; border-block: 2px solid currentColor; position: relative; }
+.menu-bars::after { content: ''; position: absolute; top: 4px; left: 0; width: 20px; border-top: 2px solid currentColor; }
+@media (max-width: 1000px) {
+ .header-inner { min-height: 82px; flex-wrap: wrap; gap: 0; padding-block: 15px; }
+ .brand { font-size: 1.45rem; min-width: 0; max-width: calc(100% - 60px); }
+ .brand .field-mark { width: 34px; height: 34px; }
+ .brand small { font-size: .47rem; }
+ .trail-navigation { flex-basis: 100%; flex-direction: column; align-items: stretch; gap: 0; padding-block: 1rem; }
+ .trail-navigation > a, .trail-navigation > a:first-child { display: block; font-size: 1.15rem; padding: .85rem .2rem; border-bottom: 1px solid var(--line); }
+ .trail-navigation > a:last-of-type { margin-top: .8rem; text-align: center; background: var(--pine); color: var(--paper); }
+ .nav-ready .trail-navigation { display: none; }
+ .nav-ready .trail-navigation.is-open { display: flex; max-height: calc(100dvh - 95px); overflow-y: auto; }
+ .drawer-note { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: .8rem 1rem; margin-top: 1.4rem; }
+ .drawer-note img { height: 100%; object-fit: cover; grid-row: span 2; }
+ .drawer-note p, .drawer-note a { font-size: .75rem; margin: 0; }
+}
+@media (min-width: 1001px) { .menu-toggle { display: none; } }

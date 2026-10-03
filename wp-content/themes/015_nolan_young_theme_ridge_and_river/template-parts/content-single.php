@@ -1,0 +1,1 @@
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'field-story' ); ?>><header><p class="eyebrow">RIDGE & RIVER / <?php echo esc_html( get_the_date() ); ?></p><h1><?php the_title(); ?></h1></header><div class="entry-content"><?php the_content(); wp_link_pages(); ?></div></article>

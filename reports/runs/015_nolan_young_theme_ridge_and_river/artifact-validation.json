@@ -1,0 +1,9 @@
+{
+  "phase": "artifact",
+  "themeSlug": "015_nolan_young_theme_ridge_and_river",
+  "errors": [],
+  "warnings": [
+    "Skipped mobile preview layout probe because Chrome was not found."
+  ],
+  "checkedAt": "2026-10-03T20:44:27.062Z"
+}

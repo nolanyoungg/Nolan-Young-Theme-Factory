@@ -1,0 +1,12 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+body { margin: 0; background: var(--paper); color: var(--pine); font-family: Arial, Helvetica, sans-serif; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; height: auto; }
+figure, blockquote { margin: 0; }
+button, input, select, textarea { font: inherit; }
+button, a, input, select, textarea, summary { -webkit-tap-highlight-color: transparent; }
+button, summary { cursor: pointer; }
+a { color: inherit; text-underline-offset: .22em; }
+button { color: inherit; }
+[hidden] { display: none !important; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }

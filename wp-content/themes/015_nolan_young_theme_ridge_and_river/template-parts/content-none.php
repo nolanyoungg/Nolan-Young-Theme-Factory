@@ -1,0 +1,1 @@
+<section class="prose"><h2>A quiet stretch of trail.</h2><p>There’s nothing here just yet. Our walking journal has packing notes, planning ideas and a little trail etiquette to keep you exploring.</p><a class="text-link" href="<?php echo esc_url( home_url( '/blog/' ) ); ?>">Open the journal ↗</a></section>

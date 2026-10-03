@@ -1,0 +1,19 @@
+h1, h2, h3, p { margin: 0 0 1.15rem; }
+h1, h2, h3 { font-weight: 700; line-height: 1.02; letter-spacing: -.05em; text-wrap: balance; }
+h1 { font-size: clamp(2.7rem, 5.3vw, 4.9rem); }
+h2 { font-size: clamp(2.1rem, 3.5vw, 3.6rem); }
+h3 { font-size: 1.45rem; letter-spacing: -.035em; line-height: 1.15; }
+p, li, dd { line-height: 1.65; }
+p { max-width: 65ch; }
+.eyebrow { font-family: var(--mono); font-size: .7rem; line-height: 1.5; letter-spacing: .1em; font-weight: 700; text-transform: uppercase; margin-bottom: 1.3rem; }
+.lead { font-size: 1.18rem; max-width: 58ch; color: var(--muted); }
+.small-note, figcaption, .image-note { font-size: .78rem; line-height: 1.6; }
+.small-note { color: var(--muted); margin-top: 1rem; }
+.text-link { font-size: .87rem; font-weight: 700; display: inline-block; padding-block: .5rem; text-decoration-thickness: 1px; }
+.text-link:hover { color: var(--rust); }
+.field-mark { width: 40px; height: 40px; object-fit: contain; margin-bottom: 1.5rem; }
+@media (max-width: 600px) {
+ h1 { font-size: clamp(2.35rem, 9vw, 3rem); max-width: 100%; }
+ h2 { font-size: 2.1rem; }
+ p, h1, h2, h3, a { overflow-wrap: anywhere; }
+}

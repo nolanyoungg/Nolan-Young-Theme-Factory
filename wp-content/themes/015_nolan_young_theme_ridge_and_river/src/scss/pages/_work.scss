@@ -1,0 +1,15 @@
+.field-feature { display: grid; grid-template-columns: 1.4fr 1fr; background: var(--pine); color: var(--paper); }
+.field-feature > img { width: 100%; height: 100%; min-height: 430px; object-fit: cover; object-position: 36% center; }
+.field-feature > div { padding: 45px 35px; }
+.route-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 8%; }
+.route-notes article { border-top: 1px solid var(--line); padding-top: 2rem; min-width: 0; }
+.route-notes h2 { font-size: 2.5rem; }
+.route-notes dl { border-left: 1px solid var(--rust); padding-left: 1rem; margin-block: 2rem; }
+.route-notes dt { font-weight: 700; margin-bottom: .4rem; }
+.route-notes dd { font-size: .9rem; margin: 0 0 1.2rem; }
+@media (max-width: 700px) {
+ .field-feature, .route-notes { grid-template-columns: minmax(0, 1fr); gap: 0; }
+ .field-feature > img { min-height: 0; height: 270px; }
+ .field-feature > div { padding: 30px 22px; }
+ .route-notes { gap: 3rem; }
+}

@@ -1,0 +1,40 @@
+{
+  "themeSlug": "015_nolan_young_theme_ridge_and_river",
+  "mode": "codex-only",
+  "provider": "codex",
+  "model": "codex-config-default",
+  "prepared": true,
+  "infrastructure": {
+    "providerPreflight": "passed",
+    "assetPreparation": "passed",
+    "assetManifestHash": "1c2b0f3808203ee3e2f091dd618e3150f93f7681706e2961d674188b41891496",
+    "approvedAssetSetHash": "9571747edcca33f0293d4bef65e46493e7536e8995f9f0292b89e53bd4cd6d81"
+  },
+  "generation": {
+    "status": "passed"
+  },
+  "build": {
+    "status": "passed"
+  },
+  "sourceValidation": {
+    "status": "passed"
+  },
+  "previewPublication": {
+    "status": "passed",
+    "path": "docs\\Preview-Themes-Github\\015_nolan_young_theme_ridge_and_river"
+  },
+  "packaging": {
+    "status": "passed",
+    "path": "dist\\zipped-themes\\015_nolan_young_theme_ridge_and_river.zip"
+  },
+  "artifactValidation": {
+    "status": "passed"
+  },
+  "visualQuality": {
+    "status": "passed",
+    "notes": "Full homepage and seven inner page layouts inspected in browser at desktop width. 390px mobile hero, menu open, Escape close, and no horizontal overflow verified. Mountain photography, field-guide trip rows, FAQ and itinerary layouts are coherent.",
+    "reviewedAt": "2026-10-03T20:46:42.4396467Z"
+  },
+  "completedAt": "2026-10-03T20:44:27.062Z",
+  "status": "completed"
+}

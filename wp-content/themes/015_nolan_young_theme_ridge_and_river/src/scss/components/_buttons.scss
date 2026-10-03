@@ -1,0 +1,4 @@
+.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 1.4rem; max-width: 100%; background: var(--rust); color: var(--white); border: 1px solid var(--rust); padding: 1rem 1.3rem; min-height: 48px; font-size: .86rem; font-weight: 700; text-decoration: none; line-height: 1.3; transition: background .2s, transform .2s; }
+.button:hover { background: var(--pine); border-color: var(--pine); transform: translateY(-2px); }
+.button-light { background: var(--paper); color: var(--pine); border-color: var(--paper); }
+.button-light:hover { background: var(--cream); border-color: var(--cream); }

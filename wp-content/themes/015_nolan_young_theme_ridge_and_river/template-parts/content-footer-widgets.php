@@ -1,0 +1,2 @@
+<nav class="footer-nav" aria-label="Explore Ridge and River"><p class="eyebrow">TAKE A LOOK AROUND</p><?php ridge_river_nav(); ?></nav>
+<div class="footer-contact"><p class="eyebrow">A NOTE FROM BASE</p><h3>The trail starts<br>with a hello.</h3><a class="text-link" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Plan your sample day ↗</a><p>No office to visit, no dates to book. Just a considered example of life at walking pace.</p></div>

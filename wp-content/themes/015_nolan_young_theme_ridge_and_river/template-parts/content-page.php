@@ -1,0 +1,1 @@
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'field-page' ); ?>><header><p class="eyebrow">RIDGE & RIVER / FIELD GUIDE</p><h1><?php the_title(); ?></h1></header><div class="entry-content"><?php the_content(); wp_link_pages(); ?></div></article>

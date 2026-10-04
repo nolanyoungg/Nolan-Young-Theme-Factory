@@ -1,0 +1,15 @@
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 32px; }
+body { margin: 0; background: var(--chalk); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+img { display: block; max-width: 100%; height: auto; }
+figure, blockquote { margin: 0; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button, summary { cursor: pointer; }
+a { color: inherit; text-underline-offset: .22em; }
+a:hover { color: var(--rust); }
+[hidden] { display: none !important; }
+main { min-height: 45vh; }
+section, article, aside, nav, div, figure, header, footer { min-width: 0; }
+p, h1, h2, h3, a, label { overflow-wrap: break-word; }
+::selection { background: var(--rust); color: var(--chalk); }
+@media (max-width: 700px) { :root { --gutter: 22px; } }

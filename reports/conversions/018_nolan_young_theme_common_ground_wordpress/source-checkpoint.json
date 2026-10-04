@@ -1,0 +1,5 @@
+{
+  "themeHash": "6cc6f2b8dbc8d3e88a3e7b7b35a6ff647940f7ba954de3dfc86ac52bd22c6216",
+  "sourceHash": "66c9b96aaf6d3eccf3f431b51bd55dc488245924db517787b2a34b6183cce829",
+  "reason": "Captured immediately after the original conversion pass and deterministic validation false positive, before any infrastructure correction. Generated source has not been edited."
+}

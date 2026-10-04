@@ -1,0 +1,3 @@
+.about-composition { display: grid; grid-template-columns: 1.1fr 1fr; gap: 9%; align-items: center; padding-top: 15px; }
+.about-composition figure img { height: 480px; width: 100%; object-fit: cover; }
+@media(max-width: 700px) { .about-composition { grid-template-columns: 1fr; gap: 32px; } .about-composition figure img { height: 300px; } }

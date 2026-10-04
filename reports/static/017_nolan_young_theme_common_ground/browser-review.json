@@ -1,0 +1,34 @@
+{
+  "sampleHash": "66c9b96aaf6d3eccf3f431b51bd55dc488245924db517787b2a34b6183cce829",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "browserChecks": {
+    "status": "passed",
+    "navigation": "passed",
+    "interactions": "passed",
+    "console": "passed",
+    "requests": "passed",
+    "overflow": "passed",
+    "clipping": "passed",
+    "notes": "All nine pages inspected. Desktop/mobile navigation, mobile toggle and Escape, FAQ disclosures, journal fragment navigation, and demo inquiry feedback exercised. No warnings/errors in captured browser logs. Resource checks cover deterministic references, rendered CSS/JS and both approved photographs (including lazy images after scrolling); no full network HAR was available. Zero horizontal overflow in recorded page measurements. Form explicitly sends/stores nothing."
+  },
+  "visualReview": {
+    "status": "passed",
+    "notes": "Actual desktop and mobile screenshots inspected: ivory/forest/ochre editorial architecture layout, serif hierarchy, generous spacing, numbered studies and clear fictional sample copy. Composition and typography meaningfully differentiate it from the older Form and Field preview despite reusing approved photographs. No clipped controls or overlapping text observed. Mobile email wraps within its card; lazy photographs render after scrolling."
+  },
+  "screenshots": [
+    "reports/static/017_nolan_young_theme_common_ground/desktop-home.png",
+    "reports/static/017_nolan_young_theme_common_ground/mobile-home.png",
+    "reports/static/017_nolan_young_theme_common_ground/mobile-menu.png",
+    "reports/static/017_nolan_young_theme_common_ground/desktop-single_services_preview.html.png",
+    "reports/static/017_nolan_young_theme_common_ground/contact-demo.png"
+  ]
+}

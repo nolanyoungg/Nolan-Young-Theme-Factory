@@ -19,7 +19,7 @@ const {
   scopesOverlap,
   validateLocalModelPlan,
   validateStagePolicies
-} = require('../lib/local-model/stages');
+} = require('../lib/local-model/legacy-stages');
 
 const MODEL_ID = 'fixture-model';
 const BENCHMARK_PROMPT_PATH = path.resolve(__dirname, '..', '..', 'prompts', 'pending', '007-009-cinderline-digital-systems-benchmark.md');

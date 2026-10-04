@@ -1,0 +1,31 @@
+.site-footer { padding: 65px 0 24px; background: var(--stone); }
+.footer-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .65fr) minmax(0, 1fr); gap: 60px; padding-bottom: 45px; }
+.footer-studio .wordmark { display: inline-block; font-size: 36px; }
+.footer-studio p { font-size: 13px; margin: 22px 0; }
+.footer-nav { display: grid; grid-template-columns: minmax(0, 1fr); }
+.footer-nav a { text-decoration: none; font-size: 13px; padding: 5px 0; }
+.footer-grid .eyebrow { margin-bottom: 18px; }
+.footer-contact__link { font-family: var(--serif); font-size: 24px; line-height: 1.4; text-decoration: none; }
+.footer-contact p:not(.eyebrow) { margin: 18px 0 0; font-size: 13px; }
+.footer-contact p.small { font-size: 11px; }
+.interface-mark { width: 32px; height: 32px; filter: grayscale(1); }
+.image-credits { border-top: 1px solid #b8b8ab; border-bottom: 1px solid #b8b8ab; font-size: 11px; padding: 15px 0; }
+.image-credits summary { list-style: none; display: flex; justify-content: space-between; gap: 15px; }
+.image-credits summary::after { content: "+"; }
+.image-credits[open] summary::after { content: "−"; }
+.image-credits p { max-width: 830px; margin: 14px 0 0; }
+.footer-bottom { display: flex; flex-wrap: wrap; gap: 18px 32px; padding-top: 24px; font-size: 10px; color: #53564c; }
+.footer-bottom p { margin: 0; }
+.footer-bottom > span { margin-right: auto; }
+.footer-bottom a { text-decoration: none; }
+@media (max-width: 760px) {
+  .site-footer { padding: 42px 0 26px; }
+  .footer-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; padding-bottom: 32px; }
+  .footer-grid > * { grid-column: auto; max-width: 100%; min-width: 0; }
+  .footer-studio .wordmark { max-width: 100%; font-size: 34px; }
+  .footer-nav a { min-height: 44px; padding: 11px 0; }
+  .footer-contact a, .footer-bottom a, .image-credits a { overflow-wrap: anywhere; white-space: normal; }
+  .footer-bottom { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .footer-bottom a { padding: 7px 0; }
+  .image-credits summary { padding: 8px 0; }
+}

@@ -1,0 +1,15 @@
+{
+  "themeSlug": "008_nolan_young_theme_hearth_and_honey",
+  "mode": "codex-only",
+  "provider": "codex",
+  "model": "codex-config-default",
+  "startedAt": "2026-10-03T18:36:31.075Z",
+  "status": "failed",
+  "updatedAt": "2026-10-03T18:36:31.233Z",
+  "failedAt": "2026-10-03T18:36:31.233Z",
+  "error": {
+    "name": "Error",
+    "code": null,
+    "message": "codex generation failed:\n$ codex exec --cd C:\\Users\\Nolan\\Developer\\repos\\Nolan-Young-Theme-Factory\\wp-content\\themes\\008_nolan_young_theme_hearth_and_honey --sandbox workspace-write --approve-for-me --ephemeral -\n\nerror: the argument '--sandbox <SANDBOX_MODE>' cannot be used with '--approve-for-me'\n\nUsage: codex exec [OPTIONS] [PROMPT]\n       codex exec [OPTIONS] <COMMAND> [ARGS]\n\nFor more information, try '--help'."
+  }
+}

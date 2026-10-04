@@ -1,0 +1,17 @@
+.trail-row { display: grid; grid-template-columns: 45px minmax(0, 1fr) 110px 140px 32px; gap: 24px; align-items: center; padding: 28px 0; border-top: 1px solid var(--line); text-decoration: none; transition: padding .2s, color .2s; }
+.trail-row:last-child { border-bottom: 1px solid var(--line); }
+.trail-row:hover { color: var(--rust); padding-inline: 8px; }
+.trail-number, .trail-stats { font: 12px/1.6 'Courier New', monospace; }
+.trail-number { color: var(--rust); }
+.trail-row h3 { font-size: 1.55rem; }
+.trail-row p { font-size: 13px; color: var(--muted); margin-top: 8px; max-width: 420px; }
+.trail-grade { border: 1px solid var(--line); padding: 4px 9px; font: 11px/1.4 'Courier New', monospace; justify-self: start; }
+.trail-arrow { font-size: 24px; }
+.walks .small-note { margin-top: 20px; }
+@media (max-width: 900px) {
+    .trail-row { grid-template-columns: 26px 1fr auto; gap: 14px; }
+    .trail-row > div { grid-column: 2 / 3; }
+    .trail-grade { grid-column: 2; }
+    .trail-stats { grid-column: 2; }
+    .trail-arrow { grid-column: 3; grid-row: 1; }
+}

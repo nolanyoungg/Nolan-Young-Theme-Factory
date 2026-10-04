@@ -1,0 +1,25 @@
+.section { padding-block: 88px; }
+.section-heading { display: flex; justify-content: space-between; align-items: end; gap: 40px; margin-bottom: 36px; }
+.section-heading > p { max-width: 340px; color: var(--muted); font-size: 14px; }
+.page-intro { padding-block: 68px 56px; }
+.page-intro h1 { max-width: 850px; }
+.page-intro .lead { margin-top: 26px; max-width: 680px; }
+.panorama { position: relative; }
+.panorama img { width: 100%; height: 420px; object-fit: cover; object-position: center 52%; }
+.panorama > p { position: absolute; bottom: 24px; left: 24px; background: var(--paper); padding: 8px 12px; }
+.inquiry-banner { background: var(--rust); color: var(--paper); padding-block: 64px; position: relative; overflow: hidden; }
+.inquiry-banner::after { content: ''; pointer-events: none; position: absolute; width: 560px; height: 280px; border: 1px solid #f4f0e535; border-radius: 50%; transform: rotate(-30deg); right: -130px; top: -100px; box-shadow: 0 0 0 25px #f4f0e50c, 0 0 0 50px #f4f0e50c, 0 0 0 75px #f4f0e50c; }
+.inquiry-banner > .container { display: flex; justify-content: space-between; align-items: center; gap: 48px; position: relative; z-index: 1; }
+.inquiry-banner h2 { font-size: clamp(2.8rem, 4vw, 4rem); }
+.inquiry-banner .field-mark { filter: brightness(0) invert(1); margin-bottom: 24px; }
+.inquiry-banner small { display: block; font: 11px/1.6 'Courier New', monospace; margin-top: 16px; max-width: 260px; }
+@media (max-width: 700px) {
+    .section { padding-block: 52px; }
+    .section-heading { display: block; }
+    .section-heading > p { margin-top: 24px; }
+    .page-intro { padding-block: 42px; }
+    .page-intro h1 { font-size: clamp(2.4rem, 9vw, 3.2rem); max-width: 100%; }
+    .panorama img { height: 260px; }
+    .inquiry-banner > .container { display: block; }
+    .inquiry-banner > .container > div + div { margin-top: 28px; }
+}

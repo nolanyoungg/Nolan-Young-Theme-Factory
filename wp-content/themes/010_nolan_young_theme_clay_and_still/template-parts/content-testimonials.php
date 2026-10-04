@@ -1,0 +1,1 @@
+<aside class="studio-note"><p class="eyebrow">A note from Clay &amp; Still</p><p>“We like the moment when an ordinary object becomes part of a daily ritual.”</p><p class="small">Our imagined studio philosophy, not a customer testimonial.</p></aside>

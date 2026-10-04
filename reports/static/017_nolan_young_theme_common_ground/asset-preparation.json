@@ -1,0 +1,10 @@
+{
+  "status": "prepared",
+  "themeSlug": "017_nolan_young_theme_common_ground",
+  "prompt": "prompts/pending/012-common-ground-static.md",
+  "manifest": "docs/Preview-Themes-Github/017_nolan_young_theme_common_ground/assets/images/asset-manifest.json",
+  "manifestHash": "ad41ddc85458db7b8f6a4075323cb6a6d5817f1884e2ee3280ee609622102872",
+  "approvedAssetSetHash": "2d7d70b92206ada762556ef3e482d5b1bdcd1a1afeb994b6d92ea4ffcb9a1bc7",
+  "assetCount": 4,
+  "recordedAt": "2026-10-03T21:48:53.692Z"
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "static-v1",
+  "slug": "017_nolan_young_theme_common_ground",
+  "title": "Common Ground",
+  "pages": [
+    "index.html",
+    "homepage_preview.html",
+    "about-us_preview.html",
+    "services_preview.html",
+    "work_preview.html",
+    "blog_preview.html",
+    "contact_preview.html",
+    "policy_preview.html",
+    "single_services_preview.html"
+  ]
+}

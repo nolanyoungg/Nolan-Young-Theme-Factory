@@ -1,0 +1,3 @@
+<section class="studio-intro section container" aria-labelledby="studio-title">
+    <p class="eyebrow section-index">01 / The studio</p><div class="studio-intro__body" data-reveal><h2 id="studio-title">Good spaces begin<br>with <em>paying attention.</em></h2><div class="studio-intro__columns"><p>To the way the light moves. To the materials already there. To the small rituals that make a place your own.</p><div><p>Form &amp; Field is an independent architecture and interiors practice exploring thoughtful, enduring places to live. We work from the scale of a building to the detail of a room.</p><a class="text-link" href="<?php echo ff_url( '/about/' ); ?>">Inside the studio <span aria-hidden="true">↗</span></a></div></div></div>
+</section>

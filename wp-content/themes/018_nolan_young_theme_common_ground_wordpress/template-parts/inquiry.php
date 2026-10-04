@@ -1,0 +1,2 @@
+<?php defined( 'ABSPATH' ) || exit; ?>
+<div class="wrap"><section class="inquiry-band" aria-labelledby="inquiry-title"><div><h2 id="inquiry-title">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div><a class="button" href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Tell us what you have in mind<span class="arrow" aria-hidden="true">↗</span></a></section></div>

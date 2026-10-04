@@ -1,0 +1,36 @@
+.section { padding-top: 88px; padding-bottom: 88px; }
+.section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 45px; margin-bottom: 42px; }
+.section-heading h2 { margin-bottom: 0; }
+.section-heading > p { font-size: 13px; max-width: 265px; margin-bottom: 5px; }
+.page-intro { padding-top: 64px; padding-bottom: 58px; }
+.page-intro h1 { max-width: 920px; }
+.page-intro__copy { max-width: 570px; margin-bottom: 0; margin-left: auto; font-size: 17px; }
+.editorial-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 50px; }
+.editorial-split > div { max-width: 730px; }
+.material-notes { background: var(--stone); }
+.process-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin: 32px 0; }
+.process-grid article { padding-top: 24px; border-top: 1px solid var(--rule); }
+.process-grid .drawing-number { display: block; margin-bottom: 38px; }
+.process-grid p { color: var(--muted); font-size: 14px; }
+.process-note { display: flex; align-items: flex-start; gap: 24px; font-size: 13px; }
+.process-note p { margin: 0; }
+.invitation { background: var(--rust); color: var(--chalk); padding: 64px 0; }
+.invitation__inner { display: grid; grid-template-columns: minmax(0, .65fr) minmax(0, 1.3fr) minmax(0, 1fr); align-items: start; gap: 45px; }
+.invitation h2 { font-size: clamp(38px, 4.4vw, 64px); margin: 0; }
+.invitation__inner > div { align-self: end; font-size: 14px; }
+@media (max-width: 900px) { .invitation__inner { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } .invitation .eyebrow { grid-column: 1 / -1; margin-bottom: 0; } }
+@media (max-width: 700px) {
+  .section { padding-top: 52px; padding-bottom: 52px; }
+  .section-heading { display: block; margin-bottom: 28px; }
+  .section-heading > p, .process-note { margin-top: 24px; }
+  .page-intro { padding-top: 40px; padding-bottom: 38px; }
+  .page-intro__copy { font-size: 16px; max-width: 100%; }
+  .editorial-split, .process-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .process-grid .drawing-number { margin-bottom: 22px; }
+  .process-grid p { margin-bottom: 10px; }
+  .invitation { padding: 42px 0; }
+  .invitation__inner { grid-template-columns: minmax(0, 1fr); gap: 25px; }
+  .invitation .eyebrow { grid-column: auto; }
+  .invitation h2 { font-size: 44px; }
+  .invitation .button { width: 100%; }
+}

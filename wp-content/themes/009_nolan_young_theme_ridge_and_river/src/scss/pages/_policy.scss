@@ -1,0 +1,8 @@
+.prose h2 { font-size: 1.8rem; margin-top: 36px; }
+.prose h2:first-child { margin-top: 0; }
+.prose h3 { margin-top: 28px; }
+.prose p, .prose li { color: var(--muted); }
+.prose > h1 { margin-bottom: 32px; }
+.prose img { max-width: 100%; }
+.prose iframe { max-width: 100%; }
+.prose table { display: block; max-width: 100%; overflow-x: auto; }

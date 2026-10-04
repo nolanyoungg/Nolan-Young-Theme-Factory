@@ -1,0 +1,13 @@
+label { display: block; font-size: 13px; margin-bottom: 23px; }
+label span { color: var(--muted); font-size: 11px; }
+input, select, textarea { display: block; width: 100%; max-width: 100%; min-width: 0; padding: 13px 12px; border: 1px solid #999b8d; border-radius: 0; background: transparent; margin-top: 9px; font-size: 16px; }
+input, select { min-height: 49px; }
+textarea { resize: vertical; min-height: 160px; }
+input::placeholder, textarea::placeholder { color: #73756b; opacity: 1; }
+.form-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.demo-notice { border-left: 2px solid var(--rust); padding: 14px 18px; background: var(--stone); font-size: 13px; margin-bottom: 32px; }
+.demo-notice strong { display: block; font-weight: 600; }
+.form-feedback { margin-top: 20px; color: var(--rust); }
+.form-feedback:empty { display: none; }
+.search-form { max-width: 650px; margin: 35px 0; }
+@media (max-width: 700px) { .form-pair { grid-template-columns: minmax(0, 1fr); gap: 0; } .inquiry-form .button { width: 100%; } }

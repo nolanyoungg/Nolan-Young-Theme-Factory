@@ -1,0 +1,8 @@
+.button-row { display: flex; align-items: center; flex-wrap: wrap; gap: 22px; margin-top: 24px; }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 24px; background: var(--rust); color: var(--paper); padding: 13px 22px; border: 1px solid transparent; font-size: 13px; font-weight: 700; text-decoration: none; transition: background .2s, transform .2s; max-width: 100%; text-align: center; }
+.button:hover { background: var(--pine); transform: translateY(-2px); }
+.button-light { background: var(--paper); color: var(--pine); }
+.button-light:hover { color: var(--paper); border-color: var(--paper); }
+.text-link { display: inline-block; font-size: 13px; font-weight: 700; text-decoration-thickness: 1px; margin-top: 22px; }
+.button-row .text-link { margin-top: 0; }
+.text-link:hover { text-decoration-thickness: 2px; }

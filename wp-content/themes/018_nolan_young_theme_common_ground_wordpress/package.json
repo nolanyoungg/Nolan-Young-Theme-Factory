@@ -1,0 +1,7 @@
+{
+  "name": "018-nolan-young-theme-common-ground-wordpress",
+  "private": true,
+  "scripts": {
+    "build": "node build.cjs"
+  }
+}

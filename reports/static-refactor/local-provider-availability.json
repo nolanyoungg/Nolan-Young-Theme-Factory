@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-10-03T21:44:44.440Z",
+  "lmstudio": {
+    "endpoint": "http://127.0.0.1:1234/v1",
+    "status": "blocked",
+    "reason": "ECONNREFUSED in sandbox and unsandboxed read-only probe",
+    "loadedModelIds": []
+  },
+  "ollama": {
+    "endpoint": "http://127.0.0.1:11434/v1",
+    "status": "blocked",
+    "reason": "ECONNREFUSED in sandbox and unsandboxed read-only probe",
+    "loadedModelIds": []
+  },
+  "generation": "not-run; no connected loaded local model available",
+  "settingsChanged": false,
+  "modelsInstalled": false
+}

@@ -1,0 +1,10 @@
+.journal-layout { display: grid; grid-template-columns: .65fr 1.35fr; gap: 100px; padding-top: 0; }
+.journal-index a { display: block; font: 12px/1.5 'Courier New', monospace; margin-bottom: 20px; }
+.journal-index img { margin-top: 36px; height: 240px; width: 100%; object-fit: cover; }
+.journal-entries article { padding-block: 44px; border-top: 1px solid var(--line); }
+.journal-entries article:first-child { padding-top: 0; border-top: 0; }
+.journal-entries .lead { margin-block: 22px; }
+.journal-entries article > p:not(.lead):not(.eyebrow) { color: var(--muted); }
+.post-list article { border-top: 1px solid var(--line); padding-block: 32px; }
+.post-list h2 { font-size: 2rem; margin-bottom: 18px; }
+@media (max-width: 700px) { .journal-layout { grid-template-columns: 1fr; gap: 40px; } .journal-index img { height: 180px; } }

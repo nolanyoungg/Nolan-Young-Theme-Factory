@@ -1,0 +1,1 @@
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'search-result' ); ?>><h2><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h2><p><?php echo esc_html( wp_trim_words( get_the_excerpt(), 35 ) ); ?></p><a class="text-link" href="<?php the_permalink(); ?>">Read on ↗</a></article>

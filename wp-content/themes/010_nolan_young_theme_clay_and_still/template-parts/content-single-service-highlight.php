@@ -1,0 +1,4 @@
+<section class="workshop-invitation section container" aria-labelledby="workshop-title">
+	<div class="workshop-picture" data-reveal><?php clay_image( 'detail' ); ?><span class="oval-caption" aria-hidden="true">a pause<br>for making</span></div>
+	<div class="workshop-copy"><p class="eyebrow">03 / Around the clay table</p><h2 id="workshop-title">Put your hands<br>to <em>something good.</em></h2><p>Step away from the hurry. Join an introductory handbuilding session and find the pleasure of making a small object from a simple lump of clay.</p><p class="workshop-meta">2½ hours · Beginner friendly · Materials included</p><a class="button button-outline" href="<?php echo clay_url( '/services/featured/' ); ?>">Explore the workshop <span aria-hidden="true">↗</span></a><p class="small">Sample experience. Ask about the idea; no live bookings.</p></div>
+</section>

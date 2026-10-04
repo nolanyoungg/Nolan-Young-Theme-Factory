@@ -1,0 +1,19 @@
+{
+  "mode": "codex-only",
+  "prompt": "prompts\\pending\\008-hearth-and-honey.md",
+  "assetCatalog": "assets/manifests/008-hearth-and-honey.json",
+  "templateSource": "wp-content\\themes\\000_nolan_young_theme_master_template_prompt_filler_template_1",
+  "themeSlug": "008_nolan_young_theme_hearth_and_honey",
+  "createdAt": "2026-10-03T18:36:27.660Z",
+  "localModelStages": [],
+  "assetPreparation": {
+    "status": "prepared",
+    "themeSlug": "008_nolan_young_theme_hearth_and_honey",
+    "prompt": "prompts\\pending\\008-hearth-and-honey.md",
+    "manifest": "wp-content\\themes\\008_nolan_young_theme_hearth_and_honey\\assets\\images\\asset-manifest.json",
+    "manifestHash": "3833a70790ade347c9a09661589fcc2c19d55fc6e2eafb2912beef823d052131",
+    "approvedAssetSetHash": "b4cb9332148c1c6a05794e681087e824a843776a61a7a9f69a83eb99ddccb27c",
+    "assetCount": 4,
+    "recordedAt": "2026-10-03T18:36:31.074Z"
+  }
+}

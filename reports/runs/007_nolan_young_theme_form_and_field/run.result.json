@@ -1,0 +1,31 @@
+{
+  "themeSlug": "007_nolan_young_theme_form_and_field",
+  "status": "failed",
+  "infrastructure": {
+    "status": "failed",
+    "reason": "Certificate trust prevented the CLI from connecting to OpenAI. No model-generated source was applied."
+  },
+  "generation": {
+    "status": "blocked"
+  },
+  "build": {
+    "status": "not-run"
+  },
+  "sourceValidation": {
+    "status": "not-run"
+  },
+  "previewPublication": {
+    "status": "not-published"
+  },
+  "packaging": {
+    "status": "not-run"
+  },
+  "artifactValidation": {
+    "status": "not-run"
+  },
+  "visualQuality": {
+    "status": "not-reviewed"
+  },
+  "preserved": true,
+  "recordedAt": "2026-10-03T18:47:05.161Z"
+}

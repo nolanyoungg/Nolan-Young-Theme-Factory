@@ -1,0 +1,19 @@
+/* WordPress menu wrappers and editable content; original site.css is unchanged. */
+.site-nav>.cground-menu{display:flex;align-items:center;gap:27px;list-style:none;margin:0;padding:0}
+.cground-menu li{list-style:none;margin:0;padding:0}
+.site-nav .cground-menu a{display:block}
+.site-nav .current-menu-item>a,.site-nav .current-menu-ancestor>a{text-decoration:underline;text-underline-offset:7px}
+.footer-links>.cground-menu{display:grid;grid-template-columns:1fr 1fr;gap:9px 25px;list-style:none;margin:0;padding:0;grid-column:1/-1}
+.entry-content{overflow-wrap:anywhere;min-width:0}
+.entry-content:not(.cground-designed-content)>*+*{margin-top:24px}
+.entry-content:not(.cground-designed-content) h2,.entry-content:not(.cground-designed-content) h3{margin-top:32px;margin-bottom:20px}
+.entry-content figure{max-width:100%}
+.entry-content iframe{max-width:100%}
+.entry-content pre{overflow:auto}
+.entry-content:after{content:'';display:table;clear:both}
+.alignleft{float:left;margin:0 24px 24px 0}.alignright{float:right;margin:0 0 24px 24px}.aligncenter{margin-inline:auto}
+.wp-caption{max-width:100%}.wp-caption-text,.gallery-caption{font-size:12px;color:var(--muted)}
+.screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.post-navigation,.pagination{padding-block:30px}.nav-links{display:flex;flex-wrap:wrap;gap:20px}
+@media(max-width:1050px){.site-nav>.cground-menu{gap:16px}}
+@media(max-width:760px){.site-nav>.cground-menu{flex-wrap:wrap;gap:18px 24px;width:100%}.js .site-nav>.cground-menu{flex-direction:column;align-items:stretch;gap:0}.footer-links>.cground-menu{gap:13px}.alignleft,.alignright{float:none;margin:0 0 24px}}

@@ -1,211 +1,88 @@
 # Nolan Young Theme Factory
 
-This repo is a template-first WordPress theme factory. It prepares a copied theme, installs its build dependencies, runs exactly one selected generation mode, then performs deterministic build, validation, preview, packaging, and reporting work.
+Generate polished multi-page **static website samples** first. Review them in `docs/index.html`, then explicitly choose a sample for WordPress conversion. Static generation never creates a WordPress theme, renders PHP, or packages a WordPress ZIP.
 
-## Core Rule
+## Quick start
 
-Generation and evaluation are separate jobs.
-
-AI generation may edit only the prepared theme directory:
-
-```text
-wp-content/themes/NNN_nolan_young_theme_[description]/
-```
-
-The workflow owns template copying, dependency installation, build commands, validation, preview generation, ZIP packaging, cleanup, and reports.
-
-## Modes
-
-There are only three generation modes:
-
-- `codex-only`: one Codex generation pass from the prepared theme directory.
-- `ollama-only`: planned LocalModelAgent stages through Ollama's OpenAI-compatible HTTP API.
-- `lmstudio-only`: the same planned LocalModelAgent stages through LM Studio's OpenAI-compatible HTTP API.
-
-There is no `hybrid` mode, CLI generation path, provider fallback, validation-triggered AI pass, build-triggered AI pass, or repair pass.
-
-## What Lives Where
-
-- `AGENTS.md` holds the repository agent policy.
-- `prompts/pending/` holds creative briefs waiting to be generated.
-- `prompts/completed/` holds prior creative briefs retained for reference.
-- `wp-content/themes/000_nolan_young_theme_master_template_prompt_filler_template_1/` is the current checked-in starter theme source.
-- `wp-content/themes/NNN_nolan_young_theme_[description]/` holds prepared and generated theme source.
-- `wordpress-themplate-themes/` keeps the intentionally spelled template artifact area.
-- `dist/zipped-theme-templates/` holds template ZIPs.
-- `dist/zipped-themes/` holds generated theme ZIP packages.
-- `docs/Preview-Themes-Github/NNN_nolan_young_theme_[description]/` holds rendered static previews.
-- `docs/index.html` is the preview gallery.
-- `reports/runs/{theme_slug}/` holds run reports and validation evidence.
-- `scripts/` holds the npm command implementation.
-
-## Public Commands
-
-Use npm scripts from the repository root:
-
-```sh
-npm run theme:run
-npm run theme:resume
-npm run theme:prepare
-npm run theme:assets
-npm run theme:validate
-npm run theme:build
-npm run theme:preview
-npm run theme:preview:index
-npm run theme:zip
-npm run theme:delete
-npm run theme:env
-npm run theme:model-check
-npm run test:scripts
-```
-
-## Preparation Flow
-
-`theme:run` and `theme:prepare` prepare a theme before any AI generation mode is called:
-
-1. Resolve the selected template source. The default source is the packaged starter ZIP when it exists, with the checked-in starter directory used only as a fallback.
-2. Stage the template ZIP under `wp-content/themes/`, unzip it, and copy the extracted WordPress theme into `wp-content/themes/{theme_slug}/`.
-3. Update prepared identity fields such as theme name, text domain, and package name.
-4. Run `npm ci` inside the prepared theme directory.
-5. Acquire or copy the provider-neutral approved asset set and write its manifest before generation.
-6. Verify the local build dependency binaries exist before Codex, Ollama, or LM Studio generation starts.
-
-The asset phase is also callable independently with `npm run theme:assets`. Fair comparisons use equivalent per-theme manifests and the same byte-identical approved asset set in all three modes; compare the recorded `approvedAssetSetHash` because manifest timestamps and theme slugs intentionally differ.
-
-`theme:build` does not install dependencies. If dependencies are missing, rerun preparation or run `npm ci` inside the prepared theme directory before building or resuming.
-
-## Local Model Architecture
-
-Ollama and LM Studio share one OpenAI-compatible provider contract. Ollama defaults to `http://127.0.0.1:11434/v1`; LM Studio defaults to `http://127.0.0.1:1234/v1`. Base URL, API key, temperature, and timeout are configurable per provider, but secrets are never included in metadata, errors, checkpoints, or reports.
-
-Both `theme:model-check` and `theme:run` verify that the selected model is visible and can return a required structured tool call. Local generation stops before model work if that preflight fails.
-
-LocalModelAgent runs these nine planned stages with separate read and write scopes:
-
-1. `01-identity-copy`
-2. `02-header-navigation`
-3. `03-homepage-layout`
-4. `04-page-templates`
-5. `05-forms-admin`
-6. `06-scss-design-system`
-7. `07-js-interactions`
-8. `08-footer-cleanup`
-9. `09-docs-and-stale-copy-cleanup`
-
-Each stage receives bounded actual source contents instead of a repository dump. The model can request only safe read-only file listing, reading, excerpt, and search tools within that stage's read scope. It never receives direct disk access.
-
-The final stage response must contain one unified diff and no direct-write instructions. The runner validates paths against the write scope, rejects traversal, absolute paths, binary files, `node_modules`, and symlinks, applies the patch to a temporary candidate, runs stage checks, and replaces the prepared theme only after success. There is no alternate edit format and no repair pass after failure.
-
-Stage write scopes exclude compiled CSS, compiled JavaScript, and `package-lock.json`. `npm run build` produces bundles deterministically after all accepted source stages finish.
-
-## Run Examples
-
-Codex:
+Run commands from the repository root (use `npm.cmd` in PowerShell if its npm shim drops flags):
 
 ```sh
 npm run theme:run -- --mode codex-only --prompt prompts/pending/000-testing.md
 ```
 
-Ollama:
+The workflow reserves the next unused numbered identity across samples, themes, ZIPs and reports. It creates a plain HTML/CSS/JavaScript scaffold, seeds approved local images and a provenance manifest, runs one generation pass, validates the sample and writes private evidence. No static build dependencies are installed.
+
+A focused architecture example with an already approved photographic catalog:
 
 ```sh
-npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model llama3.1:8b
+npm run theme:run -- --mode codex-only --prompt prompts/pending/012-common-ground-static.md --asset-catalog assets/manifests/007-form-and-field.json
 ```
 
-Qwen 2.5 Coder 14B through Ollama:
+The nine existing page filenames remain the navigation contract: `index.html`, `homepage_preview.html`, `about-us_preview.html`, `services_preview.html`, `work_preview.html`, `blog_preview.html`, `contact_preview.html`, `policy_preview.html`, `single_services_preview.html`. Index and homepage are equivalent entry points. Extra HTML pages can be discovered by the gallery.
+
+## Review before gallery inclusion
 
 ```sh
-ollama pull qwen2.5-coder:14b
-npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
-npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model qwen2.5-coder:14b
+npm run theme:preview -- --sample-slug <sample-slug> --port 4174
+npm run theme:validate -- --sample-slug <sample-slug>
+npm run theme:resume -- --sample-slug <sample-slug> --review-evidence reports/static/<sample-slug>/browser-review.json
+npm run theme:preview:index
+npm run theme:preview -- --port 4174
 ```
 
-LM Studio:
+Preview is a localhost Node static server; stop it with Ctrl+C. Without `--sample-slug`, it serves the gallery. Nothing is deployed. Existing historical previews remain in the gallery. New samples require passing technical validation and hash-bound browser/screenshot review before inclusion. Until reviewed, the run says `awaiting-review`; unavailable browser checks say `skipped`, never passed. See [the command and evidence guide](scripts/README.md) for the review format.
+
+Inspect desktop (at least 1200px) and mobile (at most 400px) screenshots. Check typography, spacing, images, content, distinct design, all pages, navigation, intended interactions, console errors, failed requests, overflow and clipping. Code similarity does not prove visual quality. Generated output is immutable after its pass: preserve failed output; improve a future brief and start a new number instead of repairing it.
+
+## Local generation modes
+
+Only `codex-only`, `ollama-only`, and `lmstudio-only` exist. Local modes retain bounded tools, declared stages, validated transactional diffs, capability probing and hash-bound checkpoints. They never fall back to Codex.
+
+First discover exact IDs from an **already running** server:
 
 ```sh
-npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
+npm run theme:model-check -- --provider ollama --ollama-base-url http://127.0.0.1:11434/v1
+npm run theme:model-check -- --provider lmstudio --lmstudio-base-url http://127.0.0.1:1234/v1
 ```
 
-LM Studio mode expects the LM Studio desktop app or `lms`/`llmster` server to already be running with the OpenAI-compatible API enabled. The default base URL is `http://127.0.0.1:1234/v1`; override it with `--lmstudio-base-url` or `LMSTUDIO_BASE_URL`.
-
-Qwen 2.5 Coder 14B through LM Studio:
+Then use the exact returned ID, including its tag/quantization, in both commands. These examples use documented example IDs, **not a claim that these models are loaded here**:
 
 ```sh
-npm run theme:model-check -- --provider lmstudio
-npm run theme:model-check -- --provider lmstudio --lmstudio-model qwen/qwen2.5-coder-14b
-npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
+npm run theme:model-check -- --provider ollama --ollama-base-url http://127.0.0.1:11434/v1 --ollama-model qwen2.5-coder:14b
+npm run theme:run -- --mode ollama-only --prompt prompts/pending/012-common-ground-static.md --asset-catalog assets/manifests/007-form-and-field.json --ollama-base-url http://127.0.0.1:11434/v1 --ollama-model qwen2.5-coder:14b
+npm run theme:model-check -- --provider lmstudio --lmstudio-base-url http://127.0.0.1:1234/v1 --lmstudio-model qwen/qwen2.5-coder-14b
+npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/012-common-ground-static.md --asset-catalog assets/manifests/007-form-and-field.json --lmstudio-base-url http://127.0.0.1:1234/v1 --lmstudio-model qwen/qwen2.5-coder-14b
 ```
 
-Use the exact model id reported by `theme:model-check`; local model ids can differ by download source and quantization. If the server is not running, the model is not loaded, the endpoint is not OpenAI-compatible, the model id is wrong, or required tool calling is unavailable, `theme:model-check` fails before generation.
+At refactor verification time, both default endpoints returned `ECONNREFUSED`; no exact loaded model ID could be verified. No server settings or model installations were changed. See `reports/static-refactor/local-provider-availability.json` for the actual result. Equivalent commands above become reproducible once an existing server is available and its returned ID is supplied.
 
-The runner prompts interactively for missing values when used from a TTY. Non-interactive runs must pass required options.
-
-## Deterministic Steps
-
-`theme:run` performs:
-
-```text
-copy template
--> acquire/copy approved assets
--> run selected AI generation mode
--> npm run build inside the copied theme
--> source validate
--> generate preview
--> rebuild preview index
--> package ZIP
--> artifact validate
--> write run report
-```
-
-`theme:resume` re-runs only the deterministic post-generation steps for an existing completed theme. Local-model stage continuation is explicit:
+## Explicit WordPress conversion
 
 ```sh
-npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model qwen2.5-coder:14b --resume-local
-npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b --resume-local --resume-from-stage 04-page-templates
+npm run theme:convert:wordpress -- --sample-slug <existing-static-sample-slug> --mode codex-only
 ```
 
-Each successful local stage records hashes for the prompt, template, provider identity, model metadata, stage policy, and current theme tree. `--resume-local` and `--resume-from-stage` proceed only when every recorded hash matches and the completed stages form a valid policy prefix. A mismatch stops without changing the theme.
+This separate command reserves a new output identity, copies the selected approved assets, and asks Codex to produce a real classic WordPress theme using the original sample as read-only design input. Optional `--output-slug <new-numbered-slug>` selects the output identity. Other conversion modes are rejected; local modes still generate static samples.
 
-## Validation And Evidence
+The converter performs a dependency-free asset build, PHP/source contract checks, legacy read-only PHP-harness rendering and temporary-copy ZIP packaging. It hashes the original sample before/after. The resulting theme README explains editable WordPress content, template-owned content, page/slugs/menu setup and demo forms. Compare the converted private preview with the original on desktop/mobile before calling conversion visually verified.
 
-Validation is observational. Failed generated output is preserved as evidence. Do not patch a generated theme in place just to make checks pass. Improve the future prompt, template, validator, or deterministic workflow, then start a fresh run.
+After an infrastructure interruption, deterministic conversion checks can resume with the same sample and `--output-slug <recorded-output> --mode codex-only --resume-checks`. This never invokes AI, requires an unchanged source checkpoint, preserves previous check reports, and refuses an existing ZIP. It does not permit repairing generated source.
 
-Source validation runs before preview and ZIP creation. Artifact validation runs after preview and packaging.
+A harness is **not WordPress**. Without an isolated WordPress runtime, theme activation, actual enqueue execution, admin editing, permalink routing, plugin interoperability and real form delivery remain unverified. Do not point tests at an existing live site.
 
-A generated theme is successful only when the generated source itself passes source validation, build, preview rendering, ZIP packaging, artifact validation, and visual preview inspection without repository-agent repairs.
+## Output and migration
 
-Do not change the preview harness, validators, packaging, or generated theme source to hide a broken generation result. If generated PHP, helpers, data providers, files, assets, or naming contracts are missing or inconsistent, mark the generation failed and keep the evidence.
+| Purpose | Location |
+| --- | --- |
+| Primary static samples | `docs/Preview-Themes-Github/<sample-slug>/` |
+| Local gallery | `docs/index.html` |
+| Static reports/checkpoints/screenshots | `reports/static/<sample-slug>/` |
+| Selected WordPress conversion | `wp-content/themes/<new-output-slug>/` |
+| WordPress package | `dist/zipped-themes/<new-output-slug>.zip` |
+| Conversion reports/private preview | `reports/conversions/<new-output-slug>/` |
 
-Reports should separate infrastructure success, generation success, validation success, preview publication success, and visual quality. Local-model evidence additionally records provider/model metadata, capability preflight, stage configuration, read/write scopes, context summaries, tool activity, raw responses, extracted diffs, applied paths, candidate checks, final status, and checkpoint hashes without secrets. A published preview is not proof that the generated theme succeeded if the preview required fallback code to render.
+Historical samples, themes, ZIPs and failed runs are preserved. Existing preview URLs continue to work. `sample.json` distinguishes new static-v1 samples; old rendered previews have no such marker and are treated as legacy. New commands do not rewrite their source. Old WordPress-first code is isolated in `scripts/legacy-wordpress.js`; direct execution is disabled. The old guide is retained as historical reference in `scripts/LEGACY-WORDPRESS.md`.
 
-## Image Assets
+`--sample-slug` replaces `--theme-slug` for static commands (the latter warns as a compatibility alias). `theme:build` is a documented static no-op. `theme:zip` and `theme:delete` have been removed; explicit `theme:wordpress:zip` packages a validated conversion only and refuses an existing ZIP. Old WordPress local checkpoints cannot resume under static checkpoint version 2. Deterministic `theme:resume` never invokes AI; explicit local continuation is separate.
 
-Image acquisition happens before theme generation as a standalone workflow. Approved images must be local, copyright-safe, and recorded in an asset manifest before the model is called.
-
-```sh
-npm run theme:assets -- --prompt prompts/pending/000-testing.md --theme-slug 007_nolan_young_theme_example
-```
-
-During generation, the model may use only images already present in the prepared theme or explicitly listed in the approved asset manifest. It must not search for images, invent image URLs, invent licensing, or hotlink third-party files.
-
-Prefer existing approved local assets first, then reusable copyright-safe stock, then newly acquired permissive stock. Use generated original images only when stock is unavailable or unsuitable.
-
-Every approved image needs source, license, creator, acquisition date, allowed use, destination file, theme slug, alt text, and notes recorded in the manifest. If a prompt requires photography or image-backed design and no approved manifest exists, generation should stop before model invocation.
-
-Asset acquisition is provider-neutral: Codex, Ollama, and LM Studio receive equivalent manifests and byte-identical copied files for the same prompt comparison. The run evidence records both the per-theme manifest hash and the cross-mode `approvedAssetSetHash`.
-
-## Preview Expectations
-
-Preview generation renders theme PHP templates through a lightweight read-only harness and writes static pages under `docs/Preview-Themes-Github/`.
-
-Required preview pages:
-
-- `index.html`
-- `homepage_preview.html`
-- `about-us_preview.html`
-- `services_preview.html`
-- `work_preview.html`
-- `blog_preview.html`
-- `contact_preview.html`
-- `policy_preview.html`
-- `single_services_preview.html`
+Run `npm run test:scripts` for validation, provider, patch, checkpoint, isolation and command-contract checks. Publishing remains a separate human-authorized operation.

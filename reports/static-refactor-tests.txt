@@ -1,0 +1,475 @@
+
+> nolan-young-theme-factory@1.0.0 test:scripts
+> node --test scripts/tests/*.test.js
+
+TAP version 13
+# Subtest: buildStageContext includes actual scoped source and useful config
+ok 1 - buildStageContext includes actual scoped source and useful config
+  ---
+  duration_ms: 37.669
+  type: 'test'
+  ...
+# Subtest: context truncation is deterministic and reports total, per-file, and line-range metadata
+ok 2 - context truncation is deterministic and reports total, per-file, and line-range metadata
+  ---
+  duration_ms: 45.2394
+  type: 'test'
+  ...
+# Subtest: compiled bundles and lockfiles are summarized instead of dumped
+ok 3 - compiled bundles and lockfiles are summarized instead of dumped
+  ---
+  duration_ms: 26.1729
+  type: 'test'
+  ...
+# Subtest: context excludes binary files, node_modules, reports, and unrelated paths
+ok 4 - context excludes binary files, node_modules, reports, and unrelated paths
+  ---
+  duration_ms: 32.7044
+  type: 'test'
+  ...
+# Subtest: strict path validation rejects traversal, absolute, drive, UNC, and symlink escapes
+ok 5 - strict path validation rejects traversal, absolute, drive, UNC, and symlink escapes
+  ---
+  duration_ms: 26.3742
+  type: 'test'
+  ...
+# Subtest: read-only tools list, read, excerpt, and search literal text successfully
+ok 6 - read-only tools list, read, excerpt, and search literal text successfully
+  ---
+  duration_ms: 41.0475
+  type: 'test'
+  ...
+# Subtest: read-only tools deny out-of-scope and binary reads
+ok 7 - read-only tools deny out-of-scope and binary reads
+  ---
+  duration_ms: 18.0629
+  type: 'test'
+  ...
+# Subtest: tool responses, cumulative output, and call count remain bounded
+ok 8 - tool responses, cumulative output, and call count remain bounded
+  ---
+  duration_ms: 28.6902
+  type: 'test'
+  ...
+# Subtest: formatting, comment padding, and a small override do not pass as a redesign
+ok 9 - formatting, comment padding, and a small override do not pass as a redesign
+  ---
+  duration_ms: 2.963
+  type: 'test'
+  ...
+# Subtest: a substantially different stylesheet can have exactly the same byte count
+ok 10 - a substantially different stylesheet can have exactly the same byte count
+  ---
+  duration_ms: 0.2629
+  type: 'test'
+  ...
+# Subtest: comments inside quoted CSS values remain meaningful content
+ok 11 - comments inside quoted CSS values remain meaningful content
+  ---
+  duration_ms: 0.0774
+  type: 'test'
+  ...
+# Subtest: every supplied preview page targets its own embedded website, including extra pages
+ok 12 - every supplied preview page targets its own embedded website, including extra pages
+  ---
+  duration_ms: 1.1558
+  type: 'test'
+  ...
+# Subtest: gallery escapes theme metadata and supports an empty inventory
+ok 13 - gallery escapes theme metadata and supports an empty inventory
+  ---
+  duration_ms: 0.7234
+  type: 'test'
+  ...
+# Subtest: npm version probe works without launching a Windows command shim
+ok 14 - npm version probe works without launching a Windows command shim
+  ---
+  duration_ms: 182.5092
+  type: 'test'
+  ...
+# Subtest: preview home URL mapping preserves WordPress query and fragment suffixes
+ok 15 - preview home URL mapping preserves WordPress query and fragment suffixes
+  ---
+  duration_ms: 65.9225
+  type: 'test'
+  ...
+# Subtest: empty-database conversion harness uses real default values and theme fallback menus
+ok 16 - empty-database conversion harness uses real default values and theme fallback menus
+  ---
+  duration_ms: 508.5102
+  type: 'test'
+  ...
+# Subtest: accepts exactly one raw unified diff
+ok 17 - accepts exactly one raw unified diff
+  ---
+  duration_ms: 2.6306
+  type: 'test'
+  ...
+# Subtest: accepts exactly one fenced unified diff
+ok 18 - accepts exactly one fenced unified diff
+  ---
+  duration_ms: 0.2045
+  type: 'test'
+  ...
+# Subtest: rejects malformed unified diffs
+ok 19 - rejects malformed unified diffs
+  ---
+  duration_ms: 1.2537
+  type: 'test'
+  ...
+# Subtest: rejects multiple fenced blocks
+ok 20 - rejects multiple fenced blocks
+  ---
+  duration_ms: 0.1085
+  type: 'test'
+  ...
+# Subtest: rejects commentary before or after a diff
+ok 21 - rejects commentary before or after a diff
+  ---
+  duration_ms: 0.2044
+  type: 'test'
+  ...
+# Subtest: rejects the legacy complete-file block protocol
+ok 22 - rejects the legacy complete-file block protocol
+  ---
+  duration_ms: 0.1525
+  type: 'test'
+  ...
+# Subtest: rejects binary patches
+ok 23 - rejects binary patches
+  ---
+  duration_ms: 0.3181
+  type: 'test'
+  ...
+# Subtest: rejects absolute and traversal patch paths
+ok 24 - rejects absolute and traversal patch paths
+  ---
+  duration_ms: 0.3579
+  type: 'test'
+  ...
+# Subtest: rejects paths outside the stage write scope
+ok 25 - rejects paths outside the stage write scope
+  ---
+  duration_ms: 0.83
+  type: 'test'
+  ...
+# Subtest: rejects mode-only patches
+ok 26 - rejects mode-only patches
+  ---
+  duration_ms: 0.3124
+  type: 'test'
+  ...
+# Subtest: transactionally applies valid modify, create, and delete patches
+ok 27 - transactionally applies valid modify, create, and delete patches
+  ---
+  duration_ms: 35.453
+  type: 'test'
+  ...
+# Subtest: real Git transaction is isolated from a parent repository
+ok 28 - real Git transaction is isolated from a parent repository
+  ---
+  duration_ms: 231.288
+  type: 'test'
+  ...
+# Subtest: git apply --check failure preserves the original theme
+ok 29 - git apply --check failure preserves the original theme
+  ---
+  duration_ms: 19.3959
+  type: 'test'
+  ...
+# Subtest: candidate-check failure preserves the original theme
+ok 30 - candidate-check failure preserves the original theme
+  ---
+  duration_ms: 14.993
+  type: 'test'
+  ...
+# Subtest: a rejected patch leaves the original theme unchanged
+ok 31 - a rejected patch leaves the original theme unchanged
+  ---
+  duration_ms: 4.8987
+  type: 'test'
+  ...
+# Subtest: rejects a patch target that is a symbolic link
+ok 32 - rejects a patch target that is a symbolic link # SKIP symbolic-link creation is unavailable: EPERM
+  ---
+  duration_ms: 3.8512
+  type: 'test'
+  ...
+# Subtest: verifies actual changed paths and rejects undeclared changes
+ok 33 - verifies actual changed paths and rejects undeclared changes
+  ---
+  duration_ms: 14.8371
+  type: 'test'
+  ...
+# Subtest: reports bounded selected-model metadata without exposing credentials
+ok 34 - reports bounded selected-model metadata without exposing credentials
+  ---
+  duration_ms: 15.7518
+  type: 'test'
+  ...
+# Subtest: records selected-model metadata as unavailable when /models returns ids only
+ok 35 - records selected-model metadata as unavailable when /models returns ids only
+  ---
+  duration_ms: 0.5215
+  type: 'test'
+  ...
+# Subtest: normalizes OpenAI-compatible and provider base URLs to /v1
+ok 36 - normalizes OpenAI-compatible and provider base URLs to /v1
+  ---
+  duration_ms: 1.6557
+  type: 'test'
+  ...
+# Subtest: lists models deterministically and checks model success and failure
+ok 37 - lists models deterministically and checks model success and failure
+  ---
+  duration_ms: 43.1847
+  type: 'test'
+  ...
+# Subtest: normalizes multipart content and vendor tool-call argument shapes
+ok 38 - normalizes multipart content and vendor tool-call argument shapes
+  ---
+  duration_ms: 8.4844
+  type: 'test'
+  ...
+# Subtest: actively verifies required structured tool calling
+ok 39 - actively verifies required structured tool calling
+  ---
+  duration_ms: 3.8724
+  type: 'test'
+  ...
+# Subtest: rejects a content-only JSON pseudo-tool-call during capability probing
+ok 40 - rejects a content-only JSON pseudo-tool-call during capability probing
+  ---
+  duration_ms: 3.2497
+  type: 'test'
+  ...
+# Subtest: normalizes provider timeouts
+ok 41 - normalizes provider timeouts
+  ---
+  duration_ms: 22.2036
+  type: 'test'
+  ...
+# Subtest: normalizes HTTP errors with safe provider metadata
+ok 42 - normalizes HTTP errors with safe provider metadata
+  ---
+  duration_ms: 3.0846
+  type: 'test'
+  ...
+# Subtest: redacts API keys from metadata, serialized providers, responses, and errors
+ok 43 - redacts API keys from metadata, serialized providers, responses, and errors
+  ---
+  duration_ms: 5.8241
+  type: 'test'
+  ...
+# Subtest: production policy declares the ordered nine stages with required fields, coverage, safe writes, and justified overlaps
+ok 44 - production policy declares the ordered nine stages with required fields, coverage, safe writes, and justified overlaps
+  ---
+  duration_ms: 4.3337
+  type: 'test'
+  ...
+# Subtest: the actual 007-009 benchmark prompt covers every stage and page-template policy owns 403.php
+ok 45 - the actual 007-009 benchmark prompt covers every stage and page-template policy owns 403.php
+  ---
+  duration_ms: 1.5909
+  type: 'test'
+  ...
+# Subtest: prompt extraction uses exact explicit ownership without adjacent or nested section capture
+ok 46 - prompt extraction uses exact explicit ownership without adjacent or nested section capture
+  ---
+  duration_ms: 0.5025
+  type: 'test'
+  ...
+# Subtest: stage prompt enforces scoped inspection and final unified-diff-only contract
+ok 47 - stage prompt enforces scoped inspection and final unified-diff-only contract
+  ---
+  duration_ms: 0.22
+  type: 'test'
+  ...
+# Subtest: one-stage final diff writes reports, progress, and checkpoint after one transactional apply
+ok 48 - one-stage final diff writes reports, progress, and checkpoint after one transactional apply
+  ---
+  duration_ms: 42.5912
+  type: 'test'
+  ...
+# Subtest: bounded tool loop returns tool results to the provider and stops at the final diff
+ok 49 - bounded tool loop returns tool results to the provider and stops at the final diff
+  ---
+  duration_ms: 23.1538
+  type: 'test'
+  ...
+# Subtest: tool-call count exceeding the bound fails without applying a patch
+ok 50 - tool-call count exceeding the bound fails without applying a patch
+  ---
+  duration_ms: 20.6271
+  type: 'test'
+  ...
+# Subtest: malformed tool JSON receives exactly one protocol retry before a final diff
+ok 51 - malformed tool JSON receives exactly one protocol retry before a final diff
+  ---
+  duration_ms: 21.6462
+  type: 'test'
+  ...
+# Subtest: candidate or patch failure marks the session failed, preserves source, and starts no repair request
+    # Subtest: candidate
+    ok 1 - candidate
+      ---
+      duration_ms: 19.7268
+      type: 'test'
+      ...
+    # Subtest: patch
+    ok 2 - patch
+      ---
+      duration_ms: 19.6071
+      type: 'test'
+      ...
+    1..2
+ok 52 - candidate or patch failure marks the session failed, preserves source, and starts no repair request
+  ---
+  duration_ms: 39.7648
+  type: 'test'
+  ...
+# Subtest: safe resume accepts a matching completed-stage checkpoint and runs only the next stage
+ok 53 - safe resume accepts a matching completed-stage checkpoint and runs only the next stage
+  ---
+  duration_ms: 46.5471
+  type: 'test'
+  ...
+# Subtest: a failed session cannot resume from its last successful checkpoint
+ok 54 - a failed session cannot resume from its last successful checkpoint
+  ---
+  duration_ms: 27.4814
+  type: 'test'
+  ...
+# Subtest: resume rejects prompt, template, asset, provider, model, policy, and prepared-theme hash mismatches before provider use
+    # Subtest: prompt hash
+    ok 1 - prompt hash
+      ---
+      duration_ms: 23.3182
+      type: 'test'
+      ...
+    # Subtest: template source hash
+    ok 2 - template source hash
+      ---
+      duration_ms: 23.1438
+      type: 'test'
+      ...
+    # Subtest: asset manifest hash
+    ok 3 - asset manifest hash
+      ---
+      duration_ms: 23.0915
+      type: 'test'
+      ...
+    # Subtest: provider identity
+    ok 4 - provider identity
+      ---
+      duration_ms: 21.7335
+      type: 'test'
+      ...
+    # Subtest: model identity
+    ok 5 - model identity
+      ---
+      duration_ms: 20.5868
+      type: 'test'
+      ...
+    # Subtest: stage policy hash
+    ok 6 - stage policy hash
+      ---
+      duration_ms: 21.3734
+      type: 'test'
+      ...
+    # Subtest: theme state hash
+    ok 7 - theme state hash
+      ---
+      duration_ms: 25.7074
+      type: 'test'
+      ...
+    1..7
+ok 55 - resume rejects prompt, template, asset, provider, model, policy, and prepared-theme hash mismatches before provider use
+  ---
+  duration_ms: 159.4307
+  type: 'test'
+  ...
+# Prepared static sample: 017_nolan_young_theme_static_contract
+# Static run awaiting-review: 017_nolan_young_theme_static_contract
+# Static run awaiting-review: 017_nolan_young_theme_static_contract
+# Subtest: static validator resolves required pages, resources and fragments without modifying output
+ok 56 - static validator resolves required pages, resources and fragments without modifying output
+  ---
+  duration_ms: 226.5381
+  type: 'test'
+  ...
+# Subtest: static validator rejects PHP/private artifacts, unapproved images, broken srcset and CSS URLs
+ok 57 - static validator rejects PHP/private artifacts, unapproved images, broken srcset and CSS URLs
+  ---
+  duration_ms: 95.8031
+  type: 'test'
+  ...
+# Subtest: static scaffold collisions preserve previous output and stages have complete bounded ownership
+ok 58 - static scaffold collisions preserve previous output and stages have complete bounded ownership
+  ---
+  duration_ms: 27.1205
+  type: 'test'
+  ...
+# Subtest: old local checkpoints fail clearly before provider invocation
+ok 59 - old local checkpoints fail clearly before provider invocation
+  ---
+  duration_ms: 15.3425
+  type: 'test'
+  ...
+# Subtest: missing browser tooling is skipped, never implicitly passed
+ok 60 - missing browser tooling is skipped, never implicitly passed
+  ---
+  duration_ms: 14.0965
+  type: 'test'
+  ...
+# Subtest: default static run cannot create WordPress artifacts or load PHP/conversion modules; resume is deterministic
+ok 61 - default static run cannot create WordPress artifacts or load PHP/conversion modules; resume is deterministic
+  ---
+  duration_ms: 498.785
+  type: 'test'
+  ...
+# Subtest: conversion rejects local modes and historical previews; WordPress command names are explicit
+ok 62 - conversion rejects local modes and historical previews; WordPress command names are explicit
+  ---
+  duration_ms: 10.0123
+  type: 'test'
+  ...
+# Subtest: conversion reserves a separate identity and rejects theme, report, sample and ZIP collisions without source changes
+ok 63 - conversion reserves a separate identity and rejects theme, report, sample and ZIP collisions without source changes
+  ---
+  duration_ms: 278.2883
+  type: 'test'
+  ...
+# Subtest: all infrastructure JavaScript parses
+ok 64 - all infrastructure JavaScript parses
+  ---
+  duration_ms: 1337.9575
+  type: 'test'
+  ...
+# Subtest: WordPress content contracts follow existing template parts and reject missing, unrelated or cyclic parts
+ok 65 - WordPress content contracts follow existing template parts and reject missing, unrelated or cyclic parts
+  ---
+  duration_ms: 15.3198
+  type: 'test'
+  ...
+# Subtest: static preparation preserves identities already used only by a ZIP or historical report
+ok 66 - static preparation preserves identities already used only by a ZIP or historical report
+  ---
+  duration_ms: 219.0623
+  type: 'test'
+  ...
+# Subtest: conversion check continuation rejects changed source before generation or packaging
+ok 67 - conversion check continuation rejects changed source before generation or packaging
+  ---
+  duration_ms: 270.5869
+  type: 'test'
+  ...
+1..67
+# tests 76
+# suites 0
+# pass 75
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 3143.3972

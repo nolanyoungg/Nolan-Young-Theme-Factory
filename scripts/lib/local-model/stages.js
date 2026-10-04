@@ -8,244 +8,206 @@ const COMPILED_WRITE_PATHS = new Set([
 
 const LOCAL_MODEL_STAGES = [
   {
-    id: '01-identity-copy',
-    promptSections: ['Business Identity', 'Content Requirements', 'Color System', 'Visual Design Direction'],
-    read: [
-      'style.css',
-      'theme.json',
-      'functions.php',
-      'inc/helpers.php',
-      'template-parts/content-brand-statement.php',
-      'template-parts/content-cta-banner.php',
-      'assets/images/asset-manifest.json'
+    "id": "01-identity-content",
+    "promptSections": [
+      "Business Identity",
+      "Content Requirements"
     ],
-    write: [
-      'style.css',
-      'theme.json',
-      'inc/helpers.php',
-      'template-parts/content-brand-statement.php',
-      'template-parts/content-cta-banner.php'
+    "read": [
+      "content.json",
+      "sample.json",
+      "assets/images/asset-manifest.json",
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html",
+      "assets/css/site.css",
+      "assets/js/site.js",
+      "README.md"
     ],
-    checks: ['php-lint', 'json-parse', 'no-inline-style']
+    "write": [
+      "content.json"
+    ],
+    "checks": [
+      "static-syntax"
+    ]
   },
   {
-    id: '02-header-navigation',
-    promptSections: ['Header', 'Header Layout', 'Header and Navigation', 'Header Behavior', 'Accessibility'],
-    read: [
-      'header.php',
-      'footer.php',
-      'functions.php',
-      'inc/**',
-      'src/scss/layout/_header.scss',
-      'src/scss/base/_accessibility.scss',
-      'src/js/main.js',
-      'assets/images/asset-manifest.json'
+    "id": "02-navigation",
+    "promptSections": [
+      "Header",
+      "Header and Navigation",
+      "Accessibility"
     ],
-    write: [
-      'header.php',
-      'inc/helpers.php',
-      'src/scss/layout/_header.scss'
+    "read": [
+      "content.json",
+      "sample.json",
+      "assets/images/asset-manifest.json",
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html",
+      "assets/css/site.css",
+      "assets/js/site.js",
+      "README.md"
     ],
-    checks: ['php-lint', 'no-inline-style'],
-    overlapJustification: 'The navigation stage may extend shared helper data created during identity work, while keeping identity facts intact.'
+    "write": [
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html"
+    ],
+    "checks": [
+      "static-syntax"
+    ]
   },
   {
-    id: '03-homepage-layout',
-    promptSections: ['front-page.php', 'Pages to Build', 'Homepage', 'template-parts to fill in/build out'],
-    read: [
-      'front-page.php',
-      'header.php',
-      'footer.php',
-      'inc/helpers.php',
-      'template-parts/**',
-      'src/scss/pages/_homepage.scss',
-      'src/scss/layout/_sections.scss',
-      'src/scss/components/**',
-      'assets/images/asset-manifest.json'
+    "id": "03-layouts-pages",
+    "promptSections": [
+      "Pages to Build",
+      "Homepage",
+      "Page Templates"
     ],
-    write: [
-      'front-page.php',
-      'template-parts/content-all-services.php',
-      'template-parts/content-blog-preview.php',
-      'template-parts/content-brand-statement.php',
-      'template-parts/content-cta-banner.php',
-      'template-parts/content-featured-work.php',
-      'template-parts/content-hero.php',
-      'template-parts/content-process.php',
-      'template-parts/content-single-service-highlight.php',
-      'template-parts/content-style-pillars.php',
-      'template-parts/content-testimonials.php',
-      'src/scss/pages/_homepage.scss',
-      'src/scss/layout/_sections.scss'
+    "read": [
+      "content.json",
+      "sample.json",
+      "assets/images/asset-manifest.json",
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html",
+      "assets/css/site.css",
+      "assets/js/site.js",
+      "README.md"
     ],
-    checks: ['php-lint', 'no-inline-style'],
-    overlapJustification: 'Homepage composition refines the identity copy established in stage 01 while preserving its business facts.'
+    "write": [
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html"
+    ],
+    "checks": [
+      "static-syntax"
+    ],
+    "overlapJustification": "Completes the prepared navigation shells as planned, preserving consistent navigation."
   },
   {
-    id: '04-page-templates',
-    promptSections: ['page-templates to fill in/build out', 'Pages to Build', 'Page Templates'],
-    read: [
-      'index.php',
-      'archive.php',
-      'page.php',
-      'single.php',
-      'search.php',
-      '404.php',
-      '403.php',
-      'comments.php',
-      'searchform.php',
-      'header.php',
-      'footer.php',
-      'inc/helpers.php',
-      'page-templates/**',
-      'template-parts/**',
-      'assets/images/asset-manifest.json'
+    "id": "04-styles",
+    "promptSections": [
+      "Visual Design Direction",
+      "Color System",
+      "Typography Direction"
     ],
-    write: [
-      'index.php',
-      'archive.php',
-      'page.php',
-      'single.php',
-      'search.php',
-      '404.php',
-      '403.php',
-      'comments.php',
-      'searchform.php',
-      'page-templates/**',
-      'template-parts/content-none.php',
-      'template-parts/content-page.php',
-      'template-parts/content-policy.php',
-      'template-parts/content-search.php',
-      'template-parts/content-single.php'
+    "read": [
+      "content.json",
+      "sample.json",
+      "assets/images/asset-manifest.json",
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html",
+      "assets/css/site.css",
+      "assets/js/site.js",
+      "README.md"
     ],
-    checks: ['php-lint', 'no-inline-style']
+    "write": [
+      "assets/css/site.css"
+    ],
+    "checks": [
+      "static-syntax"
+    ]
   },
   {
-    id: '05-forms-admin',
-    promptSections: ['Forms', 'Required Forms', 'Newsletter', 'Functionality', 'WordPress Security Requirements'],
-    read: [
-      'functions.php',
-      'inc/**',
-      'page-templates/template-contact.php',
-      'page-templates/template-single-service.php',
-      'src/scss/base/_forms.scss',
-      'src/scss/base/_newsletter.scss',
-      'src/scss/components/_forms.scss'
+    "id": "05-interactions",
+    "promptSections": [
+      "Functionality",
+      "Forms",
+      "Accessibility and Motion"
     ],
-    write: [
-      'functions.php',
-      'inc/forms.php',
-      'inc/newsletter.php',
-      'inc/policy-routing.php',
-      'inc/setup.php',
-      'page-templates/template-contact.php',
-      'page-templates/template-single-service.php'
+    "read": [
+      "content.json",
+      "sample.json",
+      "assets/images/asset-manifest.json",
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html",
+      "assets/css/site.css",
+      "assets/js/site.js",
+      "README.md"
     ],
-    checks: ['php-lint', 'no-inline-style'],
-    overlapJustification: 'The forms stage adds secure handlers and form integration to page templates created in stage 04 without redesigning unrelated page content.'
+    "write": [
+      "assets/js/site.js"
+    ],
+    "checks": [
+      "static-syntax"
+    ]
   },
   {
-    id: '06-scss-design-system',
-    promptSections: ['Style / CSS Requirements', 'CSS Architecture', 'Accessibility and Motion', 'Webpack Build Requirements', 'Color System', 'Visual Design Direction', 'Typography Direction'],
-    read: [
-      'style.css',
-      'theme.json',
-      'header.php',
-      'footer.php',
-      'front-page.php',
-      'page-templates/**',
-      'template-parts/**',
-      'src/scss/**',
-      'package.json',
-      'package-lock.json',
-      'build/webpack.config.js',
-      'assets/css/bundle.css',
-      'assets/images/asset-manifest.json'
+    "id": "06-documentation",
+    "promptSections": [
+      "Supporting Documentation",
+      "Definition of done",
+      "README REQUIREMENTS"
     ],
-    write: [
-      'theme.json',
-      'src/scss/**'
+    "read": [
+      "content.json",
+      "sample.json",
+      "assets/images/asset-manifest.json",
+      "index.html",
+      "homepage_preview.html",
+      "about-us_preview.html",
+      "services_preview.html",
+      "work_preview.html",
+      "blog_preview.html",
+      "contact_preview.html",
+      "policy_preview.html",
+      "single_services_preview.html",
+      "assets/css/site.css",
+      "assets/js/site.js",
+      "README.md"
     ],
-    checks: ['json-parse', 'scss-structure', 'no-inline-style'],
-    contextBudgetBytes: 98304,
-    overlapJustification: 'The design-system stage consolidates and completes SCSS begun by focused layout stages; compiled CSS remains deterministic build output.'
-  },
-  {
-    id: '07-js-interactions',
-    promptSections: ['Functionality', 'Header Behavior', 'Accessibility and Motion', 'Accessibility', 'Webpack Build Requirements'],
-    read: [
-      'header.php',
-      'footer.php',
-      'front-page.php',
-      'page-templates/**',
-      'template-parts/**',
-      'src/js/main.js',
-      'src/scss/base/_accessibility.scss',
-      'src/scss/layout/_header.scss',
-      'package.json',
-      'package-lock.json',
-      'build/webpack.config.js',
-      'assets/js/bundle.js'
+    "write": [
+      "README.md"
     ],
-    write: [
-      'src/js/main.js'
-    ],
-    checks: ['javascript-syntax']
-  },
-  {
-    id: '08-footer-cleanup',
-    promptSections: ['Footer', 'Responsive Footer Behavior', 'Accessibility and Visual Quality'],
-    read: [
-      'footer.php',
-      'header.php',
-      'inc/helpers.php',
-      'template-parts/content-footer-widgets.php',
-      'src/scss/layout/_footer.scss',
-      'src/scss/base/_newsletter.scss'
-    ],
-    write: [
-      'footer.php',
-      'template-parts/content-footer-widgets.php',
-      'src/scss/layout/_footer.scss'
-    ],
-    checks: ['php-lint', 'no-inline-style'],
-    overlapJustification: 'The footer pass is a final focused composition and responsive refinement after the shared design-system stage.'
-  },
-  {
-    id: '09-docs-and-stale-copy-cleanup',
-    promptSections: ['README REQUIREMENTS', 'Supporting Documentation', 'Changelog and License', 'Definition of done'],
-    read: [
-      'README.md',
-      'CHANGELOG.md',
-      'LICENSE.txt',
-      'accessibility/**',
-      'blocks/**',
-      'docs/**',
-      'assets/icons/README.md',
-      'style.css',
-      'functions.php',
-      'header.php',
-      'footer.php',
-      'front-page.php',
-      'inc/**',
-      'page-templates/**',
-      'template-parts/**',
-      'src/scss/**',
-      'src/js/main.js',
-      'package.json',
-      'theme.json',
-      'assets/images/asset-manifest.json'
-    ],
-    write: [
-      'README.md',
-      'CHANGELOG.md',
-      'LICENSE.txt',
-      'accessibility/**',
-      'blocks/**',
-      'docs/**',
-      'assets/icons/README.md'
-    ],
-    checks: ['documentation-presence']
+    "checks": [
+      "static-syntax"
+    ]
   }
 ];
 
@@ -345,7 +307,8 @@ function buildLocalModelStagePrompt(options) {
     'You do not have direct filesystem access and may not claim that you modified files.',
     'Do not request write, shell, Git, preview, report, ZIP, commit, or repository-level operations.',
     'Preserve unrelated work committed by earlier successful stages.',
-    'Do not modify compiled bundles or package-lock.json; the Node workflow regenerates build output deterministically.',
+    'Produce plain static HTML/CSS/JavaScript only. No PHP, packages, build tools, network requests, or WordPress output. Preserve sample.json and all approved images/manifest unchanged.',
+    'All nine pages must work without JavaScript for navigation. Use only sample-relative links and listed local images. Forms are demos: prevent submission and show accessible honest feedback. Mobile navigation must support Escape and aria-expanded.',
     '',
     'FINAL RESPONSE CONTRACT:',
     '- Return exactly one textual unified diff, either raw or in one fenced diff block.',

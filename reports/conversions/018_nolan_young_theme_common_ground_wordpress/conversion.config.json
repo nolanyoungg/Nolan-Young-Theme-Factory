@@ -1,0 +1,28 @@
+{
+  "schema": "wordpress-conversion-v1",
+  "sampleSlug": "017_nolan_young_theme_common_ground",
+  "outputSlug": "018_nolan_young_theme_common_ground_wordpress",
+  "sourceHash": "66c9b96aaf6d3eccf3f431b51bd55dc488245924db517787b2a34b6183cce829",
+  "mode": "codex-only",
+  "generation": {
+    "status": "pending"
+  },
+  "technicalValidation": {
+    "status": "pending"
+  },
+  "harnessChecks": {
+    "status": "pending"
+  },
+  "browserComparison": {
+    "status": "pending"
+  },
+  "wordpressRuntime": {
+    "status": "skipped",
+    "reason": "No isolated WordPress runtime was supplied. PHP harness is not WordPress; activation, admin editing, actual enqueues, routing and plugin behavior remain unverified."
+  },
+  "publication": {
+    "status": "not-published"
+  },
+  "sourcePath": "docs/Preview-Themes-Github/017_nolan_young_theme_common_ground",
+  "outputPath": "wp-content/themes/018_nolan_young_theme_common_ground_wordpress"
+}

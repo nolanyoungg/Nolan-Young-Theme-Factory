@@ -1,0 +1,14 @@
+.experience { display: grid; grid-template-columns: .48fr 1.7fr .75fr; gap: 40px; align-items: start; padding-block: 40px; border-top: 1px solid var(--line); }
+.experience:last-child { border-bottom: 1px solid var(--line); }
+.experience h2 { font-size: 2.25rem; }
+.experience .text-link { justify-self: end; margin-top: 12px; }
+.experience p:last-child { margin-bottom: 0; }
+.faq-section { display: grid; grid-template-columns: .85fr 1.15fr; gap: 75px; }
+.faq-list details { border-top: 1px solid var(--line); padding-block: 20px; }
+.faq-list details:last-child { border-bottom: 1px solid var(--line); }
+.faq-list summary { font-size: .95rem; padding-right: 10px; }
+.faq-list details p { padding-top: 17px; font-size: .9rem; margin-bottom: 0; }
+.workshop-detail { display: grid; grid-template-columns: 1.3fr 1fr; gap: 65px; align-items: start; }
+.workshop-detail figure img { width: 100%; height: 440px; object-fit: cover; }
+.workshop-facts { padding: 25px; background: #e9e8dd; }
+@media(max-width: 700px) { .experience, .faq-section, .workshop-detail { grid-template-columns: 1fr; gap: 22px; } .experience .text-link { justify-self: start; margin-top: 0; } .workshop-detail figure img { height: 270px; } }

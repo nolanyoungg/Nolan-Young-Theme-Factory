@@ -1,0 +1,19 @@
+{
+  "mode": "codex-only",
+  "prompt": "prompts\\pending\\009-ridge-and-river.md",
+  "assetCatalog": "assets/manifests/009-ridge-and-river.json",
+  "templateSource": "wp-content\\themes\\000_nolan_young_theme_master_template_prompt_filler_template_1",
+  "themeSlug": "009_nolan_young_theme_ridge_and_river",
+  "createdAt": "2026-10-03T19:02:55.683Z",
+  "localModelStages": [],
+  "assetPreparation": {
+    "status": "prepared",
+    "themeSlug": "009_nolan_young_theme_ridge_and_river",
+    "prompt": "prompts\\pending\\009-ridge-and-river.md",
+    "manifest": "wp-content\\themes\\009_nolan_young_theme_ridge_and_river\\assets\\images\\asset-manifest.json",
+    "manifestHash": "096a818870811e6d02b31898968f0b71dc1ed6da986644ca7c536c0b13625dd7",
+    "approvedAssetSetHash": "9571747edcca33f0293d4bef65e46493e7536e8995f9f0292b89e53bd4cd6d81",
+    "assetCount": 4,
+    "recordedAt": "2026-10-03T19:02:59.624Z"
+  }
+}

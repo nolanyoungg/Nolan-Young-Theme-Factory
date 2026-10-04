@@ -23,7 +23,7 @@ const DEFAULT_MAX_TOOL_RESPONSE_BYTES = 40 * 1024;
 const DEFAULT_MAX_CUMULATIVE_TOOL_BYTES = 48 * 1024;
 const DEFAULT_MAX_MALFORMED_TOOL_RETRIES = 1;
 const DEFAULT_MAX_OUTPUT_TOKENS = 8192;
-const SESSION_VERSION = 1;
+const SESSION_VERSION = 2;
 
 class LocalModelAgentError extends Error {
   constructor(message, options = {}) {
@@ -185,6 +185,7 @@ class LocalModelAgent {
       throw new LocalModelAgentError('No local-model session exists to resume.', { code: 'MISSING_RESUME_SESSION' });
     }
     const session = readJson(this.sessionFile);
+    if (session.version !== SESSION_VERSION) throw new LocalModelAgentError('Incompatible legacy checkpoint: start a new static sample; old WordPress checkpoints cannot be resumed.', { code: 'INCOMPATIBLE_CHECKPOINT' });
     if (session.status === 'failed') {
       throw new LocalModelAgentError('The prior local-model session contains a failed generated stage and cannot be resumed as a repair pass.', {
         code: 'FAILED_SESSION_NOT_RESUMABLE'
@@ -562,6 +563,7 @@ async function runLocalModelGeneration(provider, themeDir, options, reportDir, d
     maxOutputTokens: options.localModelMaxTokens,
     stageTimeoutMs: options.localModelStageTimeoutMs,
     heartbeatIntervalMs: options.localModelHeartbeatMs,
+    stages: deps.stages,
     runCandidateChecks: deps.runCandidateChecks
   });
   return agent.run();
@@ -573,7 +575,10 @@ function runCandidateChecks(candidateDir, stage, patchInfo = {}) {
   for (const check of stage.checks) {
     const startedAt = Date.now();
     try {
-      if (check === 'php-lint') {
+      if (check === 'static-syntax') {
+        const result = require('../static-validation').validateStatic(candidateDir, { candidate: true });
+        if (result.errors.length) throw new Error(result.errors.join('; '));
+      } else if (check === 'php-lint') {
         const phpFiles = files.filter((file) => file.endsWith('.php'));
         for (const relPath of phpFiles) {
           const result = spawnSync('php', ['-l', path.join(candidateDir, ...relPath.split('/'))], {

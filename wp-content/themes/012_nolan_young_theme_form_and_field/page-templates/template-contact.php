@@ -1,0 +1,5 @@
+<?php /** Template Name: Project Inquiry */ get_header(); ?>
+<main id="primary" tabindex="-1">
+<?php ff_intro( 'Contact / An open conversation', 'Every place starts with a possibility.', 'Tell us what you are thinking about. You do not need all the answers to begin a useful conversation.' ); ?>
+<section class="container contact-layout section"><aside><p class="eyebrow">The first conversation</p><h2>A little context.<br><em>A shared direction.</em></h2><p>In a real consultation, we would discuss your site, the way you want to use it and the limits of the project. Existing plans or a few photographs would be helpful, but a clear description is enough to start.</p><ol class="expectations"><li>Your place and your priorities</li><li>Likely scope, timing and resources</li><li>Questions, next steps and a written brief</li></ol><p class="small">This website presents a fictional practice. There is no live booking or inquiry service.</p><a class="text-link" href="<?php echo ff_url( '/services/featured/' ); ?>">Read about the process ↗</a></aside><div><?php ff_contact_form(); ?></div></section>
+</main><?php get_footer(); ?>

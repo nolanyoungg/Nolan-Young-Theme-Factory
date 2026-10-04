@@ -1,0 +1,8 @@
+.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-height: 50px; max-width: 100%; padding: 13px 21px; border: 1px solid var(--ink); border-radius: 0; background: var(--ink); color: var(--chalk); font-size: 13px; line-height: 1.5; text-align: left; text-decoration: none; transition: background 180ms ease, color 180ms ease; }
+.button:hover { color: var(--chalk); background: var(--rust); border-color: var(--rust); }
+.button--light { background: var(--chalk); border-color: var(--chalk); color: var(--ink); }
+.button--light:hover { background: var(--stone); color: var(--ink); border-color: var(--stone); }
+.text-link { display: inline-flex; justify-content: space-between; align-items: baseline; gap: 28px; max-width: 100%; padding: 10px 0; border-bottom: 1px solid currentColor; font-size: 13px; text-decoration: none; }
+.text-link span { flex-shrink: 0; font-size: 20px; line-height: 1; }
+.subtle-link { display: inline-block; font-size: 12px; padding: 9px 0; text-decoration: none; }
+@media (max-width: 700px) { .button { white-space: normal; gap: 16px; } .text-link { gap: 18px; min-height: 44px; } }

@@ -1,0 +1,53 @@
+{
+  "schema": "wordpress-conversion-v1",
+  "sampleSlug": "017_nolan_young_theme_common_ground",
+  "outputSlug": "018_nolan_young_theme_common_ground_wordpress",
+  "sourceHash": "66c9b96aaf6d3eccf3f431b51bd55dc488245924db517787b2a34b6183cce829",
+  "mode": "codex-only",
+  "generation": {
+    "status": "passed"
+  },
+  "technicalValidation": {
+    "status": "passed",
+    "errors": [],
+    "scope": "PHP syntax, required files, metadata and WordPress integration contracts; not a WordPress runtime test"
+  },
+  "harnessChecks": {
+    "status": "passed",
+    "errors": [],
+    "warnings": [],
+    "pages": 9,
+    "files": 19
+  },
+  "browserComparison": {
+    "status": "passed",
+    "evidence": "reports/conversions/018_nolan_young_theme_common_ground_wordpress/browser-comparison.json",
+    "scope": "Rendered PHP harness with empty database and original-design fallback navigation; not actual WordPress runtime."
+  },
+  "wordpressRuntime": {
+    "status": "skipped",
+    "reason": "No isolated WordPress runtime was supplied. PHP harness is not WordPress; activation, admin editing, actual enqueues, routing and plugin behavior remain unverified."
+  },
+  "publication": {
+    "status": "not-published"
+  },
+  "build": {
+    "status": "passed",
+    "type": "dependency-free asset copy"
+  },
+  "status": "validated-harness-only",
+  "originalSampleUnchanged": true,
+  "packaging": {
+    "status": "passed",
+    "path": "dist/zipped-themes/018_nolan_young_theme_common_ground_wordpress.zip",
+    "entries": 49
+  },
+  "themePath": "wp-content/themes/018_nolan_young_theme_common_ground_wordpress",
+  "previewPath": "reports/conversions/018_nolan_young_theme_common_ground_wordpress/preview",
+  "themeHash": "6cc6f2b8dbc8d3e88a3e7b7b35a6ff647940f7ba954de3dfc86ac52bd22c6216",
+  "checksResumedWithoutAI": true,
+  "infrastructure": {
+    "status": "passed",
+    "notes": "Initial literal page.php content check was a false positive for a real shared template part. Validator now follows literal template-part references. Empty-database harness now correctly has no posts. Initial report retained; generated source unchanged, no second AI pass. Core behavior references in refactor summary."
+  }
+}

@@ -1,0 +1,12 @@
+.prose h1 { font-size: clamp(38px, 5vw, 65px); }
+.prose h2 { font-size: 32px; margin-top: 38px; margin-bottom: 18px; }
+.prose h2:first-child { margin-top: 0; }
+.prose p, .entry-content { font-size: 16px; }
+.entry-content > * { max-width: 100%; }
+.entry-content iframe, .entry-content video { max-width: 100%; }
+.entry-content pre { overflow-x: auto; }
+.search-result { padding: 28px 0; border-bottom: 1px solid var(--rule); }
+.search-result h2 { font-size: 34px; }
+.search-result h2 a { text-decoration: none; }
+.search-result .eyebrow { margin-bottom: 12px; }
+.comments-area { padding-bottom: 50px; }

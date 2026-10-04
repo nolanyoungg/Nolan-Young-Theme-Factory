@@ -1,0 +1,15 @@
+.service-ledger { display: grid; grid-template-columns: .85fr 1.15fr; gap: 80px; padding-top: 0; align-items: start; }
+.service-ledger > figure img { width: 100%; height: 580px; object-fit: cover; object-position: 32% center; }
+.service-ledger figcaption { font-size: 10px; padding-top: 16px; }
+.service-ledger article { padding-block: 32px; border-top: 1px solid var(--line); }
+.service-ledger article:first-child { padding-top: 0; border-top: 0; }
+.service-ledger article h2 { font-size: 2.25rem; margin-top: 12px; }
+.service-ledger article p { color: var(--muted); font-size: 15px; }
+.route-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; padding-block: 30px; border-bottom: 1px solid var(--line); }
+.route-facts span { display: block; font: 10px/1.5 'Courier New', monospace; margin-bottom: 10px; }
+.route-facts strong { font-size: 17px; }
+.timeline { list-style: none; padding: 0; margin: 0; }
+.timeline li { display: grid; grid-template-columns: 60px 1fr; gap: 20px; border-top: 1px solid var(--line); padding-block: 24px; }
+.timeline time { font: 13px/1.7 'Courier New', monospace; color: var(--rust); }
+.timeline p { font-size: 14px; color: var(--muted); margin-top: 10px; }
+@media (max-width: 700px) { .service-ledger { grid-template-columns: 1fr; gap: 36px; } .service-ledger > figure img { height: 300px; } .route-facts { grid-template-columns: 1fr 1fr; gap: 22px; } }

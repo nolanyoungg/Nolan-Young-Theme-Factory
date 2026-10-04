@@ -1,0 +1,4 @@
+<section class="section container philosophy" aria-labelledby="philosophy-title">
+    <figure class="philosophy-photo"><?php rr_photo(); ?><figcaption class="mono">THE VIEW IS ONLY HALF OF IT.</figcaption></figure>
+    <div><p class="eyebrow">03 / THE WAY WE WALK</p><h2 id="philosophy-title">Less conquering.<br>More connecting.</h2><p class="lead">We like a summit. We love everything on the way there.</p><p>A flask shared at a sheltered bend. The sound of water below the path. That moment when a group settles into its own rhythm. Ridge & River is built around these small things.</p><p>Our imagined outings keep groups small, make space for questions and let the conditions shape the day. Turning around can be a good decision, too.</p><?php rr_link( '/about/', 'Our guiding philosophy ↗', 'text-link' ); ?></div>
+</section>

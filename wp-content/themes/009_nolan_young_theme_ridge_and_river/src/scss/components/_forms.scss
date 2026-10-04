@@ -1,0 +1,7 @@
+.inquiry-form { display: grid; gap: 22px; }
+.form-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.demo-notice { padding: 16px 20px; border-left: 3px solid var(--rust); background: #e8e7d9; font-size: 13px; }
+.inquiry-form .button { justify-self: start; }
+.form-status { font-size: 14px; font-weight: 700; }
+.form-status:empty { display: none; }
+@media (max-width: 700px) { .form-pair { grid-template-columns: 1fr; } }

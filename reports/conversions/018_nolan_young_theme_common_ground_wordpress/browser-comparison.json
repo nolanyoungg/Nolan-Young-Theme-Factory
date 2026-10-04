@@ -1,0 +1,30 @@
+{
+  "sourceHash": "66c9b96aaf6d3eccf3f431b51bd55dc488245924db517787b2a34b6183cce829",
+  "themeHash": "6cc6f2b8dbc8d3e88a3e7b7b35a6ff647940f7ba954de3dfc86ac52bd22c6216",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "status": "passed",
+  "scope": "Rendered PHP harness with empty database and original-design fallback navigation; not actual WordPress runtime.",
+  "navigation": "passed",
+  "interactions": "passed",
+  "console": "passed",
+  "requests": "passed",
+  "overflow": "passed",
+  "clipping": "passed",
+  "notes": "Compared actual desktop/mobile home screenshots, mobile contact and services, desktop work/services, and mobile studio with the original static sample. Same typography, spacing, palette, images and content composition; mobile email wraps identically. Eight unique pages opened at both widths; all nine files and references validated. Mobile menu/Escape, footer Services navigation, FAQ expansion and inquiry local feedback exercised. No captured console warnings/errors. Resource evidence covers resolved files, rendered photographs/CSS/JS; no full network HAR. Harness uses generic title and fixed bundle enqueues, so actual document titles, additional WordPress styles, assigned menus, editor patterns and populated database content require real runtime testing.",
+  "screenshots": [
+    "reports/conversions/018_nolan_young_theme_common_ground_wordpress/desktop-home.png",
+    "reports/conversions/018_nolan_young_theme_common_ground_wordpress/mobile-home.png",
+    "reports/conversions/018_nolan_young_theme_common_ground_wordpress/mobile-contact-demo.png",
+    "reports/conversions/018_nolan_young_theme_common_ground_wordpress/mobile-services-open.png",
+    "reports/conversions/018_nolan_young_theme_common_ground_wordpress/desktop-work_preview.html.png"
+  ]
+}

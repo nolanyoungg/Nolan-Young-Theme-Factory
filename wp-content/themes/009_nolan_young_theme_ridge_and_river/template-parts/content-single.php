@@ -1,0 +1,1 @@
+<article class="section container prose"><p class="eyebrow">RIDGE & RIVER / JOURNAL</p><h1><?php the_title(); ?></h1><?php if ( has_post_thumbnail() ) { the_post_thumbnail( 'large' ); } ?><?php the_content(); wp_link_pages(); ?><?php rr_link( '/blog/', 'Return to the journal ↗', 'text-link' ); ?></article>

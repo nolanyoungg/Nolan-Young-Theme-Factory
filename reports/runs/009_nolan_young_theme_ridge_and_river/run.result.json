@@ -1,0 +1,32 @@
+{
+  "preserved": true,
+  "sourceValidation": {
+    "status": "failed",
+    "reason": "Compiled CSS changed by only 909 bytes from starter; major redesign threshold not met."
+  },
+  "status": "failed",
+  "previewPublication": {
+    "status": "not-published"
+  },
+  "packaging": {
+    "status": "not-run"
+  },
+  "build": {
+    "status": "passed"
+  },
+  "themeSlug": "009_nolan_young_theme_ridge_and_river",
+  "completedAt": "2026-10-03T19:21:07.0778851Z",
+  "artifactValidation": {
+    "status": "not-run"
+  },
+  "infrastructure": {
+    "assetPreparation": "passed",
+    "providerPreflight": "passed"
+  },
+  "generation": {
+    "status": "passed"
+  },
+  "visualQuality": {
+    "status": "not-reviewed"
+  }
+}

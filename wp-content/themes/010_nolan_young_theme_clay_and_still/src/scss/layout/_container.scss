@@ -1,0 +1,6 @@
+.container { width: min(var(--container), calc(100% - 100px)); margin-inline: auto; }
+.narrow { max-width: 760px; }
+.section { padding-block: 90px; }
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+@media (max-width: 1000px) { .container { width: calc(100% - 56px); } .split { gap: 36px; } }
+@media (max-width: 700px) { .container { width: calc(100% - 40px); max-width: 100%; } .section { padding-block: 55px; } .split { grid-template-columns: 1fr; gap: 25px; } }

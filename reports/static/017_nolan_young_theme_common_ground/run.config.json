@@ -1,0 +1,22 @@
+{
+  "schema": "static-v1",
+  "sampleSlug": "017_nolan_young_theme_common_ground",
+  "prompt": "prompts/pending/012-common-ground-static.md",
+  "promptHash": "d5df738f617957f41fc018cbdc5009a0b46494c14fce582d22de4ab43a51e602",
+  "assetCatalog": "assets/manifests/007-form-and-field.json",
+  "identityHash": "e7474d939a329699e937ba5e3c36c7183a2d2f3688e3df9b339017f96bba54aa",
+  "createdAt": "2026-10-03T21:48:53.675Z",
+  "assetPreparation": {
+    "status": "prepared",
+    "themeSlug": "017_nolan_young_theme_common_ground",
+    "prompt": "prompts/pending/012-common-ground-static.md",
+    "manifest": "docs/Preview-Themes-Github/017_nolan_young_theme_common_ground/assets/images/asset-manifest.json",
+    "manifestHash": "ad41ddc85458db7b8f6a4075323cb6a6d5817f1884e2ee3280ee609622102872",
+    "approvedAssetSetHash": "2d7d70b92206ada762556ef3e482d5b1bdcd1a1afeb994b6d92ea4ffcb9a1bc7",
+    "assetCount": 4,
+    "recordedAt": "2026-10-03T21:48:53.692Z"
+  },
+  "scaffoldHash": "4d4fbda99f947e8e0bb7a51cedef1a43491ac374387e25a268239d1af075d68e",
+  "mode": "codex-only",
+  "stages": []
+}

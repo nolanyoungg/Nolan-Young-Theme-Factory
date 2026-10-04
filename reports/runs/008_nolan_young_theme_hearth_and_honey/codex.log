@@ -1,0 +1,8 @@
+$ codex exec --cd C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\wp-content\themes\008_nolan_young_theme_hearth_and_honey --sandbox workspace-write --approve-for-me --ephemeral -
+
+error: the argument '--sandbox <SANDBOX_MODE>' cannot be used with '--approve-for-me'
+
+Usage: codex exec [OPTIONS] [PROMPT]
+       codex exec [OPTIONS] <COMMAND> [ARGS]
+
+For more information, try '--help'.

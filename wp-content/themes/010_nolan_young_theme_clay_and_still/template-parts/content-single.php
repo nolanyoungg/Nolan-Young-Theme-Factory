@@ -1,0 +1,1 @@
+<article id="post-<?php the_ID(); ?>" <?php post_class( 'content-entry' ); ?>><p class="eyebrow">Clay &amp; Still · <?php echo esc_html( get_the_date() ); ?></p><h1><?php the_title(); ?></h1><div class="entry-content"><?php the_content(); wp_link_pages(); ?></div></article>

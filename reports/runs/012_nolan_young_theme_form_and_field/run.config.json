@@ -1,0 +1,19 @@
+{
+  "mode": "codex-only",
+  "prompt": "prompts\\pending\\007-form-and-field.md",
+  "assetCatalog": "assets/manifests/007-form-and-field.json",
+  "templateSource": "wp-content\\themes\\000_nolan_young_theme_master_template_prompt_filler_template_1",
+  "themeSlug": "012_nolan_young_theme_form_and_field",
+  "createdAt": "2026-10-03T18:04:22.148Z",
+  "localModelStages": [],
+  "assetPreparation": {
+    "status": "prepared",
+    "themeSlug": "012_nolan_young_theme_form_and_field",
+    "prompt": "prompts\\pending\\007-form-and-field.md",
+    "manifest": "wp-content\\themes\\012_nolan_young_theme_form_and_field\\assets\\images\\asset-manifest.json",
+    "manifestHash": "64d23e5022005bea451be7e03bdc7df1be63286a5f43197210e98650661e2c06",
+    "approvedAssetSetHash": "2c9bbe8241e60d79c3c16c9f543bfbd74d72bb9125277ddfc473fcc23ce4cd50",
+    "assetCount": 4,
+    "recordedAt": "2026-10-03T18:04:24.065Z"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "phase": "source",
+  "themeSlug": "010_nolan_young_theme_clay_and_still",
+  "errors": [
+    "Compiled CSS changed by only 1097 bytes from the starter template; a major visual redesign must materially change the generated stylesheet."
+  ],
+  "warnings": [],
+  "checkedAt": "2026-10-03T19:39:21.522Z"
+}

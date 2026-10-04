@@ -1,120 +1,73 @@
-# Theme Factory Scripts
+# Static factory command and architecture guide
 
-Use the npm script layer from the repository root. `scripts/theme-factory.js` remains the public orchestration entry point.
+All commands run at repository root. `node scripts/theme-factory.js help` lists the public contract. In PowerShell prefer `npm.cmd`.
 
-## Main Flow
+| Command | Flags and behavior |
+| --- | --- |
+| `theme:run` | Required `--mode`, `--prompt`; optional `--sample-slug`, `--asset-catalog`. Prepare → assets → selected AI → validate → review → gallery/artifacts/report. No automatic WordPress operation. |
+| `theme:prepare` | Required `--prompt`; optional `--sample-slug`, `--asset-catalog`, `--dry-run`. Scaffold and approved assets; no AI. |
+| `theme:assets` | Required `--sample-slug`; optional `--asset-catalog`. Acquires/copies approved assets before generation. Refuses after an attempt starts. |
+| `theme:model-check` | Required `--provider codex|ollama|lmstudio`. Without a local model ID lists IDs; with one verifies availability and required structured tool calls. |
+| `theme:validate` | Required `--sample-slug`; optional `--review-evidence reports/...json`. Read-only source/link/asset checks and explicitly supplied browser evidence. |
+| `theme:preview` | Optional `--sample-slug`, `--port` (default 4174). Node localhost static server; no PHP rendering. No slug serves docs gallery. |
+| `theme:preview:index` | Rebuild local gallery. Legacy pages preserved; new static samples require current passing review evidence. |
+| `theme:resume` | Required `--sample-slug`; optional `--review-evidence`. Deterministic checks/report/gallery only; requires unchanged completed generation. |
+| `theme:build` | No-op: static CSS and JavaScript are source and deliverables. No packages installed. |
+| `theme:convert:wordpress` | Required `--sample-slug`, `--mode codex-only`; optional `--output-slug`, Codex model/reasoning/executable flags. Creates new theme, checks and ZIP. `--resume-checks --output-slug <recorded-output>` reruns only deterministic checks for unchanged checkpointed source; no AI, no existing ZIP overwrite. |
+| `theme:wordpress:zip` | Required `--theme-slug`; only a validated unchanged conversion, never overwrite an existing ZIP. |
+| `theme:env` | Static runtime paths and Node version. |
 
-```sh
-npm run theme:run -- --mode codex-only --prompt prompts/pending/000-testing.md
-npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model qwen2.5-coder:14b
-npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b
-```
+Codex flags: `--codex-executable`, `--codex-model`, `--codex-reasoning`. Omission retains user configuration. Arbitrary extra flags are rejected to protect output scope. Codex uses `exec --cd <prepared-output> --approve-for-me --ephemeral -`, a 90-minute bound and private log; the installed CLI's automatic approval mode includes workspace-write. Repository content hashes detect out-of-bound changes even to already-dirty files.
 
-`theme:run` performs:
+Provider flags (replace `<provider>` with `ollama` or `lmstudio`): `--<provider>-base-url`, `--<provider>-model`, `--<provider>-temperature`, `--<provider>-timeout-ms`. Prefer `OLLAMA_API_KEY` / `LMSTUDIO_API_KEY` environment variables to command-line secrets. Default API URLs are localhost ports 11434/1234 with `/v1`. Existing shared provider metadata/error redaction remains active. No private provider metadata goes under docs.
 
-```text
-prepare copied theme
--> prepare the approved provider-neutral asset set
--> run exactly one selected generation mode
--> npm build inside the copied theme
--> source validation
--> preview generation
--> ZIP packaging
--> artifact validation
--> run report
-```
+Local limits: `--local-model-max-context-bytes`, `--local-model-max-tool-calls`, `--local-model-max-tool-output-bytes`, `--local-model-max-tokens`, `--local-model-stage-timeout-ms`, `--local-model-heartbeat-ms`. Defaults retain 12 tool calls, 40KB per response and approximately 30 minutes per stage. Six static stages: `01-identity-content`, `02-navigation`, `03-layouts-pages`, `04-styles`, `05-interactions`, `06-documentation`. Read/write scopes and planned overlapping HTML ownership are declared before generation. Plain `site.css` and `site.js` are editable source, not compiled bundles.
 
-There are only three modes: `codex-only`, `ollama-only`, and `lmstudio-only`. There is no provider fallback, CLI fallback for Ollama, hybrid mode, or validation-triggered repair pass.
+Explicit local continuation uses `theme:run` with the same prompt, sample, provider/model, `--resume-local`, and optionally `--resume-from-stage <id>`. Only matching version-2 checkpoints and successful-stage prefixes resume. Failed output is not repaired. Old WordPress checkpoints fail clearly. Static and conversion evidence use different report roots.
 
-## Implementation Layout
+## Browser review evidence
 
-- `scripts/theme-factory.js` coordinates public commands and deterministic post-generation work.
-- `scripts/lib/cli/options.js` owns arguments, mode mapping, provider settings, and safe resume flags.
-- `scripts/lib/providers/openai-compatible.js` implements normalized HTTP requests, model checks, tool-capability probes, errors, and redaction.
-- `scripts/lib/providers/ollama.js` configures the shared provider for `http://127.0.0.1:11434/v1` by default.
-- `scripts/lib/providers/lmstudio.js` configures it for `http://127.0.0.1:1234/v1` by default.
-- `scripts/lib/local-model/agent.js` owns the bounded conversation, limits, progress, reports, candidate transaction, and checkpoints.
-- `scripts/lib/local-model/context.js` builds bounded actual source context.
-- `scripts/lib/local-model/tools.js` exposes scoped read-only listing, reading, excerpt, and literal search tools.
-- `scripts/lib/local-model/patch.js` validates and applies one unified diff to a temporary candidate.
-- `scripts/lib/local-model/protocols.js` interprets final responses and normalized tool calls.
-- `scripts/lib/local-model/stages.js` declares the nine ordered stage policies and separate read/write scopes.
-- `scripts/lib/validation.js` owns source and artifact evaluation.
-
-## LocalModelAgent Contract
-
-Every local stage receives relevant source contents within a fixed context budget and may make at most 12 read-only tool calls. Each tool result is capped at 40 KB, cumulative output is bounded, malformed tool JSON receives at most one protocol retry, and the default stage timeout is 30 minutes.
-
-The model never receives direct disk, shell, Git, or write access. Its final answer must be exactly one textual unified diff. The runner rejects prose, unsafe paths, paths outside the stage write scope, binary patches, traversal, absolute paths, and symlink targets. It checks and applies the patch in a copied candidate, runs observational stage checks, and replaces the prepared theme only after success.
-
-Source stages do not write compiled CSS, compiled JavaScript, or `package-lock.json`. Those artifacts are regenerated by the normal deterministic build.
-
-Successful stages record hash-bound checkpoints under `reports/runs/{theme_slug}/local-model/`. Operational continuation after an interruption is explicit:
+The CLI does not pretend that file validation is a browser. Open the local preview, inspect actual screenshots and exercise each page at desktop/mobile widths. Browser tooling may be supplied by the controlling agent or human. Store screenshots under the sample's private report folder. Capture source hash with:
 
 ```sh
-npm run theme:run -- --mode ollama-only --prompt prompts/pending/000-testing.md --ollama-model qwen2.5-coder:14b --resume-local
-npm run theme:run -- --mode lmstudio-only --prompt prompts/pending/000-testing.md --lmstudio-model qwen/qwen2.5-coder-14b --resume-local --resume-from-stage 04-page-templates
+node -e "console.log(require('./scripts/lib/workspace').treeHash(require('./scripts/lib/workspace').sampleDir(process.argv[1])))" <sample-slug>
 ```
 
-Resume fails safely unless the prompt, template, provider, model, stage policy, asset manifest, and current theme hashes match. A failed generated patch or candidate check cannot be resumed as a repair pass.
+Write `reports/static/<sample-slug>/browser-review.json` with this format, using truthful results and actual screenshot paths:
 
-## Provider Setup
-
-Ollama uses its OpenAI-compatible HTTP API only:
-
-```sh
-ollama pull qwen2.5-coder:14b
-npm run theme:model-check -- --provider ollama --ollama-model qwen2.5-coder:14b
+```json
+{
+  "sampleHash": "<current source SHA256>",
+  "viewports": [{ "width": 1280, "height": 900 }, { "width": 390, "height": 844 }],
+  "browserChecks": {
+    "status": "passed",
+    "navigation": "passed", "interactions": "passed", "console": "passed",
+    "requests": "passed", "overflow": "passed", "clipping": "passed"
+  },
+  "visualReview": { "status": "passed", "notes": "Describe actual layout, typography, spacing, image and content observations; compare with existing designs." },
+  "screenshots": ["reports/static/<sample-slug>/desktop.png", "reports/static/<sample-slug>/mobile.png"]
+}
 ```
 
-Override its endpoint with `--ollama-base-url` or `OLLAMA_BASE_URL`.
+Use `failed` or `skipped` when appropriate, with reasons. The importer requires the exact current source hash, separate browser checks, desktop/mobile sizes, existing screenshot files and review notes. The runner cannot independently prove a human's claims: these are explicit inspection attestations, not automatically computed visual scores. Run `theme:resume -- --sample-slug ... --review-evidence ...` to consume them. No evidence means browser skipped and visual pending; the new sample is excluded from the gallery.
 
-LM Studio must have its OpenAI-compatible server running and the exact model loaded:
+Conversion comparison evidence belongs under `reports/conversions/<output-slug>/`, with original/converted hashes, desktop/mobile screenshots and observed differences. Runtime checks must remain separately labeled from the PHP harness. No conversion preview is inserted into the public gallery or overwrites the original sample.
 
-```sh
-npm run theme:model-check -- --provider lmstudio
-npm run theme:model-check -- --provider lmstudio --lmstudio-model qwen/qwen2.5-coder-14b
-```
+## Modules and checks
 
-Override its endpoint with `--lmstudio-base-url` or `LMSTUDIO_BASE_URL`. Passing a model id performs model availability and required structured tool-call checks. If either fails, generation is blocked before the prepared theme is modified.
+- `theme-factory.js`: small dispatcher; WordPress converter is lazily loaded only by explicit commands.
+- `lib/static-workflow.js`: static orchestration, immutable generation attempts, preparation, deterministic resume.
+- `lib/static-scaffold.js`: versioned nine-page plain scaffold.
+- `lib/assets.js`: extracted provider-neutral approved acquisition/cache/manifests.
+- `lib/static-validation.js`: required content, links/fragments, CSS resource URLs, HTML resource/srcset paths, JS syntax, provenance and public-file boundary checks. Dynamic JS-generated URLs/behavior require browser review.
+- `lib/static-server.js`: localhost GET/HEAD static resource serving, no PHP execution.
+- `lib/static-gallery.js`, `gallery.js`, `gallery-client.js`, `gallery.css`: legacy-compatible local inventory and preview-above-name gallery.
+- `lib/review.js`: hash-bound explicit review evidence.
+- `lib/codex.js`: scoped ephemeral runner and content-boundary checks.
+- `lib/local-model/*`: bounded context, safe tools, patch transactions, stages, checkpoints; legacy policy retained for historical regression fixtures.
+- `lib/wordpress-converter.js`: explicit selected-sample conversion, source checks, read-only harness, ZIP and source preservation evidence.
+- `legacy-wordpress.js`: archived WordPress-first implementation; only appropriate rendering/packaging helpers are imported by conversion. Direct legacy runs are disabled.
 
-## Useful Commands
+Tests cover unchanged static output during validation, missing targets/fragments/resources, unapproved images, forbidden PHP/private files, scope/collision checks, provider preflight/redaction, candidate transactions, checkpoint compatibility and static/converter isolation. A static orchestration fixture checks that no wp-content/dist output is created and no WordPress module is loaded. Browser and runtime checks are reported independently.
 
-```sh
-npm run theme:prepare -- --prompt prompts/pending/000-testing.md
-npm run theme:assets -- --prompt prompts/pending/000-testing.md --theme-slug 007_nolan_young_theme_example
-npm run theme:build -- --theme-slug 007_nolan_young_theme_example
-npm run theme:validate -- --theme-slug 007_nolan_young_theme_example
-npm run theme:preview -- --theme-slug 007_nolan_young_theme_example
-npm run theme:zip -- --theme-slug 007_nolan_young_theme_example
-npm run theme:resume -- --theme-slug 007_nolan_young_theme_example
-npm run theme:env
-npm run theme:model-check -- --provider codex
-npm run test:scripts
-```
-
-`theme:prepare` copies the template, updates prepared identity, and runs `npm ci`. `theme:assets` is the standalone, provider-neutral asset step. Fair comparisons use equivalent per-theme manifests and require the same byte-identical asset set, verified by `approvedAssetSetHash`. `theme:build` expects prepared dependencies and never installs or repairs them.
-
-## Showcase and creative asset catalogs
-
-`npm run theme:preview:index` rebuilds the collection from the HTML pages actually present in each preview directory. Each card places the interactive website above its name. Page links target that card's iframe, so every exported page can be explored without leaving the collection. Newest themes appear first; search and desktop/mobile width controls are progressive enhancements.
-
-Pass `--asset-catalog assets/manifests/<brief>.json` to `theme:run` or `theme:assets` to use a reviewed image selection instead of the default software imagery. Catalogs contain `approved: true` and `assets` with `path`, `kind`, `role`, `alt`, and (for stock photos) `sourceUrl`, `pageUrl`, `creator`, and `creatorUrl`. Review the original source page and license before marking a catalog approved. The catalogs in this collection use the [Unsplash License](https://unsplash.com/license); photo attribution remains in the per-theme manifest. Catalog paths are restricted to the repository manifest folder and image/icon destinations. Stock files are cached in `assets/approved-stock/` and copied locally before generation.
-
-Example:
-
-```sh
-npm run theme:run -- --mode codex-only --prompt prompts/pending/007-form-and-field.md --theme-slug 007_nolan_young_theme_form_and_field --asset-catalog assets/manifests/007-form-and-field.json
-```
-
-The Windows runner invokes npm's JavaScript CLI with Node, avoiding the [Windows command-shim limitation](https://nodejs.org/api/child_process.html#spawning-bat-and-cmd-files-on-windows). Script tests use Node's default test isolation and work on Node 22.15.
-
-In PowerShell, use `npm.cmd run ... -- --option value` if the `npm.ps1` shim drops option names. When `unzip` is unavailable, select the checked-in starter explicitly with `--template-source-path wp-content/themes/000_nolan_young_theme_master_template_prompt_filler_template_1`. Stock downloads use Node's HTTPS client and verify the response type before caching. Codex retains its theme-scoped workspace sandbox, uses automatic approval review, and streams diagnostics to the run's `codex.log`; its full generation pass has a 90-minute maximum. A timeout preserves the incomplete output and requires a fresh run, never a cleanup pass.
-
-### Source differentiation policy
-
-New runs record `stylesheet-content-v2` in their configuration. Stylesheet differentiation compares sets of five-token sequences using Jaccard similarity; 85% or higher starter similarity fails. Comments and formatting do not affect the comparison. This replaces the byte-length delta heuristic: different designs can produce similarly sized bundles, and comment padding can change size without changing a design. Critical layout/source files must still differ from the starter, and browser inspection remains necessary to assess actual visual quality.
-
-Runs 009 (Ridge & River) and 010 (Clay & Still) failed the original byte-length rule and remain failed, with their original source and validation evidence preserved. They must not be resumed or reclassified under the new policy. New samples use fresh theme numbers and complete generation passes.
-
-The read-only preview harness preserves query strings and fragments when mapping WordPress `home_url()` paths to exported HTML. This is generic core compatibility: [WordPress appends the supplied path intact](https://developer.wordpress.org/reference/functions/get_home_url/). The harness only replaces the route portion with its static filename; it does not repair missing generated links, IDs, helpers, or templates.
+Official contracts: [Codex non-interactive execution](https://learn.chatgpt.com/docs/non-interactive-mode), [WordPress asset APIs](https://developer.wordpress.org/themes/core-concepts/including-assets/), [classic template hierarchy](https://developer.wordpress.org/themes/classic-themes/basics/template-hierarchy/), [LM Studio OpenAI compatibility](https://lmstudio.ai/docs/developer/openai-compat), [Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility).

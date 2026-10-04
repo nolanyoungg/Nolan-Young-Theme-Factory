@@ -2,7 +2,7 @@
   "name": "nolan-young-theme-factory",
   "version": "1.0.0",
   "private": true,
-  "description": "Template-first WordPress theme factory with Codex-only, Ollama-only, and LM Studio-only generation modes.",
+  "description": "Static website sample factory with explicit selected-sample WordPress conversion.",
   "scripts": {
     "theme:run": "node scripts/theme-factory.js run",
     "theme:resume": "node scripts/theme-factory.js resume",
@@ -12,11 +12,11 @@
     "theme:build": "node scripts/theme-factory.js build",
     "theme:preview": "node scripts/theme-factory.js preview",
     "theme:preview:index": "node scripts/theme-factory.js preview:index",
-    "theme:zip": "node scripts/theme-factory.js zip",
-    "theme:delete": "node scripts/theme-factory.js delete",
     "theme:env": "node scripts/theme-factory.js env",
     "theme:model-check": "node scripts/theme-factory.js model-check",
-    "test:scripts": "node --test scripts/tests/*.test.js && node scripts/theme-factory.js self-test"
+    "test:scripts": "node --test scripts/tests/*.test.js",
+    "theme:convert:wordpress": "node scripts/theme-factory.js convert:wordpress",
+    "theme:wordpress:zip": "node scripts/theme-factory.js wordpress:zip"
   },
   "engines": {
     "node": ">=20"

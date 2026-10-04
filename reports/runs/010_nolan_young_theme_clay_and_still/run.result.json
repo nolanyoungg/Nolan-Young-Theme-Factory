@@ -1,0 +1,32 @@
+{
+  "themeSlug": "010_nolan_young_theme_clay_and_still",
+  "packaging": {
+    "status": "not-run"
+  },
+  "generation": {
+    "status": "passed"
+  },
+  "sourceValidation": {
+    "reason": "Compiled CSS changed by only 1097 bytes from starter under the original byte-size policy.",
+    "status": "failed"
+  },
+  "visualQuality": {
+    "status": "not-reviewed"
+  },
+  "build": {
+    "status": "passed"
+  },
+  "previewPublication": {
+    "status": "not-published"
+  },
+  "preserved": true,
+  "artifactValidation": {
+    "status": "not-run"
+  },
+  "status": "failed",
+  "infrastructure": {
+    "assetPreparation": "passed",
+    "providerPreflight": "passed"
+  },
+  "completedAt": "2026-10-03T19:41:35.5589538Z"
+}

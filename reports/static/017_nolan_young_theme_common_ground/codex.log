@@ -1,0 +1,667 @@
+2026-10-03T21:48:55.171322Z  WARN codex_skills::interface: ignoring interface.icon_small: icon path with '..' must resolve under plugin assets/
+2026-10-03T21:48:55.171402Z  WARN codex_skills::interface: ignoring interface.icon_large: icon path with '..' must resolve under plugin assets/
+2026-10-03T21:48:55.176313Z  WARN codex_core_plugins::loader: failed to load plugin: missing or invalid plugin.json plugin="openai-developers@openai-curated-remote" path=C:\Users\Nolan\.codex\plugins\cache\openai-curated-remote\openai-developers\1.3.6
+2026-10-03T21:48:55.179563Z  WARN codex_core::shell_snapshot: Failed to create shell snapshot for powershell: Shell snapshot not supported yet for PowerShell
+OpenAI Codex v0.154.0
+--------
+workdir: C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+model: gpt-6-astra
+provider: openai
+approval: on-request
+sandbox: workspace-write [workdir, /tmp, $TMPDIR] (network access enabled)
+reasoning effort: high
+reasoning summaries: detailed
+session id: 01a103bd-d5c1-7261-bb90-4b98f99aa21f
+--------
+user
+Generate one complete polished STATIC website sample in the current prepared directory only. This is the single generation pass.
+The parent runner owns validation, browser review, reports and gallery updates. Do not run them or edit anything outside this directory. No PHP, WordPress, packages, builds, ZIPs, branches, commits or network/image acquisition. Do not spawn subagents.
+Preserve sample.json, all supplied assets and assets/images/asset-manifest.json byte-for-byte. Reference only those approved images. Do not invent provenance, hotlink, or create new image files. Original CSS graphics and inline interface SVG are fine.
+Write all nine required HTML pages: index.html, homepage_preview.html, about-us_preview.html, services_preview.html, work_preview.html, blog_preview.html, contact_preview.html, policy_preview.html, single_services_preview.html. index.html and homepage_preview.html are the same home experience. Use assets/css/site.css and assets/js/site.js, plain browser code, system fonts. Every internal link and fragment must resolve inside this sample. Use relative URLs, no root-relative URLs. No placeholder # links unless returning to page top. All navigation must work inside a gallery iframe and without JavaScript. Do not set target=_top or target=_parent. Do not use inline onclick handlers.
+Create meaningful distinct compositions, cohesive typography/spacing, visible approved photographs, full useful content on every page and a complete footer. At 390 and 1280px: no clipped text, horizontal overflow or dead space. Mobile menu opens/closes with aria-expanded, Escape and keyboard access. Respect reduced motion. Forms must be honest demos with local accessible feedback, no external submission or storage. Include details/FAQ or another useful working interaction.
+Finish content.json as the content/identity plan and README.md describing pages and demo behavior. No implementation instructions in visible product copy.
+You may self-audit within this one pass, but there is no second AI repair invocation.
+Approved inventory:
+{
+  "generatedAt": "2026-10-03T21:48:53.676Z",
+  "themeSlug": "017_nolan_young_theme_common_ground",
+  "source": "Deterministic provider-neutral asset preparation by the Nolan Young Theme Factory before AI generation.",
+  "license": "Stock photos are downloaded from Unsplash and governed by the Unsplash License: free commercial and non-commercial use, no permission required, attribution appreciated. Local SVG icons are original generated interface assets for this theme run.",
+  "usageRule": "Every generation provider receives this same approved asset set. Stock photos are for photographic/hero/portfolio/menu imagery; SVG is for interface marks, icons, and small UI details.",
+  "assets": [
+    {
+      "path": "assets/images/hero/editorial-hero.jpg",
+      "kind": "stock-photo",
+      "role": "Editorial hero photograph; illustrative stock, not a claimed project or product",
+      "alt": "white concrete building",
+      "sourceUrl": "https://images.unsplash.com/photo-1525199588264-c9ceb2e22457?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/white-concrete-building-BK00-RIxFLc",
+      "creator": "Pierre Châtel-Innocenti",
+      "creatorUrl": "https://unsplash.com/@chatelp",
+      "id": "01-editorial-hero",
+      "file": "assets/images/hero/editorial-hero.jpg",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/white-concrete-building-BK00-RIxFLc",
+      "license": "Unsplash License",
+      "license_url": "https://unsplash.com/license",
+      "creator_url": "https://unsplash.com/@chatelp",
+      "acquired_at": "2026-10-03T21:48:53.676Z",
+      "allowed_use": "Approved for this static sample and optional WordPress conversion.",
+      "theme_slug": "017_nolan_young_theme_common_ground",
+      "alt_text": "white concrete building",
+      "notes": "Editorial hero photograph; illustrative stock, not a claimed project or product"
+    },
+    {
+      "path": "assets/images/portfolio/editorial-detail.jpg",
+      "kind": "stock-photo",
+      "role": "Supporting editorial photograph; illustrative stock, not a claimed project or product",
+      "alt": "photo of beige concrete building",
+      "sourceUrl": "https://images.unsplash.com/photo-1524228461686-3de5d5289d09?auto=format&fit=crop&w=1600&q=82",
+      "pageUrl": "https://unsplash.com/photos/fzbQz0RoNLs",
+      "creator": "Annie Spratt",
+      "creatorUrl": "https://unsplash.com/@anniespratt",
+      "id": "02-editorial-detail",
+      "file": "assets/images/portfolio/editorial-detail.jpg",
+      "source": "Unsplash",
+      "source_url": "https://unsplash.com/photos/fzbQz0RoNLs",
+      "license": "Unsplash License",
+      "license_url": "https://unsplash.com/license",
+      "creator_url": "https://unsplash.com/@anniespratt",
+      "acquired_at": "2026-10-03T21:48:53.676Z",
+      "allowed_use": "Approved for this static sample and optional WordPress conversion.",
+      "theme_slug": "017_nolan_young_theme_common_ground",
+      "alt_text": "photo of beige concrete building",
+      "notes": "Supporting editorial photograph; illustrative stock, not a claimed project or product"
+    },
+    {
+      "path": "assets/icons/mark-1.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 1",
+      "alt": "Decorative interface mark",
+      "id": "03-mark-1",
+      "file": "assets/icons/mark-1.svg",
+      "source": "Original local asset generated by the Nolan Young Theme Factory",
+      "source_url": "https://github.com/nolanyoungg/Nolan-Young-Theme-Factory",
+      "license": "Project-owned original asset distributed with the theme",
+      "license_url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "creator": "Nolan Young Theme Factory",
+      "creator_url": "https://shibey.com",
+      "acquired_at": "2026-10-03T21:48:53.676Z",
+      "allowed_use": "Approved for this static sample and optional WordPress conversion.",
+      "theme_slug": "017_nolan_young_theme_common_ground",
+      "alt_text": "Decorative interface mark",
+      "notes": "Original local decorative interface mark 1"
+    },
+    {
+      "path": "assets/icons/mark-2.svg",
+      "kind": "local-svg-icon",
+      "role": "Original local decorative interface mark 2",
+      "alt": "Decorative interface mark",
+      "id": "04-mark-2",
+      "file": "assets/icons/mark-2.svg",
+      "source": "Original local asset generated by the Nolan Young Theme Factory",
+      "source_url": "https://github.com/nolanyoungg/Nolan-Young-Theme-Factory",
+      "license": "Project-owned original asset distributed with the theme",
+      "license_url": "https://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+      "creator": "Nolan Young Theme Factory",
+      "creator_url": "https://shibey.com",
+      "acquired_at": "2026-10-03T21:48:53.676Z",
+      "allowed_use": "Approved for this static sample and optional WordPress conversion.",
+      "theme_slug": "017_nolan_young_theme_common_ground",
+      "alt_text": "Decorative interface mark",
+      "notes": "Original local decorative interface mark 2"
+    }
+  ]
+}
+Creative brief (business/design requirements apply; any old WordPress/PHP/build instructions are superseded by this static contract):
+# Common Ground — static website brief
+
+## Business Identity
+Common Ground is an independent architecture practice designing modest, enduring homes and thoughtful neighborhood spaces. This is a fictional portfolio sample. Audience: homeowners and small cultural organizations. Primary action: start a project conversation.
+
+## Content Requirements
+Write polished, specific copy about renovations, compact new homes, and civic interiors. Use three clearly fictional example projects with locations described generically. No fabricated awards or testimonials. Contact details use example.test; no real business address. Journal has three useful short articles on light, materials and reuse on the journal page itself. Include privacy and one detailed renovation service page.
+
+## Header and Navigation
+Brand at left, compact textual desktop navigation and project CTA. On mobile show brand and Menu button with an accessible expandable navigation panel. All nine required pages link consistently. Navigation must work inside the gallery iframe. Use sample-relative links; no external requests.
+
+## Pages to Build
+Complete the nine required static HTML files. Index and homepage are equivalent. Home: restrained editorial hero, one large approved architectural photograph, numbered project list, philosophy strip, services, project inquiry CTA. About: studio principles and approach. Services: three coherent offerings and FAQ. Work: three substantial sample projects with distinct layouts and approved images. Journal: three articles with fragment links. Contact: clearly demo inquiry form and local success feedback. Privacy: honest static demo policy. Service detail: renovation scope, process, example and FAQ. No dead-end buttons.
+
+## Visual Design Direction
+Warm ivory, forest ink, muted ochre; charcoal text. Editorial serif display headings, compact system sans body. Spacious but purposeful, confident asymmetric desktop layout, thin rules, numbered indexes, elegant restrained motion. Never build a generic SaaS card wall. Keep headlines controlled at 390px and every footer/nav element inside the viewport. Use the approved Form & Field architectural photo catalog supplied by the runner; reinterpret it for this new identity. No new image acquisition during generation.
+
+## Color System
+Canvas #f4f1e8, ink #20372f, accent #a66d31, muted #6b726a, white #fffef9. Accessible contrast, visible focus rings. Original CSS geometric flourishes may support photography but must not replace it.
+
+## Functionality
+Accessible mobile menu with aria-expanded, Escape and correct keyboard behavior. Native details/summary FAQ. Contact form is demo-only; no network/storage and honest live-region feedback. Reduced-motion support. Progressive enhancement: page navigation/content usable without JS. Avoid UI language about implementation or conversion.
+
+## Supporting Documentation
+README lists pages, imagery provenance location, interactions and static limitations. content.json contains a short identity/content plan. Preserve prepared sample.json and every approved image/manifest. No PHP, npm build or WordPress files.
+
+codex
+I’ll build the nine-page Common Ground sample with a shared editorial design, complete page content, and accessible demo interactions, while preserving the prepared identity and assets.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "Get-Location; rg --files -g AGENTS.md -g AGENTS.override.md -g sample.json -g '*.html' -g '*.css' -g '*.js' -g content.json -g README.md -g asset-manifest.json -g '*.jpg' -g '*.svg'" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 97ms:
+
+work_preview.html
+single_services_preview.html
+services_preview.html
+sample.json
+README.md
+policy_preview.html
+index.html
+homepage_preview.html
+content.json
+contact_preview.html
+blog_preview.html
+assets\js\site.js
+assets\images\portfolio\editorial-detail.jpg
+assets\images\hero\editorial-hero.jpg
+assets\images\asset-manifest.json
+assets\icons\mark-2.svg
+assets\icons\mark-1.svg
+assets\css\site.css
+about-us_preview.html
+Path
+----
+C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command 'Get-Content sample.json; Get-Content index.html; Get-Content content.json; Get-Content README.md' in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 83ms:
+{
+  "schema": "static-v1",
+  "slug": "017_nolan_young_theme_common_ground",
+  "title": "Common Ground",
+  "pages": [
+    "index.html",
+    "homepage_preview.html",
+    "about-us_preview.html",
+    "services_preview.html",
+    "work_preview.html",
+    "blog_preview.html",
+    "contact_preview.html",
+    "policy_preview.html",
+    "single_services_preview.html"
+  ]
+}
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head><body>
+<header><nav aria-label="Main"><a href="index.html">index</a>
+<a href="about-us_preview.html">about-us</a>
+<a href="services_preview.html">services</a>
+<a href="work_preview.html">work</a>
+<a href="blog_preview.html">blog</a>
+<a href="contact_preview.html">contact</a>
+<a href="policy_preview.html">policy</a>
+<a href="single_services_preview.html">single_services</a></nav></header>
+<main id="main"><h1>Common Ground</h1><p data-scaffold>Replace this scaffold with a complete designed page.</p></main>
+<footer><a href="policy_preview.html">Privacy</a></footer>
+</body></html>
+{
+  "name": "Common Ground",
+  "tagline": "Replace with the business identity and content plan."
+}
+# Common Ground
+
+Static sample. Complete the design and document its demo interactions.
+
+**Preparing CSS and JavaScript.**
+**Building page templates.**
+codex
+The design will pair warm ivory and forest green with large serif headings, fine rules, and the two approved architectural photographs. The three projects will be clearly labeled fictional studies, and the journal will contain complete articles on light, materials, and reuse.
+
+2026-10-03T21:53:46.653234Z ERROR codex_core::tools::router: error=apply_patch verification failed: invalid patch: multiple operations target C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground\assets\css\site.css
+**Rerunning CSS script**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+@charset \"UTF-8\";
+:root{--canvas:#f4f1e8;--ink:#20372f;--accent:#a66d31;--text:#303b34;--muted:#626a61;--white:#fffef9;--line:#c9cdc1;--serif:Georgia,'Times New Roman',serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--canvas);color:var(--text);font:16px/1.65 Arial,Helvetica,sans-serif}a{color:inherit;text-underline-offset:5px;text-decoration-thickness:1px}a:hover{color:var(--accent)}button,input,select,textarea{font:inherit}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:5px}img{display:block;width:100%;height:auto}figure{margin:0}h1,h2,h3,h4,p{margin:0}h1,h2,h3,h4{font-family:var(--serif);font-weight:400;color:var(--ink)}h1{font-size:clamp(52px,7.7vw,106px);line-height:1.02;letter-spacing:-.055em}h2{font-size:clamp(36px,4.3vw,58px);line-height:1.12;letter-spacing:-.035em}h3{font-size:30px;line-height:1.2;letter-spacing:-.025em}p+p{margin-top:18px}ul,ol{padding-left:22px}li+li{margin-top:8px}::selection{background:#d5d7bb;color:var(--ink)}.wrap{width:min(100% - 112px,1328px);margin-inline:auto}.skip-link{position:absolute;top:10px;left:20px;z-index:20;transform:translateY(-180%);padding:12px;background:var(--white)}.skip-link:focus{transform:none}.site-header{border-bottom:1px solid var(--line)}.header-inner{min-height:108px;display:flex;align-items:center;justify-content:space-between;gap:28px}.brand{display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);flex-shrink:0}.brand-name{font-family:var(--serif);font-size:27px;line-height:1.05;letter-spacing:-1px}.brand-mark{width:32px;height:37px}.site-nav{display:flex;align-items:center;gap:27px;font-size:13px}.site-nav a{text-decoration:none;white-space:nowrap}.site-nav a[aria-current=page]{text-decoration:underline;text-underline-offset:7px}.nav-cta{border:1px solid var(--ink);padding:11px 16px}.menu-toggle{display:none;color:var(--ink);border:1px solid var(--ink);background:transparent;padding:9px 13px;cursor:pointer}.eyebrow{display:block;font-size:10px;line-height:1.6;letter-spacing:1.7px;text-transform:uppercase;font-weight:600;color:var(--ink)}.eyebrow.accent{color:var(--accent)}.hero-heading{display:grid;grid-template-columns:1.6fr 1fr;gap:60px;padding:55px 0 38px;align-items:end}.hero-heading .eyebrow{margin-bottom:24px}.hero-heading h1 em{font-weight:400;color:var(--accent)}.hero-intro{max-width:290px;margin-left:auto;padding-bottom:5px}.hero-intro p{font-size:15px}.text-link{display:inline-flex;align-items:center;gap:28px;font-size:13px;padding-bottom:6px;border-bottom:1px solid var(--ink);text-decoration:none;margin-top:24px}.arrow{font-size:22px;font-family:Arial,sans-serif;line-height:1}.hero-photo{position:relative}.hero-photo>img{height:clamp(290px,35vw,510px);object-fit:cover;object-position:50% 60%}.photo-stamp{position:absolute;bottom:25px;left:25px;width:112px;height:112px;border-radius:50%;background:var(--canvas);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:7px;text-align:center;font-size:9px;letter-spacing:1px;text-transform:uppercase;line-height:1.5}.photo-stamp span{font-family:var(--serif);font-size:33px;letter-spacing:-2px}.caption{display:flex;justify-content:space-between;gap:16px;font-size:10px;color:var(--muted);padding-top:12px;line-height:1.5}.section{padding-block:82px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:25px;margin-bottom:38px}.section-head .eyebrow{margin-bottom:14px}.section-head .text-link{flex-shrink:0}.project-row{display:grid;grid-template-columns:55px 1fr 220px 28px;align-items:center;gap:24px;padding:27px 0;border-top:1px solid var(--line);text-decoration:none}.project-row:last-child{border-bottom:1px solid var(--line)}.project-row .number{font-size:11px;color:var(--accent)}.project-row h3{font-size:35px;transition:transform .2s}.project-row:hover h3{transform:translateX(6px);color:var(--accent)}.project-type{font-size:12px;color:var(--muted)}.fine-print{font-size:12px;color:var(--muted);margin-top:18px}.philosophy{background:var(--ink);color:var(--canvas);padding:62px 0}.philosophy .wrap{display:grid;grid-template-columns:1fr 2.1fr;gap:60px}.philosophy .eyebrow,.philosophy h2{color:var(--canvas)}.philosophy h2{font-size:clamp(32px,4vw,52px);max-width:790px}.philosophy p{color:#d7ddd3;max-width:580px;margin-top:25px;font-size:15px}.service-columns{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}.service-column{border-top:1px solid var(--line);padding-top:21px}.service-column .eyebrow{margin-bottom:34px;color:var(--accent)}.service-column h3{margin-bottom:18px}.service-column p{font-size:14px;max-width:340px}.inquiry-band{border-top:1px solid var(--line);padding-block:49px;display:flex;align-items:center;justify-content:space-between;gap:30px}.inquiry-band h2{font-size:clamp(34px,4vw,50px)}.inquiry-band p{margin-top:9px;font-size:14px}.button{display:inline-flex;justify-content:space-between;align-items:center;gap:36px;background:var(--ink);color:var(--white);padding:15px 22px;font-size:13px;text-decoration:none;border:1px solid var(--ink);cursor:pointer}.button:hover{background:#344c40;color:var(--white)}.button:disabled{opacity:.55;cursor:default}.site-footer{background:#e9e8dd;border-top:1px solid var(--line);padding:48px 0 22px}.footer-main{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px;padding-bottom:46px}.footer-main p{font-size:13px;margin-top:20px;max-width:290px}.footer-links{display:grid;grid-template-columns:1fr 1fr;gap:9px 25px;font-size:12px;align-content:start}.footer-links a{text-decoration:none}.footer-note .eyebrow{margin-bottom:16px}.footer-note p{margin:0 0 7px;font-size:12px}.footer-note a{font-size:12px;overflow-wrap:anywhere}.footer-bottom{border-top:1px solid var(--line);padding-top:19px;display:flex;justify-content:space-between;gap:20px;font-size:10px;color:var(--muted)}.page-heading{padding:63px 0 52px}.page-heading .eyebrow{margin-bottom:25px}.page-heading h1{max-width:950px;font-size:clamp(51px,7vw,92px)}.page-heading .lede{max-width:600px;font-size:18px;line-height:1.6;margin-top:30px}.split-heading{display:grid;grid-template-columns:1.4fr 1fr;gap:70px;align-items:end}.split-heading .lede{font-size:16px;margin:0}.studio-layout{display:grid;grid-template-columns:1fr .8fr;gap:85px;align-items:center;padding-bottom:80px}.portrait-photo img{aspect-ratio:4/5;object-fit:cover}.studio-copy .eyebrow{margin-bottom:23px}.studio-copy h2{margin-bottom:26px}.studio-copy p{font-size:15px}.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:45px;margin-top:36px}.principles article{padding-top:22px;border-top:1px solid var(--line)}.principles .eyebrow{color:var(--accent);margin-bottom:25px}.principles p{font-size:14px;margin-top:18px}.wash{background:#eae9df}.process-list{list-style:none;padding:0;margin:30px 0 0}.process-list li{display:grid;grid-template-columns:55px 1fr 1.3fr;gap:24px;border-top:1px solid var(--line);padding:25px 0;margin:0}.process-list .number{color:var(--accent);font-size:12px}.process-list h3{font-size:26px}.process-list p{font-size:14px}.offering{display:grid;grid-template-columns:80px 1.05fr 1fr;gap:35px;border-top:1px solid var(--line);padding:44px 0}.offering .number{font:30px var(--serif);color:var(--accent)}.offering h2{font-size:43px}.offering .service-sub{font-size:12px;color:var(--muted);margin-top:17px}.offering p,.offering li{font-size:14px}.offering ul{margin-top:22px}.faq-layout{display:grid;grid-template-columns:.8fr 1.2fr;gap:80px}.faq-layout .eyebrow{margin-bottom:18px}details{border-top:1px solid var(--line)}details:last-child{border-bottom:1px solid var(--line)}summary{cursor:pointer;padding:22px 30px 22px 0;font-size:15px;position:relative;list-style:none}summary::-webkit-details-marker{display:none}summary:after{content:'+';position:absolute;right:3px;top:18px;font-size:23px;color:var(--accent)}details[open] summary:after{content:'−'}details p{font-size:14px;padding:0 30px 24px 0;max-width:590px}.jump-nav{display:flex;flex-wrap:wrap;gap:12px 30px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:12px}.jump-nav a{text-decoration:none}.project{padding:70px 0;border-bottom:1px solid var(--line);scroll-margin-top:25px}.project-head{display:grid;grid-template-columns:1.3fr 1fr;gap:60px;align-items:end;margin-bottom:32px}.project-head .eyebrow{margin-bottom:17px}.project-head p{font-size:15px}.landscape-photo img{aspect-ratio:2.2;object-fit:cover}.project-notes{display:grid;grid-template-columns:.85fr 1.2fr 1.2fr;gap:50px;margin-top:34px}.project-notes h3{font-family:Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0}.project-notes p{font-size:14px;margin-top:12px}.project-meta{font-size:12px;line-height:1.8}.project-meta dt{color:var(--muted);margin-top:10px}.project-meta dd{margin:0}.project-aside{display:grid;grid-template-columns:1fr 1fr;gap:65px;align-items:center}.project-aside .eyebrow{margin-bottom:20px}.project-aside h2{margin-bottom:26px}.project-aside p{font-size:15px}.project-aside .project-meta{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:25px}.project-aside .portrait-photo img{aspect-ratio:1/1.15;object-position:30% center}.project-dark{background:var(--ink);color:var(--canvas);padding:45px}.project-dark h2,.project-dark h3,.project-dark .eyebrow{color:var(--canvas)}.project-dark .project-meta dt{color:#ccd4cb}.journal-feature{display:grid;grid-template-columns:1.4fr .8fr;gap:55px;align-items:center;padding-bottom:48px}.journal-feature img{aspect-ratio:1.4;object-fit:cover}.journal-feature h2{margin:20px 0}.journal-feature p{font-size:15px}.journal-article{display:grid;grid-template-columns:.55fr 1.45fr;gap:75px;border-bottom:1px solid var(--line);padding:60px 0;scroll-margin-top:20px}.article-meta{font-size:12px;color:var(--muted)}.article-meta .eyebrow{margin-bottom:12px;color:var(--accent)}.article-body{max-width:720px}.article-body h2{font-size:44px;margin-bottom:27px}.article-body h3{font-size:24px;margin:28px 0 13px}.article-body p{font-size:16px}.takeaway{border-left:2px solid var(--accent);padding:4px 0 4px 22px;margin-top:25px}.takeaway strong{font-size:12px;display:block;margin-bottom:7px;color:var(--ink)}.takeaway p{font-size:14px}.contact-layout{display:grid;grid-template-columns:.75fr 1.25fr;gap:90px;padding-bottom:80px}.contact-aside{border-top:1px solid var(--line);padding-top:28px}.contact-aside h2{font-size:33px;margin-bottom:20px}.contact-aside p{font-size:14px}.contact-aside .contact-email{font-family:var(--serif);font-size:23px;overflow-wrap:anywhere;margin-top:25px}.contact-aside .small-block{margin-top:42px}.small-block .eyebrow{margin-bottom:14px}.demo-note{background:#e9e7d9;padding:18px 20px;font-size:13px;margin-bottom:28px;border-left:2px solid var(--accent)}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:23px}.field.full{grid-column:1/-1}label{display:block;font-size:12px;margin-bottom:8px}input,select,textarea{width:100%;min-width:0;color:var(--ink);background:transparent;border:1px solid #929c90;border-radius:0;padding:12px}textarea{resize:vertical;min-height:135px}select{padding-right:25px}.form-bottom{margin-top:23px}.form-bottom p{font-size:12px;color:var(--muted);margin-bottom:20px}.form-status{margin-top:22px;font-size:14px}.form-status:not(:empty){border:1px solid var(--ink);background:var(--white);padding:20px}.policy-layout{display:grid;grid-template-columns:.6fr 1.4fr;gap:75px;padding-bottom:80px}.policy-menu{align-self:start;display:grid;gap:13px;border-top:1px solid var(--line);padding-top:20px;font-size:13px}.policy-body section{padding:0 0 35px;margin-bottom:35px;border-bottom:1px solid var(--line);scroll-margin-top:25px}.policy-body h2{font-size:32px;margin-bottom:20px}.policy-body p{font-size:15px}.detail-hero{display:grid;grid-template-columns:1fr 1fr;gap:65px;align-items:center;padding-bottom:70px}.detail-hero img{aspect-ratio:1.25;object-fit:cover}.detail-hero p{font-size:17px}.scope-list{display:grid;grid-template-columns:1fr 1fr;gap:30px 60px;margin-top:35px}.scope-list article{border-top:1px solid var(--line);padding-top:23px}.scope-list h3{font-size:25px;margin-bottom:15px}.scope-list p{font-size:14px}.example-strip{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}.example-strip img{aspect-ratio:1.6;object-fit:cover}.example-strip h2{margin:17px 0 22px;font-size:40px}.example-strip p{font-size:14px}.breadcrumb{font-size:12px;margin-bottom:30px}.space-bottom{padding-bottom:75px}
+@media(min-width:1500px){.hero-heading{padding-top:70px}.hero-heading h1{font-size:112px}}
+@media(max-width:1050px){.wrap{width:calc(100% - 64px)}.site-nav{gap:16px}.brand-name{font-size:24px}.hero-heading{gap:35px}.footer-main{gap:30px}.studio-layout,.contact-layout,.faq-layout,.project-aside{gap:45px}.project-row{grid-template-columns:35px 1fr 180px 25px}.offering{grid-template-columns:45px 1fr 1fr;gap:24px}.split-heading{gap:35px}}
+@media(max-width:760px){.wrap{width:calc(100% - 40px)}.header-inner{min-height:88px;flex-wrap:wrap;gap:0;padding:21px 0}.brand-name{font-size:25px}.brand-mark{width:28px}.site-nav{width:100%;flex-wrap:wrap;gap:18px 24px;padding-top:23px}.js .menu-toggle{display:block}.js .site-nav{display:none}.js .site-nav.is-open{display:flex;flex-direction:column;align-items:stretch;gap:0}.js .site-nav a{padding:13px 0;border-bottom:1px solid var(--line);font-size:15px}.js .site-nav .nav-cta{margin-top:16px;padding:12px 15px;border:1px solid var(--ink)}.hero-heading{grid-template-columns:1fr;gap:27px;padding:37px 0 30px}.hero-heading h1{font-size:clamp(53px,11vw,80px)}.hero-heading .eyebrow{margin-bottom:21px}.hero-intro{max-width:370px;margin:0}.hero-intro p{font-size:14px}.hero-intro .text-link{margin-top:17px}.hero-photo>img{height:310px;object-position:52% center}.photo-stamp{height:87px;width:87px;left:17px;bottom:17px;font-size:8px;gap:3px}.photo-stamp span{font-size:27px}.caption{font-size:9px;gap:13px}.caption span{max-width:55%}.caption span:last-child{text-align:right}.section{padding-block:52px}.section-head{align-items:start;margin-bottom:27px}.section-head h2{font-size:35px}.section-head .text-link{font-size:11px;gap:12px;margin-top:24px}.project-row{grid-template-columns:25px 1fr 22px;gap:10px;padding:23px 0}.project-row h3{font-size:28px}.project-type{grid-column:2;grid-row:2;font-size:11px}.project-row .arrow{grid-column:3;grid-row:1/3}.philosophy{padding:44px 0}.philosophy .wrap{grid-template-columns:1fr;gap:24px}.philosophy p{font-size:14px}.service-columns,.principles{grid-template-columns:1fr;gap:29px}.service-column .eyebrow{margin-bottom:17px}.service-column h3{font-size:29px}.service-column p{max-width:100%}.service-column .text-link{margin-top:17px}.inquiry-band{flex-direction:column;align-items:start;padding:35px 0;gap:23px}.footer-main{grid-template-columns:1fr;gap:32px;padding-bottom:30px}.footer-links{max-width:350px;gap:13px}.footer-note p{margin:0 0 5px}.footer-bottom{flex-wrap:wrap;font-size:10px;gap:12px}.page-heading{padding:39px 0 35px}.page-heading h1{font-size:clamp(49px,10vw,70px)}.page-heading .lede{font-size:16px;margin-top:24px}.split-heading{grid-template-columns:1fr;gap:0}.studio-layout{grid-template-columns:1fr;gap:35px;padding-bottom:50px}.portrait-photo img{aspect-ratio:1.12}.studio-copy h2{font-size:37px}.principles{margin-top:29px}.principles .eyebrow{margin-bottom:16px}.process-list li{grid-template-columns:30px 1fr;gap:12px}.process-list p{grid-column:2}.process-list h3{font-size:25px}.offering{grid-template-columns:30px 1fr;gap:12px;padding:30px 0}.offering .number{font-size:22px}.offering h2{font-size:35px}.offering>div:last-child{grid-column:2}.offering .service-sub{margin:12px 0 9px}.faq-layout{grid-template-columns:1fr;gap:30px}.faq-layout h2{font-size:37px}.jump-nav{gap:12px 20px;font-size:11px}.project{padding:43px 0}.project-head{grid-template-columns:1fr;gap:24px;margin-bottom:25px}.landscape-photo img{aspect-ratio:1.18}.project-notes{grid-template-columns:1fr;gap:22px;margin-top:24px}.project-meta{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin:0}.project-notes h3{font-size:13px}.project-aside{grid-template-columns:1fr;gap:30px}.project-aside .portrait-photo img{aspect-ratio:1.15}.project-dark{padding:25px 20px}.project-dark .landscape-photo img{aspect-ratio:1.15}.journal-feature{grid-template-columns:1fr;gap:24px;padding-bottom:35px}.journal-feature h2{font-size:35px;margin:13px 0}.journal-article{grid-template-columns:1fr;gap:22px;padding:40px 0}.article-meta{display:flex;justify-content:space-between;gap:20px;font-size:11px}.article-body h2{font-size:35px}.article-body p{font-size:15px}.contact-layout{grid-template-columns:1fr;gap:36px;padding-bottom:50px}.contact-aside .small-block{margin-top:26px}.form-grid{grid-template-columns:1fr;gap:20px}.field.full{grid-column:auto}.policy-layout{grid-template-columns:1fr;gap:36px;padding-bottom:40px}.policy-menu{grid-template-columns:1fr 1fr;gap:14px;font-size:12px}.policy-body section{margin-bottom:27px;padding-bottom:27px}.detail-hero{grid-template-columns:1fr;gap:29px;padding-bottom:45px}.detail-hero p{font-size:16px}.scope-list{grid-template-columns:1fr;gap:25px}.example-strip{grid-template-columns:1fr;gap:30px}.example-strip h2{font-size:35px}.space-bottom{padding-bottom:45px}.breadcrumb{margin-bottom:23px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation:none"'!important;transition:none!important}}
+'"'@ | Set-Content -Encoding utf8 assets/css/site.css
+@'
+'use strict';
+document.documentElement.classList.add('js');
+const menuButton = document.querySelector('.menu-toggle');
+const navigation = document.querySelector('#site-navigation');
+if (menuButton && navigation) {
+  const closeMenu = (restoreFocus = false) => {
+    navigation.classList.remove('is-open');
+    menuButton.setAttribute('aria-expanded', 'false');
+    menuButton.textContent = 'Menu +';
+    if (restoreFocus) menuButton.focus();
+  };
+  menuButton.addEventListener('click', () => {
+    const opening = menuButton.getAttribute('aria-expanded') "'!== '"'true';
+    navigation.classList.toggle('is-open', opening);
+    menuButton.setAttribute('aria-expanded', String(opening));
+    menuButton.textContent = opening ? 'Close −' : 'Menu +';
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && menuButton.getAttribute('aria-expanded') === 'true') closeMenu(true);
+  });
+  document.addEventListener('click', event => {
+    if ("'!navigation.contains(event.target) && !menuButton.contains(event.target)) closeMenu();
+  });
+  navigation.addEventListener('"'click', event => {
+    if (event.target.closest('a')) closeMenu();
+  });
+  window.matchMedia('(min-width: 761px)').addEventListener('change', () => closeMenu());
+}
+const inquiryForm = document.querySelector('#inquiry-form');
+if (inquiryForm) {
+  const button = inquiryForm.querySelector('button');
+  const status = document.querySelector('#form-status');
+  button.disabled = false;
+  const showDemoFeedback = () => {
+    if ("'!inquiryForm.reportValidity()) return;
+    status.textContent = '"'Your example inquiry is ready. This is a demo: nothing has been sent or saved. In a real project conversation, we would begin with your space, priorities, and budget. You can change the details and try again.';
+    status.focus();
+  };
+  button.addEventListener('click', showDemoFeedback);
+  inquiryForm.addEventListener('submit', event => {
+    event.preventDefault();
+    showDemoFeedback();
+  });
+  inquiryForm.addEventListener('input', () => { status.textContent = ''; });
+}
+'@ | Set-Content -Encoding utf8 assets/js/site.js" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 169ms:
+**Preparing HTML generation**
+codex
+The shared styles and interactions are in place. I’m now building the distinct page layouts, including the renovation process, three project studies, and the inquiry form with local-only feedback.
+
+2026-10-03T22:05:02.662042Z ERROR codex_core::tools::router: error=exec_command failed: CreateProcess { message: "Rejected(\"Failed to create unified exec process: runner failed during SpawnChild: CreateProcessAsUserW failed: 206 (The filename or extension is too long.) | cwd=C:\\\\Users\\\\Nolan\\\\Developer\\\\repos\\\\Nolan-Young-Theme-Factory\\\\docs\\\\Preview-Themes-Github\\\\017_nolan_young_theme_common_ground | cmd=C:\\\\Users\\\\Nolan\\\\.cache\\\\codex-runtimes\\\\codex-primary-runtime\\\\dependencies\…47798 chars truncated…e. Validation, browser review, screenshots, reports, and gallery updates are owned by the parent runner and were not run during this generation pass. No build, package, publication, or WordPress conversion is part of this sample.\\n''',encoding='utf-8')\\nprint('Wrote nine HTML pages, content.json, and README.md in the prepared directory.')\\n'@ | python -\\\" | env_u16_len=10718 | si_flags=256 | creation_flags=134743040 (Windows error 206)\")" }
+**Preparing batched page generation**
+**Preparing shorter page commands**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+from pathlib import Path
+import json
+arrow = '<span class=\"arrow\" aria-hidden=\"true\">↗</span>'
+mark = '<svg class=\"brand-mark\" viewBox=\"0 0 32 37\" fill=\"none\" aria-hidden=\"true\"><path d=\"M2 34V14L16 3l14 11v20M9 34V18l7-6 7 6v16M2 34h28M16 12v22\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>'
+brand = f'<a class=\"brand\" href=\"index.html\" aria-label=\"Common Ground home\">{mark}<span class=\"brand-name\">Common<br>Ground</span></a>'
+nav_items = [('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('contact_preview.html','Start a project')]
+def link(href,label,kind='text-link'):
+    return f'<a class=\"{kind}\" href=\"{href}\">{label}{arrow}</a>'
+def photo(which='hero',cls='landscape-photo',caption=True,eager=False):
+    if which=='hero':
+        src='assets/images/hero/editorial-hero.jpg'; alt='White concrete facade with long horizontal windows beneath a pale blue sky'; credit='Pierre Châtel-Innocenti'
+    else:
+        src='assets/images/portfolio/editorial-detail.jpg'; alt='Weathered beige walls with an arched recess and a tall opening to the sky'; credit='Annie Spratt'
+    loading='fetchpriority=\"high\"' if eager else 'loading=\"lazy\"'
+    height=1067 if which=='hero' else 1086
+    cap=f'<figcaption class=\"caption\"><span>Architectural reference · illustrative photography</span><span>{credit} / Unsplash</span></figcaption>' if caption else ''
+    return f'<figure class=\"{cls}\"><img src=\"{src}\" alt=\"{alt}\" width=\"1600\" height=\"{height}\" {loading}>{cap}</figure>'
+def cta():
+    return f'<div class=\"wrap\"><section class=\"inquiry-band\" aria-labelledby=\"inquiry-title\"><div><h2 id=\"inquiry-title\">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div>{link(\"contact_preview.html\",\"Tell us what you have in mind\",\"button\")}</section></div>'
+def faq(items):
+    return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in items)
+def heading(kicker,title,intro='',split=False):
+    modifier=' split-heading' if split else ''
+    lede=f'<p class=\"lede\">{intro}</p>' if intro else ''
+    return f'<div class=\"wrap page-heading{modifier}\"><div><span class=\"eyebrow\">{kicker}</span><h1>{title}</h1></div>{lede}</div>'
+def page(filename,title,description,body,active=None,include_cta=True):
+    navigation=''.join(f'<a href=\"{href}\"'+(' class=\"nav-cta\"' if label=='Start a project' else '')+(' aria-current=\"page\"' if href==(active or filename) else '')+f'>{label}'+(' <span aria-hidden=\"true\">↗</span>' if label=='Start a project' else '')+'</a>' for href,label in nav_items)
+    footer_links=''.join(f'<a href=\"{href}\">{label}</a>' for href,label in [('homepage_preview.html','Home'),('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('single_services_preview.html','Renovations'),('contact_preview.html','Contact'),('policy_preview.html','Privacy')])
+    result=f'''<"'!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{description}"><meta name="theme-color" content="#f4f1e8"><title>{title} | Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head>
+<body id="top"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-inner">{brand}<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu +</button><nav class="site-nav" id="site-navigation" aria-label="Main navigation">{navigation}</nav></div></header>
+<main id="main">{body}{cta() if include_cta else '"''}</main>
+<footer class=\"site-footer\"><div class=\"wrap\"><div class=\"footer-main\"><div>{brand}<p>Independent architecture.<br>Homes with staying power.<br>Places that bring us together.</p></div><nav class=\"footer-links\" aria-label=\"Footer navigation\">{footer_links}</nav><div class=\"footer-note\"><span class=\"eyebrow\">A little context</span><p>A fictional independent practice.<br>Three studies. One shared outlook.</p><a href=\"contact_preview.html\">Begin a project conversation ↗</a></div></div><div class=\"footer-bottom\"><span>© 2026 Common Ground · Fictional portfolio sample</span><span>Thoughtfully made, for everyday life.</span><a href=\"#top\">Back to top ↑</a></div></div></footer>
+</body></html>'''
+    Path(filename).write_text(result,encoding='utf-8')
+
+home=f'''<div class=\"wrap\"><section class=\"hero-heading\" aria-labelledby=\"home-title\"><div><span class=\"eyebrow\">Independent architecture · A considered approach</span><h1 id=\"home-title\">Less, but<br><em>more meaningful.</em></h1></div><div class=\"hero-intro\"><p>Modest homes. Thoughtful shared spaces. Architecture that makes more of what is already there.</p>{link('work_preview.html','Explore our work')}</div></section><figure><div class=\"hero-photo\"><img src=\"assets/images/hero/editorial-hero.jpg\" alt=\"White concrete building with deeply recessed horizontal windows under a soft blue sky\" width=\"1600\" height=\"1067\" fetchpriority=\"high\"><div class=\"photo-stamp\" aria-hidden=\"true\">Built around<span>everyday</span>life</div></div><figcaption class=\"caption\"><span>Light, proportion, and a sense of belonging.</span><span>Architectural reference · Pierre Châtel-Innocenti / Unsplash</span></figcaption></figure>
+<section class=\"section\" aria-labelledby=\"selected-title\"><div class=\"section-head\"><div><span class=\"eyebrow\">01 / Selected studies</span><h2 id=\"selected-title\">Small moves.<br>Lasting possibilities.</h2></div>{link('work_preview.html','View all studies')}</div><a class=\"project-row\" href=\"work_preview.html#courtyard-house\"><span class=\"number\">01</span><h3>Courtyard House</h3><span class=\"project-type\">Renovation · An inner suburb</span>{arrow}</a><a class=\"project-row\" href=\"work_preview.html#little-gable\"><span class=\"number\">02</span><h3>Little Gable</h3><span class=\"project-type\">Compact home · A village edge</span>{arrow}</a><a class=\"project-row\" href=\"work_preview.html#the-reading-room\"><span class=\"number\">03</span><h3>The Reading Room</h3><span class=\"project-type\">Civic interior · A neighborhood high street</span>{arrow}</a><p class=\"fine-print\">Three fictional design studies, exploring the places we care about.</p></section></div>
+<section class=\"philosophy\"><div class=\"wrap\"><span class=\"eyebrow\">02 / Our point of view</span><div><h2>Enough space.<br>The right light.<br>Room for life to happen.</h2><p>We begin by listening: to the people, to the place, and to what a building already offers. Often, the best answer is a careful adjustment rather than a bigger footprint.</p></div></div></section>
+<div class=\"wrap\"><section class=\"section\" aria-labelledby=\"home-services\"><div class=\"section-head\"><div><span class=\"eyebrow\">03 / How we can help</span><h2 id=\"home-services\">A thoughtful next chapter.</h2></div></div><div class=\"service-columns\"><article class=\"service-column\"><span class=\"eyebrow\">01 / Renew</span><h3>Renovations</h3><p>Rework the plan, welcome the daylight, and keep the character. A fresh way to live in a familiar place.</p>{link('single_services_preview.html','Explore renovations')}</article><article class=\"service-column\"><span class=\"eyebrow\">02 / Make</span><h3>Compact homes</h3><p>Careful proportions and hardworking rooms. New homes shaped around daily rituals and a lighter footprint.</p>{link('services_preview.html#compact-homes','Explore new homes')}</article><article class=\"service-column\"><span class=\"eyebrow\">03 / Gather</span><h3>Civic interiors</h3><p>Welcoming rooms for reading, making, meeting, and sharing. Small public places with an open invitation.</p>{link('services_preview.html#civic-interiors','Explore shared spaces')}</article></div></section></div>'''
+page('index.html','Architecture for everyday life','Common Ground is a fictional independent architecture practice exploring modest homes, careful renovations, and welcoming neighborhood spaces.',home)
+page('homepage_preview.html','Architecture for everyday life','Common Ground is a fictional independent architecture practice exploring modest homes, careful renovations, and welcoming neighborhood spaces.',home)
+print('Created both home pages.')
+
+'@ | python -" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 93ms:
+Created both home pages.
+
+**Checking heading line breaks**
+**Adjusting home H1 sizing**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+from pathlib import Path
+import json
+arrow = '<span class=\"arrow\" aria-hidden=\"true\">↗</span>'
+mark = '<svg class=\"brand-mark\" viewBox=\"0 0 32 37\" fill=\"none\" aria-hidden=\"true\"><path d=\"M2 34V14L16 3l14 11v20M9 34V18l7-6 7 6v16M2 34h28M16 12v22\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>'
+brand = f'<a class=\"brand\" href=\"index.html\" aria-label=\"Common Ground home\">{mark}<span class=\"brand-name\">Common<br>Ground</span></a>'
+nav_items = [('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('contact_preview.html','Start a project')]
+def link(href,label,kind='text-link'):
+    return f'<a class=\"{kind}\" href=\"{href}\">{label}{arrow}</a>'
+def photo(which='hero',cls='landscape-photo',caption=True,eager=False):
+    if which=='hero':
+        src='assets/images/hero/editorial-hero.jpg'; alt='White concrete facade with long horizontal windows beneath a pale blue sky'; credit='Pierre Châtel-Innocenti'
+    else:
+        src='assets/images/portfolio/editorial-detail.jpg'; alt='Weathered beige walls with an arched recess and a tall opening to the sky'; credit='Annie Spratt'
+    loading='fetchpriority=\"high\"' if eager else 'loading=\"lazy\"'
+    height=1067 if which=='hero' else 1086
+    cap=f'<figcaption class=\"caption\"><span>Architectural reference · illustrative photography</span><span>{credit} / Unsplash</span></figcaption>' if caption else ''
+    return f'<figure class=\"{cls}\"><img src=\"{src}\" alt=\"{alt}\" width=\"1600\" height=\"{height}\" {loading}>{cap}</figure>'
+def cta():
+    return f'<div class=\"wrap\"><section class=\"inquiry-band\" aria-labelledby=\"inquiry-title\"><div><h2 id=\"inquiry-title\">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div>{link(\"contact_preview.html\",\"Tell us what you have in mind\",\"button\")}</section></div>'
+def faq(items):
+    return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in items)
+def heading(kicker,title,intro='',split=False):
+    modifier=' split-heading' if split else ''
+    lede=f'<p class=\"lede\">{intro}</p>' if intro else ''
+    return f'<div class=\"wrap page-heading{modifier}\"><div><span class=\"eyebrow\">{kicker}</span><h1>{title}</h1></div>{lede}</div>'
+def page(filename,title,description,body,active=None,include_cta=True):
+    navigation=''.join(f'<a href=\"{href}\"'+(' class=\"nav-cta\"' if label=='Start a project' else '')+(' aria-current=\"page\"' if href==(active or filename) else '')+f'>{label}'+(' <span aria-hidden=\"true\">↗</span>' if label=='Start a project' else '')+'</a>' for href,label in nav_items)
+    footer_links=''.join(f'<a href=\"{href}\">{label}</a>' for href,label in [('homepage_preview.html','Home'),('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('single_services_preview.html','Renovations'),('contact_preview.html','Contact'),('policy_preview.html','Privacy')])
+    result=f'''<"'!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{description}"><meta name="theme-color" content="#f4f1e8"><title>{title} | Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head>
+<body id="top"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-inner">{brand}<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu +</button><nav class="site-nav" id="site-navigation" aria-label="Main navigation">{navigation}</nav></div></header>
+<main id="main">{body}{cta() if include_cta else '"''}</main>
+<footer class=\"site-footer\"><div class=\"wrap\"><div class=\"footer-main\"><div>{brand}<p>Independent architecture.<br>Homes with staying power.<br>Places that bring us together.</p></div><nav class=\"footer-links\" aria-label=\"Footer navigation\">{footer_links}</nav><div class=\"footer-note\"><span class=\"eyebrow\">A little context</span><p>A fictional independent practice.<br>Three studies. One shared outlook.</p><a href=\"contact_preview.html\">Begin a project conversation ↗</a></div></div><div class=\"footer-bottom\"><span>© 2026 Common Ground · Fictional portfolio sample</span><span>Thoughtfully made, for everyday life.</span><a href=\"#top\">Back to top ↑</a></div></div></footer>
+</body></html>'''
+    Path(filename).write_text(result,encoding='utf-8')
+
+about=heading('The studio / Common Ground','A practice of<br>paying attention.','We believe a good building makes everyday life feel a little easier. It holds the light, welcomes change, and belongs to its surroundings.')+f'''<div class=\"wrap studio-layout\">{photo('detail','portrait-photo',True,True)}<div class=\"studio-copy\"><span class=\"eyebrow\">Thoughtful by nature</span><h2>Start with what<br>is already good.</h2><p>A well-placed window. A wall with a useful history. A garden that catches the afternoon sun. These are the starting points for our work.</p><p>Common Ground is an imagined independent practice for homeowners and small cultural organizations. Our approach brings the same care to a kitchen threshold as to a shared reading room: understand the daily routines, ask what matters, and give each decision a clear purpose.</p><p>We favor direct conversations, legible drawings, and materials that can be maintained. The ambition is quiet: places that earn their keep, year after year.</p>{link('services_preview.html','How we work with you')}</div></div>
+<section class=\"section wash\"><div class=\"wrap\"><span class=\"eyebrow\">Our principles</span><h2>Three things we return to.</h2><div class=\"principles\"><article><span class=\"eyebrow\">01 / Enough</span><h3>Make space count.</h3><p>Before adding floor area, look at how the existing rooms connect. A simpler route or a shared threshold can unlock more than an extension.</p></article><article><span class=\"eyebrow\">02 / Endurance</span><h3>Think beyond the finish.</h3><p>Choose for touch, repair, and daily wear. A material should look at home now and remain useful as lives and needs change.</p></article><article><span class=\"eyebrow\">03 / Belonging</span><h3>Look beyond the boundary.</h3><p>Consider neighbors, streets, and shared edges. Even a modest project can make its little part of the world more welcoming.</p></article></div></div></section>
+<section class=\"wrap section\"><span class=\"eyebrow\">Working together</span><h2>A clear path, taken together.</h2><ol class=\"process-list\"><li><span class=\"number\">01</span><h3>Listen closely</h3><p>We discuss what works, what gets in the way, and what you can realistically invest. Your brief begins with everyday life.</p></li><li><span class=\"number\">02</span><h3>Explore carefully</h3><p>We compare a small number of meaningful options, explaining the tradeoffs in space, cost, light, and complexity.</p></li><li><span class=\"number\">03</span><h3>Resolve together</h3><p>We develop the preferred direction in stages, with clear decisions and agreed responsibilities before moving forward.</p></li></ol></section>'''
+page('about-us_preview.html','The studio','The principles behind Common Ground: enough space, enduring materials, and architecture that belongs.',about)
+services=heading('Services / Places for everyday life','Considered from<br>the very beginning.','Three areas of practice, connected by a simple aim: make useful, enduring places without doing more than the project needs.',True)+f'''<div class=\"wrap space-bottom\"><section class=\"offering\" id=\"renovations\"><span class=\"number\">01</span><div><h2>Renovations<br>&amp; additions</h2><p class=\"service-sub\">A better fit for the life you live now.</p>{link('single_services_preview.html','Our renovation approach')}</div><div><p>For homes with good bones and rooms that no longer quite work. We explore what to keep, what to connect, and where a measured addition could make a difference.</p><ul><li>Existing layout and daylight studies</li><li>Kitchen, living, and circulation changes</li><li>Careful additions and material reuse</li><li>Phased design and construction information</li></ul></div></section><section class=\"offering\" id=\"compact-homes\"><span class=\"number\">02</span><div><h2>Compact<br>new homes</h2><p class=\"service-sub\">A modest footprint. A generous way of living.</p>{link('work_preview.html#little-gable','See Little Gable')}</div><div><p>For small sites and people who would rather build well than build big. We begin with orientation, privacy, and the rituals of a normal day, then bring structure and services into a straightforward plan.</p><ul><li>Site opportunities and feasibility</li><li>Efficient layouts and flexible rooms</li><li>Daylight, shading, and outdoor connections</li><li>Material and building-system coordination</li></ul></div></section><section class=\"offering\" id=\"civic-interiors\"><span class=\"number\">03</span><div><h2>Civic<br>interiors</h2><p class=\"service-sub\">Small spaces with a shared purpose.</p>{link('work_preview.html#the-reading-room','See The Reading Room')}</div><div><p>For independent libraries, cultural groups, and neighborhood organizations. We help make existing rooms welcoming and adaptable, balancing public use with storage, upkeep, and the people who run the place.</p><ul><li>Conversations with users and organizers</li><li>Access, circulation, and flexible layouts</li><li>Joinery, lighting, and acoustic intent</li><li>Durable finishes and phased improvements</li></ul></div></section></div>
+<section class=\"section wash\"><div class=\"wrap faq-layout\"><div><span class=\"eyebrow\">Before we begin</span><h2>A few useful<br>questions.</h2><p class=\"fine-print\">Every project starts with its own circumstances.</p></div><div>{faq([('When should I speak to an architect?','As soon as you have a question about a site or an existing building. Early conversations can help define the brief before you commit to a layout, purchase, or construction schedule.'),('Do I need a finished brief?','No. A few photographs, a rough budget range, and a list of what is and is not working are a useful beginning. We would shape a clearer brief together.'),('How would fees be agreed?','After an initial discussion, the scope, stages, deliverables, and exclusions would be set out in a written proposal. Specialist advice and statutory fees would be identified separately; this sample does not quote fees.'),('Can the work happen in stages?','Yes, when the building and scope allow it. We would plan the whole first, then consider sensible phases so that early work does not prevent later improvements.'),('Are these completed projects?','No. Common Ground and the three portfolio projects are fictional. Photographs are approved architectural references, not images of built work by this practice.')])}</div></div></section>'''
+page('services_preview.html','Services','Renovations, compact new homes, and civic interiors: explore the Common Ground approach and frequently asked questions.',services)
+print('Created studio and services pages.')
+
+'@ | python -" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 93ms:
+Created studio and services pages.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+from pathlib import Path
+import json
+arrow = '<span class=\"arrow\" aria-hidden=\"true\">↗</span>'
+mark = '<svg class=\"brand-mark\" viewBox=\"0 0 32 37\" fill=\"none\" aria-hidden=\"true\"><path d=\"M2 34V14L16 3l14 11v20M9 34V18l7-6 7 6v16M2 34h28M16 12v22\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>'
+brand = f'<a class=\"brand\" href=\"index.html\" aria-label=\"Common Ground home\">{mark}<span class=\"brand-name\">Common<br>Ground</span></a>'
+nav_items = [('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('contact_preview.html','Start a project')]
+def link(href,label,kind='text-link'):
+    return f'<a class=\"{kind}\" href=\"{href}\">{label}{arrow}</a>'
+def photo(which='hero',cls='landscape-photo',caption=True,eager=False):
+    if which=='hero':
+        src='assets/images/hero/editorial-hero.jpg'; alt='White concrete facade with long horizontal windows beneath a pale blue sky'; credit='Pierre Châtel-Innocenti'
+    else:
+        src='assets/images/portfolio/editorial-detail.jpg'; alt='Weathered beige walls with an arched recess and a tall opening to the sky'; credit='Annie Spratt'
+    loading='fetchpriority=\"high\"' if eager else 'loading=\"lazy\"'
+    height=1067 if which=='hero' else 1086
+    cap=f'<figcaption class=\"caption\"><span>Architectural reference · illustrative photography</span><span>{credit} / Unsplash</span></figcaption>' if caption else ''
+    return f'<figure class=\"{cls}\"><img src=\"{src}\" alt=\"{alt}\" width=\"1600\" height=\"{height}\" {loading}>{cap}</figure>'
+def cta():
+    return f'<div class=\"wrap\"><section class=\"inquiry-band\" aria-labelledby=\"inquiry-title\"><div><h2 id=\"inquiry-title\">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div>{link(\"contact_preview.html\",\"Tell us what you have in mind\",\"button\")}</section></div>'
+def faq(items):
+    return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in items)
+def heading(kicker,title,intro='',split=False):
+    modifier=' split-heading' if split else ''
+    lede=f'<p class=\"lede\">{intro}</p>' if intro else ''
+    return f'<div class=\"wrap page-heading{modifier}\"><div><span class=\"eyebrow\">{kicker}</span><h1>{title}</h1></div>{lede}</div>'
+def page(filename,title,description,body,active=None,include_cta=True):
+    navigation=''.join(f'<a href=\"{href}\"'+(' class=\"nav-cta\"' if label=='Start a project' else '')+(' aria-current=\"page\"' if href==(active or filename) else '')+f'>{label}'+(' <span aria-hidden=\"true\">↗</span>' if label=='Start a project' else '')+'</a>' for href,label in nav_items)
+    footer_links=''.join(f'<a href=\"{href}\">{label}</a>' for href,label in [('homepage_preview.html','Home'),('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('single_services_preview.html','Renovations'),('contact_preview.html','Contact'),('policy_preview.html','Privacy')])
+    result=f'''<"'!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{description}"><meta name="theme-color" content="#f4f1e8"><title>{title} | Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head>
+<body id="top"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-inner">{brand}<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu +</button><nav class="site-nav" id="site-navigation" aria-label="Main navigation">{navigation}</nav></div></header>
+<main id="main">{body}{cta() if include_cta else '"''}</main>
+<footer class=\"site-footer\"><div class=\"wrap\"><div class=\"footer-main\"><div>{brand}<p>Independent architecture.<br>Homes with staying power.<br>Places that bring us together.</p></div><nav class=\"footer-links\" aria-label=\"Footer navigation\">{footer_links}</nav><div class=\"footer-note\"><span class=\"eyebrow\">A little context</span><p>A fictional independent practice.<br>Three studies. One shared outlook.</p><a href=\"contact_preview.html\">Begin a project conversation ↗</a></div></div><div class=\"footer-bottom\"><span>© 2026 Common Ground · Fictional portfolio sample</span><span>Thoughtfully made, for everyday life.</span><a href=\"#top\">Back to top ↑</a></div></div></footer>
+</body></html>'''
+    Path(filename).write_text(result,encoding='utf-8')
+
+work=heading('Work / Three fictional design studies','Different places.<br>Common ground.','A home opened to its garden. A small house with room to adapt. A welcoming room for a neighborhood. Three imagined briefs, explored with the same care.')+f'''<div class=\"wrap\"><nav class=\"jump-nav\" aria-label=\"Project index\"><a href=\"#courtyard-house\">01 / Courtyard House ↓</a><a href=\"#little-gable\">02 / Little Gable ↓</a><a href=\"#the-reading-room\">03 / The Reading Room ↓</a></nav><p class=\"fine-print\">All projects are fictional proposals. Photographs illustrate architectural themes and do not depict these projects.</p>
+<article class=\"project\" id=\"courtyard-house\"><div class=\"project-head\"><div><span class=\"eyebrow accent\">01 / Renovation study</span><h2>Courtyard House</h2></div><p>A familiar home, rearranged around a pocket of daylight. The proposal finds more room in the plan before asking more of the site.</p></div>{photo('detail')}<div class=\"project-notes\"><dl class=\"project-meta\"><div><dt>Setting</dt><dd>A quiet inner suburb</dd></div><div><dt>Brief</dt><dd>Renovation with a small rear addition</dd></div><div><dt>Status</dt><dd>Fictional concept</dd></div></dl><div><h3>The question</h3><p>How could a deep, narrow house feel connected to its garden without replacing the spaces that give it character? The imagined owners wanted a shared kitchen and a quiet place to work.</p></div><div><h3>The response</h3><p>Retain the front rooms, bring circulation beside a small courtyard, and gather cooking and eating beneath one simple roof. Existing doors and sound timber would be surveyed for reuse.</p>{link('single_services_preview.html','Explore the renovation process')}</div></div></article>
+<article class=\"project project-aside\" id=\"little-gable\"><div><span class=\"eyebrow accent\">02 / Compact home study</span><h2>Little Gable</h2><p>A new home for a small plot at a village edge. The concept replaces spare corridors with connected rooms and uses a sheltered threshold to extend everyday life outdoors.</p><p>A flexible ground-floor room could serve as a workspace, guest room, or future bedroom. A central service zone keeps the remaining plan clear, while deep window reveals offer places to sit and pause.</p><p>The material idea is deliberately limited: a durable outer layer, a straightforward timber interior, and parts that can be reached for repair.</p><dl class=\"project-meta\"><div><dt>Setting</dt><dd>A village edge</dd></div><div><dt>Brief</dt><dd>A small, adaptable new home</dd></div><div><dt>Status</dt><dd>Fictional concept</dd></div><div><dt>Guiding idea</dt><dd>Less circulation, more living</dd></div></dl>{link('services_preview.html#compact-homes','About compact homes')}</div>{photo('hero','portrait-photo')}</article>
+<article class=\"project\" id=\"the-reading-room\"><div class=\"project-dark\"><div class=\"project-head\"><div><span class=\"eyebrow\">03 / Civic interior study</span><h2>The Reading Room</h2></div><p>An ordinary shopfront becomes an open invitation: a place to read, meet a neighbor, or stay a little longer.</p></div>{photo('hero','landscape-photo',False)}<p class=\"dark-caption\">Illustrative architectural reference · Pierre Châtel-Innocenti / Unsplash</p><div class=\"project-notes\"><dl class=\"project-meta\"><div><dt>Setting</dt><dd>A neighborhood high street</dd></div><div><dt>Brief</dt><dd>A shared reading and meeting space</dd></div><div><dt>Status</dt><dd>Fictional concept</dd></div></dl><div><h3>A room that can change</h3><p>Low shelves would define quieter edges while movable tables keep the center open. A reading session in the morning could give way to a workshop in the afternoon.</p></div><div><h3>Care behind the scenes</h3><p>The proposal reserves proper space for storage, a clear entrance, and an easy-to-find welcome desk. Acoustic finishes and controllable light support different ways of using the room.</p></div></div></div></article></div>'''
+page('work_preview.html','Selected studies','Three fictional architectural studies: Courtyard House, Little Gable, and The Reading Room.',work)
+journal=heading('Journal / Notes from the studio','Things worth<br>looking at closely.','Short observations on light, materials, and making good use of what we have.',True)+f'''<div class=\"wrap space-bottom\"><div class=\"journal-feature\">{photo('detail','',True,True)}<div><span class=\"eyebrow accent\">Field note 01 / Light</span><h2>Before adding glass,<br>follow the light.</h2><p>A brighter room begins with observation. The size of the window is only part of the story.</p>{link('#light','Read the field note')}</div></div><nav class=\"jump-nav\" aria-label=\"Journal articles\"><a href=\"#light\">01 / Following the light ↓</a><a href=\"#materials\">02 / Materials that age well ↓</a><a href=\"#reuse\">03 / Begin with what remains ↓</a></nav>
+<article class=\"journal-article\" id=\"light\"><div class=\"article-meta\"><span class=\"eyebrow\">01 / Light</span><span>Studio notes · 2 min read</span></div><div class=\"article-body\"><h2>Before adding glass,<br>follow the light.</h2><p>A room can have a large window and still feel dim. The depth of the plan, the direction it faces, and the surfaces opposite the opening all influence how light travels. Start by noticing where you actually spend time, rather than assuming that more glazing is always the answer.</p><h3>Watch an ordinary day</h3><p>Make a simple plan and mark the pools of light in the morning, at midday, and in the late afternoon. Repeat in different seasons if you can. Note where you turn on a lamp, where glare makes a screen difficult to read, and which rooms become uncomfortable in strong sun.</p><h3>Think about the path, not just the opening</h3><p>A lighter ceiling or a wider internal opening may let borrowed light reach the center of a home. Moving a tall cupboard can change the way a room feels without changing a wall. Where new glazing makes sense, consider shade, privacy, views, and heat together.</p><div class=\"takeaway\"><strong>A useful first step</strong><p>Photograph the same room from the same position at three times of day. Bring those observations into your first design conversation.</p></div></div></article>
+<article class=\"journal-article\" id=\"materials\"><div class=\"article-meta\"><span class=\"eyebrow\">02 / Materials</span><span>Studio notes · 2 min read</span></div><div class=\"article-body\"><h2>Choose for the years<br>after the photograph.</h2><p>A material sample is usually small, clean, and perfectly lit. Daily life is less controlled. Shoes bring in grit, chairs move, and water gathers near a sink. A useful material choice accounts for those ordinary moments, as well as the impression on the first day.</p><h3>Ask how it will be maintained</h3><p>Can the surface be cleaned with readily available products? Can a damaged section be replaced without removing the whole assembly? Some finishes invite local repair; others rely on an unbroken coating. Neither is automatically right, but the upkeep should fit the way you want to live.</p><h3>Put the samples together</h3><p>Look at the floor beside the joinery, the wall finish beside the window frame. View them in the actual room and under evening light. A restrained palette often allows texture and proportion to do more of the work, and can make future repairs easier to integrate.</p><div class=\"takeaway\"><strong>A useful first step</strong><p>Ask for maintenance information with each sample. Compare the work needed over time, not only the purchase price.</p></div></div></article>
+<article class=\"journal-article\" id=\"reuse\"><div class=\"article-meta\"><span class=\"eyebrow\">03 / Reuse</span><span>Studio notes · 2 min read</span></div><div class=\"article-body\"><h2>Begin with<br>what remains.</h2><p>The first design move in a renovation can be a list of things to keep. That list might include the structure, but also an old door, a useful shelf, or the way two rooms connect. Looking carefully helps separate a real problem from something that simply looks unfamiliar.</p><h3>Make a keep, adapt, replace inventory</h3><p>Walk through the building before selecting new finishes. Record each element, its condition, and why it matters. A door that no longer suits one opening may work elsewhere. Sound joinery might need a new layout rather than complete replacement. Condition and suitability should be assessed before committing to reuse.</p><h3>Leave room for discovery</h3><p>Existing buildings rarely reveal everything at once. Allow time for surveys and specialist advice, and keep a contingency for what may be uncovered. Reuse can reduce unnecessary replacement, but careful removal, storage, and adaptation still require planning and a realistic budget.</p><div class=\"takeaway\"><strong>A useful first step</strong><p>Choose five things you would miss if they disappeared. That small list can be the beginning of a more personal renovation brief.</p></div></div></article></div>'''
+page('blog_preview.html','Journal','Three complete field notes on natural light, enduring materials, and thoughtful reuse in architecture.',journal)
+print('Created work and journal pages.')
+
+'@ | python -" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 111ms:
+Created work and journal pages.
+
+**Finding two detail docs**
+codex
+The home, studio, services, work, and journal pages are written. The project studies use three different layouts, with captions identifying the photographs as illustrative references. I’m finishing the contact and privacy pages, renovation detail, and supporting documentation.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+from pathlib import Path
+import json
+arrow = '<span class=\"arrow\" aria-hidden=\"true\">↗</span>'
+mark = '<svg class=\"brand-mark\" viewBox=\"0 0 32 37\" fill=\"none\" aria-hidden=\"true\"><path d=\"M2 34V14L16 3l14 11v20M9 34V18l7-6 7 6v16M2 34h28M16 12v22\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>'
+brand = f'<a class=\"brand\" href=\"index.html\" aria-label=\"Common Ground home\">{mark}<span class=\"brand-name\">Common<br>Ground</span></a>'
+nav_items = [('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('contact_preview.html','Start a project')]
+def link(href,label,kind='text-link'):
+    return f'<a class=\"{kind}\" href=\"{href}\">{label}{arrow}</a>'
+def photo(which='hero',cls='landscape-photo',caption=True,eager=False):
+    if which=='hero':
+        src='assets/images/hero/editorial-hero.jpg'; alt='White concrete facade with long horizontal windows beneath a pale blue sky'; credit='Pierre Châtel-Innocenti'
+    else:
+        src='assets/images/portfolio/editorial-detail.jpg'; alt='Weathered beige walls with an arched recess and a tall opening to the sky'; credit='Annie Spratt'
+    loading='fetchpriority=\"high\"' if eager else 'loading=\"lazy\"'
+    height=1067 if which=='hero' else 1086
+    cap=f'<figcaption class=\"caption\"><span>Architectural reference · illustrative photography</span><span>{credit} / Unsplash</span></figcaption>' if caption else ''
+    return f'<figure class=\"{cls}\"><img src=\"{src}\" alt=\"{alt}\" width=\"1600\" height=\"{height}\" {loading}>{cap}</figure>'
+def cta():
+    return f'<div class=\"wrap\"><section class=\"inquiry-band\" aria-labelledby=\"inquiry-title\"><div><h2 id=\"inquiry-title\">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div>{link(\"contact_preview.html\",\"Tell us what you have in mind\",\"button\")}</section></div>'
+def faq(items):
+    return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in items)
+def heading(kicker,title,intro='',split=False):
+    modifier=' split-heading' if split else ''
+    lede=f'<p class=\"lede\">{intro}</p>' if intro else ''
+    return f'<div class=\"wrap page-heading{modifier}\"><div><span class=\"eyebrow\">{kicker}</span><h1>{title}</h1></div>{lede}</div>'
+def page(filename,title,description,body,active=None,include_cta=True):
+    navigation=''.join(f'<a href=\"{href}\"'+(' class=\"nav-cta\"' if label=='Start a project' else '')+(' aria-current=\"page\"' if href==(active or filename) else '')+f'>{label}'+(' <span aria-hidden=\"true\">↗</span>' if label=='Start a project' else '')+'</a>' for href,label in nav_items)
+    footer_links=''.join(f'<a href=\"{href}\">{label}</a>' for href,label in [('homepage_preview.html','Home'),('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('single_services_preview.html','Renovations'),('contact_preview.html','Contact'),('policy_preview.html','Privacy')])
+    result=f'''<"'!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{description}"><meta name="theme-color" content="#f4f1e8"><title>{title} | Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head>
+<body id="top"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-inner">{brand}<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu +</button><nav class="site-nav" id="site-navigation" aria-label="Main navigation">{navigation}</nav></div></header>
+<main id="main">{body}{cta() if include_cta else '"''}</main>
+<footer class=\"site-footer\"><div class=\"wrap\"><div class=\"footer-main\"><div>{brand}<p>Independent architecture.<br>Homes with staying power.<br>Places that bring us together.</p></div><nav class=\"footer-links\" aria-label=\"Footer navigation\">{footer_links}</nav><div class=\"footer-note\"><span class=\"eyebrow\">A little context</span><p>A fictional independent practice.<br>Three studies. One shared outlook.</p><a href=\"contact_preview.html\">Begin a project conversation ↗</a></div></div><div class=\"footer-bottom\"><span>© 2026 Common Ground · Fictional portfolio sample</span><span>Thoughtfully made, for everyday life.</span><a href=\"#top\">Back to top ↑</a></div></div></footer>
+</body></html>'''
+    Path(filename).write_text(result,encoding='utf-8')
+
+contact=heading('Start a conversation','What could<br>your place become?','You do not need all the answers. A few notes about your space and what you hope to change are a good beginning.')+'''<div class=\"wrap contact-layout\"><aside class=\"contact-aside\"><h2>Begin with the everyday.</h2><p>Tell us what you enjoy about your place, what gets in the way, and the one change that would make the biggest difference.</p><div class=\"small-block\"><span class=\"eyebrow\">Helpful things to consider</span><p>Your general location, the type of building, your priorities, and a comfortable investment range. For this demo, use invented details and leave out anything private.</p></div><div class=\"small-block\"><span class=\"eyebrow\">Example studio contact</span><p class=\"contact-email\">hello@commonground.example.test</p><p>This is an illustrative address, not a monitored inbox.</p></div><div class=\"small-block\"><span class=\"eyebrow\">A typical first conversation</span><p>We would discuss the brief, explain a suitable starting scope, and agree what information is needed before preparing a proposal.</p></div></aside><div><div class=\"demo-note\" id=\"demo-note\"><strong>Try an example inquiry.</strong> This is a fictional studio. The form shows a local confirmation only; nothing is sent or saved.</div><form id=\"inquiry-form\" aria-describedby=\"demo-note\" autocomplete=\"off\"><div class=\"form-grid\"><div class=\"field\"><label for=\"full-name\">Your name (required)</label><input id=\"full-name\" type=\"text\" required maxlength=\"100\" autocomplete=\"off\"></div><div class=\"field\"><label for=\"email\">Email address (required)</label><input id=\"email\" type=\"email\" required maxlength=\"150\" autocomplete=\"off\" aria-describedby=\"email-hint\"><span class=\"fine-print\" id=\"email-hint\">An example address is welcome.</span></div><div class=\"field\"><label for=\"project-type\">Project type (required)</label><select id=\"project-type\" required><option value=\"\">Select an area of interest</option><option>Renovation or addition</option><option>Compact new home</option><option>Civic interior</option><option>Still exploring</option></select></div><div class=\"field\"><label for=\"location\">General location (optional)</label><input id=\"location\" type=\"text\" maxlength=\"120\" placeholder=\"A village, suburb, or neighborhood\"></div><div class=\"field\"><label for=\"timing\">When are you hoping to begin?</label><select id=\"timing\"><option>Still exploring</option><option>Within 6 months</option><option>In 6–12 months</option><option>More than a year away</option></select></div><div class=\"field\"><label for=\"budget\">Budget context (optional)</label><input id=\"budget\" type=\"text\" maxlength=\"120\" placeholder=\"A range, or ‘not yet sure’\"></div><div class=\"field full\"><label for=\"project-notes\">What do you have in mind? (required)</label><textarea id=\"project-notes\" required maxlength=\"3000\" placeholder=\"What works now? What would you like to change?\"></textarea></div></div><div class=\"form-bottom\"><p>Please use sample details. Read our <a href=\"policy_preview.html\">privacy note</a> for how this demo handles information.</p><button class=\"button\" type=\"button\" disabled>Preview inquiry <span class=\"arrow\" aria-hidden=\"true\">↗</span></button><noscript><p>The form preview needs JavaScript. Nothing can be submitted here. You can still browse the project studies and service information.</p></noscript></div><div class=\"form-status\" id=\"form-status\" role=\"status\" aria-live=\"polite\" tabindex=\"-1\"></div></form></div></div>'''
+page('contact_preview.html','Start a project','Try a local example inquiry for the fictional Common Ground architecture practice. No information is sent or stored.',contact,include_cta=False)
+privacy=heading('Privacy / A clear explanation','A small site.<br>A simple policy.','This is a fictional portfolio sample. Here is what happens when you browse it or try the inquiry form.')+'''<div class=\"wrap policy-layout\"><nav class=\"policy-menu\" aria-label=\"Privacy sections\"><a href=\"#about-this-site\">About this site</a><a href=\"#form-information\">Form information</a><a href=\"#cookies\">Cookies &amp; storage</a><a href=\"#hosting\">Hosting &amp; requests</a><a href=\"#photography\">Photography</a><a href=\"#questions\">Questions</a></nav><div class=\"policy-body\"><section id=\"about-this-site\"><h2>01 / About this site</h2><p>Common Ground is an imagined architecture practice created for a static website portfolio. Its projects are fictional design studies. There is no operating studio or client service behind this sample, and the displayed email address uses the reserved example.test domain.</p><p>This note describes the sample itself, as of 3 October 2026.</p></section><section id=\"form-information\"><h2>02 / Information in the form</h2><p>The inquiry form is a demonstration. Its script checks the required fields in your browser and displays a confirmation on the same page. It does not send an email, contact a server, or save the contents to a database or browser storage.</p><p>Use invented details. Text stays in the visible fields until you change it or leave the page; your browser may restore form values when returning through its history. The confirmation means only that the demonstration fields were completed, not that a studio received an inquiry.</p></section><section id=\"cookies\"><h2>03 / Cookies and browser storage</h2><p>The sample code does not set cookies, use local storage or session storage, or include analytics, advertising, tracking pixels, embedded maps, or third-party fonts. The navigation and FAQs do not create a stored preference.</p></section><section id=\"hosting\"><h2>04 / Hosting and requests</h2><p>Pages, styles, scripts, and photographs load from the same site. No external submission service is connected. If this sample is served by a hosting provider or displayed inside a gallery, that service may receive ordinary request information such as an IP address, requested file, and browser details. Its own policies govern that processing; this sample does not control hosting logs or the surrounding gallery.</p></section><section id=\"photography\"><h2>05 / Photography and project descriptions</h2><p>The architectural photographs are illustrative stock by Pierre Châtel-Innocenti and Annie Spratt, supplied locally under the Unsplash License. They are not photographs of Common Ground projects and do not imply a relationship between the photographers, the buildings shown, and this fictional practice.</p></section><section id=\"questions\"><h2>06 / Questions about the sample</h2><p>The example contact address is not monitored. For questions about where this sample is hosted or how the surrounding gallery handles data, contact the operator of that gallery through their own website.</p><p>You can return to the <a href=\"contact_preview.html\">demo inquiry</a> or explore the <a href=\"work_preview.html\">fictional project studies</a>.</p></section></div></div>'''
+page('policy_preview.html','Privacy','An honest explanation of the static Common Ground sample, its local demo form, photography, and absence of tracking.',privacy,include_cta=False)
+print('Created contact and privacy pages.')
+
+'@ | python -" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 113ms:
+Created contact and privacy pages.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+from pathlib import Path
+import json
+arrow = '<span class=\"arrow\" aria-hidden=\"true\">↗</span>'
+mark = '<svg class=\"brand-mark\" viewBox=\"0 0 32 37\" fill=\"none\" aria-hidden=\"true\"><path d=\"M2 34V14L16 3l14 11v20M9 34V18l7-6 7 6v16M2 34h28M16 12v22\" stroke=\"currentColor\" stroke-width=\"1.3\"/></svg>'
+brand = f'<a class=\"brand\" href=\"index.html\" aria-label=\"Common Ground home\">{mark}<span class=\"brand-name\">Common<br>Ground</span></a>'
+nav_items = [('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('contact_preview.html','Start a project')]
+def link(href,label,kind='text-link'):
+    return f'<a class=\"{kind}\" href=\"{href}\">{label}{arrow}</a>'
+def photo(which='hero',cls='landscape-photo',caption=True,eager=False):
+    if which=='hero':
+        src='assets/images/hero/editorial-hero.jpg'; alt='White concrete facade with long horizontal windows beneath a pale blue sky'; credit='Pierre Châtel-Innocenti'
+    else:
+        src='assets/images/portfolio/editorial-detail.jpg'; alt='Weathered beige walls with an arched recess and a tall opening to the sky'; credit='Annie Spratt'
+    loading='fetchpriority=\"high\"' if eager else 'loading=\"lazy\"'
+    height=1067 if which=='hero' else 1086
+    cap=f'<figcaption class=\"caption\"><span>Architectural reference · illustrative photography</span><span>{credit} / Unsplash</span></figcaption>' if caption else ''
+    return f'<figure class=\"{cls}\"><img src=\"{src}\" alt=\"{alt}\" width=\"1600\" height=\"{height}\" {loading}>{cap}</figure>'
+def cta():
+    return f'<div class=\"wrap\"><section class=\"inquiry-band\" aria-labelledby=\"inquiry-title\"><div><h2 id=\"inquiry-title\">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div>{link(\"contact_preview.html\",\"Tell us what you have in mind\",\"button\")}</section></div>'
+def faq(items):
+    return ''.join(f'<details><summary>{q}</summary><p>{a}</p></details>' for q,a in items)
+def heading(kicker,title,intro='',split=False):
+    modifier=' split-heading' if split else ''
+    lede=f'<p class=\"lede\">{intro}</p>' if intro else ''
+    return f'<div class=\"wrap page-heading{modifier}\"><div><span class=\"eyebrow\">{kicker}</span><h1>{title}</h1></div>{lede}</div>'
+def page(filename,title,description,body,active=None,include_cta=True):
+    navigation=''.join(f'<a href=\"{href}\"'+(' class=\"nav-cta\"' if label=='Start a project' else '')+(' aria-current=\"page\"' if href==(active or filename) else '')+f'>{label}'+(' <span aria-hidden=\"true\">↗</span>' if label=='Start a project' else '')+'</a>' for href,label in nav_items)
+    footer_links=''.join(f'<a href=\"{href}\">{label}</a>' for href,label in [('homepage_preview.html','Home'),('work_preview.html','Work'),('about-us_preview.html','Studio'),('services_preview.html','Services'),('blog_preview.html','Journal'),('single_services_preview.html','Renovations'),('contact_preview.html','Contact'),('policy_preview.html','Privacy')])
+    result=f'''<"'!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="{description}"><meta name="theme-color" content="#f4f1e8"><title>{title} | Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head>
+<body id="top"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-inner">{brand}<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu +</button><nav class="site-nav" id="site-navigation" aria-label="Main navigation">{navigation}</nav></div></header>
+<main id="main">{body}{cta() if include_cta else '"''}</main>
+<footer class=\"site-footer\"><div class=\"wrap\"><div class=\"footer-main\"><div>{brand}<p>Independent architecture.<br>Homes with staying power.<br>Places that bring us together.</p></div><nav class=\"footer-links\" aria-label=\"Footer navigation\">{footer_links}</nav><div class=\"footer-note\"><span class=\"eyebrow\">A little context</span><p>A fictional independent practice.<br>Three studies. One shared outlook.</p><a href=\"contact_preview.html\">Begin a project conversation ↗</a></div></div><div class=\"footer-bottom\"><span>© 2026 Common Ground · Fictional portfolio sample</span><span>Thoughtfully made, for everyday life.</span><a href=\"#top\">Back to top ↑</a></div></div></footer>
+</body></html>'''
+    Path(filename).write_text(result,encoding='utf-8')
+
+renovation=heading('Services / 01','A new chapter.<br>A familiar place.')+f'''<div class=\"wrap\"><div class=\"breadcrumb\"><a href=\"services_preview.html\">All services</a> / Renovations &amp; additions</div><div class=\"detail-hero\"><div><p>Good renovation begins with understanding what deserves to stay. We look for the smallest set of changes that can make a home work better: a clearer plan, a stronger garden connection, a little more daylight in the right place.</p><p>From reworking a single floor to a measured addition, the process brings your daily needs, the building’s condition, and the available budget into the same conversation.</p>{link('contact_preview.html','Talk about your renovation','button')}</div>{photo('detail','',True,True)}</div></div>
+<section class=\"wash section\"><div class=\"wrap\"><span class=\"eyebrow\">The scope / What we consider</span><h2>See the whole.<br>Resolve the details.</h2><div class=\"scope-list\"><article><h3>Layout &amp; everyday use</h3><p>Map how you move through the home, where belongings gather, and which rooms need privacy or connection. Compare options before adding area.</p></article><article><h3>Light &amp; comfort</h3><p>Consider orientation, shading, ventilation opportunities, and the depth of the plan. Coordinate specialist input where performance needs closer investigation.</p></article><article><h3>Character &amp; materials</h3><p>Identify elements worth retaining and assess how old and new can meet. Develop finishes and joinery with maintenance and repair in mind.</p></article><article><h3>Buildability &amp; sequence</h3><p>Review structural changes, service routes, site access, and possible phases with the relevant consultants and builder. Make the work understandable before it begins.</p></article></div><p class=\"fine-print\">A project proposal would define the exact appointment. Surveys, engineering, statutory fees, and construction costs are separate items to discuss.</p></div></section>
+<section class=\"wrap section\"><span class=\"eyebrow\">The process</span><h2>One clear decision at a time.</h2><ol class=\"process-list\"><li><span class=\"number\">01</span><h3>Understand the existing</h3><p>Gather your brief, available drawings, and a condition overview. Identify the measured survey and specialist investigations needed to make informed decisions.</p></li><li><span class=\"number\">02</span><h3>Test the possibilities</h3><p>Explore a small number of layout options, including what could be achieved within the current footprint. Discuss priorities and seek cost input early.</p></li><li><span class=\"number\">03</span><h3>Develop the design</h3><p>Resolve the chosen arrangement, material direction, and key details. Coordinate consultant input and identify the relevant approval route for the site.</p></li><li><span class=\"number\">04</span><h3>Prepare for building</h3><p>Produce the agreed drawings and specifications for pricing and construction. Confirm responsibilities, information needs, and the scope of any site-stage support.</p></li></ol></section>
+<section class=\"section wash\"><div class=\"wrap example-strip\">{photo('hero')}<div><span class=\"eyebrow\">An example / Fictional concept</span><h2>Courtyard House</h2><p>A narrow house becomes easier to live in by moving circulation toward a small courtyard. The front rooms remain intact, while the shared kitchen and dining space gain a direct relationship with the garden.</p><p>The lesson is simple: a change in the plan can matter more than a change in size.</p>{link('work_preview.html#courtyard-house','Read the project study')}</div></div></section>
+<section class=\"wrap section faq-layout\"><div><span class=\"eyebrow\">Renovation questions</span><h2>A little clarity<br>before you start.</h2></div><div>{faq([('Can we live at home during the work?','Sometimes, but it depends on access, services, dust, noise, and the extent of structural work. Discuss this with the design team and builder early. A phased plan may help, while some projects need a temporary move.'),('Will we need planning permission?','That depends on the location, property, and proposed changes. The relevant local requirements would need to be checked for your actual project. This fictional sample cannot determine an approval route.'),('What if our budget is still uncertain?','Start with a comfortable investment range and a list of priorities. Early options can then be tested with appropriate cost advice. Keep professional fees, approvals, contingency, and temporary accommodation in the overall picture.'),('Can you guarantee a completion date?','No date can be established from an initial idea alone. Surveys, approvals, design decisions, contractor availability, and the condition of the existing building all affect the schedule. A realistic program would be developed as those unknowns become clearer.')])}</div></section>'''
+page('single_services_preview.html','Renovations and additions','A detailed renovation approach covering scope, surveys, layout studies, design development, construction preparation, and common questions.',renovation,active='services_preview.html')
+print('Created renovation detail page.')
+
+'@ | python -" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 113ms:
+Created renovation detail page.
+
+**Writing documentation**
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+from pathlib import Path
+import json
+content={
+  'identity':{'name':'Common Ground','type':'Fictional independent architecture practice','tagline':'Less, but more meaningful.','purpose':'Modest, enduring homes and thoughtful neighborhood spaces','audiences':['Homeowners','Small cultural organizations'],'primary_action':'Start a project conversation','example_email':'hello@commonground.example.test'},
+  'design':{'canvas':'#f4f1e8','ink':'#20372f','accent':'#a66d31','muted':'#6b726a','white':'#fffef9','typography':'Georgia serif display; Arial/Helvetica system sans body','layout':'Asymmetric editorial layouts, numbered indexes, thin rules, purposeful whitespace','responsive':'Single-column layouts and expandable navigation at 760px and below'},
+  'pages':[
+    {'file':'index.html','role':'Home: editorial hero, numbered project studies, philosophy, services, inquiry'},
+    {'file':'homepage_preview.html','role':'Identical home experience'},
+    {'file':'about-us_preview.html','role':'Studio approach, principles, and collaborative process'},
+    {'file':'services_preview.html','role':'Three offerings and native FAQ'},
+    {'file':'work_preview.html','role':'Three detailed fictional studies with individual fragment destinations'},
+    {'file':'blog_preview.html','role':'Three complete articles on light, materials, and reuse'},
+    {'file':'contact_preview.html','role':'Clearly labeled local-only demo inquiry'},
+    {'file':'policy_preview.html','role':'Honest policy for form data, storage, hosting, and illustrative photography'},
+    {'file':'single_services_preview.html','role':'Detailed renovation scope, four stages, fictional example, and FAQ'}
+  ],
+  'projects':[
+    {'name':'Courtyard House','location':'A quiet inner suburb','type':'Renovation with a small rear addition','status':'Fictional concept','fragment':'courtyard-house'},
+    {'name':'Little Gable','location':'A village edge','type':'Compact new home','status':'Fictional concept','fragment':'little-gable'},
+    {'name':'The Reading Room','location':'A neighborhood high street','type':'Civic interior','status':'Fictional concept','fragment':'the-reading-room'}
+  ],
+  'journal':[{'title':'Before adding glass, follow the light.','fragment':'light'},{'title':'Choose for the years after the photograph.','fragment':'materials'},{'title':'Begin with what remains.','fragment':'reuse'}],
+  'imagery':{'manifest':'assets/images/asset-manifest.json','files':['assets/images/hero/editorial-hero.jpg','assets/images/portfolio/editorial-detail.jpg'],'use':'Illustrative architectural references only; not claimed project photographs. Photographer names accompany images. Supplied assets and provenance remain unchanged.'},
+  'interactions':{'navigation':'Relative links; no iframe escape targets; all navigation visible without JavaScript','mobile_menu':'Button with aria-expanded and aria-controls; Escape closes and returns focus; normal Tab navigation','faq':'Native details and summary','form':'Native required/email validation and local live-region feedback; no network submission, analytics, or storage; demo button disabled without JavaScript','motion':'Reduced-motion media query disables smooth scroll and transitions'},
+  'constraints':'Static sample only. No fabricated awards, testimonials, or built-project claims. Runner owns validation, browser review, reports, and gallery updates.'
+}
+Path('content.json').write_text(json.dumps(content,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')
+Path('README.md').write_text('''# Common Ground
+
+A complete static portfolio sample for a fictional independent architecture practice. The design uses warm ivory, forest ink, muted ochre, system serif headings, and system sans-serif body text. No packages or build step are required.
+
+## Pages
+
+- "'`index.html` and `homepage_preview.html`: identical home experience with editorial photography, a numbered project index, philosophy, services, and inquiry link.
+- `about-us_preview.html`: studio principles and a collaborative approach.
+- `services_preview.html`: renovations, compact homes, civic interiors, and native FAQs.
+- `work_preview.html`: three substantial, clearly fictional design studies with fragment navigation.
+- `blog_preview.html`: three complete articles about light, materials, and reuse, with article fragment links.
+- `contact_preview.html`: accessible, explicitly labeled demo inquiry form.
+- `policy_preview.html`: form, browser storage, hosting, and photography policy.
+- `single_services_preview.html`: detailed renovation scope, process, example, and FAQs.
+
+## Assets and provenance
+
+The approved provenance record is `assets/images/asset-manifest.json`. The supplied photographs are `assets/images/hero/editorial-hero.jpg` by Pierre Châtel-Innocenti and `assets/images/portfolio/editorial-detail.jpg` by Annie Spratt, from Unsplash under the supplied Unsplash License. They are architectural references and never represented as photographs of the fictional projects. No additional images or remote resources are used. The small brand symbol is original inline interface SVG. Prepared `sample.json`, supplied photographs, icons, and the asset manifest are preserved.
+
+## Interactions and accessibility
+
+Shared styling is in `assets/css/site.css`; progressive enhancement is in `assets/js/site.js`. All site links are relative and stay inside the current iframe. The brand links to `index.html`; the footer Home link exposes the equivalent `homepage_preview.html`. The footer consistently links every page role, including privacy and renovation details.
+
+Without JavaScript, navigation remains visible and native FAQ disclosures and fragment links work. With JavaScript, the mobile menu opens with a button, reports its state with `aria-expanded`, follows normal keyboard tab order, and closes on Escape with focus returned to the button. Pointer clicks outside and navigation selection also close it. Focus indicators, skip links, semantic headings, labeled fields, and reduced-motion support are included.
+
+The inquiry form uses browser validation and displays an accessible local confirmation. Its preview button is a non-submit button and starts disabled until the script attaches. The script also intercepts form submission. Fields have no submission names. No fetch, email, storage, analytics, or external submission is connected. The form remains filled for editing after confirmation; browser history may restore values. Without JavaScript, a message explains that the interactive preview is unavailable. Use invented details only.
+
+## Content and limitations
+
+`content.json` records the identity, page plan, fictional projects, journal topics, imagery usage, and interactions. Contact details use `example.test`; there is no real address, inbox, studio, or appointment service. No awards, testimonials, or built-project claims are made.
+
+The sample is designed with responsive layouts for desktop and mobile. Validation, browser review, screenshots, reports, and gallery updates are owned by the parent runner and were not run during this generation pass. No build, package, publication, or WordPress conversion is part of this sample.
+'"''',encoding='utf-8')
+print('Completed content plan and README.')
+'@ | python -
+Get-Content -Encoding utf8 index.html -TotalCount 9" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 126ms:
+Completed content plan and README.
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Common Ground is a fictional independent architecture practice exploring modest homes, careful renovations, and welcoming neighborhood spaces."><meta name="theme-color" content="#f4f1e8"><title>Architecture for everyday life | Common Ground</title><link rel="stylesheet" href="assets/css/site.css"><script src="assets/js/site.js" defer></script></head>
+<body id="top"><a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-inner"><a class="brand" href="index.html" aria-label="Common Ground home"><svg class="brand-mark" viewBox="0 0 32 37" fill="none" aria-hidden="true"><path d="M2 34V14L16 3l14 11v20M9 34V18l7-6 7 6v16M2 34h28M16 12v22" stroke="currentColor" stroke-width="1.3"/></svg><span class="brand-name">Common<br>Ground</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">Menu +</button><nav class="site-nav" id="site-navigation" aria-label="Main navigation"><a href="work_preview.html">Work</a><a href="about-us_preview.html">Studio</a><a href="services_preview.html">Services</a><a href="blog_preview.html">Journal</a><a href="contact_preview.html" class="nav-cta">Start a project <span aria-hidden="true">↗</span></a></nav></div></header>
+<main id="main"><div class="wrap"><section class="hero-heading" aria-labelledby="home-title"><div><span class="eyebrow">Independent architecture · A considered approach</span><h1 id="home-title">Less, but<br><em>more meaningful.</em></h1></div><div class="hero-intro"><p>Modest homes. Thoughtful shared spaces. Architecture that makes more of what is already there.</p><a class="text-link" href="work_preview.html">Explore our work<span class="arrow" aria-hidden="true">↗</span></a></div></section><figure><div class="hero-photo"><img src="assets/images/hero/editorial-hero.jpg" alt="White concrete building with deeply recessed horizontal windows under a soft blue sky" width="1600" height="1067" fetchpriority="high"><div class="photo-stamp" aria-hidden="true">Built around<span>everyday</span>life</div></div><figcaption class="caption"><span>Light, proportion, and a sense of belonging.</span><span>Architectural reference · Pierre Châtel-Innocenti / Unsplash</span></figcaption></figure>
+<section class="section" aria-labelledby="selected-title"><div class="section-head"><div><span class="eyebrow">01 / Selected studies</span><h2 id="selected-title">Small moves.<br>Lasting possibilities.</h2></div><a class="text-link" href="work_preview.html">View all studies<span class="arrow" aria-hidden="true">↗</span></a></div><a class="project-row" href="work_preview.html#courtyard-house"><span class="number">01</span><h3>Courtyard House</h3><span class="project-type">Renovation · An inner suburb</span><span class="arrow" aria-hidden="true">↗</span></a><a class="project-row" href="work_preview.html#little-gable"><span class="number">02</span><h3>Little Gable</h3><span class="project-type">Compact home · A village edge</span><span class="arrow" aria-hidden="true">↗</span></a><a class="project-row" href="work_preview.html#the-reading-room"><span class="number">03</span><h3>The Reading Room</h3><span class="project-type">Civic interior · A neighborhood high street</span><span class="arrow" aria-hidden="true">↗</span></a><p class="fine-print">Three fictional design studies, exploring the places we care about.</p></section></div>
+<section class="philosophy"><div class="wrap"><span class="eyebrow">02 / Our point of view</span><div><h2>Enough space.<br>The right light.<br>Room for life to happen.</h2><p>We begin by listening: to the people, to the place, and to what a building already offers. Often, the best answer is a careful adjustment rather than a bigger footprint.</p></div></div></section>
+<div class="wrap"><section class="section" aria-labelledby="home-services"><div class="section-head"><div><span class="eyebrow">03 / How we can help</span><h2 id="home-services">A thoughtful next chapter.</h2></div></div><div class="service-columns"><article class="service-column"><span class="eyebrow">01 / Renew</span><h3>Renovations</h3><p>Rework the plan, welcome the daylight, and keep the character. A fresh way to live in a familiar place.</p><a class="text-link" href="single_services_preview.html">Explore renovations<span class="arrow" aria-hidden="true">↗</span></a></article><article class="service-column"><span class="eyebrow">02 / Make</span><h3>Compact homes</h3><p>Careful proportions and hardworking rooms. New homes shaped around daily rituals and a lighter footprint.</p><a class="text-link" href="services_preview.html#compact-homes">Explore new homes<span class="arrow" aria-hidden="true">↗</span></a></article><article class="service-column"><span class="eyebrow">03 / Gather</span><h3>Civic interiors</h3><p>Welcoming rooms for reading, making, meeting, and sharing. Small public places with an open invitation.</p><a class="text-link" href="services_preview.html#civic-interiors">Explore shared spaces<span class="arrow" aria-hidden="true">↗</span></a></article></div></section></div><div class="wrap"><section class="inquiry-band" aria-labelledby="inquiry-title"><div><h2 id="inquiry-title">Good places begin with a conversation.</h2><p>A room to rethink. A small plot. An idea for your neighborhood.</p></div><a class="button" href="contact_preview.html">Tell us what you have in mind<span class="arrow" aria-hidden="true">↗</span></a></section></div></main>
+
+**Auditing responsive CSS issues**
+**Auditing responsive CSS**
+**Widening hero heading styles**
+**Reviewing menu keyboard handling**
+codex
+All nine pages and the documentation are complete. I’m making the final source-level refinements to text contrast and responsive spacing. Validation, browser review, reports, and gallery updates remain with the parent runner.
+
+exec
+"C:\\Users\\Nolan\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe" -Command "@'
+/* Readable supporting text and resilient editorial grids. */
+.dark-caption{font-size:10px;margin-top:12px;color:#d7ddd3}
+.hero-heading,.split-heading,.studio-layout,.contact-layout,.faq-layout,.project-aside,.journal-feature,.journal-article,.policy-layout,.detail-hero,.example-strip{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.hero-heading{grid-template-columns:minmax(0,1.9fr) minmax(0,1fr)}
+.studio-layout{grid-template-columns:minmax(0,1fr) minmax(0,.8fr)}
+.contact-layout{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)}
+.faq-layout{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+.project-aside,.detail-hero,.example-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+.journal-article{grid-template-columns:minmax(0,.55fr) minmax(0,1.45fr)}
+.policy-layout{grid-template-columns:minmax(0,.6fr) minmax(0,1.4fr)}
+.eyebrow.accent,.service-column .eyebrow,.principles .eyebrow,.article-meta .eyebrow,.project-row .number,.process-list .number{color:#875723}
+a:hover{color:#875723}.button:hover{color:var(--white)}
+.button{max-width:100%}.button .arrow,.text-link .arrow{flex-shrink:0}
+.detail-hero .button{margin-top:26px}
+@media(max-width:760px){.hero-heading,.split-heading,.studio-layout,.contact-layout,.faq-layout,.project-aside,.journal-feature,.journal-article,.policy-layout,.detail-hero,.example-strip{grid-template-columns:minmax(0,1fr)}.section-head{flex-wrap:wrap}.section-head .text-link{margin-top:0}.hero-heading h1{font-size:clamp(50px,11vw,80px)}}
+'@ | Add-Content -Encoding utf8 assets/css/site.css" in C:\Users\Nolan\Developer\repos\Nolan-Young-Theme-Factory\docs\Preview-Themes-Github\017_nolan_young_theme_common_ground
+ succeeded in 70ms:
+codex
+Created all nine pages, shared CSS/JS, content.json, and README.md, including fictional project studies, complete journal articles, accessible navigation, FAQs, and a local-only demo form.
+
+Preserved sample.json and all supplied assets. Validation and browser review remain with the parent runner.
+tokens used
+95,617
+Created all nine pages, shared CSS/JS, content.json, and README.md, including fictional project studies, complete journal articles, accessible navigation, FAQs, and a local-only demo form.
+
+Preserved sample.json and all supplied assets. Validation and browser review remain with the parent runner.

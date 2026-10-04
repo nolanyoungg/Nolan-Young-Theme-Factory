@@ -1,0 +1,31 @@
+{
+  "themeSlug": "008_nolan_young_theme_hearth_and_honey",
+  "status": "failed",
+  "infrastructure": {
+    "status": "failed",
+    "reason": "The CLI rejected conflicting sandbox and automatic-review flags before generation. No model-generated source was applied."
+  },
+  "generation": {
+    "status": "blocked"
+  },
+  "build": {
+    "status": "not-run"
+  },
+  "sourceValidation": {
+    "status": "not-run"
+  },
+  "previewPublication": {
+    "status": "not-published"
+  },
+  "packaging": {
+    "status": "not-run"
+  },
+  "artifactValidation": {
+    "status": "not-run"
+  },
+  "visualQuality": {
+    "status": "not-reviewed"
+  },
+  "preserved": true,
+  "recordedAt": "2026-10-03T18:47:05.162Z"
+}

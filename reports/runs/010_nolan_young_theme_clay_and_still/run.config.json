@@ -1,0 +1,19 @@
+{
+  "mode": "codex-only",
+  "prompt": "prompts\\pending\\010-clay-and-still.md",
+  "assetCatalog": "assets/manifests/010-clay-and-still.json",
+  "templateSource": "wp-content\\themes\\000_nolan_young_theme_master_template_prompt_filler_template_1",
+  "themeSlug": "010_nolan_young_theme_clay_and_still",
+  "createdAt": "2026-10-03T19:21:12.047Z",
+  "localModelStages": [],
+  "assetPreparation": {
+    "status": "prepared",
+    "themeSlug": "010_nolan_young_theme_clay_and_still",
+    "prompt": "prompts\\pending\\010-clay-and-still.md",
+    "manifest": "wp-content\\themes\\010_nolan_young_theme_clay_and_still\\assets\\images\\asset-manifest.json",
+    "manifestHash": "f4ffc341258f1f5c7386b87ee3c82b71508ea65f552c598221db8880e18c49f9",
+    "approvedAssetSetHash": "9f9f3cc70aca21a4165e68bc08d470b469e251f9b18bdf60841b536d20b59d99",
+    "assetCount": 4,
+    "recordedAt": "2026-10-03T19:21:15.344Z"
+  }
+}

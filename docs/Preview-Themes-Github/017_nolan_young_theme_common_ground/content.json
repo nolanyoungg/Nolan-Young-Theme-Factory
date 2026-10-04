@@ -1,0 +1,115 @@
+{
+  "identity": {
+    "name": "Common Ground",
+    "type": "Fictional independent architecture practice",
+    "tagline": "Less, but more meaningful.",
+    "purpose": "Modest, enduring homes and thoughtful neighborhood spaces",
+    "audiences": [
+      "Homeowners",
+      "Small cultural organizations"
+    ],
+    "primary_action": "Start a project conversation",
+    "example_email": "hello@commonground.example.test"
+  },
+  "design": {
+    "canvas": "#f4f1e8",
+    "ink": "#20372f",
+    "accent": "#a66d31",
+    "muted": "#6b726a",
+    "white": "#fffef9",
+    "typography": "Georgia serif display; Arial/Helvetica system sans body",
+    "layout": "Asymmetric editorial layouts, numbered indexes, thin rules, purposeful whitespace",
+    "responsive": "Single-column layouts and expandable navigation at 760px and below"
+  },
+  "pages": [
+    {
+      "file": "index.html",
+      "role": "Home: editorial hero, numbered project studies, philosophy, services, inquiry"
+    },
+    {
+      "file": "homepage_preview.html",
+      "role": "Identical home experience"
+    },
+    {
+      "file": "about-us_preview.html",
+      "role": "Studio approach, principles, and collaborative process"
+    },
+    {
+      "file": "services_preview.html",
+      "role": "Three offerings and native FAQ"
+    },
+    {
+      "file": "work_preview.html",
+      "role": "Three detailed fictional studies with individual fragment destinations"
+    },
+    {
+      "file": "blog_preview.html",
+      "role": "Three complete articles on light, materials, and reuse"
+    },
+    {
+      "file": "contact_preview.html",
+      "role": "Clearly labeled local-only demo inquiry"
+    },
+    {
+      "file": "policy_preview.html",
+      "role": "Honest policy for form data, storage, hosting, and illustrative photography"
+    },
+    {
+      "file": "single_services_preview.html",
+      "role": "Detailed renovation scope, four stages, fictional example, and FAQ"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Courtyard House",
+      "location": "A quiet inner suburb",
+      "type": "Renovation with a small rear addition",
+      "status": "Fictional concept",
+      "fragment": "courtyard-house"
+    },
+    {
+      "name": "Little Gable",
+      "location": "A village edge",
+      "type": "Compact new home",
+      "status": "Fictional concept",
+      "fragment": "little-gable"
+    },
+    {
+      "name": "The Reading Room",
+      "location": "A neighborhood high street",
+      "type": "Civic interior",
+      "status": "Fictional concept",
+      "fragment": "the-reading-room"
+    }
+  ],
+  "journal": [
+    {
+      "title": "Before adding glass, follow the light.",
+      "fragment": "light"
+    },
+    {
+      "title": "Choose for the years after the photograph.",
+      "fragment": "materials"
+    },
+    {
+      "title": "Begin with what remains.",
+      "fragment": "reuse"
+    }
+  ],
+  "imagery": {
+    "manifest": "assets/images/asset-manifest.json",
+    "files": [
+      "assets/images/hero/editorial-hero.jpg",
+      "assets/images/portfolio/editorial-detail.jpg"
+    ],
+    "use": "Illustrative architectural references only; not claimed project photographs. Photographer names accompany images. Supplied assets and provenance remain unchanged."
+  },
+  "interactions": {
+    "navigation": "Relative links; no iframe escape targets; all navigation visible without JavaScript",
+    "mobile_menu": "Button with aria-expanded and aria-controls; Escape closes and returns focus; normal Tab navigation",
+    "faq": "Native details and summary",
+    "form": "Native required/email validation and local live-region feedback; no network submission, analytics, or storage; demo button disabled without JavaScript",
+    "motion": "Reduced-motion media query disables smooth scroll and transitions"
+  },
+  "constraints": "Static sample only. No fabricated awards, testimonials, or built-project claims. Runner owns validation, browser review, reports, and gallery updates."
+}

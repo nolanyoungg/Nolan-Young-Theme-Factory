@@ -1,0 +1,4 @@
+.about-composition { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 9%; align-items: center; padding-top: 12px; }
+.about-composition figure img { width: 100%; height: 570px; object-fit: cover; object-position: 35% 50%; }
+.about-composition p:not(.eyebrow) { font-size: 15px; }
+@media (max-width: 700px) { .about-composition { grid-template-columns: minmax(0, 1fr); gap: 35px; } .about-composition figure img { height: 320px; } }

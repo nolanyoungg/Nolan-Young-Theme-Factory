@@ -1,0 +1,21 @@
+h1, h2, h3, p { margin-top: 0; }
+h1, h2 { font-family: var(--serif); font-weight: 400; letter-spacing: -.045em; line-height: 1.08; }
+h1 { font-size: clamp(48px, 5.8vw, 82px); margin-bottom: 28px; }
+h2 { font-size: clamp(36px, 3.8vw, 56px); margin-bottom: 28px; }
+h3 { font-size: 21px; line-height: 1.35; font-weight: 400; letter-spacing: -.025em; margin-bottom: 14px; }
+h1 em, h2 em { font-weight: 400; }
+p { margin-bottom: 20px; }
+.eyebrow, .drawing-number { font-family: var(--sans); font-size: 11px; font-weight: 400; line-height: 1.6; letter-spacing: .1em; text-transform: uppercase; }
+.eyebrow { margin-bottom: 25px; }
+.drawing-number { color: var(--muted); }
+.lead { font-size: 21px; line-height: 1.6; }
+.small, .photo-note, figcaption { font-size: 12px; line-height: 1.6; color: var(--muted); }
+figcaption { padding-top: 12px; }
+.photo-note { margin: 28px 0 0; }
+@media (max-width: 700px) {
+  h1 { font-size: clamp(36px, 9.3vw, 48px); line-height: 1.08; max-width: 100%; letter-spacing: -.04em; }
+  h2 { font-size: clamp(32px, 8.5vw, 40px); }
+  h3 { font-size: 20px; }
+  .lead { font-size: 18px; }
+  .eyebrow { font-size: 10px; letter-spacing: .07em; }
+}

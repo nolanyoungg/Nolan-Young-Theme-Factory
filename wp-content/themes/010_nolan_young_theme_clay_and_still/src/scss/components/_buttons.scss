@@ -1,0 +1,7 @@
+.button { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; padding: 15px 23px; min-height: 50px; max-width: 100%; border: 1px solid var(--cocoa); background: var(--cocoa); color: var(--paper); font-size: .82rem; font-weight: 500; text-decoration: none; transition: background .2s, color .2s, transform .2s; }
+.button:hover { background: var(--olive); border-color: var(--olive); transform: translateY(-2px); }
+.button-outline { background: transparent; color: var(--cocoa); }
+.button-outline:hover { color: var(--paper); }
+.text-link { display: inline-block; font-size: .83rem; text-decoration: none; border-bottom: 1px solid currentColor; padding-bottom: 4px; }
+.text-link:hover { color: var(--olive); }
+.back-link { display: inline-block; font-size: .72rem; margin-bottom: 35px; color: var(--muted); text-decoration: none; }

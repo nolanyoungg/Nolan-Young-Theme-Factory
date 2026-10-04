@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "color": {
+      "palette": [
+        { "slug": "pine", "color": "#193e34", "name": "Pine" },
+        { "slug": "parchment", "color": "#f4f0e5", "name": "Parchment" },
+        { "slug": "rust", "color": "#9e4229", "name": "Rust" }
+      ]
+    },
+    "layout": { "contentSize": "760px", "wideSize": "1280px" },
+    "typography": { "fontFamilies": [ { "slug": "field-sans", "name": "Field Sans", "fontFamily": "Arial, Helvetica, sans-serif" } ] }
+  }
+}

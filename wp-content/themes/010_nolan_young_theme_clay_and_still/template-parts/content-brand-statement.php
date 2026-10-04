@@ -1,0 +1,1 @@
+<section class="section container studio-statement"><p class="eyebrow">The Clay &amp; Still philosophy</p><h2>Useful things.<br><em>Meaningful pauses.</em></h2><p>We imagine a home where fewer objects carry more feeling. A vessel can hold a stem, catch the light, or simply remind us to look a little closer.</p></section>

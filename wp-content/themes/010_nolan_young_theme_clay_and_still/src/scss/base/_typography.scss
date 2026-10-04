@@ -1,0 +1,19 @@
+body { font: 400 16px/1.7 var(--sans); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0 0 1.15rem; }
+h1, h2, h3 { font-family: var(--serif); font-weight: 400; line-height: 1.12; letter-spacing: -.045em; }
+h1 { font-size: clamp(2.7rem, 4.8vw, 4.5rem); }
+h2 { font-size: clamp(2.1rem, 3.5vw, 3.3rem); }
+h3 { font-size: 1.7rem; }
+em { font-weight: 400; }
+p { color: var(--muted); }
+.eyebrow { font: 500 .68rem/1.5 var(--sans); text-transform: uppercase; letter-spacing: .16em; color: var(--cocoa); }
+.small, figcaption { font: 400 .75rem/1.6 var(--sans); color: var(--muted); }
+figcaption { margin-top: .85rem; }
+.lede { font-size: 1.18rem; line-height: 1.65; }
+.studio-mark { width: 48px; height: 48px; }
+@media (max-width: 700px) {
+  body { font-size: 15px; }
+  h1 { font-size: clamp(2.45rem, 10vw, 3rem); max-width: 100%; }
+  h2 { font-size: 2.25rem; }
+  h3 { font-size: 1.65rem; }
+}

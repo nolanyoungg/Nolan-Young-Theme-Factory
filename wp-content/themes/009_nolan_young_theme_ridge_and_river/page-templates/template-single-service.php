@@ -1,0 +1,12 @@
+<?php
+/** Template Name: Full-Day Ridge Walk */
+get_header(); ?>
+<main id="primary" tabindex="-1">
+<?php rr_page_intro( 'WALK 02 / FULL-DAY RIDGE WALK', 'Spend a day on the skyline.', 'A steady climb, a long horizon and a sheltered lunch. An illustrative itinerary for walkers who enjoy a more demanding day.' ); ?>
+<div class="container panorama"><?php rr_photo( '', true ); ?></div>
+<section class="container route-facts"><div><span>GRADE</span><strong>Challenging</strong></div><div><span>DISTANCE / ASCENT</span><strong>14 km / 700 m</strong></div><div><span>TIME OUTSIDE</span><strong>About 7 hours</strong></div><div><span>SAMPLE GROUP</span><strong>Up to 6 walkers</strong></div></section>
+<section class="section container editorial-split"><div><p class="eyebrow">THE SHAPE OF THE DAY</p><h2>A little effort.<br>A lot of perspective.</h2><p>Previous hill-walking experience is essential for this concept. Expect rough paths, steep sections and exposed ground. This is not a published or navigable route.</p></div><ol class="timeline"><li><time>08:30</time><div><h3>Meet & make a plan</h3><p>Review conditions, kit and everyone’s expectations at an agreed trailhead.</p></div></li><li><time>09:00</time><div><h3>Find a steady rhythm</h3><p>Climb gradually, regroup often and check how the day is feeling.</p></div></li><li><time>12:00</time><div><h3>A lunch with a view</h3><p>Choose a sheltered stop before continuing along the ridge, conditions permitting.</p></div></li><li><time>15:30</time><div><h3>Back to the valley</h3><p>Descend together and leave time for a final check-in before heading home.</p></div></li></ol></section>
+<section class="section container two-notes"><article><h2>What the concept includes</h2><ul><li>Pre-walk discussion and route planning</li><li>A small-group guided day</li><li>Regular pace and condition checks</li><li>Informal landscape and navigation observations</li></ul></article><article><h2>What to bring & arrange</h2><ul><li>Your own travel to the meeting point</li><li>Lunch, snacks and enough drinking water</li><li>Walking boots, waterproofs and warm layers</li><li>Personal medication and suitable personal cover</li></ul><p>No transport, equipment hire or accommodation is included in this sample.</p></article></section>
+<?php get_template_part( 'template-parts/content', 'single-service-highlight' ); ?>
+<?php rr_next_step(); ?>
+</main><?php get_footer(); ?>

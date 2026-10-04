@@ -1,0 +1,31 @@
+{
+  "themeSlug": "012_nolan_young_theme_form_and_field",
+  "status": "failed",
+  "infrastructure": {
+    "status": "failed",
+    "reason": "The generation process reached the 30-minute runner timeout. Partial generated source is preserved without repairs."
+  },
+  "generation": {
+    "status": "incomplete"
+  },
+  "build": {
+    "status": "not-run"
+  },
+  "sourceValidation": {
+    "status": "not-run"
+  },
+  "previewPublication": {
+    "status": "not-published"
+  },
+  "packaging": {
+    "status": "not-run"
+  },
+  "artifactValidation": {
+    "status": "not-run"
+  },
+  "visualQuality": {
+    "status": "not-reviewed"
+  },
+  "preserved": true,
+  "recordedAt": "2026-10-03T18:47:05.162Z"
+}

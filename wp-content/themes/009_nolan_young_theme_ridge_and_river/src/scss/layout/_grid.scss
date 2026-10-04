@@ -1,0 +1,4 @@
+.editorial-split { display: grid; grid-template-columns: 1fr 1.1fr; gap: 96px; }
+.two-notes { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; border-top: 1px solid var(--line); }
+.two-notes h2 { font-size: 1.8rem; }
+@media (max-width: 700px) { .editorial-split, .two-notes { grid-template-columns: 1fr; gap: 32px; } }

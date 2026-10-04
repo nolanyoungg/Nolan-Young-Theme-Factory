@@ -1,0 +1,1 @@
+<section class="content-none"><h2>A quiet corner, for now.</h2><p>No published entries matched this request. There is still plenty to explore in our sample journal and collection.</p><a class="text-link" href="<?php echo clay_url( '/blog/' ); ?>">Open the studio journal ↗</a></section>

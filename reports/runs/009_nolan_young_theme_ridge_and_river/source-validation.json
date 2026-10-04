@@ -1,0 +1,9 @@
+{
+  "phase": "source",
+  "themeSlug": "009_nolan_young_theme_ridge_and_river",
+  "errors": [
+    "Compiled CSS changed by only 909 bytes from the starter template; a major visual redesign must materially change the generated stylesheet."
+  ],
+  "warnings": [],
+  "checkedAt": "2026-10-03T19:20:40.650Z"
+}

@@ -1,180 +1,57 @@
-# Nolan Young Theme Factory - Agent Policy
+# Nolan Young Theme Factory — Agent Policy
 
-This repository is a template-first WordPress theme factory. Infrastructure work and generated-theme evaluation are separate jobs.
+The primary product is a polished, multi-page static website sample and its local GitHub Pages gallery. WordPress conversion is a separate, explicitly selected operation. This policy supersedes the former WordPress-first generation policy for new runs; preserve all historical output and evidence.
 
-## Boundaries
+## Boundaries and identities
 
-Theme source belongs only in `wp-content/themes/NNN_nolan_young_theme_[description]/`.
+- Static samples: `docs/Preview-Themes-Github/NNN_nolan_young_theme_description/`.
+- Gallery: `docs/index.html`. Retain existing URLs, numbered slugs, and all nine legacy page filenames. Never renumber or overwrite samples.
+- Static reports and local-model checkpoints: `reports/static/{sample_slug}/`, never public docs.
+- Explicit converted WordPress themes: `wp-content/themes/{new_output_slug}/`.
+- WordPress ZIPs: `dist/zipped-themes/{new_output_slug}.zip`.
+- Conversion reports and private harness previews: `reports/conversions/{new_output_slug}/`.
+- Historical `reports/runs/`, WordPress themes, ZIPs, assets, failed attempts, and `wordpress-themplate-themes` remain preserved. That spelling is intentional.
 
-ZIP files belong only in `dist/zipped-themes/NNN_nolan_young_theme_[description].zip`.
+## Static generation
 
-GitHub Pages previews belong only in `docs/Preview-Themes-Github/NNN_nolan_young_theme_[description]/`.
+The default flow is brief → static scaffold → approved local assets/manifest → one selected generation mode → static validation → browser and screenshot review → local gallery update → artifact checks → report.
 
-The folder name `wordpress-themplate-themes` is intentionally spelled this way.
+The runner prepares the sample. During generation, the model may write only HTML, browser CSS/JavaScript, content.json and README.md inside that sample. It must preserve sample.json, images, icons and the approved manifest unchanged. No PHP, WordPress starter, packages, build tools, ZIPs, private provider details, reports, gallery edits, repository edits, commits, or publication from generation. Static commands never invoke conversion, PHP rendering or WordPress packaging.
 
-## Generation Rules
+Codex runs one ephemeral generation pass in the prepared directory with its writable sandbox. The runner hashes repository files outside that output before/after generation and records boundary violations, including changes to already-dirty files. It also checks protected identity/assets after generation. No second AI cleanup or repair pass. Models may self-audit within the original pass.
 
-The prep script copies the selected template into `wp-content/themes/{slug}` before AI generation starts.
+## Local modes and integrity
 
-During theme generation, the model may edit only `wp-content/themes/{slug}/`.
+Only `codex-only`, `ollama-only`, and `lmstudio-only` exist. Ollama defaults to `http://127.0.0.1:11434/v1`; LM Studio defaults to `http://127.0.0.1:1234/v1`. Use their shared OpenAI-compatible provider. No CLI generation, silent fallback, hybrid mode or model installation.
 
-The model must not create the initial theme folder, copy templates, rename folders, generate previews, update docs, create ZIPs, edit scripts, edit prompts, or touch any file outside the prepared theme folder.
+Before local generation, verify the exact model ID and required structured tool calling. Six declared stages cover identity/content, navigation, layouts/pages, plain CSS, browser interactions, and documentation. Each stage has explicit prompt ownership, bounded read/write scopes and checks. Missing prompt coverage blocks invocation. Planned overlap is documented; it is not a repair pass.
 
-The repository agent must not modify generated themes to satisfy checks. Failed output is valid evaluation evidence and must be preserved.
+Keep bounded actual source context, read-only list/read/excerpt/search tools, at most 12 tool calls per stage, 40KB per response, one malformed-tool retry and a 30-minute stage timeout. The only accepted edit is one unified diff. Validate paths, reject traversal/absolute paths/symlinks/binary writes, apply in a candidate, run observational checks, and replace transactionally. Never invent missing source or salvage failed output.
 
-## Evaluation Integrity
+Checkpoint version 2 binds prompt, scaffold implementation, provider, model, stage policy, asset manifest and current sample hashes. Explicit `--resume-local` continuation requires matching successful-stage evidence. Failed sessions cannot resume. Old WordPress checkpoint versions are incompatible; preserve them and start a new sample.
 
-A generated theme is successful only when the generated source itself passes source validation, build, preview rendering, ZIP packaging, artifact validation, and visual preview inspection without repository-agent repairs.
+## Assets
 
-Do not make infrastructure, harness, validation, preview, or packaging changes to compensate for failed generated theme output in the same run.
+Acquire and approve assets before generation. Prefer existing approved local files, then reusable permissive stock, new verified permissive stock, and original graphics when appropriate. Never use unverified search images, incompatible licenses, invented provenance or hotlinks. Models may use only supplied approved files; original inline interface SVG/CSS graphics may be authored, but are not photographs.
 
-If preview fails because generated source references missing functions, classes, files, array keys, assets, invalid PHP, or inconsistent generated names, the generated theme has failed. Preserve the output and report the failure.
+`theme:assets` is provider-neutral. Shared approved files live in `assets/approved-stock/`, `assets/generated-images/` or `assets/manifests/`. Copied files belong in the selected sample's assets directory. Record id, file, source, source_url, license, license_url, creator, creator_url, acquired_at, allowed_use, theme_slug (compatibility identity), alt_text and notes. Cross-mode comparisons use equivalent manifests and byte-identical asset sets. Missing required manifests block generation: `Missing approved asset manifest for theme generation.` Assets become immutable when generation begins.
 
-Preview harness changes are allowed only for generic WordPress core compatibility needs. They must be minimal, justified, and not specific to a brand, theme number, prompt, generated helper, generated data shape, or broken internal contract.
+## Validation and review
 
-Never use a successful preview as proof of generation quality if that preview required post-generation harness fallbacks for missing generated source behavior.
+Preserve failed generated output and evidence. Do not repair it, change validators/harnesses to hide a source failure, or reclassify old failures under new policies. Improve future runs instead. Validation is read-only. Deterministic resume never invokes AI and requires an unchanged completed generation.
 
-Do not mark a generated theme complete if any generated PHP helper, template, data provider, class, asset reference, or required theme file is missing from generated source.
+Check all required pages, nonempty files, internal links/fragments, CSS/JS/image references, approved provenance, browser navigation/interactions, console/request failures, desktop/mobile overflow and clipping. Inspect actual screenshots for layout, typography, spacing, imagery, content and meaningful differentiation. Code similarity is not visual proof. Unavailable checks are skipped, never passed. Reviews bind to the actual output hash; new static samples require browser and visual review before gallery inclusion. Legacy previews retain compatibility inclusion.
 
-If local-model generation produces incomplete or inconsistent source, stop after deterministic validation or preview failure and classify the result as failed model output. Improve future prompts or planned stages in a new run; do not salvage the failed result in place.
+Reports separately record infrastructure, generation, technical validation, browser checks, visual review, gallery/artifact status and publication. Gallery creation is local artifact creation, not publication. No push/deploy unless separately authorized.
 
-Final reports must distinguish infrastructure success, generation success, validation success, preview publication success, and visual quality. A published preview of a failed generated theme is not a successful generated theme.
+## Explicit WordPress conversion
 
-Hard rule: if generated theme preview fails because of missing generated source symbols, data, files, assets, or inconsistent generated naming, do not patch the preview harness. Mark the generated theme failed.
+Only `theme:convert:wordpress -- --sample-slug <existing-static-sample> --mode codex-only` initiates conversion. Reject other conversion modes. Reserve a new output identity; fail on collisions. Read the selected static sample unchanged, seed copied approved assets, then run one scoped Codex conversion pass.
 
-## Mode Rules
+Create genuine WordPress templates, metadata, enqueued assets and APIs, retaining the selected design/content/navigation/interactions. Document editable content, template content, page setup and demo-only forms. Reuse deterministic asset build, PHP lint, read-only preview harness and temporary-copy ZIP packaging. Compare original and converted output on desktop/mobile. A PHP harness is not an actual WordPress runtime: report activation, admin, routing, plugin and form behavior as unverified unless tested in an isolated installation. Never alter an existing live WordPress site for validation.
 
-`ollama-only` means Ollama generation only through its OpenAI-compatible HTTP API at `http://127.0.0.1:11434/v1` by default.
+Generic WordPress-core harness compatibility changes must be justified independently. Missing generated symbols, files, assets or inconsistent names are failed conversion output; do not patch the harness to compensate.
 
-`lmstudio-only` means LM Studio generation only through its OpenAI-compatible HTTP API at `http://127.0.0.1:1234/v1` by default.
+## Public commands
 
-Ollama-only and LM Studio-only use planned local-model stages. These stages are declared before generation starts and always run as part of the mode; prompt count is not repair.
-
-Every local-model stage must declare its prompt-section ownership and separate read and write scopes. Missing production prompt coverage blocks the run before model invocation.
-
-`codex-only` means one Codex generation pass.
-
-There are only three generation modes: `ollama-only`, `lmstudio-only`, and `codex-only`.
-
-There is no hybrid mode, automatic model fallback, validation-triggered AI pass, build-triggered AI pass, or second AI cleanup pass.
-
-A planned generation stage is declared before generation begins, owns defined read and write scopes, receives bounded current theme context, and runs regardless of validation state.
-
-A repair stage is triggered by a failed check or designed to make generated output pass after the fact. Repair stages are prohibited.
-
-## Local Model Agent Rules
-
-Ollama and LM Studio use the shared OpenAI-compatible provider abstraction. Each provider exposes model metadata, chat completion, model listing, model checking, normalized content and tool calls, normalized errors, timeouts, and capability metadata. API keys and authorization headers must never be written to logs or reports.
-
-`theme:model-check` and `theme:run` must verify the selected model and perform a required structured tool-call probe before local generation begins. A provider or model that cannot complete the probe must fail before generation. Ollama has no CLI generation path, provider fallback, or alternate output path.
-
-The local-model implementation is divided into:
-
-- `scripts/lib/local-model/agent.js` for orchestration, limits, progress, reports, and checkpoints.
-- `scripts/lib/local-model/context.js` for bounded actual source context.
-- `scripts/lib/local-model/tools.js` for safe read-only inspection tools.
-- `scripts/lib/local-model/patch.js` for path validation, candidate checks, and transactional patch application.
-- `scripts/lib/local-model/stages.js` for planned stage policy and prompt-section ownership.
-- `scripts/lib/local-model/protocols.js` for final-response and structured tool-call parsing.
-- `scripts/lib/providers/openai-compatible.js`, `lmstudio.js`, and `ollama.js` for provider behavior.
-
-The nine planned stages are `01-identity-copy`, `02-header-navigation`, `03-homepage-layout`, `04-page-templates`, `05-forms-admin`, `06-scss-design-system`, `07-js-interactions`, `08-footer-cleanup`, and `09-docs-and-stale-copy-cleanup`. Each stage has independent `read`, `write`, and `checks` declarations. Read scope controls context and tools; write scope controls patch paths.
-
-The model receives bounded actual contents for relevant PHP, SCSS, JavaScript, JSON, Markdown, configuration, and build files. It may request only `list_files`, `read_file`, `read_file_excerpt`, and `search_files`. The Node runner owns every filesystem operation. Absolute paths, traversal, out-of-scope paths, binary reads, `node_modules`, symlinks, and oversized tool responses are rejected.
-
-Each stage may make at most 12 tool calls. Each tool response is limited to 40 KB, malformed tool arguments receive at most one retry, and the default stage timeout is approximately 30 minutes.
-
-The only accepted local-model edit is one unified diff. The runner validates every patch path against the stage write scope, rejects unsafe paths and symlinks, applies the diff to a temporary candidate, runs declared candidate checks, and replaces the prepared theme only after success. A failed response, patch, or candidate check is preserved as evidence and ends the run without a repair attempt.
-
-Local-model stages must not write compiled bundles or `package-lock.json`. Compiled CSS and JavaScript are produced later by the deterministic build from accepted source changes.
-
-Successful stages create detailed evidence and hash-bound checkpoints. Local generation may resume only with `--resume-local`; `--resume-from-stage` may select a stage only when the recorded prompt, template, provider, model, policy, and current theme hashes all match. A mismatch fails safely instead of replaying or skipping generation.
-
-## Deterministic Work
-
-Build, validation, preview generation, ZIP packaging, cleanup, and reports are deterministic post-generation work.
-
-Validation is observational and read-only. Source validation runs before preview and ZIP creation. Artifact validation runs after preview and ZIP packaging. If a required template file is missing, validation reports it and does not copy it back.
-
-Model output is applied without semantic modification. The application layer may parse one unified diff, enforce the declared write scope, apply it through a checked candidate transaction, and run observational candidate checks. It must not fix PHP, rewrite SCSS, invent fallback CSS, replace URLs, salvage malformed output, or keep old source when generated code is invalid.
-
-Codex must run from the prepared theme directory with a writable sandbox and ephemeral execution. Repository snapshots around Codex are required to detect out-of-bound changes.
-
-Preview generation renders actual generated theme templates through a read-only PHP harness. It may read generated themes and write only under `docs/Preview-Themes-Github/` and `docs/index.html`. Preview replacement must be transactional and must preserve an existing preview when candidate rendering fails.
-
-Approved third-party image use must come from `assets/images/asset-manifest.json`. Models may create original local SVG marks, icons, textures, and illustrations, but must not invent provenance or describe illustrations as photographs.
-
-Packaging must package from a temporary copy and must not modify generated theme source.
-
-Run reports belong in `reports/runs/{theme_slug}/`. Do not store secrets there.
-
-Local-model reports must include provider and model metadata, capability preflight, stage policy, read and write scopes, context summaries, tool activity, raw responses, extracted diffs, applied paths, candidate-check results, status, and checkpoint hashes without secrets.
-
-Failed generated output must be preserved. Improving a failed result means improving a future prompt and starting a fresh run, not changing the failed result in place.
-
-## Image Acquisition and Asset Seeding
-
-Image acquisition is a standalone pre-generation process. Images must be gathered, generated, approved, copied, resized, optimized, attributed, and recorded before any AI theme generation call begins.
-
-During generation, the model may reference only images already present in the prepared theme source or listed in the approved asset manifest. The model must not search for images, generate images, invent image URLs, invent provenance, or invent licensing.
-
-Prefer image sources in this order:
-
-1. Existing approved local assets.
-2. Previously acquired reusable copyright-safe stock assets.
-3. New copyright-safe stock assets from verified permissive sources.
-4. Generated original local images only when stock is unavailable or unsuitable.
-
-The asset acquisition process must be callable as a separate public workflow before theme generation, for example:
-
-```text
-npm run theme:assets -- --prompt <prompt-file> --theme-slug <theme-slug>
-```
-
-`theme:assets` is provider-neutral. A prompt/theme pair must receive the same approved manifest and copied asset set before `codex-only`, `ollama-only`, or `lmstudio-only` generation so provider comparisons do not use different visual inputs.
-
-The asset workflow may write only approved asset folders, copied per-theme image files, and asset reports or manifests. It must not edit prompts, scripts, generated theme code outside the prepared image destination, previews, ZIPs, or validation results.
-
-Shared approved assets belong under repository-controlled asset folders such as `assets/approved-stock/`, `assets/generated-images/`, and `assets/manifests/`.
-
-Per-theme copied images belong under `wp-content/themes/{theme_slug}/assets/images/`.
-
-Every approved image must have a manifest entry before generation starts. Manifest entries must include `id`, `file`, `source`, `source_url`, `license`, `license_url`, `creator`, `creator_url`, `acquired_at`, `allowed_use`, `theme_slug`, `alt_text`, and `notes`.
-
-Do not use an image unless its source and license are recorded in the manifest. Do not use general search-result images unless the original source page confirms a compatible license.
-
-Do not use images with unclear, missing, editorial-only, noncommercial-only, attribution-impossible, or incompatible licenses. Do not use copyrighted brand, product, venue, or person images unless they are owned by the project or explicitly permissioned for this use.
-
-Do not hotlink third-party images. Copy every approved image file into a repository-controlled asset folder.
-
-The repository runner owns image licensing decisions. The model does not decide whether an image is legally safe.
-
-Reusable approved images may be used across multiple themes only when the manifest confirms their license still permits the intended use and they fit the prompt.
-
-If no safe image can be found, the asset step must fail or use a generated original local graphic. It must never use unverified images.
-
-Theme generation may start only after approved images exist locally, the manifest exists, required metadata is present, copied paths are available, and the prompt lists exactly which images the model may use.
-
-If a prompt asks for photography or an image-backed visual design and no approved asset manifest exists, the runner must fail before model invocation with: `Missing approved asset manifest for theme generation.`
-
-Missing assets are not a repair condition.
-
-## Public Commands
-
-Use npm scripts as the public command layer:
-
-```text
-npm run theme:run
-npm run theme:resume
-npm run theme:prepare
-npm run theme:assets
-npm run theme:validate
-npm run theme:build
-npm run theme:preview
-npm run theme:preview:index
-npm run theme:zip
-npm run theme:delete
-npm run theme:env
-npm run theme:model-check
-npm run test:scripts
-```
+Use `npm run theme:run`, `theme:prepare`, `theme:assets`, `theme:model-check`, `theme:validate`, `theme:preview`, `theme:preview:index`, `theme:resume`, `theme:build` (documented static no-op), `theme:convert:wordpress`, `theme:wordpress:zip`, `theme:env`, and `test:scripts`. Commands run at the repository root. `theme:zip` and destructive `theme:delete` are removed from the public surface. Historical implementation is labeled legacy and is not the normal static path.

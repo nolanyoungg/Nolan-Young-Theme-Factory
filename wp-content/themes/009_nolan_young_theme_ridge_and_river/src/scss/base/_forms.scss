@@ -1,0 +1,4 @@
+label { display: block; font-size: 13px; font-weight: 700; }
+input, select, textarea { display: block; width: 100%; max-width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 0; background: #faf8f1; color: var(--pine); padding: 13px; margin-top: 8px; font-size: 16px; }
+textarea { resize: vertical; }
+input::placeholder, textarea::placeholder { color: #657064; opacity: 1; }

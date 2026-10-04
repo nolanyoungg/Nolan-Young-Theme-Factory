@@ -1,0 +1,1 @@
+<form role="search" method="get" class="search-form" action="<?php echo clay_url(); ?>"><label>Search the studio<input type="search" value="<?php echo esc_attr( get_search_query() ); ?>" name="s" placeholder="Clay, care, making…"></label><button type="submit" class="button">Search</button></form>
